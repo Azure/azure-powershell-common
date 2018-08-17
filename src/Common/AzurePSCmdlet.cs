@@ -172,6 +172,28 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
+        public string ResolvePath(string path)
+        {
+            return GetUnresolvedProviderPathFromPSPath(path);
+        }
+
+        public string ResolvePath(string[] paths)
+        {
+            if (paths == null || paths.Count() == 0)
+            {
+                return "";
+            }
+            string path = paths[0];
+            if (paths.Count() > 1)
+            {
+                for (var i = 1; i < path.Count(); i++)
+                {
+                    path = Path.Combine(path, paths[i]);
+                }
+            }
+            return GetUnresolvedProviderPathFromPSPath(path);
+        }
+
         /// <summary>
         /// Initializes AzurePSCmdlet properties.
         /// </summary>
