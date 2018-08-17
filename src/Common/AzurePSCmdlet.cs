@@ -186,7 +186,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             string path = paths[0];
             if (paths.Count() > 1)
             {
-                for (var i = 1; i < path.Count(); i++)
+                for (var i = 1; i < path.Count() - 1; i++)
                 {
                     path = Path.Combine(path, paths[i]);
                 }
