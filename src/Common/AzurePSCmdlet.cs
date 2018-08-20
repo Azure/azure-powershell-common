@@ -172,12 +172,22 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
-        public string ResolvePath(string path)
+        public string ResolveUserPath(string path)
         {
+            if (path == null)
+            {
+                return null;
+            }
+
+            if (SessionState == null)
+            {
+                return path;
+            }
+
             return GetUnresolvedProviderPathFromPSPath(path);
         }
 
-        public string ResolvePath(string[] paths)
+        public string ResolveUserPath(string[] paths)
         {
             if (paths == null || paths.Count() == 0)
             {
@@ -191,7 +201,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                     path = Path.Combine(path, paths[i]);
                 }
             }
-            return GetUnresolvedProviderPathFromPSPath(path);
+            return ResolveUserPath(path);
         }
 
         /// <summary>
