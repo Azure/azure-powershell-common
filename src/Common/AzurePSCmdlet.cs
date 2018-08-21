@@ -184,7 +184,14 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 return path;
             }
 
-            return GetUnresolvedProviderPathFromPSPath(path);
+            try
+            {
+                return GetUnresolvedProviderPathFromPSPath(path);
+            }
+            catch
+            {
+                return path;
+            }
         }
 
         public string ResolveUserPath(string[] paths)
