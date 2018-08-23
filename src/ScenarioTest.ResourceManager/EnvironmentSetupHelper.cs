@@ -667,19 +667,18 @@ namespace Microsoft.WindowsAzure.Commands.ScenarioTest
             foreach (string moduleName in modules)
             {
                 powershell.AddScript(string.Format("Import-Module \"{0}\"", moduleName.AsAbsoluteLocation()));
+#if NETSTANDARD
                 if (moduleName.EndsWith(".psd1"))
                 {
-#if NETSTANDARD
                     var moduleShortName = moduleName.Split(new string[] { "\\" }, StringSplitOptions.None).Last().Split(new string[] { "/" }, StringSplitOptions.None).Last();
                     powershell.AddScript("Enable-AzureRmAlias -Module " + moduleShortName.Substring(0, moduleShortName.Length - 5));
-                    if (moduleShortName.Equals("Az.Storage.psd1"))
-                    {
-                        powershell.AddScript("Get-Alias | Where-Object {$_.Name -like '*-AzureRmStorage*'} | ForEach-Object { Remove-Item \"alias:\\$_\" }");
-                    }
-#endif
                 }
+#endif
             }
 
+#if NETSTANDARD
+            powershell.AddScript("Get-Alias | Where-Object {$_.Name -like '*-AzureRmStorage*'} | ForEach-Object { Remove-Item \"alias:\\$_\" }");
+#endif
             powershell.AddScript("Disable-AzureRmDataCollection -ErrorAction Ignore");
             powershell.AddScript(
                 string.Format("set-location \"{0}\"", System.AppDomain.CurrentDomain.BaseDirectory));
