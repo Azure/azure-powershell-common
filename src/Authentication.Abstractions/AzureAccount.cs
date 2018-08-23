@@ -124,7 +124,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// Login Uri for Managed Service Login
         /// </summary>
         MSILoginUri = "MSILoginUri",
-        
+
         /// <summary>
         /// Backup login Uri for MSI
         /// </summary>
@@ -134,7 +134,19 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// Secret that may be used with MSI login
         /// </summary>
-        MSILoginSecret = "MSILoginSecret";
+        MSILoginSecret = "MSILoginSecret",
+
+
+        /// <summary>
+        /// Service principal name used for login
+        /// </summary>
+        ServicePrincipalName = "ServicePrincipalName",
+
+
+        /// <summary>
+        /// Service principal secret used for login
+        /// </summary>
+        ServicePrincipalSecret = "ServicePrincipalSecret";
         }
     }
 }

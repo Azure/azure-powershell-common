@@ -22,6 +22,7 @@ using System.Xml.Serialization;
 using Microsoft.Azure.Commands.ResourceManager.Common.Serialization;
 using System.Collections.Concurrent;
 using Microsoft.Azure.Commands.Common.Authentication.ResourceManager;
+using Microsoft.WindowsAzure.Commands.Common;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Models
 {
@@ -183,6 +184,20 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Models
                 {
                     context.Value.TokenCache = AzureSession.Instance.TokenCache;
                     this.Contexts.Add(context.Key, context.Value);
+#if NETSTANDARD
+                    var account = context.Value.Account;
+                    var tenant = context.Value.Tenant;
+                    if (account != null && tenant != null)
+                    {
+                        var key = $"{account.Id}_{tenant.Id}";
+                        if (!ServicePrincipalKeyStore.Credentials.ContainsKey(key) &&
+                            account.ExtendedProperties.ContainsKey(AzureAccount.Property.ServicePrincipalSecret))
+                        {
+                            var secret = account.ExtendedProperties[AzureAccount.Property.ServicePrincipalSecret].ConvertToSecureString();
+                            ServicePrincipalKeyStore.Credentials.Add(key, secret);
+                        }
+                    }
+#endif
                 }
 
                 DefaultContextKey = profile.DefaultContextKey ?? "Default";
