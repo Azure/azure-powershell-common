@@ -176,7 +176,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// Resolve user submitted paths correctly on all platforms
         /// </summary>
         /// <param name="path">Absolute or relative path</param>
-        /// <returns></returns>
+        /// <returns>Absolute path</returns>
         public string ResolveUserPath(string path)
         {
             if (path == null)
@@ -203,7 +203,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// Correctly join sections of a path and resolve final path correctly on all platforms
         /// </summary>
         /// <param name="paths">Sections of an absolute or relative path</param>
-        /// <returns></returns>
+        /// <returns>Combined absolute path</returns>
         public string ResolveUserPath(string[] paths)
         {
             if (paths == null || paths.Count() == 0)
