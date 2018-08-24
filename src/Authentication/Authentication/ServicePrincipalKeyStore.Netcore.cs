@@ -26,6 +26,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication
     {
         private static IDictionary<string, SecureString> _credentials = new Dictionary<string, SecureString>();
 
+        public static IDictionary<string, SecureString> Credentials { get => _credentials; set => _credentials = value; }
+
         public static void SaveKey(string appId, string tenantId, SecureString serviceKey)
         {
             var key = CreateKey(appId, tenantId);
