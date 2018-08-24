@@ -152,12 +152,14 @@ namespace Microsoft.Azure.Commands.Common.Authentication
 
         static IAzureSession CreateInstance(IDataStore dataStore = null)
         {
-            string oldProfilePath = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    Resources.OldAzureDirectoryName);
             string profilePath = Path.Combine(
+#if NETSTANDARD
                     Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                     Resources.AzureDirectoryName);
+            string oldProfilePath = Path.Combine(
+#endif
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    Resources.OldAzureDirectoryName);
             dataStore = dataStore ?? new DiskDataStore();
 
             var session = new AdalSession
@@ -171,7 +173,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                 ProfileFile = "AzureProfile.json",
             };
 
-            var migrated = MigrateSettings(dataStore, oldProfilePath, profilePath);
+            var migrated =
+#if !NETSTANDARD
+                false;
+#else
+                MigrateSettings(dataStore, oldProfilePath, profilePath);
+#endif
             var autoSave = InitializeSessionSettings(dataStore, profilePath, ContextAutosaveSettings.AutoSaveSettingsFile, migrated);
             session.ARMContextSaveMode = autoSave.Mode;
             session.ARMProfileDirectory = autoSave.ContextDirectory;
