@@ -172,6 +172,11 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
+        /// <summary>
+        /// Resolve user submitted paths correctly on all platforms
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public string ResolveUserPath(string path)
         {
             if (path == null)
@@ -194,6 +199,11 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
+        /// <summary>
+        /// Correctly join sections of a path and resolve final path correctly on all platforms
+        /// </summary>
+        /// <param name="paths"></param>
+        /// <returns></returns>
         public string ResolveUserPath(string[] paths)
         {
             if (paths == null || paths.Count() == 0)
