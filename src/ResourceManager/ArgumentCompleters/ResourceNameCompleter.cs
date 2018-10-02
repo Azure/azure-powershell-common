@@ -166,7 +166,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
                 "$parentResources = @()\n";
             foreach (var parentResourceName in parentResourceNames)
             {
-                script += String.Format("$parentResources += $fakeBoundParameters[{0}]\n", parentResourceName);
+                script += String.Format("$parentResources += $fakeBoundParameters[\"{0}\"]\n", parentResourceName);
             }
             script += String.Format("$resourceType = {0}\n", resourceType) +
                 "$resources = [Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters.LocationCompleterAttribute]::FindResources($resourceType, $parentResources)\n" +
