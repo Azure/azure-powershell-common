@@ -150,6 +150,9 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
                 throw ex;
 #endif
             }
+#if !DEBUG
+            return new string[0];
+#endif
         }
 
         /// <summary>
