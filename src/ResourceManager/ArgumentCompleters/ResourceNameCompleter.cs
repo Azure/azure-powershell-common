@@ -166,10 +166,10 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
                 "$parentResources = @()\n";
             foreach (var parentResourceName in parentResourceNames)
             {
-                script += String.Format("$parentResources += $fakeBoundParameters[\"{0}\"]\n", parentResourceName);
+                script += String.Format("$parentResources += $fakeBoundParameter[\"{0}\"]\n", parentResourceName);
             }
             script += String.Format("$resourceType = {0}\n", resourceType) +
-                "$resources = [Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters.LocationCompleterAttribute]::FindResources($resourceType, $parentResources)\n" +
+                "$resources = [Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters.ResourceNameCompleterAttribute]::FindResources($resourceType, $parentResources)\n" +
                 "$resources | Where-Object { $_ -Like \"'$wordToComplete*\" } | Sort-Object | ForEach-Object { [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_) }";
             ScriptBlock scriptBlock = ScriptBlock.Create(script);
             return scriptBlock;
