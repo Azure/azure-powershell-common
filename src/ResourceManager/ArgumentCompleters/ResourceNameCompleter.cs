@@ -29,6 +29,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
     using System.Threading.Tasks;
     using Microsoft.Azure.Management.Internal.Resources.Utilities.Models;
     using System.Text;
+    using Microsoft.Rest.Azure.OData;
 
 
     /// <summary>
@@ -36,7 +37,6 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
     /// </summary>
     public class ResourceNameCompleterAttribute : ArgumentCompleterAttribute
     {
-        private static readonly object _lock = new object();
         private static int _timeout = 3;
 
         /// <summary>
@@ -61,15 +61,11 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
             {
                 IResourceManagementClient client = AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager);
                 Task<IPage<GenericResource>> allProviders = null;
-                var expression = CreateFilter(
-                    resourceType: resourceType,
-                    filter: null);
-
-                var odataQuery = new Rest.Azure.OData.ODataQuery<GenericResourceFilter>(expression);
+                var odataQuery = new ODataQuery<GenericResourceFilter>(r => r.ResourceType == resourceType);
 
                 if (parentResources[0] != null)
                 {
-                    allProviders = client.ResourceGroups.ListResourcesAsync(parentResources[0], odataQuery);
+                    allProviders = client.Resources.ListAsync(odataQuery);
                 }
                 else
                 {
