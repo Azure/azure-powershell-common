@@ -63,7 +63,14 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
                 Task<IPage<GenericResource>> allProviders = null;
                 var odataQuery = new ODataQuery<GenericResourceFilter>(r => r.ResourceType == resourceType);
 
-                allProviders = client.Resources.ListAsync(odataQuery);
+                if (string.IsNullOrWhiteSpace(parentResources[0]))
+                {
+                    allProviders = client.Resources.ListAsync(odataQuery);
+                }
+                else
+                {
+                    allProviders = client.ResourceGroups.ListResourcesAsync(parentResources[0], odataQuery);
+                }
 
                 List<ResourceIdentifier> ids = new List<ResourceIdentifier>();
                 if (_timeout == -1)
@@ -138,15 +145,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
                     }
                 }
 
-                if (parentResources[0] != null)
-                {
-                    return new string[] { parentResources[0].ToString(), parentResources[0].Equals(null).ToString(), "here" };
-                }
-                else
-                {
-                    return new string[] { "here1" };
-                }
-                //return output.ToArray();
+                return output.ToArray();
             }
             catch (Exception ex)
             {
