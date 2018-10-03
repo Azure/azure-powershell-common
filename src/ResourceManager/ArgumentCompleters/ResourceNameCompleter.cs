@@ -28,6 +28,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
     using Microsoft.Rest.Azure;
     using System.Threading.Tasks;
     using Microsoft.Azure.Management.Internal.Resources.Utilities.Models;
+    using System.Text;
 
 
     /// <summary>
@@ -60,6 +61,12 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
             {
                 IResourceManagementClient client = AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager);
                 Task<IPage<GenericResource>> allProviders = null;
+                var expression = CreateFilter(
+                    resourceType: resourceType,
+                    filter: null);
+
+                var odataQuery = new Rest.Azure.OData.ODataQuery<GenericResourceFilter>(expression);
+
                 if (parentResources[0] != null)
                 {
                     allProviders = client.ResourceGroups.ListResourcesAsync(parentResources[0]);
@@ -173,6 +180,27 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
                 "$resources | Where-Object { $_ -Like \"'$wordToComplete*\" } | Sort-Object | ForEach-Object { [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_) }";
             ScriptBlock scriptBlock = ScriptBlock.Create(script);
             return scriptBlock;
+        }
+
+        public static string CreateFilter(
+            string resourceType,
+            string filter)
+        {
+            var filterStringBuilder = new StringBuilder();
+
+            if (!string.IsNullOrWhiteSpace(resourceType))
+            {
+                if (filterStringBuilder.Length > 0)
+                {
+                    filterStringBuilder.Append(" AND ");
+                }
+
+                filterStringBuilder.AppendFormat("resourceType EQ '{0}'", resourceType);
+            }
+
+            return filterStringBuilder.Length > 0
+                ? filterStringBuilder.ToString()
+                : filter.CoalesceString();
         }
     }
 }
