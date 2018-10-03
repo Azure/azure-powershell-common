@@ -56,7 +56,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
 
         public static string[] FindResources(string resourceType, string[] parentResources)
         {
-            IAzureContext context = AzureRmProfileProvider.Instance.Profile.DefaultContext;
+            IAzureContext context = AzureRmProfileProvider.Instance?.Profile?.DefaultContext;
             try
             {
                 IResourceManagementClient client = AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager);
@@ -69,11 +69,11 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
 
                 if (parentResources[0] != null)
                 {
-                    allProviders = client.ResourceGroups.ListResourcesAsync(parentResources[0]);
+                    allProviders = client.ResourceGroups.ListResourcesAsync(parentResources[0], odataQuery);
                 }
                 else
                 {
-                    allProviders = client.Resources.ListAsync();
+                    allProviders = client.Resources.ListAsync(odataQuery);
                 }
 
                 List<ResourceIdentifier> ids = new List<ResourceIdentifier>();
