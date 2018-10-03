@@ -95,7 +95,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                         try
                         {
                             var macAddress = _networkHelper.GetMACAddress();
-                            _hashMacAddress = string.IsNullOrWhiteSpace(macAddress) 
+                            _hashMacAddress = string.IsNullOrWhiteSpace(macAddress)
                                 ? null : GenerateSha256HashString(macAddress)?.Replace("-", string.Empty)?.ToLowerInvariant();
                         }
                         catch
@@ -221,7 +221,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 Dictionary<string, string> eventProperties = new Dictionary<string, string>();
                 LoadTelemetryClientContext(qos, client.Context);
                 PopulatePropertiesFromQos(qos, eventProperties);
-                // qos.Exception contains exception message which may contain Users specific data. 
+                // qos.Exception contains exception message which may contain Users specific data.
                 // We should not collect users specific data.
                 eventProperties.Add("Message", "Message removed due to PII.");
                 eventProperties.Add("StackTrace", qos.Exception.StackTrace);
@@ -295,8 +295,8 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
         public bool IsMetricTermAccepted()
         {
-            return _profile != null 
-                && _profile.EnableAzureDataCollection.HasValue 
+            return _profile != null
+                && _profile.EnableAzureDataCollection.HasValue
                 && _profile.EnableAzureDataCollection.Value;
         }
 
