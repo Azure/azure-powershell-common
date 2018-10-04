@@ -24,11 +24,11 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
     using System.Collections.Generic;
     using System.Linq;
     using System.Management.Automation;
-    using System.Collections.Concurrent;
     using Microsoft.Rest.Azure;
     using System.Threading.Tasks;
     using Microsoft.Azure.Management.Internal.Resources.Utilities.Models;
     using System.Text;
+    using Microsoft.Rest.Azure.OData;
 
 
     /// <summary>
@@ -36,7 +36,6 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
     /// </summary>
     public class ResourceNameCompleterAttribute : ArgumentCompleterAttribute
     {
-        private static readonly object _lock = new object();
         private static int _timeout = 3;
 
         /// <summary>
@@ -61,19 +60,15 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
             {
                 IResourceManagementClient client = AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager);
                 Task<IPage<GenericResource>> allProviders = null;
-                var expression = CreateFilter(
-                    resourceType: resourceType,
-                    filter: null);
+                var odataQuery = new ODataQuery<GenericResourceFilter>(r => r.ResourceType == resourceType);
 
-                var odataQuery = new Rest.Azure.OData.ODataQuery<GenericResourceFilter>(expression);
-
-                if (parentResources[0] != null)
+                if (string.IsNullOrWhiteSpace(parentResources[0]))
                 {
-                    allProviders = client.ResourceGroups.ListResourcesAsync(parentResources[0], odataQuery);
+                    allProviders = client.Resources.ListAsync(odataQuery);
                 }
                 else
                 {
-                    allProviders = client.Resources.ListAsync(odataQuery);
+                    allProviders = client.ResourceGroups.ListResourcesAsync(parentResources[0], odataQuery);
                 }
 
                 List<ResourceIdentifier> ids = new List<ResourceIdentifier>();
@@ -118,17 +113,18 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
                 }
 
                 List<string> output = new List<string>();
-                foreach(var resource in ids)
+                foreach (var resource in ids)
                 {
                     var include = true;
+
                     if (resource.ParentResource != null)
                     {
                         var actualParentResource = resource.ParentResource.Split('/');
-                        if (actualParentResource.Count() == parentResources.Count() - 1)
+                        if (actualParentResource.Count() / 2 == parentResources.Count() - 1)
                         {
-                            for (int i = 0; i < actualParentResource.Count(); i++)
+                            for (int i = 0; i < actualParentResource.Count() / 2; i++)
                             {
-                                if (actualParentResource[i] != null && !actualParentResource[i].Equals(parentResources[i]))
+                                if (!string.IsNullOrEmpty(parentResources[i + 1]) && !actualParentResource[i * 2 + 1].Equals(parentResources[i + 1]))
                                 {
                                     include = false;
                                 }
