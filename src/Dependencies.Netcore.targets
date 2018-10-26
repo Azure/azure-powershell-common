@@ -16,7 +16,7 @@
   </ItemGroup>
   <ItemGroup Condition="'$(IncludeHyak)' == 'true'">
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.4.0" />
-    <PackageReference Include="Microsoft.Azure.Common" Version="2.2.0" />
-    <PackageReference Include="Hyak.Common" Version="1.2.1" />
+    <PackageReference Include="Microsoft.Azure.Common" Version="2.2.1" />
+    <PackageReference Include="Hyak.Common" Version="1.2.2" />
   </ItemGroup>
 </Project>

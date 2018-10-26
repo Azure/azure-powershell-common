@@ -51,7 +51,7 @@
       <HintPath>$(PackagesDirectory)Microsoft.Azure.Test.Framework.3.0.0\lib\net452\Microsoft.Azure.Test.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Azure.Test.HttpRecorder, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(PackagesDirectory)Microsoft.Azure.Test.HttpRecorder.1.13.0\lib\net452\Microsoft.Azure.Test.HttpRecorder.dll</HintPath>
+      <HintPath>$(PackagesDirectory)Microsoft.Azure.Test.HttpRecorder.1.13.1\lib\net452\Microsoft.Azure.Test.HttpRecorder.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Rest.ClientRuntime.Azure.TestFramework, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>$(PackagesDirectory)Microsoft.Rest.ClientRuntime.Azure.TestFramework.1.7.5\lib\net452\Microsoft.Rest.ClientRuntime.Azure.TestFramework.dll</HintPath>
