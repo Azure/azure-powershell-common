@@ -120,7 +120,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             List<IAzureSubscription> subscriptionObjects = DefaultProfile.Subscriptions.Where(s => subscriptions.Contains(s.GetId().ToString())).ToList();
             if (subscriptionsNotInDefaultProfile.Any())
             {
-                //So we didnt find some subscriptions in the default profile.. 
+                //So we didnt find some subscriptions in the default profile..
                 //this does not mean that the user does not have access to the subs, it just menas that the local context did not have them
                 //We gotta now call into the subscription RP and see if the user really does not have access to these subscriptions
 
@@ -195,10 +195,10 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         }
 
         /// <summary>
-        /// Guards execution of the given action using ShouldProcess and ShouldContinue.  The optional 
-        /// useSHouldContinue predicate determines whether SHouldContinue should be called for this 
-        /// particular action (e.g. a resource is being overwritten). By default, both 
-        /// ShouldProcess and ShouldContinue will be executed.  Cmdlets that use this method overload 
+        /// Guards execution of the given action using ShouldProcess and ShouldContinue.  The optional
+        /// useSHouldContinue predicate determines whether SHouldContinue should be called for this
+        /// particular action (e.g. a resource is being overwritten). By default, both
+        /// ShouldProcess and ShouldContinue will be executed.  Cmdlets that use this method overload
         /// must have a force parameter.
         /// </summary>
         /// <param name="force">Do not ask for confirmation</param>
@@ -211,7 +211,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         {
             ConfirmAction(force, continueMessage, processMessage, target, action, () => true);
         }
-        
+
         /// <summary>
         /// Prompt for confirmation for the specified change to the specified ARM resource
         /// </summary>
@@ -266,7 +266,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         /// <param name="actionName">A description of the change to the resource</param>
         /// <param name="action">The code action to perform if confirmation is successful</param>
         /// <param name="promptForContinuation">Predicate to determine whether a ShouldContinue prompt is necessary</param>
-        protected void ConfirmResourceAction(string resourceId, bool force, string continueMessage, string actionName, 
+        protected void ConfirmResourceAction(string resourceId, bool force, string continueMessage, string actionName,
             Action action, Func<bool> promptForContinuation = null)
         {
             ConfirmAction(force, continueMessage, actionName, string.Format(Resources.ResourceIdConfirmTarget,
@@ -297,7 +297,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
                 _qosEvent.InvocationName = this.MyInvocation.InvocationName;
             }
 
-            if (this.MyInvocation != null && this.MyInvocation.BoundParameters != null 
+            if (this.MyInvocation != null && this.MyInvocation.BoundParameters != null
                 && this.MyInvocation.BoundParameters.Keys != null)
             {
                 _qosEvent.Parameters = string.Join(" ",
@@ -306,8 +306,8 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             }
 
             IAzureContext context;
-            if (TryGetDefaultContext(out context) 
-                && context.Account != null 
+            if (TryGetDefaultContext(out context)
+                && context.Account != null
                 && !string.IsNullOrWhiteSpace(context.Account.Id))
             {
                 _qosEvent.Uid = MetricHelper.GenerateSha256HashString(context.Account.Id.ToString());
@@ -315,6 +315,12 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             else
             {
                 _qosEvent.Uid = "defaultid";
+            }
+
+            string profileVersion;
+            if (AzureSession.Instance.TryGetComponent("ProfileVersion", out profileVersion))
+            {
+                _qosEvent.CustomProperties["ProfileVersion"] = profileVersion;
             }
         }
 
