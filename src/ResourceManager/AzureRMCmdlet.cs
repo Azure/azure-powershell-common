@@ -300,9 +300,20 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             if (this.MyInvocation != null && this.MyInvocation.BoundParameters != null
                 && this.MyInvocation.BoundParameters.Keys != null)
             {
-                _qosEvent.Parameters = string.Join(" ",
-                    this.MyInvocation.BoundParameters.Keys.Select(
-                        s => string.Format(CultureInfo.InvariantCulture, "-{0} ***", s)));
+                var parameters = new List<string>();
+                foreach (var parameter in this.MyInvocation.BoundParameters.Keys)
+                {
+                    var result = string.Format(CultureInfo.InvariantCulture, "-{0}", parameter);
+                    if (!(this.MyInvocation.BoundParameters[parameter] is SwitchParameter))
+                    {
+                        result += " ***";
+                    }
+
+                    parameters.Add(result);
+                }
+
+                parameters.Sort();
+                _qosEvent.Parameters = string.Join(" ", parameters);
             }
 
             IAzureContext context;
