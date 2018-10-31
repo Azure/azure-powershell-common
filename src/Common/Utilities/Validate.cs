@@ -29,6 +29,8 @@ namespace Microsoft.WindowsAzure.Commands.Common
     /// </summary>
     public static class Validate
     {
+// TODO: Remove IfDef code
+#if !NETSTANDARD
         [Flags]
         enum InternetConnectionState : int
         {
@@ -39,6 +41,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             INTERNET_CONNECTION_OFFLINE = 0x20,
             INTERNET_CONNECTION_CONFIGURED = 0x40
         }
+#endif
 
         /// <summary>
         /// Validates against given string if null or empty.
@@ -49,19 +52,16 @@ namespace Microsoft.WindowsAzure.Commands.Common
         /// <param name="useDefaultMessage">Indicates either to use messageData as actual message or parameter name</param>
         public static void ValidateStringIsNullOrEmpty(string data, string messageData, bool useDefaultMessage = true)
         {
-            if (string.IsNullOrEmpty(data))
+            if (!string.IsNullOrEmpty(data)) return;
+
+            // In this case use messageData parameter as name for null/empty string.
+            if (useDefaultMessage)
             {
-                // In this case use messageData parameter as name for null/empty string.
-                if (useDefaultMessage)
-                {
-                    throw new ArgumentException(string.Format(Resources.InvalidOrEmptyArgumentMessage, messageData));
-                }
-                else
-                {
-                    // Use the message provided by the user
-                    throw new ArgumentException(messageData);
-                }
+                throw new ArgumentException(string.Format(Resources.InvalidOrEmptyArgumentMessage, messageData));
             }
+
+            // Use the message provided by the user
+            throw new ArgumentException(messageData);
         }
 
         /// <summary>
@@ -81,12 +81,12 @@ namespace Microsoft.WindowsAzure.Commands.Common
         /// Check a file path for invalid characters
         /// </summary>
         /// <param name="element">The file name</param>
-        /// <param name="exceptionMessage">The exception messag eto throw if invalid characters are found</param>
+        /// <param name="exceptionMessage">The exception message to throw if invalid characters are found</param>
         public static void ValidateFileName(string element, string exceptionMessage = null)
         {
             try
             {
-                string fileName = Path.GetFileName(element);
+                var fileName = Path.GetFileName(element);
 
                 if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
                 {
@@ -119,17 +119,16 @@ namespace Microsoft.WindowsAzure.Commands.Common
         /// <param name="exceptionMessage">The exception message to throw if the directory does not exist</param>
         public static void ValidateDirectoryExists(string directory, string exceptionMessage = null)
         {
-            string msg = string.Format(Resources.PathDoesNotExist, directory);
+            var msg = string.Format(Resources.PathDoesNotExist, directory);
 
-            if (!FileUtilities.DataStore.DirectoryExists(directory))
+            if (FileUtilities.DataStore.DirectoryExists(directory)) return;
+
+            if (!string.IsNullOrEmpty(exceptionMessage))
             {
-                if (!string.IsNullOrEmpty(exceptionMessage))
-                {
-                    msg = exceptionMessage;
-                }
-
-                throw new FileNotFoundException(msg);
+                msg = exceptionMessage;
             }
+
+            throw new FileNotFoundException(msg);
         }
 
         /// <summary>
@@ -146,13 +145,13 @@ namespace Microsoft.WindowsAzure.Commands.Common
         }
 
         /// <summary>
-        /// Verify that the given file has the required extnsion
+        /// Verify that the given file has the required extension
         /// </summary>
         /// <param name="filePath">The file path</param>
         /// <param name="desiredExtention">The extension desired</param>
         public static void ValidateFileExtention(string filePath, string desiredExtention)
         {
-            bool invalidExtension = Convert.ToBoolean(string.Compare(Path.GetExtension(filePath), desiredExtention, true));
+            var invalidExtension = Convert.ToBoolean(string.Compare(Path.GetExtension(filePath), desiredExtention, true));
 
             if (invalidExtension)
             {
@@ -163,7 +162,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         /// Validate the form of the given dns name
         /// </summary>
         /// <param name="dnsName">The dns name to check</param>
-        /// <param name="parameterName">The name of the parameter containign the dns value in the source method calling this fucntion</param>
+        /// <param name="parameterName">The name of the parameter containing the dns value in the source method calling this function</param>
         public static void ValidateDnsName(string dnsName, string parameterName)
         {
             if (Uri.CheckHostName(dnsName) != UriHostNameType.Dns || dnsName.EndsWith("-"))
@@ -190,7 +189,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 // Dns doesn't exist
             }
         }
-
+// TODO: Remove IfDef code
 #if !NETSTANDARD
         [SuppressMessage("Microsoft.Design", "CA1060:MovePInvokesToNativeMethodsClass", Justification = "Not necessary for a single p-invoke")]
         [DllImport("WININET", CharSet = CharSet.Auto)]
@@ -198,10 +197,11 @@ namespace Microsoft.WindowsAzure.Commands.Common
 #endif
 
         /// <summary>
-        /// Validate that the intenret connection is working
+        /// Validate that the internet connection is working
         /// </summary>
         public static void ValidateInternetConnection()
         {
+// TODO: Remove IfDef code
 #if !NETSTANDARD
             InternetConnectionState flags = 0;
 
@@ -213,7 +213,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         }
 
         /// <summary>
-        /// Verify that the given test has no whitespace characetrs
+        /// Verify that the given test has no whitespace characters
         /// </summary>
         /// <param name="text">The text to check</param>
         /// <param name="exceptionMessage">The exception message to throw if the check fails</param>
@@ -251,7 +251,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
             ValidateStringIsNullOrEmpty(fullPath, name);
             ValidateFileName(fullPath, Resources.IllegalPath);
-            string directoryPath = Path.GetDirectoryName(fullPath);
+            var directoryPath = Path.GetDirectoryName(fullPath);
             if (!string.IsNullOrEmpty(directoryPath))
             {
                 ValidatePath(fullPath, Resources.IllegalPath);

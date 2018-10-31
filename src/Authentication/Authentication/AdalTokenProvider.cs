@@ -18,6 +18,7 @@ using System;
 using System.Security;
 using Microsoft.Azure.Commands.Common.Authentication.Properties;
 
+// TODO: Remove IfDef code
 #if !NETSTANDARD
 using System.Windows.Forms;
 #endif
@@ -30,24 +31,20 @@ namespace Microsoft.Azure.Commands.Common.Authentication
     /// </summary>
     public class AdalTokenProvider : ITokenProvider
     {
-        private readonly ITokenProvider userTokenProvider;
-        private readonly ITokenProvider servicePrincipalTokenProvider;
-#if !NETSTANDARD
+        private readonly ITokenProvider _userTokenProvider;
+        private readonly ITokenProvider _servicePrincipalTokenProvider;
+// TODO: Remove IfDef
+#if NETSTANDARD
         public AdalTokenProvider()
-            : this(new ConsoleParentWindow())
         {
-        }
-
-        public AdalTokenProvider(IWin32Window parentWindow)
-        {
-            this.userTokenProvider = new UserTokenProvider(parentWindow);
-            this.servicePrincipalTokenProvider = new ServicePrincipalTokenProvider();
+            _userTokenProvider = new UserTokenProvider();
+            _servicePrincipalTokenProvider = new ServicePrincipalTokenProvider();
         }
 
         public AdalTokenProvider(Func<IServicePrincipalKeyStore> getKeyStore)
         {
-            this.userTokenProvider = new UserTokenProvider(new ConsoleParentWindow());
-            this.servicePrincipalTokenProvider = new ServicePrincipalTokenProvider(getKeyStore);
+            _userTokenProvider = new UserTokenProvider();
+            _servicePrincipalTokenProvider = new ServicePrincipalTokenProvider(getKeyStore);
         }
 
         public IAccessToken GetAccessToken(
@@ -61,9 +58,57 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             switch (credentialType)
             {
                 case AzureAccount.AccountType.User:
-                    return userTokenProvider.GetAccessToken(config, promptBehavior, promptAction, userId, password, credentialType);
+                    return _userTokenProvider.GetAccessToken(
+                        config,
+                        promptBehavior,
+                        promptAction,
+                        userId,
+                        password,
+                        credentialType);
                 case AzureAccount.AccountType.ServicePrincipal:
-                    return servicePrincipalTokenProvider.GetAccessToken(config, promptBehavior, promptAction, userId, password, credentialType);
+                    return _servicePrincipalTokenProvider.GetAccessToken(
+                        config,
+                        promptBehavior,
+                        promptAction,
+                        userId,
+                        password,
+                        credentialType);
+                default:
+                    throw new ArgumentException(Resources.UnsupportedCredentialType, nameof(credentialType));
+            }
+        }
+#else
+        public AdalTokenProvider()
+            : this(new ConsoleParentWindow())
+        {
+        }
+
+        public AdalTokenProvider(IWin32Window parentWindow)
+        {
+            _userTokenProvider = new UserTokenProvider(parentWindow);
+            _servicePrincipalTokenProvider = new ServicePrincipalTokenProvider();
+        }
+
+        public AdalTokenProvider(Func<IServicePrincipalKeyStore> getKeyStore)
+        {
+            _userTokenProvider = new UserTokenProvider(new ConsoleParentWindow());
+            _servicePrincipalTokenProvider = new ServicePrincipalTokenProvider(getKeyStore);
+        }
+
+        public IAccessToken GetAccessToken(
+            AdalConfiguration config,
+            string promptBehavior,
+            Action<string> promptAction,
+            string userId,
+            SecureString password,
+            string credentialType)
+        {
+            switch (credentialType)
+            {
+                case AzureAccount.AccountType.User:
+                    return _userTokenProvider.GetAccessToken(config, promptBehavior, promptAction, userId, password, credentialType);
+                case AzureAccount.AccountType.ServicePrincipal:
+                    return _servicePrincipalTokenProvider.GetAccessToken(config, promptBehavior, promptAction, userId, password, credentialType);
                 default:
                     throw new ArgumentException(Resources.UnknownCredentialType, "credentialType");
             }
@@ -78,55 +123,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             switch (credentialType)
             {
                 case AzureAccount.AccountType.ServicePrincipal:
-                    return servicePrincipalTokenProvider.GetAccessTokenWithCertificate(config, clientId, certificate, credentialType);
+                    return _servicePrincipalTokenProvider.GetAccessTokenWithCertificate(config, clientId, certificate, credentialType);
                 default:
                     throw new ArgumentException(string.Format(Resources.UnsupportedCredentialType, credentialType), "credentialType");
             }
         }
-#else
-        public AdalTokenProvider()
-        {
-            this.userTokenProvider = new UserTokenProvider();
-            this.servicePrincipalTokenProvider = new ServicePrincipalTokenProvider();
-        }
-
-        public AdalTokenProvider(Func<IServicePrincipalKeyStore> getKeyStore)
-        {
-            this.userTokenProvider = new UserTokenProvider();
-            this.servicePrincipalTokenProvider = new ServicePrincipalTokenProvider(getKeyStore);
-        }
-
-        public IAccessToken GetAccessToken(
-            AdalConfiguration config,
-            string promptBehavior,
-            Action<string> promptAction,
-            string userId,
-            SecureString password,
-            string credentialType)
-        {
-            switch (credentialType)
-            {
-                case AzureAccount.AccountType.User:
-                    return userTokenProvider.GetAccessToken(
-                        config,
-                        promptBehavior,
-                        promptAction,
-                        userId,
-                        password,
-                        credentialType);
-                case AzureAccount.AccountType.ServicePrincipal:
-                    return servicePrincipalTokenProvider.GetAccessToken(
-                        config,
-                        promptBehavior,
-                        promptAction,
-                        userId,
-                        password,
-                        credentialType);
-                default:
-                    throw new ArgumentException(Resources.UnsupportedCredentialType, "credentialType");
-            }
-        }
 #endif
-
     }
 }

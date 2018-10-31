@@ -30,19 +30,20 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
             get
             {
-                if (RMProfile != null && RMProfile.DefaultContext != null && RMProfile.DefaultContext.Environment != null)
+                if (RMProfile?.DefaultContext?.Environment != null)
                 {
                     return RMProfile.DefaultContext;
                 }
-#if !NETSTANDARD
+// TODO: Remove IfDef
+#if NETSTANDARD
+                return null;
+#else
                 if (SMProfile == null || SMProfile.DefaultContext == null)
                 {
                     throw new InvalidOperationException(Resources.NoCurrentContextForDataCmdlet);
                 }
 
                 return SMProfile.DefaultContext;
-#else
-                return null;
 #endif
             }
         }
@@ -62,7 +63,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         }
         /// <summary>
         /// Guards execution of the given action using ShouldProcess and ShouldContinue.  The optional 
-        /// useSHouldContinue predicate determines whether SHouldContinue should be called for this 
+        /// useShouldContinue predicate determines whether ShouldContinue should be called for this 
         /// particular action (e.g. a resource is being overwritten). By default, both 
         /// ShouldProcess and ShouldContinue will be executed.  Cmdlets that use this method overload 
         /// must have a force parameter.
@@ -82,6 +83,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
             get
             {
+// TODO: Remove IfDef
 #if NETSTANDARD
                 return null;
 #else

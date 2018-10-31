@@ -35,9 +35,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 {
     public static class GeneralUtilities
     {
-        private static Assembly assembly = Assembly.GetExecutingAssembly();
-
-        private static List<string> AuthorizationHeaderNames = new List<string>() { "Authorization" };
+        private static readonly List<string> AuthorizationHeaderNames = new List<string> { "Authorization" };
 
         // this is only used to determine cutoff for streams (not xml or json).
         private const int StreamCutOffSize = 10 * 1024; //10KB
@@ -46,7 +44,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             System.Security.Cryptography.X509Certificates.StoreLocation location, out X509Certificate2Collection certificates)
         {
             X509Certificate2Collection found = null;
-            DiskDataStore.X509StoreWrapper(StoreName.My, location, (store) =>
+            DiskDataStore.X509StoreWrapper(StoreName.My, location, store =>
             {
                 store.Open(OpenFlags.ReadOnly);
                 found = store.Certificates.Find(X509FindType.FindByThumbprint, thumbprint, false);
@@ -68,13 +66,11 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             {
                 return certificates[0];
             }
-            else
-            {
-                throw new ArgumentException(string.Format(
-                    "Certificate {0} was not found in the certificate store.  Please ensure the referenced " +
-                    "certificate exists in the the LocalMachine\\My or CurrentUser\\My store",
-                    thumbprint));
-            }
+
+            throw new ArgumentException(string.Format(
+                "Certificate {0} was not found in the certificate store.  Please ensure the referenced " +
+                "certificate exists in the the LocalMachine\\My or CurrentUser\\My store",
+                thumbprint));
         }
 
         /// <summary>
@@ -85,13 +81,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// <returns>True if equals or leftHandSide is null/empty, false otherwise.</returns>
         public static bool TryEquals(string leftHandSide, string rightHandSide)
         {
-            if (string.IsNullOrEmpty(leftHandSide) ||
-                leftHandSide.Equals(rightHandSide, StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
-
-            return false;
+            return string.IsNullOrEmpty(leftHandSide) ||
+                   leftHandSide.Equals(rightHandSide, StringComparison.OrdinalIgnoreCase);
         }
 
 
@@ -132,9 +123,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// <returns>A non-null sequence.</returns>
         public static IEnumerable<T> NonNull<T>(this IEnumerable<T> sequence)
         {
-            return (sequence != null) ?
-                sequence :
-                Enumerable.Empty<T>();
+            return sequence ?? Enumerable.Empty<T>();
         }
 
         /// <summary>
@@ -148,7 +137,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             Debug.Assert(sequence != null, "sequence cannot be null!");
             Debug.Assert(action != null, "action cannot be null!");
 
-            foreach (T element in sequence)
+            foreach (var element in sequence)
             {
                 action(element);
             }
@@ -166,22 +155,16 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             if (left == null)
             {
                 return right != null ?
-                    new T[] { right } :
+                    new[] { right } :
                     new T[] { };
             }
-            else if (right == null)
-            {
-                return left;
-            }
-            else
-            {
-                return Enumerable.Concat(left, new T[] { right }).ToArray();
-            }
+
+            return right == null ? left : left.Concat(new[] { right }).ToArray();
         }
 
         public static TResult MaxOrDefault<T, TResult>(this IEnumerable<T> sequence, Func<T, TResult> selector, TResult defaultValue)
         {
-            return (sequence != null) ? sequence.Max(selector) : defaultValue;
+            return sequence != null ? sequence.Max(selector) : defaultValue;
         }
 
         /// <summary>
@@ -198,8 +181,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 collection = new T[0];
             }
 
-            List<T> list = new List<T>(collection);
-            list.Add(item);
+            var list = new List<T>(collection) {item};
             return list.ToArray<T>();
         }
 
@@ -222,7 +204,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 items = new T[0];
             }
 
-            return collection.Concat<T>(items).ToArray<T>();
+            return collection.Concat(items).ToArray();
         }
 
         /// <summary>
@@ -244,7 +226,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         public static string EnsureTrailingSlash(string url)
         {
-            UriBuilder address = new UriBuilder(url);
+            var address = new UriBuilder(url);
             if (!address.Path.EndsWith("/", StringComparison.Ordinal))
             {
                 address.Path += "/";
@@ -254,7 +236,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         public static string GetHttpResponseLog(string statusCode, IDictionary<string, IEnumerable<string>> headers, string body)
         {
-            StringBuilder httpResponseLog = new StringBuilder();
+            var httpResponseLog = new StringBuilder();
             httpResponseLog.AppendLine($"============================ HTTP RESPONSE ============================{Environment.NewLine}");
             httpResponseLog.AppendLine($"Status Code:{Environment.NewLine}{statusCode}{Environment.NewLine}");
             httpResponseLog.AppendLine($"Headers:{ Environment.NewLine}{ MessageHeadersToString(headers)}");
@@ -269,7 +251,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         public static string TransformBody(string inBody)
         {
-            Regex matcher = new Regex("(\\s*\"access_token\"\\s*:\\s*)\"[^\"]+\"");
+            var matcher = new Regex("(\\s*\"access_token\"\\s*:\\s*)\"[^\"]+\"");
             return matcher.Replace(inBody, "$1\"<redacted>\"");
         }
 
@@ -279,7 +261,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             IDictionary<string, IEnumerable<string>> headers,
             string body)
         {
-            StringBuilder httpRequestLog = new StringBuilder();
+            var httpRequestLog = new StringBuilder();
             httpRequestLog.AppendLine(string.Format("============================ HTTP REQUEST ============================{0}", Environment.NewLine));
             httpRequestLog.AppendLine(string.Format("HTTP Method:{0}{1}{0}", Environment.NewLine, method));
             httpRequestLog.AppendLine(string.Format("Absolute Uri:{0}{1}{0}", Environment.NewLine, requestUri));
@@ -296,7 +278,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         public static string GetLog(HttpResponseMessage response)
         {
-            string body = response.Content == null ? string.Empty
+            var body = response.Content == null ? string.Empty
                 : FormatString(response.Content.ReadAsStringAsync().Result);
 
             return GetHttpResponseLog(
@@ -307,13 +289,13 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         public static string GetLog(HttpRequestMessage request)
         {
-            string body = request.Content == null ? string.Empty
+            var body = request.Content == null ? string.Empty
                 : FormatString(request.Content.ReadAsStringAsync().Result);
 
             return GetHttpRequestLog(
                 request.Method.ToString(),
                 request.RequestUri.ToString(),
-                (HttpHeaders)request.Headers,
+                request.Headers,
                 body);
         }
 
@@ -323,23 +305,22 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             {
                 return TryFormatXml(content);
             }
-            else if (CloudException.IsJson(content))
+
+            if (CloudException.IsJson(content))
             {
                 return TryFormatJson(content);
             }
-            else
-            {
-                return content.Length <= GeneralUtilities.StreamCutOffSize ? 
-                    content : 
-                    content.Substring(0, StreamCutOffSize) + "\r\nDATA TRUNCATED DUE TO SIZE\r\n";
-            }
+
+            return content.Length <= StreamCutOffSize ? 
+                content : 
+                content.Substring(0, StreamCutOffSize) + "\r\nDATA TRUNCATED DUE TO SIZE\r\n";
         }
 
         private static string TryFormatJson(string str)
         {
             try
             {
-                object parsedJson = JsonConvert.DeserializeObject(str);
+                var parsedJson = JsonConvert.DeserializeObject(str);
                 return JsonConvert.SerializeObject(parsedJson,
                     Newtonsoft.Json.Formatting.Indented);
             }
@@ -354,7 +335,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         {
             try
             {
-                XDocument doc = XDocument.Parse(content);
+                var doc = XDocument.Parse(content);
                 return doc.ToString();
             }
             catch (Exception)
@@ -366,7 +347,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         private static IDictionary<string, IEnumerable<string>> ConvertHttpHeadersToWebHeaderCollection(HttpHeaders headers)
         {
             IDictionary<string, IEnumerable<string>> webHeaders = new Dictionary<string, IEnumerable<string>>();
-            foreach (KeyValuePair<string, IEnumerable<string>> pair in headers)
+            foreach (var pair in headers)
             {
                 if (AuthorizationHeaderNames.Any(h => h.Equals(pair.Key, StringComparison.OrdinalIgnoreCase)))
                 {
@@ -382,15 +363,15 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         private static string MessageHeadersToString(IDictionary<string, IEnumerable<string>> headers)
         {
-            string[] keys = headers.Keys.ToArray();
-            StringBuilder result = new StringBuilder();
+            var keys = headers.Keys.ToArray();
+            var result = new StringBuilder();
 
-            foreach (string key in keys)
+            foreach (var key in keys)
             {
                 result.AppendLine(string.Format(
                     "{0,-30}: {1}",
                     key,
-                    ConversionUtilities.ArrayToString(headers[key].ToArray(), ",")));
+                    headers[key].ToArray().ArrayToString(",")));
             }
 
             return result.ToString();
@@ -403,8 +384,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// <returns>The https endpoint uri.</returns>
         public static Uri CreateHttpsEndpoint(string endpointUri)
         {
-            UriBuilder builder = new UriBuilder(endpointUri) { Scheme = "https" };
-            string endpoint = builder.Uri.GetComponents(
+            var builder = new UriBuilder(endpointUri) { Scheme = "https" };
+            var endpoint = builder.Uri.GetComponents(
                 UriComponents.AbsoluteUri & ~UriComponents.Port,
                 UriFormat.UriEscaped);
 
@@ -420,7 +401,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// <returns>A string containing the given number of repetitions of the separator string</returns>
         public static string GenerateSeparator(int amount, string separator)
         {
-            StringBuilder result = new StringBuilder();
+            var result = new StringBuilder();
             while (amount-- != 0) result.Append(separator);
             return result.ToString();
         }
@@ -467,13 +448,14 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         {
             if (AzureRmProfileProvider.Instance != null)
             {
-                var RMProfile = AzureRmProfileProvider.Instance.Profile;
-                if (RMProfile != null && RMProfile.DefaultContext != null &&
-                    RMProfile.DefaultContext.Subscription != null && RMProfile.DefaultContext.Subscription.IsPropertySet(AzureSubscription.Property.StorageAccount))
+                var rmProfile = AzureRmProfileProvider.Instance.Profile;
+                if (rmProfile?.DefaultContext?.Subscription != null 
+                    && rmProfile.DefaultContext.Subscription.IsPropertySet(AzureSubscription.Property.StorageAccount))
                 {
-                    RMProfile.DefaultContext.Subscription.SetProperty(AzureSubscription.Property.StorageAccount, null);
+                    rmProfile.DefaultContext.Subscription.SetProperty(AzureSubscription.Property.StorageAccount, null);
                 }
             }
+// TODO: Remove IfDef code
 #if !NETSTANDARD
             if (clearSMContext && AzureSMProfileProvider.Instance != null)
             {
@@ -491,7 +473,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// Execute a process and check for a clean exit to determine if the process exists.
         /// </summary>
         /// <param name="programName">Name of the program to start.</param>
-        /// <param name="args">Command line argumentes provided to the program.</param>
+        /// <param name="args">Command line arguments provided to the program.</param>
         /// <param name="waitTime">Time to wait for the process to close.</param>
         /// <param name="criterion">Function to evaluate the process response to determine success. The default implementation returns true if the exit code equals 0.</param>
         /// <returns></returns>
@@ -519,17 +501,16 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 process.BeginOutputReadLine();
                 process.WaitForExit(waitTime);
                 var exitInfo = new ProcessExitInfo { ExitCode = process.ExitCode, StdOut = stdout, StdErr = stderr };
-                var exitCode = process.ExitCode;
-                return criterion == null ? exitInfo.ExitCode == 0 : criterion(exitInfo);
+                return criterion?.Invoke(exitInfo) ?? exitInfo.ExitCode == 0;
             }
             catch (InvalidOperationException)
             {
-                // The excutable failed to execute prior wait time expiring.
+                // The executable failed to execute prior wait time expiring.
                 return false;
             }
             catch (SystemException)
             {
-                // The excutable doesn't exist on path. Rather than handling Win32 exception, chose to handle a less platform specific sys exception.
+                // The executable doesn't exist on path. Rather than handling Win32 exception, chose to handle a less platform specific sys exception.
                 return false;
             }
         }
@@ -559,7 +540,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         {
             string contents = null;
 
-            using (WebClient webClient = new WebClient())
+            using (var webClient = new WebClient())
             {
                 try
                 {

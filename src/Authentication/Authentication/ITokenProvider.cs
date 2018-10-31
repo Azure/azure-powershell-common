@@ -38,11 +38,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         IAccessToken GetAccessToken(
             AdalConfiguration config,
             string promptBehavior,
-			Action<string> promptAction,
+            Action<string> promptAction,
             string userId,
             SecureString password,
             string credentialType);
-			
+// TODO: Remove IfDef code
 #if !NETSTANDARD
         /// <summary>
         /// Get a new authentication token for the given environment
@@ -57,6 +57,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             string principalId,
             string certificateThumbprint,
             string credentialType);
-#endif	
+#endif
     }
 }

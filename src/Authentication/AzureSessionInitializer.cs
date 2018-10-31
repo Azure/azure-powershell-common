@@ -57,30 +57,28 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             AzureSession.Initialize(() => CreateInstance(dataStore), true);
         }
 
-        static IAzureTokenCache InitializeTokenCache(IDataStore store, string cacheDirectory, string cacheFile, string autoSaveMode)
+        private static IAzureTokenCache InitializeTokenCache(IDataStore store, string cacheDirectory, string cacheFile, string autoSaveMode)
         {
             IAzureTokenCache result = new AuthenticationStoreTokenCache(new AzureTokenCache());
-            if (autoSaveMode == ContextSaveMode.CurrentUser)
+            if (autoSaveMode != ContextSaveMode.CurrentUser) return result;
+
+            try
             {
-                try
-                {
-                    FileUtilities.DataStore = store;
-                    FileUtilities.EnsureDirectoryExists(cacheDirectory);
-                    var cachePath = Path.Combine(cacheDirectory, cacheFile);
-                    result = new ProtectedFileTokenCache(cachePath, store);
-                }
-                catch
-                {
-                }
+                FileUtilities.DataStore = store;
+                FileUtilities.EnsureDirectoryExists(cacheDirectory);
+                var cachePath = Path.Combine(cacheDirectory, cacheFile);
+                result = new ProtectedFileTokenCache(cachePath, store);
+            }
+            catch
+            {
             }
 
             return result;
         }
 
-        static bool MigrateSettings(IDataStore store, string oldProfileDirectory, string newProfileDirectory)
+        private static bool MigrateSettings(IDataStore store, string oldProfileDirectory, string newProfileDirectory)
         {
-            var filesToMigrate = new string[] { ContextAutosaveSettingFileName,
-                                                DataCollectionFileName };
+            var filesToMigrate = new[] { ContextAutosaveSettingFileName, DataCollectionFileName };
             try
             {
                 if (!store.DirectoryExists(newProfileDirectory))
@@ -113,7 +111,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             return false;
         }
 
-        static ContextAutosaveSettings InitializeSessionSettings(IDataStore store, string profileDirectory, string settingsFile, bool migrated = false)
+        private static ContextAutosaveSettings InitializeSessionSettings(IDataStore store, string profileDirectory, string settingsFile, bool migrated = false)
         {
             var result = new ContextAutosaveSettings
             {
@@ -131,7 +129,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                 if (store.FileExists(settingsPath))
                 {
                     var settingsText = store.ReadFileAsText(settingsPath);
-                    ContextAutosaveSettings settings = JsonConvert.DeserializeObject<ContextAutosaveSettings>(settingsText);
+                    var settings = JsonConvert.DeserializeObject<ContextAutosaveSettings>(settingsText);
                     result.CacheDirectory = migrated ? profileDirectory : settings.CacheDirectory ?? result.CacheDirectory;
                     result.CacheFile = settings.CacheFile ?? result.CacheFile;
                     result.ContextDirectory = migrated ? profileDirectory : settings.ContextDirectory ?? result.ContextDirectory;
@@ -139,18 +137,18 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                     result.ContextFile = settings.ContextFile ?? result.ContextFile;
                     if (migrated)
                     {
-                        string autoSavePath = Path.Combine(profileDirectory, settingsFile);
+                        var autoSavePath = Path.Combine(profileDirectory, settingsFile);
                         store.WriteFile(autoSavePath, JsonConvert.SerializeObject(result));
                     }
                 }
                 else
                 {
-                    string directoryPath = Path.GetDirectoryName(profileDirectory);
+                    var directoryPath = Path.GetDirectoryName(profileDirectory);
                     if (!store.DirectoryExists(directoryPath))
                     {
                         store.CreateDirectory(directoryPath);
                     }
-                    string autoSavePath = Path.Combine(profileDirectory, settingsFile);
+                    var autoSavePath = Path.Combine(profileDirectory, settingsFile);
                     result.Mode = ContextSaveMode.CurrentUser;
                     store.WriteFile(autoSavePath, JsonConvert.SerializeObject(result));
                 }
@@ -164,18 +162,19 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             return result;
         }
 
-        static void InitializeDataCollection(IAzureSession session)
+        private static void InitializeDataCollection(IAzureSession session)
         {
             session.RegisterComponent(DataCollectionController.RegistryKey, () => DataCollectionController.Create(session));
         }
 
-        static IAzureSession CreateInstance(IDataStore dataStore = null)
+        private static IAzureSession CreateInstance(IDataStore dataStore = null)
         {
-            string profilePath = Path.Combine(
+            var profilePath = Path.Combine(
+// TODO: Remove IfDef
 #if NETSTANDARD
                     Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                     Resources.AzureDirectoryName);
-            string oldProfilePath = Path.Combine(
+            var oldProfilePath = Path.Combine(
 #endif
                     Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                     Resources.OldAzureDirectoryName);
@@ -189,14 +188,13 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                 OldProfileFile = "WindowsAzureProfile.xml",
                 OldProfileFileBackup = "WindowsAzureProfile.xml.bak",
                 ProfileDirectory = profilePath,
-                ProfileFile = "AzureProfile.json",
+                ProfileFile = "AzureProfile.json"
             };
-
-            var migrated =
-#if !NETSTANDARD
-                false;
+// TODO: Remove IfDef
+#if NETSTANDARD
+            var migrated = MigrateSettings(dataStore, oldProfilePath, profilePath);
 #else
-                MigrateSettings(dataStore, oldProfilePath, profilePath);
+            var migrated = false;
 #endif
             var autoSave = InitializeSessionSettings(dataStore, profilePath, ContextAutosaveSettings.AutoSaveSettingsFile, migrated);
             session.ARMContextSaveMode = autoSave.Mode;
@@ -206,27 +204,14 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             session.TokenCacheFile = autoSave.CacheFile;
             session.TokenCache = InitializeTokenCache(dataStore, session.TokenCacheDirectory, session.TokenCacheFile, autoSave.Mode);
             InitializeDataCollection(session);
-            session.RegisterComponent(HttpClientOperationsFactory.Name, () => HttpClientOperationsFactory.Create());
+            session.RegisterComponent(HttpClientOperationsFactory.Name, HttpClientOperationsFactory.Create);
             return session;
         }
 
         public class AdalSession : AzureSession
         {
-#if !NETSTANDARD
-            public override TraceLevel AuthenticationLegacyTraceLevel
-            {
-                get { return AdalTrace.LegacyTraceSwitch.Level; }
-                set { AdalTrace.LegacyTraceSwitch.Level = value; }
-            }
-
-            public override TraceListenerCollection AuthenticationTraceListeners => AdalTrace.TraceSource.Listeners;
-
-            public override SourceLevels AuthenticationTraceSourceLevel
-            {
-                get { return AdalTrace.TraceSource.Switch.Level; }
-                set { AdalTrace.TraceSource.Switch.Level = value; }
-            }
-#else
+// TODO: Remove IfDef
+#if NETSTANDARD
             public AdalSession()
             {
                 LoggerCallbackHandler.UseDefaultLogging = false;
@@ -244,6 +229,20 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             {
                 get => SourceLevels.Off;
                 set { }
+            }
+#else
+            public override TraceLevel AuthenticationLegacyTraceLevel
+            {
+                get { return AdalTrace.LegacyTraceSwitch.Level; }
+                set { AdalTrace.LegacyTraceSwitch.Level = value; }
+            }
+
+            public override TraceListenerCollection AuthenticationTraceListeners => AdalTrace.TraceSource.Listeners;
+
+            public override SourceLevels AuthenticationTraceSourceLevel
+            {
+                get { return AdalTrace.TraceSource.Switch.Level; }
+                set { AdalTrace.TraceSource.Switch.Level = value; }
             }
 #endif
         }

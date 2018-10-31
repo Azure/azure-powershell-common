@@ -14,6 +14,7 @@
 
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.Rest.Azure.Authentication;
+// TODO: Remove IfDef
 #if NETSTANDARD
 using Microsoft.WindowsAzure.Commands.Common;
 #endif
@@ -27,8 +28,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication
     /// </summary>
     internal sealed class KeyStoreApplicationCredentialProvider : IApplicationAuthenticationProvider
     {
-        private string _tenantId;
-        private IServicePrincipalKeyStore _keyStore;
+        private readonly string _tenantId;
+        private readonly IServicePrincipalKeyStore _keyStore;
 
         /// <summary>
         /// Create a credential provider
@@ -36,7 +37,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         /// <param name="tenant"></param>
         public KeyStoreApplicationCredentialProvider(string tenant)
         {
-            this._tenantId = tenant;
+            _tenantId = tenant;
         }
 
         /// <summary>
@@ -46,8 +47,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         /// <param name="keyStore"></param>
         public KeyStoreApplicationCredentialProvider(string tenant, IServicePrincipalKeyStore keyStore)
         {
-            this._tenantId = tenant;
-            this._keyStore = keyStore;
+            _tenantId = tenant;
+            _keyStore = keyStore;
         }
 
         /// <summary>
@@ -59,17 +60,14 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         /// <returns></returns>
         public async Task<AuthenticationResult> AuthenticateAsync(string clientId, string audience, AuthenticationContext context)
         {
-            var task = new Task<SecureString>(() =>
-            {
-                return _keyStore.GetKey(clientId, _tenantId);
-            });
+            var task = new Task<SecureString>(() => _keyStore.GetKey(clientId, _tenantId));
             task.Start();
             var key = await task.ConfigureAwait(false);
-#if !NETSTANDARD
-            return await context.AcquireTokenAsync(audience, new ClientCredential(clientId, key));
+// TODO: Remove IfDef
+#if NETSTANDARD
+            return await context.AcquireTokenAsync(audience, new ClientCredential(clientId, ConversionUtilities.SecureStringToString(key)));
 #else
-            return await context.AcquireTokenAsync(audience, new ClientCredential(clientId,
-                ConversionUtilities.SecureStringToString(key)));
+            return await context.AcquireTokenAsync(audience, new ClientCredential(clientId, key));
 #endif
         }
     }

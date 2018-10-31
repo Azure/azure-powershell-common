@@ -15,8 +15,8 @@
 using Hyak.Common;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
+// TODO: Remove IfDef
 #if NETSTANDARD
-using Microsoft.Rest.Azure.Authentication;
 using Microsoft.WindowsAzure.Commands.Common;
 #endif
 using System;
@@ -24,26 +24,17 @@ using System.Collections.Generic;
 using System.Security;
 using Microsoft.Azure.Commands.Common.Authentication.Properties;
 
-
 namespace Microsoft.Azure.Commands.Common.Authentication
 {
     internal class ServicePrincipalTokenProvider : ITokenProvider
     {
-        private static readonly TimeSpan expirationThreshold = TimeSpan.FromMinutes(5);
-        private Func<IServicePrincipalKeyStore> _getKeyStore;
+        private static readonly TimeSpan ExpirationThreshold = TimeSpan.FromMinutes(5);
+        private readonly Func<IServicePrincipalKeyStore> _getKeyStore;
         private IServicePrincipalKeyStore _keyStore;
 
         public IServicePrincipalKeyStore KeyStore
         {
-            get
-            {
-                if (_keyStore == null)
-                {
-                    _keyStore = _getKeyStore();
-                }
-
-                return _keyStore;
-            }
+            get { return _keyStore ?? (_keyStore = _getKeyStore()); }
             set
             {
                 _keyStore = value;
@@ -62,16 +53,16 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         public IAccessToken GetAccessToken(
             AdalConfiguration config,
             string promptBehavior,
-			Action<string> promptAction,
+            Action<string> promptAction,
             string userId,
             SecureString password,
             string credentialType)
         {
             if (credentialType == AzureAccount.AccountType.User)
             {
-                throw new ArgumentException(string.Format(Resources.InvalidCredentialType, "User"), "credentialType");
+                throw new ArgumentException(string.Format(Resources.InvalidCredentialType, "User"), nameof(credentialType));
             }
-            return new ServicePrincipalAccessToken(config, AcquireTokenWithSecret(config, userId, password), this.RenewWithSecret, userId);
+            return new ServicePrincipalAccessToken(config, AcquireTokenWithSecret(config, userId, password), RenewWithSecret, userId);
         }
 
         public IAccessToken GetAccessTokenWithCertificate(
@@ -82,17 +73,17 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         {
             if (credentialType == AzureAccount.AccountType.User)
             {
-                throw new ArgumentException(string.Format(Resources.InvalidCredentialType, "User"), "credentialType");
+                throw new ArgumentException(string.Format(Resources.InvalidCredentialType, "User"), nameof(credentialType));
             }
             return new ServicePrincipalAccessToken(
                 config,
                 AcquireTokenWithCertificate(config, clientId, certificateThumbprint),
-                (adalConfig, appId) => this.RenewWithCertificate(adalConfig, appId, certificateThumbprint), clientId);
+                (adalConfig, appId) => RenewWithCertificate(adalConfig, appId, certificateThumbprint), clientId);
         }
 
-        private AuthenticationContext GetContext(AdalConfiguration config)
+        private static AuthenticationContext GetContext(AdalConfiguration config)
         {
-            string authority = config.AdEndpoint + config.AdDomain;
+            var authority = config.AdEndpoint + config.AdDomain;
             return new AuthenticationContext(authority, config.ValidateAuthority, config.TokenCache);
         }
 
@@ -105,16 +96,17 @@ namespace Microsoft.Azure.Commands.Common.Authentication
 
             StoreAppKey(appId, config.AdDomain, appKey);
             var context = GetContext(config);
-#if !NETSTANDARD
-            var credential = new ClientCredential(appId, appKey);
-            return context.AcquireToken(config.ResourceClientUri, credential);
-#else
+// TODO: Remove IfDef
+#if NETSTANDARD
             var credential = new ClientCredential(appId, ConversionUtilities.SecureStringToString(appKey));
             return context.AcquireTokenAsync(config.ResourceClientUri, credential).ConfigureAwait(false).GetAwaiter().GetResult();
+#else
+            var credential = new ClientCredential(appId, appKey);
+            return context.AcquireToken(config.ResourceClientUri, credential);
 #endif
         }
 
-        private AuthenticationResult AcquireTokenWithCertificate(
+        private static AuthenticationResult AcquireTokenWithCertificate(
             AdalConfiguration config,
             string appId,
             string thumbprint)
@@ -126,11 +118,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             }
 
             var context = GetContext(config);
-#if !NETSTANDARD
-            return context.AcquireToken(config.ResourceClientUri, new ClientAssertionCertificate(appId, certificate));
-#else
-            return context.AcquireTokenAsync(config.ResourceClientUri, new Microsoft.IdentityModel.Clients.ActiveDirectory.ClientAssertionCertificate(appId, certificate))
+// TODO: Remove IfDef
+#if NETSTANDARD
+            return context.AcquireTokenAsync(config.ResourceClientUri, new ClientAssertionCertificate(appId, certificate))
                           .ConfigureAwait(false).GetAwaiter().GetResult();
+#else
+            return context.AcquireToken(config.ResourceClientUri, new ClientAssertionCertificate(appId, certificate));
 #endif
         }
 
@@ -138,23 +131,27 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         {
             TracingAdapter.Information(Resources.SPNRenewTokenTrace, appId, config.AdDomain, config.AdEndpoint,
                 config.ClientId, config.ClientRedirectUri);
-#if !NETSTANDARD
+// TODO: Remove IfDef
+#if NETSTANDARD
+            var appKey = LoadAppKey(appId, config.AdDomain);
+            if (appKey == null)
+            {
+                throw new KeyNotFoundException(string.Format(Resources.ServiceKeyNotFound, appId));
+            }
+            return AcquireTokenWithSecret(config, appId, appKey);
+#else
             using (SecureString appKey = LoadAppKey(appId, config.AdDomain))
             {
-#else
-                var appKey = LoadAppKey(appId, config.AdDomain);
-#endif
                 if (appKey == null)
                 {
                     throw new KeyNotFoundException(string.Format(Resources.ServiceKeyNotFound, appId));
                 }
                 return AcquireTokenWithSecret(config, appId, appKey);
-#if !NETSTANDARD
             }
 #endif
         }
 
-        private AuthenticationResult RenewWithCertificate(
+        private static AuthenticationResult RenewWithCertificate(
             AdalConfiguration config,
             string appId,
             string thumbprint)
@@ -181,10 +178,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication
 
         private class ServicePrincipalAccessToken : IRenewableToken
         {
-            internal readonly AdalConfiguration Configuration;
-            internal AuthenticationResult AuthResult;
-            private readonly Func<AdalConfiguration, string, AuthenticationResult> tokenRenewer;
-            private readonly string appId;
+            private readonly AdalConfiguration _configuration;
+            private AuthenticationResult _authResult;
+            private readonly Func<AdalConfiguration, string, AuthenticationResult> _tokenRenewer;
 
             public ServicePrincipalAccessToken(
                 AdalConfiguration configuration,
@@ -192,29 +188,29 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                 Func<AdalConfiguration, string, AuthenticationResult> tokenRenewer,
                 string appId)
             {
-                Configuration = configuration;
-                AuthResult = authResult;
-                this.tokenRenewer = tokenRenewer;
-                this.appId = appId;
+                _configuration = configuration;
+                _authResult = authResult;
+                _tokenRenewer = tokenRenewer;
+                UserId = appId;
             }
 
             public void AuthorizeRequest(Action<string, string> authTokenSetter)
             {
                 if (IsExpired)
                 {
-                    AuthResult = tokenRenewer(Configuration, appId);
+                    _authResult = _tokenRenewer(_configuration, UserId);
                 }
 
-                authTokenSetter(AuthResult.AccessTokenType, AuthResult.AccessToken);
+                authTokenSetter(_authResult.AccessTokenType, _authResult.AccessToken);
             }
 
-            public string UserId { get { return appId; } }
+            public string UserId { get; }
 
-            public string AccessToken { get { return AuthResult.AccessToken; } }
+            public string AccessToken { get { return _authResult.AccessToken; } }
 
             public string LoginType { get { return Authentication.LoginType.OrgId; } }
 
-            public string TenantId { get { return this.Configuration.AdDomain; } }
+            public string TenantId { get { return _configuration.AdDomain; } }
 
             private bool IsExpired
             {
@@ -227,20 +223,20 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                     }
 #endif
 
-                    var expiration = AuthResult.ExpiresOn;
+                    var expiration = _authResult.ExpiresOn;
                     var currentTime = DateTimeOffset.UtcNow;
                     var timeUntilExpiration = expiration - currentTime;
                     TracingAdapter.Information(
                         Resources.SPNTokenExpirationCheckTrace,
                         expiration,
                         currentTime,
-                        expirationThreshold,
+                        ExpirationThreshold,
                         timeUntilExpiration);
-                    return timeUntilExpiration < expirationThreshold;
+                    return timeUntilExpiration < ExpirationThreshold;
                 }
             }
 
-            public DateTimeOffset ExpiresOn { get { return AuthResult.ExpiresOn; } }
+            public DateTimeOffset ExpiresOn { get { return _authResult.ExpiresOn; } }
         }
     }
 }

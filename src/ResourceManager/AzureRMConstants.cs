@@ -16,6 +16,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
 {
     public class AzureRMConstants
     {
+// TODO: Remove IfDef
 #if NETSTANDARD
         public const string AzurePrefix = "Az";
         public const string AzureRMPrefix = "Az";

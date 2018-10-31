@@ -21,15 +21,15 @@ using System.Text;
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
     /// <summary>
-    /// A ddata store based on the managed windows file system functions (System.IO)
+    /// A data store based on the managed windows file system functions (System.IO)
     /// </summary>
     public class DiskDataStore : IDataStore
     {
-        // <summary>
+        /// <summary>
         /// Write the given contents to the specified file
         /// </summary>
         /// <param name="path">The file path</param>
-        /// <param name="contents">The fiel contents</param>
+        /// <param name="contents">The file contents</param>
         public void WriteFile(string path, string contents)
         {
             File.WriteAllText(path, contents);
@@ -97,7 +97,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         }
 
         /// <summary>
-        /// Copy the given file to the target path.  Overwirtes the file if it exists
+        /// Copy the given file to the target path.  Overwrites the file if it exists
         /// </summary>
         /// <param name="oldPath">Source file path</param>
         /// <param name="newPath">Target file path</param>
@@ -157,10 +157,10 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         }
 
         /// <summary>
-        /// Get files at the given path matchign the givven pattern and search options
+        /// Get files at the given path matching the given pattern and search options
         /// </summary>
         /// <param name="startDirectory">The directory to list file contents of</param>
-        /// <param name="filePattern">The pattern of file naems to include</param>
+        /// <param name="filePattern">The pattern of file names to include</param>
         /// <param name="options">File search options</param>
         /// <returns>The path to all contained files</returns>
         public string[] GetFiles(string startDirectory, string filePattern, SearchOption options)
@@ -171,7 +171,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// Get the file system attributes for the given file
         /// </summary>
-        /// <param name="path">The fiel path</param>
+        /// <param name="path">The file path</param>
         /// <returns>The file system attributes associated with the file</returns>
         public FileAttributes GetFileAttributes(string path)
         {
@@ -189,24 +189,20 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             {
                 return null;
             }
-            else
-            {
-                if (string.IsNullOrEmpty(thumbprint))
-                {
-                    throw new ArgumentException(string.Format(Resources.InvalidOrEmptyArgumentMessage, "certificate thumbprint"));
-                }
 
-                X509Certificate2Collection certificates;
-                if (TryFindCertificatesInStore(thumbprint, StoreLocation.CurrentUser, out certificates) ||
-                    TryFindCertificatesInStore(thumbprint, StoreLocation.LocalMachine, out certificates))
-                {
-                    return certificates[0];
-                }
-                else
-                {
-                    throw new ArgumentException(string.Format(Resources.CertificateNotFoundInStore, thumbprint));
-                }
+            if (string.IsNullOrEmpty(thumbprint))
+            {
+                throw new ArgumentException(string.Format(Resources.InvalidOrEmptyArgumentMessage, "certificate thumbprint"));
             }
+
+            X509Certificate2Collection certificates;
+            if (TryFindCertificatesInStore(thumbprint, StoreLocation.CurrentUser, out certificates) ||
+                TryFindCertificatesInStore(thumbprint, StoreLocation.LocalMachine, out certificates))
+            {
+                return certificates[0];
+            }
+
+            throw new ArgumentException(string.Format(Resources.CertificateNotFoundInStore, thumbprint));
         }
 
         /// <summary>
@@ -220,7 +216,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 throw new ArgumentException(Resources.InvalidCertificate);
             }
 
-            X509StoreWrapper(StoreName.My, StoreLocation.CurrentUser, (store) =>
+            X509StoreWrapper(StoreName.My, StoreLocation.CurrentUser, store =>
             {
                 store.Open(OpenFlags.ReadWrite);
                 store.Add(certificate);
@@ -233,17 +229,16 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <param name="thumbprint">The thumbprint of the certificate to look for</param>
         public void RemoveCertificate(string thumbprint)
         {
-            if (thumbprint != null)
+            if (thumbprint == null) return;
+
+            var certificate = GetCertificate(thumbprint);
+            if (certificate != null)
             {
-                var certificate = GetCertificate(thumbprint);
-                if (certificate != null)
+                X509StoreWrapper(StoreName.My, StoreLocation.CurrentUser, store =>
                 {
-                    X509StoreWrapper(StoreName.My, StoreLocation.CurrentUser, (store) =>
-                    {
-                        store.Open(OpenFlags.ReadWrite);
-                        store.Remove(certificate);
-                    });
-                }
+                    store.Open(OpenFlags.ReadWrite);
+                    store.Remove(certificate);
+                });
             }
         }
 
@@ -277,10 +272,10 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         }
 
         /// <summary>
-        /// Get directories at the given path matchign the givven pattern and search options
+        /// Get directories at the given path matching the given pattern and search options
         /// </summary>
         /// <param name="startDirectory">The directory to list directory contents of</param>
-        /// <param name="filePattern">The pattern of directory naems to include</param>
+        /// <param name="filePattern">The pattern of directory names to include</param>
         /// <param name="options">Directory search options</param>
         /// <returns>The path to all contained directories</returns>
         public string[] GetDirectories(string startDirectory, string filePattern, SearchOption options)
@@ -292,7 +287,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             StoreLocation location, out X509Certificate2Collection certificates)
         {
             X509Certificate2Collection found = null;
-            X509StoreWrapper(StoreName.My, location, (store) =>
+            X509StoreWrapper(StoreName.My, location, store =>
             {
                 store.Open(OpenFlags.ReadOnly);
                 found = store.Certificates.Find(X509FindType.FindByThumbprint, thumbprint, false);
@@ -303,15 +298,16 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 
         public static void X509StoreWrapper(StoreName storeName, StoreLocation storeLocation, Action<X509Store> action)
         {
-#if !NETSTANDARD
-            X509Store store = new X509Store(storeName, storeLocation);
-            action(store);
-            store.Close();
-#else
-            using (X509Store store = new X509Store(storeName, storeLocation))
+// TODO: Remove IfDef
+#if NETSTANDARD
+            using (var store = new X509Store(storeName, storeLocation))
             {
                 action(store);
             }
+#else
+            X509Store store = new X509Store(storeName, storeLocation);
+            action(store);
+            store.Close();
 #endif
         }
         public Stream OpenForSharedRead(string path)

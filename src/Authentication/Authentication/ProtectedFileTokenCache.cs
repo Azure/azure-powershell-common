@@ -28,20 +28,19 @@ namespace Microsoft.Azure.Commands.Common.Authentication
     public class ProtectedFileTokenCache : TokenCache, IAzureTokenCache
     {
         private static readonly string CacheFileName = Path.Combine(
-#if !NETSTANDARD
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                Resources.OldAzureDirectoryName,
-#else
+// TODO: Remove IfDef
+#if NETSTANDARD
                 Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                 Resources.AzureDirectoryName,
+#else
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                Resources.OldAzureDirectoryName,
 #endif
                  "TokenCache.dat");
 
-        private static readonly object fileLock = new object();
+        private static readonly object FileLock = new object();
 
-        private static readonly Lazy<ProtectedFileTokenCache> instance = new Lazy<ProtectedFileTokenCache>(() => new ProtectedFileTokenCache());
-
-        IDataStore _store;
+        private readonly IDataStore _store;
 
         public byte[] CacheData
         {
@@ -97,19 +96,19 @@ namespace Microsoft.Azure.Commands.Common.Authentication
 
         // Triggered right before ADAL needs to access the cache.
         // Reload the cache from the persistent store in case it changed since the last access.
-        void BeforeAccessNotification(TokenCacheNotificationArgs args)
+        private void BeforeAccessNotification(TokenCacheNotificationArgs args)
         {
             ReadFileIntoCache();
         }
 
         // Triggered right after ADAL accessed the cache.
-        void AfterAccessNotification(TokenCacheNotificationArgs args)
+        private void AfterAccessNotification(TokenCacheNotificationArgs args)
         {
             // if the access operation resulted in a cache update
             EnsureStateSaved();
         }
 
-        void EnsureStateSaved()
+        private void EnsureStateSaved()
         {
             if (HasStateChanged)
             {
@@ -121,29 +120,29 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         {
             if(cacheFileName == null)
             {
-                cacheFileName = ProtectedFileTokenCache.CacheFileName;
+                cacheFileName = CacheFileName;
             }
 
-            lock (fileLock)
+            lock (FileLock)
             {
-                if (_store.FileExists(cacheFileName))
+                if (!_store.FileExists(cacheFileName)) return;
+
+                var existingData = _store.ReadFileAsBytes(cacheFileName);
+                if (existingData != null)
                 {
-                    var existingData = _store.ReadFileAsBytes(cacheFileName);
-                    if (existingData != null)
-                    {
-#if !NETSTANDARD
-                        try
-                        {
-                            Deserialize(ProtectedData.Unprotect(existingData, null, DataProtectionScope.CurrentUser));
-                        }
-                        catch (CryptographicException)
-                        {
-                            _store.DeleteFile(cacheFileName);
-                        }
+// TODO: Remove IfDef
+#if NETSTANDARD
+                    Deserialize(existingData);
 #else
-                        Deserialize(existingData);
-#endif
+                    try
+                    {
+                        Deserialize(ProtectedData.Unprotect(existingData, null, DataProtectionScope.CurrentUser));
                     }
+                    catch (CryptographicException)
+                    {
+                        _store.DeleteFile(cacheFileName);
+                    }
+#endif
                 }
             }
         }
@@ -152,35 +151,37 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         {
             if(cacheFileName == null)
             {
-                cacheFileName = ProtectedFileTokenCache.CacheFileName;
+                cacheFileName = CacheFileName;
             }
-
-#if !NETSTANDARD
-            var dataToWrite = ProtectedData.Protect(Serialize(), null, DataProtectionScope.CurrentUser);
-#else
+// TODO: Remove IfDef
+#if NETSTANDARD
             var dataToWrite = Serialize();
+#else
+            var dataToWrite = ProtectedData.Protect(Serialize(), null, DataProtectionScope.CurrentUser);
 #endif
 
-            lock(fileLock)
+            lock (FileLock)
             {
-                if (HasStateChanged)
-                {
-                    _store.WriteFile(cacheFileName, dataToWrite);
-                    HasStateChanged =  false;
-                }
+                if (!HasStateChanged) return;
+
+                _store.WriteFile(cacheFileName, dataToWrite);
+                HasStateChanged =  false;
             }
         }
 
         private void EnsureCacheFile(string cacheFileName = null)
         {
-            lock (fileLock)
+            lock (FileLock)
             {
                 if (_store.FileExists(cacheFileName))
                 {
                     var existingData = _store.ReadFileAsBytes(cacheFileName);
                     if (existingData != null)
                     {
-#if !NETSTANDARD
+// TODO: Remove IfDef
+#if NETSTANDARD
+                        Deserialize(existingData);
+#else
                         try
                         {
                             Deserialize(ProtectedData.Unprotect(existingData, null, DataProtectionScope.CurrentUser));
@@ -189,17 +190,16 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                         {
                             _store.DeleteFile(cacheFileName);
                         }
-#else
-                        Deserialize(existingData);
 #endif
                     }
                 }
 
                 // Eagerly create cache file.
-#if !NETSTANDARD
-                var dataToWrite = ProtectedData.Protect(Serialize(), null, DataProtectionScope.CurrentUser);
-#else
+// TODO: Remove IfDef
+#if NETSTANDARD
                 var dataToWrite = Serialize();
+#else
+                var dataToWrite = ProtectedData.Protect(Serialize(), null, DataProtectionScope.CurrentUser);
 #endif
                 _store.WriteFile(cacheFileName, dataToWrite);
             }
