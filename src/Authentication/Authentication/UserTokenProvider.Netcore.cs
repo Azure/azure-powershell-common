@@ -19,6 +19,11 @@ using System;
 using System.Security;
 using System.Security.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Properties;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Net.Sockets;
+using System.Net;
+using System.IO;
 
 namespace Microsoft.Azure.Commands.Common.Authentication
 {
@@ -106,13 +111,13 @@ namespace Microsoft.Azure.Commands.Common.Authentication
 
         private AuthenticationContext CreateContext(AdalConfiguration config)
         {
-            return new AuthenticationContext(config.AdEndpoint + config.AdDomain, 
+            return new AuthenticationContext(config.AdEndpoint + config.AdDomain,
                 config.ValidateAuthority, config.TokenCache);
         }
 
         // We have to run this in a separate thread to guarantee that it's STA. This method
         // handles the threading details.
-        private AuthenticationResult AcquireToken(AdalConfiguration config, Action<string> promptAction, 
+        private AuthenticationResult AcquireToken(AdalConfiguration config, Action<string> promptAction,
             string userId, SecureString password, bool renew = false)
         {
             AuthenticationResult result = null;
@@ -188,7 +193,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             Action<string> promptAction,
             bool renew = false)
         {
-            AuthenticationResult result;
+            AuthenticationResult result = null;
             var context = CreateContext(config);
 
             TracingAdapter.Information(
@@ -204,18 +209,23 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                 config.ClientRedirectUri);
             if (promptAction == null || renew)
             {
-                result =context.AcquireTokenSilentAsync(config.ResourceClientUri, config.ClientId,
+                result = context.AcquireTokenSilentAsync(config.ResourceClientUri, config.ClientId,
                     new UserIdentifier(userId, UserIdentifierType.OptionalDisplayableId))
                     .ConfigureAwait(false).GetAwaiter().GetResult();
             }
             else if (string.IsNullOrEmpty(userId) || password == null)
             {
-                var code = context.AcquireDeviceCodeAsync(config.ResourceClientUri, config.ClientId)
-                    .ConfigureAwait(false).GetAwaiter().GetResult();
-                promptAction(code?.Message);
+                result = TryInteractiveLogin(context, config, promptAction);
+                if (result == null)
+                {
+                    promptAction("Unable to launch a browser for interactive authentication; falling back to device code login.");
+                    var code = context.AcquireDeviceCodeAsync(config.ResourceClientUri, config.ClientId)
+                        .ConfigureAwait(false).GetAwaiter().GetResult();
+                        promptAction(code?.Message);
 
-                result = context.AcquireTokenByDeviceCodeAsync(code)
-                    .ConfigureAwait(false).GetAwaiter().GetResult();
+                    result = context.AcquireTokenByDeviceCodeAsync(code)
+                        .ConfigureAwait(false).GetAwaiter().GetResult();
+                }
             }
             else
             {
@@ -225,6 +235,99 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             }
 
             return result;
+        }
+
+        private AuthenticationResult TryInteractiveLogin(AuthenticationContext context, AdalConfiguration config, Action<string> promptAction)
+        {
+            HttpListener httpListener = null;
+            var replyUrl = string.Empty;
+            var port = 8399;
+
+            try
+            {
+                while (++port < 9000)
+                {
+                    try
+                    {
+                        httpListener = new HttpListener();
+                        httpListener.Prefixes.Add(string.Format("http://localhost:{0}/", port));
+                        httpListener.Start();
+                        replyUrl = string.Format("http://localhost:{0}", port);
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        promptAction(string.Format("Port {0} is taken with exception '{1}'; trying to connect to the next port.", port, ex.Message));
+                        httpListener?.Stop();
+                    }
+                }
+
+                if (string.IsNullOrEmpty(replyUrl))
+                {
+                    promptAction("Unable to reserve a port for authentication reply url.");
+                    return null;
+                }
+
+                try
+                {
+                    var url = string.Format("{0}/oauth2/authorize?response_type=code&client_id={1}&redirect_uri={2}&state={3}&resource={4}&prompt=select_account",
+                                                Path.Combine(config.AdEndpoint, config.AdDomain),
+                                                "04b07795-8ddb-461a-bbee-02f9e1bf7b46",
+                                                replyUrl,
+                                                "code",
+                                                config.ResourceClientUri);
+                    promptAction(string.Format("Opening browser with URL '{0}'", url));
+                    if (!OpenBrowser(url))
+                    {
+                        return null;
+                    }
+
+                    promptAction("A browser has been launched for interactive login. For the old experience with device code, provide the -UseDeviceCode parameter.");
+                    HttpListenerContext httpListenerContext = httpListener.GetContext();
+                    HttpListenerRequest httpListenerRequest = httpListenerContext.Request;
+                    var code = httpListenerRequest.QueryString["code"].ToString();
+                    return context.AcquireTokenByAuthorizationCodeAsync(code, new Uri(replyUrl), , config.ResourceClientUri)
+                        .ConfigureAwait(false).GetAwaiter().GetResult();
+                }
+                catch (Exception ex)
+                {
+                    string blank = ex?.Message;
+                }
+            }
+            catch { }
+            finally
+            {
+                httpListener?.Stop();
+            }
+
+            return null;
+        }
+
+        // No universal call in .NET Core to open browser -- see below issue for more details
+        // https://github.com/dotnet/corefx/issues/10361
+        private bool OpenBrowser(string url)
+        {
+            try
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}"));
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    Process.Start("xdg-open", url);
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    Process.Start("open", url);
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private string GetExceptionMessage(Exception ex)
