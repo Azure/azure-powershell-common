@@ -123,13 +123,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Factories
             }
             else if (account.IsPropertySet(AzureAccount.Property.CertificateThumbprint))
             {
-// TODO: Remove IfDef
-#if NETSTANDARD
-                throw new NotSupportedException("Certificate based authentication is not supported in netcore version.");
-#else
                 var thumbprint = account.GetProperty(AzureAccount.Property.CertificateThumbprint);
                 token = TokenProvider.GetAccessTokenWithCertificate(configuration, account.Id, thumbprint, account.Type);
-#endif
             }
             else
             {
