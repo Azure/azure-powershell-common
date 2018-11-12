@@ -77,6 +77,21 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                     throw new ArgumentException(Resources.UnsupportedCredentialType, nameof(credentialType));
             }
         }
+
+        public IAccessToken GetAccessTokenWithCertificate(
+            AdalConfiguration config,
+            string clientId,
+            string certificate,
+            string credentialType)
+        {
+            switch (credentialType)
+            {
+                case AzureAccount.AccountType.ServicePrincipal:
+                    return _servicePrincipalTokenProvider.GetAccessTokenWithCertificate(config, clientId, certificate, credentialType);
+                default:
+                    throw new ArgumentException(string.Format(Resources.UnsupportedCredentialType, credentialType), nameof(credentialType));
+            }
+        }
 #else
         public AdalTokenProvider()
             : this(new ConsoleParentWindow())
