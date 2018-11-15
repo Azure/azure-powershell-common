@@ -22,30 +22,20 @@ namespace Microsoft.Azure.Graph.RBAC.Version1_6.ActiveDirectory
     {
         public static PSADObject ToPSADObject(this User user)
         {
-            var adObj = new PSADObject() { DisplayName = user.DisplayName };
-            return AssignObjectId(adObj, user.ObjectId);
+            return new PSADObject()
+            {
+                DisplayName = user.DisplayName,
+                Id = user.ObjectId
+            };
         }
 
         public static PSADObject ToPSADObject(this ADGroup group)
         {
-            var adObj = new PSADObject() { DisplayName = group.DisplayName };
-            return AssignObjectId(adObj, group.ObjectId);
-        }
-
-        public static PSADObject AssignObjectId(PSADObject adObj, string objectId)
-        {
-            Guid objectIdGuid;
-
-            if (Guid.TryParse(objectId, out objectIdGuid))
+            return new PSADObject()
             {
-                adObj.Id = objectIdGuid;
-            }
-            else
-            {
-                adObj.AdfsId = objectId;
-            }
-
-            return adObj;
+                DisplayName = group.DisplayName,
+                Id = group.ObjectId
+            };
         }
 
         public static PSADObject ToPSADObject(this AADObject obj)
@@ -54,95 +44,88 @@ namespace Microsoft.Azure.Graph.RBAC.Version1_6.ActiveDirectory
 
             if (obj.ObjectType == typeof(User).Name)
             {
-                var adUser = new PSADUser()
+                return new PSADUser()
                 {
                     DisplayName = obj.DisplayName,
+                    Id = obj.ObjectId,
                     Type = obj.ObjectType,
                     UserPrincipalName = obj.UserPrincipalName
                 };
-
-                return AssignObjectId(adUser, obj.ObjectId);
             }
             else if (obj.ObjectType == "Group")
             {
-                var adGroup = new PSADGroup()
+                return new PSADGroup()
                 {
                     DisplayName = obj.DisplayName,
+                    Id = obj.ObjectId,
                     Type = obj.ObjectType,
                     SecurityEnabled = obj.SecurityEnabled,
                     MailNickname = obj.Mail
                 };
-                return AssignObjectId(adGroup, obj.ObjectId);
             }
             else if (obj.ObjectType == typeof(ServicePrincipal).Name)
             {
-                var adSp = new PSADServicePrincipal()
+                return new PSADServicePrincipal()
                 {
                     DisplayName = obj.DisplayName,
+                    Id = obj.ObjectId,
                     Type = obj.ObjectType,
                     ServicePrincipalNames = obj.ServicePrincipalNames.ToArray()
                 };
-
-                return AssignObjectId(adSp, obj.ObjectId);
             }
             else
             {
-                var adObj = new PSADObject()
+                return new PSADObject()
                 {
                     DisplayName = obj.DisplayName,
+                    Id = obj.ObjectId,
                     Type = obj.ObjectType
                 };
-
-                return AssignObjectId(adObj, obj.ObjectId);
             }
         }
 
         public static PSADObject ToPSADGroup(this AADObject obj)
         {
-            var adObj = new PSADObject()
+            return new PSADObject()
             {
                 DisplayName = obj.DisplayName,
+                Id = obj.ObjectId
             };
-
-            return AssignObjectId(adObj, obj.ObjectId);
         }
 
         public static PSADUser ToPSADUser(this User user)
         {
-            var adUser = new PSADUser()
+            return new PSADUser()
             {
                 DisplayName = user.DisplayName,
+                Id = user.ObjectId,
                 UserPrincipalName = user.UserPrincipalName,
                 Type = user.ObjectType
             };
-
-            return (PSADUser) AssignObjectId(adUser, user.ObjectId);
         }
 
         public static PSADGroup ToPSADGroup(this ADGroup group)
         {
-            var adGroup = new PSADGroup()
+            return new PSADGroup()
             {
                 DisplayName = group.DisplayName,
+                Id = group.ObjectId,
                 SecurityEnabled = group.SecurityEnabled,
                 Type = group.ObjectType,
                 MailNickname = group.Mail
             };
-
-            return (PSADGroup) AssignObjectId(adGroup, group.ObjectId);
         }
 
         public static PSADServicePrincipal ToPSADServicePrincipal(this ServicePrincipal servicePrincipal)
         {
-            var adSp = new PSADServicePrincipal()
+            return new PSADServicePrincipal()
             {
                 DisplayName = servicePrincipal.DisplayName,
+                Id = servicePrincipal.ObjectId,
                 ApplicationId = Guid.Parse(servicePrincipal.AppId),
                 ServicePrincipalNames = servicePrincipal.ServicePrincipalNames.ToArray(),
                 Type = servicePrincipal.ObjectType
             };
-
-            return (PSADServicePrincipal) AssignObjectId(adSp, servicePrincipal.ObjectId);
         }
 
         public static PSADApplication ToPSADApplication(this Application application)
@@ -151,7 +134,7 @@ namespace Microsoft.Azure.Graph.RBAC.Version1_6.ActiveDirectory
             {
                 return new PSADApplication()
                 {
-                    ObjectId = Guid.Parse(application.ObjectId),
+                    ObjectId = application.ObjectId,
                     DisplayName = application.DisplayName,
                     Type = application.ObjectType,
                     ApplicationId = Guid.Parse(application.AppId),

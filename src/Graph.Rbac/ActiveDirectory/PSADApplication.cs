@@ -21,7 +21,7 @@ namespace Microsoft.Azure.Graph.RBAC.Version1_6.ActiveDirectory
     {
         public string DisplayName { get; set; }
 
-        public Guid ObjectId { get; set; }
+        public string ObjectId { get; set; }
 
         public IList<string> IdentifierUris { get; set; }
 
@@ -34,7 +34,7 @@ namespace Microsoft.Azure.Graph.RBAC.Version1_6.ActiveDirectory
         public bool AvailableToOtherTenants { get; set; }
 
         public IList<string> AppPermissions { get; set; }
-        
+
         public IList<string> ReplyUrls { get; set; }
     }
 }
