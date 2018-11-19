@@ -17,6 +17,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+#if NETSTANDARD
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Core;
+#endif
 using Microsoft.Azure.Commands.ResourceManager.Common;
 using System.Xml.Serialization;
 using Microsoft.Azure.Commands.ResourceManager.Common.Serialization;
@@ -399,6 +402,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Models
                 if (context.Subscription != null && context.Account != null)
                 {
                     name = string.Format("{0} ({1}) - {2}", context.Subscription.Name, context.Subscription.Id, context.Account.Id);
+                    result = true;
+                }
+                else if (context.Tenant != null && context.Account != null)
+                {
+                    name = string.Format("{0} - {1}", context.Tenant.Id, context.Account.Id);
                     result = true;
                 }
                 else
