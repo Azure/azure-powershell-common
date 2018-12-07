@@ -12,14 +12,23 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 using System;
 
 namespace Microsoft.WindowsAzure.Commands.Common
 {
+    /// <summary>
+    /// Abstract factory for version-independent provider registration
+    /// </summary>
     public interface IProviderRegistrationFactory
     {
+        /// <summary>
+        /// Get a client that cna register ARM providers
+        /// </summary>
+        /// <param name="factory">The active AuthenticationFactory</param>
+        /// <param name="context">The active context</param>
+        /// <param name="messageWriter">A method to log messages</param>
+        /// <returns>A registration service for RPs</returns>
         IProviderRegistrar GetRegistrar(IAuthenticationFactory factory, IAzureContext context, Action<string> messageWriter);
     }
 }

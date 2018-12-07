@@ -22,6 +22,9 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Models
 {
+    /// <summary>
+    /// Delegating Handlere that catches registration errors and attempts to register the provider
+    /// </summary>
     public class RPRegistrationDelegatingHandler : DelegatingHandler, ICloneable
     {
         private const short RetryCount = 3;

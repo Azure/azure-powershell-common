@@ -12,16 +12,16 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Microsoft.WindowsAzure.Commands.Common.Utilities
 {
+    /// <summary>
+    /// A generic provider registration factory
+    /// </summary>
     public class DefaultProviderRegistrationFactory : IProviderRegistrationFactory
     {
         /// <summary>
@@ -43,7 +43,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Utilities
 
             public string GetProviderNamespace(Uri requestUri)
             {
-                return requestUri.ToString();
+                return string.Empty;
             }
 
             public bool IsNotRegisteredError(HttpResponseMessage message)
@@ -51,19 +51,14 @@ namespace Microsoft.WindowsAzure.Commands.Common.Utilities
                 return true;
             }
 
-            public Task<bool> IsRegistered(string providerName)
+            public bool IsRegistered(string providerName)
             {
-                return Task.FromResult(true);
+                return true;
             }
 
             public Task<bool> Register(string providerName)
             {
                 return Task.FromResult(true);
-            }
-
-            bool IProviderRegistrar.IsRegistered(string providerNamespace)
-            {
-                throw new NotImplementedException();
             }
         }
     }
