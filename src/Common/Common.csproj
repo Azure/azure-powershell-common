@@ -55,6 +55,12 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AccessTokenExtensions.cs" />
+    <Compile Include="ArgumentCompleters\PSArgumentCompleter.cs" />
+    <Compile Include="AzureRMCmdlet.cs" />
+    <Compile Include="AzureRMConstants.cs" />
+    <Compile Include="AzureRmLongRunningCmdlet.cs" />
+    <Compile Include="AzureRmProfileProvider.cs" />
     <Compile Include="CustomAttributes\GenericBreakingChangeAttribute.cs" />
     <Compile Include="CustomAttributes\BreakingChangeAttributeHelper.cs" />
     <Compile Include="CustomAttributes\Utilities.cs" />
@@ -63,6 +69,11 @@
     <Compile Include="CustomAttributes\CmdletParameterBreakingChangeAttribute.cs" />
     <Compile Include="Attributes\Ps1XmlAttribute.cs" />
     <Compile Include="LongRunningJobCancelledException.cs" />
+    <Compile Include="PaginatedResponseHelper.cs" />
+    <Compile Include="Paging\GenericPageEnumerable.cs" />
+    <Compile Include="Paging\GenericPageEnumerator.cs" />
+    <Compile Include="ResponseWithContinuation.cs" />
+    <Compile Include="ServiceClientTracingInterceptor.cs" />
     <Compile Include="ShouldMethodInvoker.cs" />
     <Compile Include="AzureLongRunningJob.cs" />
     <Compile Include="Serialization\LegacyAzureAccount.cs" />
@@ -70,7 +81,14 @@
     <Compile Include="Serialization\LegacyAzureSubscription.cs" />
     <Compile Include="Serialization\ModelConversionExtensions.cs" />
     <Compile Include="ShouldMethodStreamItem.cs" />
+    <Compile Include="Tags\PSTag.cs" />
+    <Compile Include="Tags\PSTagValue.cs" />
+    <Compile Include="Tags\PSTagValuePair.cs" />
+    <Compile Include="Tags\TagsConversionHelper.cs" />
+    <Compile Include="Utilities\DefaultProviderRegistrationFactory.cs" />
     <Compile Include="Utilities\INetworkHelper.cs" />
+    <Compile Include="Utilities\IProviderRegistrar.cs" />
+    <Compile Include="Utilities\IProviderRegistrationFactory.cs" />
     <Compile Include="Utilities\JsonUtilities.cs" />
     <Compile Include="AzureDataCmdlet.cs" />
     <Compile Include="AzurePSCmdlet.cs" />
@@ -90,6 +108,10 @@
     <Compile Include="Utilities\ConversionUtilities.cs" />
     <Compile Include="DebugStreamTraceListener.cs" />
     <Compile Include="Utilities\GeneralUtilities.cs" />
+    <Compile Include="Utilities\Models\DeploymentVariable.cs" />
+    <Compile Include="Utilities\Models\FilterResourcesOptions.cs" />
+    <Compile Include="Utilities\Models\Location.cs" />
+    <Compile Include="Utilities\Models\ResourceIdentifier.cs" />
     <Compile Include="Utilities\NetworkHelper.cs" />
     <Compile Include="Utilities\PowerShellUtilities.cs" />
     <Compile Include="RecordingTracingInterceptor.cs" />
@@ -97,6 +119,7 @@
     <Compile Include="Extensions\CmdletExtensions.cs" />
     <Compile Include="TestMockSupport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\RPRegistrationDelegatingHandler.cs" />
     <Compile Include="Utilities\Validate.cs" />
     <Compile Include="ValidateGuidNotEmpty.cs" />
     <Compile Include="Utilities\XmlUtilities.cs" />

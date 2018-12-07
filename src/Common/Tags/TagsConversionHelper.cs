@@ -17,7 +17,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
-using ProjectResources = Microsoft.Azure.Commands.ResourceManager.Common.Properties.Resources;
+using ProjectResources = Microsoft.WindowsAzure.Commands.Common.Properties.Resources;
 
 namespace Microsoft.Azure.Commands.ResourceManager.Common.Tags
 {

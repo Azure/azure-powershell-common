@@ -1725,4 +1725,38 @@ Use the Enable-AzureDataCollection cmdlet to turn the feature On. The cmdlet can
   <data name="BreakingChangeAttributeParameterTypeChange" xml:space="preserve">
     <value>	The type of the parameter is changing from '{0}' to '{1}'.</value>
   </data>
+  <data name="ARMDataCollectionMessage1" xml:space="preserve">
+    <value>Azure PowerShell collects usage data in order to improve your experience.
+The data is anonymous and does not include commandline argument values.
+The data is collected by Microsoft.
+
+Use the Disable-AzDataCollection cmdlet to turn the feature Off. The cmdlet can be found in the Az.Accounts. To disable data collection: PS &gt; Disable-AzDataCollection.
+Use the Enable-AzDataCollection cmdlet to turn the feature On. The cmdlet can be found in the Az.Accounts module. To enable data collection: PS &gt; Enable-AzDataCollection.</value>
+  </data>
+  <data name="ProfileNotInitialized" xml:space="preserve">
+    <value>The Azure PowerShell context has not been properly initialized.  Please import the module and try again.</value>
+  </data>
+  <data name="ResourceConfirmTarget" xml:space="preserve">
+    <value>the '{0}' resource named '{1}' in resource group '{2}'</value>
+    <comment>{0} is resource type name, {1} is resource name, {2} is resource group name</comment>
+  </data>
+  <data name="ResourceIdConfirmTarget" xml:space="preserve">
+    <value>the resource with identity '{0}'</value>
+    <comment>{0} is resource identity</comment>
+  </data>
+  <data name="RunConnectAccount" xml:space="preserve">
+    <value>Run Connect-AzAccount to login.</value>
+  </data>
+  <data name="ResourceProviderRegisterAttempt" xml:space="preserve">
+    <value>Attempting to register resource provider '{0}'</value>
+  </data>
+  <data name="ResourceProviderRegisterFailure" xml:space="preserve">
+    <value>Failed to register resource provider '{0}'.Details: '{1}'</value>
+  </data>
+  <data name="ResourceProviderRegisterSuccessful" xml:space="preserve">
+    <value>Succeeded to register resource provider '{0}'</value>
+  </data>
+  <data name="InvalidTagFormat" xml:space="preserve">
+    <value>Invalid tag format. Expect @{tagName = $null} or @{tagName = "tagValue"}</value>
+  </data>
 </root>

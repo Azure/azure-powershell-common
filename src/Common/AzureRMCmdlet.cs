@@ -14,23 +14,19 @@
 
 using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using Microsoft.Azure.Commands.Common.Authentication.Models;
 #if NETSTANDARD
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Core;
 #endif
-using Microsoft.Azure.Commands.Common.Authentication.Models;
-using Microsoft.Azure.Commands.ResourceManager.Common.Properties;
-using Microsoft.Azure.Management.Internal.Resources;
-using Microsoft.Azure.Management.Internal.Resources.Utilities.Models;
 using Microsoft.Rest;
 using Microsoft.WindowsAzure.Commands.Common;
+using Microsoft.WindowsAzure.Commands.Common.Properties;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
-using System.Security.Authentication;
-using System.Text;
+using Microsoft.WindowsAzure.Commands.Common.Utilities;
 
 namespace Microsoft.Azure.Commands.ResourceManager.Common
 {
@@ -42,11 +38,6 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         protected ServiceClientTracingInterceptor _serviceClientTracingInterceptor;
         IAzureContextContainer _profile;
 
-        public const int MAX_NUMBER_OF_TOKENS_ALLOWED_IN_AUX_HEADER = 3;
-        public const string AUX_HEADER_NAME = "x-ms-authorization-auxiliary";
-        public const string AUX_TOKEN_PREFIX = "Bearer";
-        public const string AUX_TOKEN_APPEND_CHAR = ";";
-
         /// <summary>
         /// Creates new instance from AzureRMCmdlet and add the RPRegistration handler.
         /// </summary>
@@ -57,7 +48,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         /// <summary>
         /// Gets or sets the global profile for ARM cmdlets.
         /// </summary>
-        [Parameter(Mandatory =false, HelpMessage= "The credentials, account, tenant, and subscription used for communication with Azure.")]
+        [Parameter(Mandatory = false, HelpMessage = "The credentials, account, tenant, and subscription used for communication with Azure.")]
         [Alias("AzContext", "AzureRmContext", "AzureCredential")]
         public IAzureContextContainer DefaultProfile
         {
@@ -78,82 +69,6 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             {
                 _profile = value;
             }
-        }
-
-        protected IDictionary<String, List<String>> GetAuxilaryAuthHeaderFromResourceIds(List<String> resourceIds)
-        {
-            IDictionary<String, List<String>> auxHeader = null;
-
-            //Get the subscriptions from the resource Ids
-            var subscriptionIds = resourceIds.Select(rId => (new ResourceIdentifier(rId))?.Subscription)?.Distinct();
-
-            //Checxk if we have access to all the subscriptions
-            var subscriptionList = CheckAccessToSubscriptions(subscriptionIds);
-
-            //get all the non default tenant ids for the subscriptions
-            var nonDeafultTenantIds = subscriptionList?.Select(s => s.GetTenant())?.Distinct()?.Where(t => t != DefaultContext.Tenant.GetId().ToString());
-
-            if ((nonDeafultTenantIds != null) && (nonDeafultTenantIds.Count() > 0))
-            {
-                // WE can only fill in tokens for 3 tennats in the aux header, if tehre are more tenants fail now
-                if (nonDeafultTenantIds.Count() > MAX_NUMBER_OF_TOKENS_ALLOWED_IN_AUX_HEADER)
-                {
-                    throw new ArgumentException("Number of tenants (tenants other than the one in the current context), that the requested resources belongs to, exceeds maximum allowed number of " + MAX_NUMBER_OF_TOKENS_ALLOWED_IN_AUX_HEADER);
-                }
-
-                //get the tokens for each tenant and prepare the string in the following format :
-                //"Header Value :: Bearer <auxiliary token1>;EncryptedBearer <auxiliary token2>; Bearer <auxiliary token3>"
-
-                var tokens = nonDeafultTenantIds.Select(t => (new StringBuilder(AUX_TOKEN_PREFIX).Append(" ").Append(GetTokenForTenant(t)?.AccessToken))?.ToString())?.ConcatStrings(AUX_TOKEN_APPEND_CHAR);
-
-                auxHeader = new Dictionary<String, List<String>>();
-
-                List<string> headerValues = new List<string>(1);
-                headerValues.Add(tokens);
-                auxHeader.Add(AUX_HEADER_NAME, headerValues);
-            }
-
-            return auxHeader;
-        }
-
-        private List<IAzureSubscription> CheckAccessToSubscriptions(IEnumerable<string> subscriptions)
-        {
-            var subscriptionsNotInDefaultProfile = subscriptions.ToList().Except(DefaultProfile.Subscriptions.Select(s => s.GetId().ToString()).ToList());
-
-            List<IAzureSubscription> subscriptionObjects = DefaultProfile.Subscriptions.Where(s => subscriptions.Contains(s.GetId().ToString())).ToList();
-            if (subscriptionsNotInDefaultProfile.Any())
-            {
-                //So we didnt find some subscriptions in the default profile.. 
-                //this does not mean that the user does not have access to the subs, it just menas that the local context did not have them
-                //We gotta now call into the subscription RP and see if the user really does not have access to these subscriptions
-
-                var result = Utilities.SubscriptionAndTenantHelper.GetTenantsForSubscriptions(subscriptionsNotInDefaultProfile.ToList(), DefaultContext);
-
-                if (result.Count < subscriptionsNotInDefaultProfile.Count())
-                {
-                    var subscriptionsNotFoundAtAll = subscriptionsNotInDefaultProfile.ToList().Except(result.Keys);
-                    //Found subscription(s) the user does not have acess to... throw exception
-                    StringBuilder message = new StringBuilder();
-
-                    message.Append(" The user does not have access to the following subscription(s) : ");
-                    subscriptionsNotFoundAtAll.ForEach(s => message.Append(" " + s));
-                    throw new AuthenticationException(message.ToString());
-                }
-                else
-                {
-                    subscriptionObjects.AddRange(result.Values);
-                }
-            }
-
-            return subscriptionObjects;
-        }
-
-
-        private IAccessToken GetTokenForTenant(string tenantId)
-        {
-            return Utilities.SubscriptionAndTenantHelper.AcquireAccessToken(DefaultContext.Account,
-                DefaultContext.Environment,
-                tenantId);
         }
 
         protected override string DataCollectionWarning
@@ -214,7 +129,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         {
             ConfirmAction(force, continueMessage, processMessage, target, action, () => true);
         }
-        
+
         /// <summary>
         /// Prompt for confirmation for the specified change to the specified ARM resource
         /// </summary>
@@ -242,7 +157,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         /// <param name="action">The code action to perform if confirmation is successful</param>
         /// <param name="promptForContinuation">Predicate to determine whether a ShouldContinue prompt is necessary</param>
         protected void ConfirmResourceAction(string resourceType, string resourceName, string resourceGroupName,
-            bool force, string continueMessage, string processMessage, Action action, Func<bool> promptForContinuation = null )
+            bool force, string continueMessage, string processMessage, Action action, Func<bool> promptForContinuation = null)
         {
             ConfirmAction(force, continueMessage, processMessage, string.Format(Resources.ResourceConfirmTarget,
                 resourceType, resourceName, resourceGroupName), action, promptForContinuation);
@@ -269,7 +184,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         /// <param name="actionName">A description of the change to the resource</param>
         /// <param name="action">The code action to perform if confirmation is successful</param>
         /// <param name="promptForContinuation">Predicate to determine whether a ShouldContinue prompt is necessary</param>
-        protected void ConfirmResourceAction(string resourceId, bool force, string continueMessage, string actionName, 
+        protected void ConfirmResourceAction(string resourceId, bool force, string continueMessage, string actionName,
             Action action, Func<bool> promptForContinuation = null)
         {
             ConfirmAction(force, continueMessage, actionName, string.Format(Resources.ResourceIdConfirmTarget,
@@ -300,7 +215,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
                 _qosEvent.InvocationName = this.MyInvocation.InvocationName;
             }
 
-            if (this.MyInvocation != null && this.MyInvocation.BoundParameters != null 
+            if (this.MyInvocation != null && this.MyInvocation.BoundParameters != null
                 && this.MyInvocation.BoundParameters.Keys != null)
             {
                 _qosEvent.Parameters = string.Join(" ",
@@ -309,8 +224,8 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             }
 
             IAzureContext context;
-            if (TryGetDefaultContext(out context) 
-                && context.Account != null 
+            if (TryGetDefaultContext(out context)
+                && context.Account != null
                 && !string.IsNullOrWhiteSpace(context.Account.Id))
             {
                 _qosEvent.Uid = MetricHelper.GenerateSha256HashString(context.Account.Id.ToString());
@@ -329,8 +244,8 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
                 && context.Account != null
                 && context.Account.Id != null)
             {
-                    WriteDebugWithTimestamp(string.Format("using account id '{0}'...",
-                    context.Account.Id));
+                WriteDebugWithTimestamp(string.Format("using account id '{0}'...",
+                context.Account.Id));
             }
         }
 
@@ -372,19 +287,14 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         {
             AzureSession.Instance.ClientFactory.RemoveHandler(typeof(RPRegistrationDelegatingHandler));
             IAzureContext context;
+            IProviderRegistrationFactory factory;
             if (TryGetDefaultContext(out context)
                 && context.Account != null
-                && context.Subscription != null)
+                && context.Subscription != null
+                && AzureSession.Instance.TryGetComponent(DefaultProviderRegistrationFactory.ProviderRegistrationFactoryName, out factory))
             {
                 AzureSession.Instance.ClientFactory.AddHandler(new RPRegistrationDelegatingHandler(
-                    () =>
-                    {
-                        var client = new ResourceManagementClient(
-                            context.Environment.GetEndpointAsUri(AzureEnvironment.Endpoint.ResourceManager),
-                            AzureSession.Instance.AuthenticationFactory.GetServiceClientCredentials(context, AzureEnvironment.Endpoint.ResourceManager));
-                        client.SubscriptionId = context.Subscription.Id;
-                        return client;
-                    },
+                    () => factory.GetRegistrar(AzureSession.Instance.AuthenticationFactory, context, s => DebugMessages.Enqueue(s)),
                     s => DebugMessages.Enqueue(s)));
             }
 
