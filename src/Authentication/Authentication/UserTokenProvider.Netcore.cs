@@ -218,13 +218,21 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             }
             else
             {
-                result = null;
-                /*
-                var account = context.GetAccountAsync(userId)
-                    .ConfigureAwait(false).GetAwaiter().GetResult();
-                result = context.AcquireTokenAsync(_scopes, account)
-                    .ConfigureAwait(false).GetAwaiter().GetResult();
-                */
+                if (password == null)
+                {
+                    result = null;
+                    /*
+                    var account = context.GetAccountAsync(userId)
+                        .ConfigureAwait(false).GetAwaiter().GetResult();
+                    result = context.AcquireTokenAsync(_scopes, account)
+                        .ConfigureAwait(false).GetAwaiter().GetResult();
+                    */
+                }
+                else
+                {
+                    result = context.AcquireTokenByUsernamePasswordAsync(_scopes, userId, password)
+                        .ConfigureAwait(false).GetAwaiter().GetResult();
+                }
             }
 
             return result;

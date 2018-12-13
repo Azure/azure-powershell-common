@@ -80,7 +80,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             set
             {
                 UserCache.Deserialize(value);
-                UserCache.HasStateChanged = true;
                 EnsureStateSaved();
             }
         }
@@ -126,9 +125,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             EnsureStateSaved();
         }
 
-        void EnsureStateSaved()
+        void EnsureStateSaved(TokenCacheNotificationArgs args = null)
         {
-            if (UserCache.HasStateChanged)
+            if (args != null && args.HasStateChanged)
             {
                 WriteCacheIntoFile();
             }
@@ -165,7 +164,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             }
         }
 
-        private void WriteCacheIntoFile(string cacheFileName = null)
+        private void WriteCacheIntoFile(string cacheFileName = null, TokenCacheNotificationArgs args = null)
         {
             if(cacheFileName == null)
             {
@@ -180,10 +179,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication
 
             lock(fileLock)
             {
-                if (UserCache.HasStateChanged)
+                if (args != null && args.HasStateChanged)
                 {
                     _store.WriteFile(cacheFileName, dataToWrite);
-                    UserCache.HasStateChanged =  false;
                 }
             }
         }

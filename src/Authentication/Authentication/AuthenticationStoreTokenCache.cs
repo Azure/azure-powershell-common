@@ -95,7 +95,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
 
         public void HandleAfterAccess(TokenCacheNotificationArgs args)
         {
-            if (UserCache.HasStateChanged)
+            if (args.HasStateChanged)
             {
                 _store.CacheData = UserCache.Serialize();
             }
