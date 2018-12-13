@@ -12,9 +12,8 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using Microsoft.Rest.Azure.Authentication;
 #if NETSTANDARD
+using Microsoft.Identity.Client;
 using Microsoft.WindowsAzure.Commands.Common;
 #endif
 using System.Security;
@@ -29,6 +28,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication
     {
         private string _tenantId;
         private IServicePrincipalKeyStore _keyStore;
+
+        private string[] _scopes = new string[] { };
 
         /// <summary>
         /// Create a credential provider
@@ -57,7 +58,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         /// <param name="audience">The intended audience for authentication</param>
         /// <param name="context">The AD AuthenticationContext to use</param>
         /// <returns></returns>
-        public async Task<AuthenticationResult> AuthenticateAsync(string clientId, string audience, AuthenticationContext context)
+        public async Task<AuthenticationResult> AuthenticateAsync(string clientId, string audience)
         {
             var task = new Task<SecureString>(() =>
             {
@@ -65,12 +66,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             });
             task.Start();
             var key = await task.ConfigureAwait(false);
-#if !NETSTANDARD
-            return await context.AcquireTokenAsync(audience, new ClientCredential(clientId, key));
-#else
-            return await context.AcquireTokenAsync(audience, new ClientCredential(clientId,
-                ConversionUtilities.SecureStringToString(key)));
-#endif
+            var clientCredential = new ClientCredential(ConversionUtilities.SecureStringToString(key));
+            var context = new ConfidentialClientApplication(clientId, audience, clientCredential, new TokenCache(), new TokenCache());
+            return await context.AcquireTokenForClientAsync(_scopes);
         }
     }
 }

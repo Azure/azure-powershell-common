@@ -34,5 +34,10 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         {
             CacheData = null;
         }
+
+        public object GetUserCache()
+        {
+            return null;
+        }
     }
 }

@@ -12,13 +12,14 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 using Hyak.Common;
-using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System;
 using System.Security;
 using System.Security.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Properties;
+using Microsoft.Identity.Client;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Microsoft.Azure.Commands.Common.Authentication
 {
@@ -32,6 +33,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         public UserTokenProvider()
         {
         }
+
+        private readonly static IEnumerable<string> _scopes = new[] { "user.read" };
 
         public IAccessToken GetAccessToken(
             AdalConfiguration config,
@@ -71,22 +74,19 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         {
             TracingAdapter.Information(
                 Resources.UPNRenewTokenTrace,
-                token.AuthResult.AccessTokenType,
                 token.AuthResult.ExpiresOn,
                 true,
                 token.AuthResult.TenantId,
                 token.UserId);
 
-            var user = token.AuthResult.UserInfo;
+            var user = token.AuthResult.Account;
             if (user != null)
             {
                 TracingAdapter.Information(
                     Resources.UPNRenewTokenUserInfoTrace,
-                    user.DisplayableId,
-                    user.FamilyName,
-                    user.GivenName,
-                    user.IdentityProvider,
-                    user.UniqueId);
+                    user.Environment,
+                    user.HomeAccountId,
+                    user.Username);
             }
             if (IsExpired(token))
             {
@@ -104,11 +104,10 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             }
         }
 
-        private AuthenticationContext CreateContext(AdalConfiguration config)
+        private PublicClientApplication CreateContext(AdalConfiguration config)
         {
-            return new AuthenticationContext(config.AdEndpoint + config.AdDomain,
-                config.ValidateAuthority, config.TokenCache);
-        }
+            return new PublicClientApplication(config.ClientId, config.AdEndpoint + config.AdDomain, config.TokenCache);
+    }
 
         // We have to run this in a separate thread to guarantee that it's STA. This method
         // handles the threading details.
@@ -120,12 +119,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             result = SafeAquireToken(config, promptAction, userId, password, out ex);
             if (ex != null)
             {
-                var adex = ex as AdalException;
-                if (adex != null)
+                var msalException = ex as MsalClientException;
+                if (msalException != null)
                 {
-                    if (adex.ErrorCode == AdalError.AuthenticationCanceled)
+                    if (msalException.ErrorCode == MsalClientException.AuthenticationCanceledError)
                     {
-                        throw new AadAuthenticationCanceledException(adex.Message, adex);
+                        throw new AadAuthenticationCanceledException(msalException.Message, msalException);
                     }
                 }
                 if (ex is AadAuthenticationException)
@@ -151,27 +150,27 @@ namespace Microsoft.Azure.Commands.Common.Authentication
 
                 return DoAcquireToken(config, userId, password, promptAction);
             }
-            catch (AdalException adalEx)
+            catch (MsalException msalException)
             {
-                if (adalEx.ErrorCode == AdalError.UserInteractionRequired ||
-                    adalEx.ErrorCode == AdalError.MultipleTokensMatched)
+                if (msalException.ErrorCode == MsalClientException.AuthenticationUiFailedError ||
+                    msalException.ErrorCode == MsalClientException.MultipleTokensMatchedError)
                 {
                     string message = Resources.AdalUserInteractionRequired;
-                    if (adalEx.ErrorCode == AdalError.MultipleTokensMatched)
+                    if (msalException.ErrorCode == MsalClientException.MultipleTokensMatchedError)
                     {
                         message = Resources.AdalMultipleTokens;
                     }
 
-                    ex = new AadAuthenticationFailedWithoutPopupException(message, adalEx);
+                    ex = new AadAuthenticationFailedWithoutPopupException(message, msalException);
                 }
-                else if (adalEx.ErrorCode == AdalError.MissingFederationMetadataUrl ||
-                         adalEx.ErrorCode == AdalError.FederatedServiceReturnedError)
+                else if (msalException.ErrorCode == MsalError.MissingFederationMetadataUrl ||
+                         msalException.ErrorCode == MsalError.FederatedServiceReturnedError)
                 {
-                    ex = new AadAuthenticationFailedException(Resources.CredentialOrganizationIdMessage, adalEx);
+                    ex = new AadAuthenticationFailedException(Resources.CredentialOrganizationIdMessage, msalException);
                 }
                 else
                 {
-                    ex = adalEx;
+                    ex = msalException;
                 }
             }
             catch (Exception threadEx)
@@ -194,7 +193,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             TracingAdapter.Information(
                 Resources.UPNAcquireTokenContextTrace,
                 context.Authority,
-                context.CorrelationId,
+                string.Empty,
                 context.ValidateAuthority);
             TracingAdapter.Information(
                 Resources.UPNAcquireTokenConfigTrace,
@@ -204,24 +203,28 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                 config.ClientRedirectUri);
             if (promptAction == null || renew)
             {
-                result =context.AcquireTokenSilentAsync(config.ResourceClientUri, config.ClientId,
-                    new UserIdentifier(userId, UserIdentifierType.OptionalDisplayableId))
+                var account = context.GetAccountAsync(userId)
+                    .ConfigureAwait(false).GetAwaiter().GetResult();
+                result = context.AcquireTokenSilentAsync(_scopes, account)
                     .ConfigureAwait(false).GetAwaiter().GetResult();
             }
             else if (string.IsNullOrEmpty(userId) || password == null)
             {
-                var code = context.AcquireDeviceCodeAsync(config.ResourceClientUri, config.ClientId)
-                    .ConfigureAwait(false).GetAwaiter().GetResult();
-                promptAction(code?.Message);
-
-                result = context.AcquireTokenByDeviceCodeAsync(code)
-                    .ConfigureAwait(false).GetAwaiter().GetResult();
+                result = context.AcquireTokenWithDeviceCodeAsync(_scopes, deviceCodeResult =>
+                {
+                    promptAction(deviceCodeResult?.Message);
+                    return Task.FromResult(0);
+                }).ConfigureAwait(false).GetAwaiter().GetResult();
             }
             else
             {
-                    UserCredential credential = new UserCredential(userId);
-                    result = context.AcquireTokenAsync(config.ResourceClientUri, config.ClientId, credential)
-                        .ConfigureAwait(false).GetAwaiter().GetResult();
+                result = null;
+                /*
+                var account = context.GetAccountAsync(userId)
+                    .ConfigureAwait(false).GetAwaiter().GetResult();
+                result = context.AcquireTokenAsync(_scopes, account)
+                    .ConfigureAwait(false).GetAwaiter().GetResult();
+                */
             }
 
             return result;
@@ -261,12 +264,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             public void AuthorizeRequest(Action<string, string> authTokenSetter)
             {
                 tokenProvider.Renew(this);
-                authTokenSetter(AuthResult.AccessTokenType, AuthResult.AccessToken);
+                authTokenSetter("Bearer", AuthResult.AccessToken);
             }
 
             public string AccessToken { get { return AuthResult.AccessToken; } }
 
-            public string UserId { get { return AuthResult.UserInfo.DisplayableId; } }
+            public string UserId { get { return AuthResult.Account.Username; } }
 
             public string TenantId { get { return AuthResult.TenantId; } }
 
@@ -274,7 +277,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             {
                 get
                 {
-                    if (AuthResult.UserInfo.IdentityProvider != null)
+                    if (AuthResult.Account.Environment != null)
                     {
                         return Authentication.LoginType.LiveId;
                     }

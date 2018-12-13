@@ -12,27 +12,23 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
+using Microsoft.Identity.Client;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Microsoft.Azure.Commands.Common.Authentication
 {
     /// <summary>
-    /// State storage for token cache
+    /// Interface to platform-specific methods for securely storing client credentials
     /// </summary>
-    public interface IAzureTokenCache
+    public interface IApplicationAuthenticationProvider
     {
         /// <summary>
-        /// The serialized data from the token cache.
+        /// Retrieve ClientCredentials for an active directory application.
         /// </summary>
-        byte[] CacheData { get; set; }
-
-        /// <summary>
-        /// Get the user token cache.
-        /// </summary>
-        /// <returns></returns>
-        object GetUserCache();
-
-        /// <summary>
-        /// Clear all cached authentication data
-        /// </summary>
-        void Clear();
+        /// <param name="clientId">The active directory client Id of the application.</param>
+        /// <param name="audience">The audience to target</param>
+        /// <returns>authentication result which can be used for authentication with the given audience.</returns>
+        Task<AuthenticationResult> AuthenticateAsync(string clientId, string audience);
     }
 }

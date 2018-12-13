@@ -14,13 +14,12 @@
 
 using Hyak.Common;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.Rest;
-using Microsoft.Rest.Azure.Authentication;
 using System;
 using System.Linq;
 using System.Security;
 using Microsoft.Azure.Commands.Common.Authentication.Properties;
+using Microsoft.Identity.Client;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Factories
 {
@@ -78,10 +77,10 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Factories
             string resourceId = AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId)
         {
             IAccessToken token;
-            var cache = tokenCache as TokenCache;
+            var cache = tokenCache.GetUserCache() as TokenCache;
             if (cache == null)
             {
-                cache = TokenCache.DefaultShared;
+                cache = new TokenCache();
             }
 
             var configuration = GetAdalConfiguration(environment, tenant, resourceId, cache);
@@ -337,12 +336,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Factories
                                 context.Environment.GetTokenAudience(targetEndpoint)));
                         break;
                     case AzureAccount.AccountType.User:
-                        result = Rest.Azure.Authentication.UserTokenProvider.CreateCredentialsFromCache(
+                        result = UserTokenAuthenticationProvider.CreateCredentialsFromCache(
                            AdalConfiguration.PowerShellClientId,
                            tenant,
                            context.Account.Id,
                            env,
-                           tokenCache as TokenCache).ConfigureAwait(false).GetAwaiter().GetResult();
+                           tokenCache.GetUserCache() as TokenCache).ConfigureAwait(false).GetAwaiter().GetResult();
                         break;
                     case AzureAccount.AccountType.ServicePrincipal:
                         if (context.Account.IsPropertySet(AzureAccount.Property.CertificateThumbprint))
@@ -353,7 +352,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Factories
                                 new CertificateApplicationCredentialProvider(
                                     context.Account.GetThumbprint()),
                                 env,
-                                tokenCache as TokenCache).ConfigureAwait(false).GetAwaiter().GetResult();
+                                tokenCache.GetUserCache() as TokenCache).ConfigureAwait(false).GetAwaiter().GetResult();
                         }
                         else
                         {
@@ -362,7 +361,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Factories
                                 context.Account.Id,
                                 new KeyStoreApplicationCredentialProvider(tenant, KeyStore),
                                 env,
-                                tokenCache as TokenCache).ConfigureAwait(false).GetAwaiter().GetResult();
+                                tokenCache.GetUserCache() as TokenCache).ConfigureAwait(false).GetAwaiter().GetResult();
                         }
                         break;
                     default:
@@ -380,7 +379,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Factories
 
         public void RemoveUser(IAzureAccount account, IAzureTokenCache tokenCache)
         {
-            TokenCache cache = tokenCache as TokenCache;
+            TokenCache cache = tokenCache.GetUserCache() as TokenCache;
             if (cache != null && account != null && !string.IsNullOrEmpty(account.Id) && !string.IsNullOrWhiteSpace(account.Type))
             {
                 switch (account.Type)
@@ -493,37 +492,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Factories
 
         private void RemoveFromTokenCache(TokenCache cache, IAzureAccount account)
         {
-            if (cache != null && cache.Count > 0 && account != null && !string.IsNullOrWhiteSpace(account.Id) && !string.IsNullOrWhiteSpace(account.Type))
-            {
-                var items = cache.ReadItems().Where((i) => MatchCacheItem(account, i));
-                foreach (var item in items)
-                {
-                    cache.DeleteItem(item);
-                }
-            }
+            // Use app.RemoveAsync() to clear cache for user
         }
-
-        private bool MatchCacheItem(IAzureAccount account, TokenCacheItem item)
-        {
-            bool result = false;
-            if (account != null && !string.IsNullOrWhiteSpace(account.Type) && item != null)
-            {
-                switch (account.Type)
-                {
-                    case AzureAccount.AccountType.ServicePrincipal:
-                        result = string.Equals(account.Id, item.ClientId, StringComparison.OrdinalIgnoreCase);
-                        break;
-                    case AzureAccount.AccountType.User:
-                        result = string.Equals(account.Id, item.DisplayableId, StringComparison.OrdinalIgnoreCase)
-                            || (account.TenantMap != null && account.TenantMap.Any(
-                                (m) => string.Equals(m.Key, item.TenantId, StringComparison.OrdinalIgnoreCase)
-                                       && string.Equals(m.Value, item.UniqueId, StringComparison.OrdinalIgnoreCase)));
-                        break;
-                }
-            }
-
-            return result;
-        }
-
     }
 }
