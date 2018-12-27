@@ -74,7 +74,6 @@ namespace Microsoft.Azure.Commands.TestFx
             RmModules = new List<string>
             {
                 Helper.RMProfileModule,
-                Helper.RMResourceModule,
             };
 
             RecordMatcher = (ignoreResourcesClient, resourceProviders, userAgentsToIgnore) =>
