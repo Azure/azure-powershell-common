@@ -210,7 +210,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// <param name="cmdlet">the executing cmdlet</param>
         /// <param name="parameterName">The name of the parameter to return</param>
         /// <returns>true if the parameter was provided by the user, otherwise false</returns>
-        public static bool IsBound(this PSCmdlet cmdlet, string parameterName) 
+        public static bool IsBound(this PSCmdlet cmdlet, string parameterName)
         {
             return cmdlet.MyInvocation.BoundParameters.ContainsKey(parameterName);
         }
@@ -230,6 +230,11 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             {
                 return path;
             }
+        }
+
+        public static string TryResolvePathWithException(this PSCmdlet psCmdlet, string path)
+        {
+            return psCmdlet.ResolvePath(path);
         }
 
         public static string ResolvePath(this PSCmdlet psCmdlet, string path)
