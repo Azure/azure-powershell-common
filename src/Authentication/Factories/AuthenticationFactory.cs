@@ -434,6 +434,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Factories
                 tenant = environment.AdTenant ?? "Common";
             }
 
+            if (account.IsPropertySet(AzureAccount.Property.MSIWebAppsAdHoc))
+            {
+                return new ManagedServiceAccessTokenWebAppsMsiAdHoc(account, environment, tenant);
+            }
+
             return new ManagedServiceAccessToken(account, environment, GetResourceId(resourceId, environment), tenant);
         }
 

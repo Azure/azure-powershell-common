@@ -136,9 +136,15 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         MSILoginSecret = "MSILoginSecret",
 
         /// <summary>
+        /// Flag to recognize WebApps ad hoc
+        /// </summary>
+        MSIWebAppsAdHoc = "MSIWebAppsAdHoc",
+
+        /// <summary>
         /// Secret that may be used with service principal login
         /// </summary>
         ServicePrincipalSecret = "ServicePrincipalSecret";
+
         }
     }
 }

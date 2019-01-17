@@ -62,7 +62,9 @@
     <Compile Include="Authentication\ITokenProvider.cs" />
     <Compile Include="Authentication\KeyStoreApplicationCredentialProvider.cs" />
     <Compile Include="Authentication\ManagedServiceAccessToken.cs" />
+    <Compile Include="Authentication\ManagedServiceAccessTokenWebAppsMsiAdHoc.cs" />
     <Compile Include="Authentication\ManagedServiceTokenInfo.cs" />
+    <Compile Include="Authentication\ManagedServiceTokenInfoWebAppsMsiAdHoc.cs" />
     <Compile Include="Authentication\ProtectedFileTokenCache.cs" />
     <Compile Include="Authentication\RawAccessToken.cs" />
     <Compile Include="Authentication\RenewingTokenCredential.cs" />
