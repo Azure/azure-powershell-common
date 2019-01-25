@@ -25,6 +25,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         byte[] CacheData { get; set; }
 
         /// <summary>
+        /// Get the user token cache.
+        /// </summary>
+        /// <returns>The user token cache.</returns>
+        object GetUserCache();
+
+        /// <summary>
         /// Clear all cached authentication data
         /// </summary>
         void Clear();

@@ -28,6 +28,14 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public virtual byte[] CacheData {get; set;}
 
         /// <summary>
+        /// Get the user token cache.
+        /// </summary>
+        public object GetUserCache()
+        {
+            return null;
+        }
+
+        /// <summary>
         /// Remove all token cache state
         /// </summary>
         public virtual void Clear()
