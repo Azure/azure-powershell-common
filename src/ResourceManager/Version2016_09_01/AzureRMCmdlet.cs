@@ -46,6 +46,9 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         public const string AUX_HEADER_NAME = "x-ms-authorization-auxiliary";
         public const string AUX_TOKEN_PREFIX = "Bearer";
         public const string AUX_TOKEN_APPEND_CHAR = ";";
+        public const string WriteDebugKey = "WriteDebug";
+        public const string WriteVerboseKey = "WriteVerbose";
+        public const string WriteWarningKey = "WriteWarning";
 
         /// <summary>
         /// Creates new instance from AzureRMCmdlet and add the RPRegistration handler.
@@ -370,6 +373,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
 
         protected override void BeginProcessing()
         {
+            InitializeEventHandlers();
             AzureSession.Instance.ClientFactory.RemoveHandler(typeof(RPRegistrationDelegatingHandler));
             IAzureContext context;
             if (TryGetDefaultContext(out context)
@@ -499,6 +503,38 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             }
 
             return false;
+        }
+
+        private event EventHandler<StreamEventArgs> _writeDebugEvent;
+        private event EventHandler<StreamEventArgs> _writeVerboseEvent;
+        private event EventHandler<StreamEventArgs> _writeWarningEvent;
+
+        private void InitializeEventHandlers()
+        {
+            _writeDebugEvent -= WriteDebugSender;
+            _writeDebugEvent += WriteDebugSender;
+            _writeVerboseEvent -= WriteVerboseSender;
+            _writeVerboseEvent += WriteVerboseSender;
+            _writeWarningEvent -= WriteWarningSender;
+            _writeWarningEvent += WriteWarningSender;
+            AzureSession.Instance.RegisterComponent(WriteDebugKey, () => _writeDebugEvent);
+            AzureSession.Instance.RegisterComponent(WriteVerboseKey, () => _writeVerboseEvent);
+            AzureSession.Instance.RegisterComponent(WriteWarningKey, () => _writeWarningEvent);
+        }
+
+        private void WriteDebugSender(object sender, StreamEventArgs args)
+        {
+            WriteDebug(args.Message);
+        }
+
+        private void WriteVerboseSender(object sender, StreamEventArgs args)
+        {
+            WriteVerbose(args.Message);
+        }
+
+        private void WriteWarningSender(object sender, StreamEventArgs args)
+        {
+            WriteWarning(args.Message);
         }
     }
 }
