@@ -11,6 +11,8 @@
 namespace Microsoft.Azure.Management.Internal.ResourceManager.Version2018_06_01.Models
 {
     using Newtonsoft.Json;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Linq;
 
     /// <summary>
@@ -34,11 +36,13 @@ namespace Microsoft.Azure.Management.Internal.ResourceManager.Version2018_06_01.
         /// <param name="tenantId">The tenant ID. For example,
         /// 00000000-0000-0000-0000-000000000000.</param>
         /// <param name="displayName">The display name of the tenant.</param>
-        public TenantIdDescription(string id = default(string), string tenantId = default(string), string displayName = default(string))
+        /// <param name="domains">The list of domains for the tenant.</param>
+        public TenantIdDescription(string id = default(string), string tenantId = default(string), string displayName = default(string), IList<string> domains = default(IList<string>))
         {
             Id = id;
             TenantId = tenantId;
             DisplayName = displayName;
+            Domains = domains;
             CustomInit();
         }
 
@@ -66,6 +70,12 @@ namespace Microsoft.Azure.Management.Internal.ResourceManager.Version2018_06_01.
         /// </summary>
         [JsonProperty(PropertyName = "displayName")]
         public string DisplayName { get; private set; }
+
+        /// <summary>
+        /// Gets the list of domains for the tenant.
+        /// </summary>
+        [JsonProperty(PropertyName = "domains")]
+        public IList<string> Domains { get; private set; }
 
     }
 }
