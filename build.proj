@@ -16,24 +16,5 @@
     <Exec Command="dotnet msbuild build/pack.proj $(CommandArguments)" />
   </Target>
 
-  <Target Name="CpLicense">
-    <Exec Command="copy LICENSE.txt src\Aks" />
-    <Exec Command="copy LICENSE.txt src\Authentication.Abstractions" />
-    <Exec Command="copy LICENSE.txt src\Authorization" />
-    <Exec Command="copy LICENSE.txt src\Common" />
-    <Exec Command="copy LICENSE.txt src\Compute" />
-    <Exec Command="copy LICENSE.txt src\Graph.Rbac" />
-    <Exec Command="copy LICENSE.txt src\KeyVault" />
-    <Exec Command="copy LICENSE.txt src\Monitor" />
-    <Exec Command="copy LICENSE.txt src\Network" />
-    <Exec Command="copy LICENSE.txt src\PolicyInsights" />
-    <Exec Command="copy LICENSE.txt src\Probe.Test" />
-    <Exec Command="copy LICENSE.txt src\ResourceManager" />
-    <Exec Command="copy LICENSE.txt src\Storage" />
-    <Exec Command="copy LICENSE.txt src\Storage.Management" />
-    <Exec Command="copy LICENSE.txt src\Strategies" />
-    <Exec Command="copy LICENSE.txt src\Websites" />
-  </Target>
-
   <Target Name="All" DependsOnTargets="Build;Pack" />
 </Project>
