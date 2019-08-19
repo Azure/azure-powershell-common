@@ -1,5 +1,8 @@
-﻿using Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using Xunit;
+using Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters;
 
 namespace Microsoft.Azure.Commands.ResourceManager.Tests
 {
@@ -12,7 +15,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Tests
             var libNamespace = "Microsoft.Azure.Commands.Management.Compute.ArgumentCompleters";
             var className = "VmssSkuCompleterAttribute";
             var methodName = "GetSkuNames";
-            string script = new CompleterScriptBuilder(parameters, libNamespace, className, methodName).ToString();
+            string script = new ArgumentCompleterHelper.ScriptBuilder(parameters, libNamespace, className, methodName).ToString();
             Assert.Equal(@"param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
 $var0 = $fakeBoundParameter['Location']
 $var1 = $fakeBoundParameter['Type']
