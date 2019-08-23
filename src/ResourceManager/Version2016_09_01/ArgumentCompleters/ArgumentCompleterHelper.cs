@@ -95,7 +95,12 @@ $candidates | Where-Object {{ $_ -Like ""$wordToComplete*"" }} | Sort-Object | G
         /// <returns></returns>
         public static int HashContext(IAzureContext context)
         {
+            if (context == null) {
+                return hashForNullContext;
+            }
             return (context.Account.Id + context.Environment.Name + context.Subscription.Id + context.Tenant.Id).GetHashCode();
         }
+
+        private readonly static int hashForNullContext = "".GetHashCode();
     }
 }
