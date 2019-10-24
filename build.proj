@@ -13,7 +13,7 @@
   </Target>
 
   <Target Name="Pack">
-    <Exec Command="dotnet msbuild build/pack.proj $(CommandArguments)" />
+    <Exec Command="donet msbuild build/pack.proj $(CommandArguments)" />
   </Target>
 
   <Target Name="All" DependsOnTargets="Build;Pack" />
