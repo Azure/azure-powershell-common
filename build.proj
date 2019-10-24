@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <Target Name="Build">
-    <Exec Command="dotnet msbuild build/build.proj $(CommandArguments)" />
+    <Exec Command="donet msbuild build/build.proj $(CommandArguments)" />
   </Target>
 
   <Target Name="Pack">
