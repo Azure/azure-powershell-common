@@ -12,17 +12,16 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.Azure.Management.Internal.Resources.Models;
-using Microsoft.Azure.Management.Internal.Resources.Utilities.Models;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
-namespace Microsoft.Azure.Management.Internal.Resources.Utilities
+namespace Microsoft.Azure.Management.Internal.ResourceManager.Version2018_05_01.Models
 {
-    public static class ResourceManagementClientExtensions
+    public partial class GenericResource
     {
-        public static List<GenericResource> FilterResources(this IResourceManagementClient client, FilterResourcesOptions options)
-        {
-            return ResourceManagementClientExtensionsTemplate.FilterResources<IResourceManagementClient, GenericResource, GenericResourceFilter>(client, options);
-        }
+        /// <summary>
+        /// Gets or sets the resource group.
+        /// </summary>
+        [JsonProperty(PropertyName = "resourceGroupName")]
+        public string ResourceGroupName { get; set; }
     }
 }

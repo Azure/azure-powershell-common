@@ -12,17 +12,17 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.Azure.Management.Internal.Resources.Models;
-using Microsoft.Azure.Management.Internal.Resources.Utilities.Models;
-using System.Collections.Generic;
+using Microsoft.Azure.Management.Internal.ResourceManager.Version2018_05_01;
+using System.Management.Automation;
 
-namespace Microsoft.Azure.Management.Internal.Resources.Utilities
+namespace Microsoft.Azure.Commands.ResourceManager.Common.Version2018_05_01
 {
-    public static class ResourceManagementClientExtensions
+    /// <summary>
+    /// Cmdlet base class that implements AsJob using an AzureRmLongRunningJob
+    /// </summary>
+    public class AzureRmLongRunningCmdlet: AzureRMCmdletTemplate<ResourceManagementClient>
     {
-        public static List<GenericResource> FilterResources(this IResourceManagementClient client, FilterResourcesOptions options)
-        {
-            return ResourceManagementClientExtensionsTemplate.FilterResources<IResourceManagementClient, GenericResource, GenericResourceFilter>(client, options);
-        }
+        [Parameter(Mandatory=false, HelpMessage ="Run cmdlet in the background")]
+        public SwitchParameter AsJob { get; set;}
     }
 }

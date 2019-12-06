@@ -13,8 +13,6 @@
 // ----------------------------------------------------------------------------------
 
 using Microsoft.Azure.Commands.ResourceManager.Common.Properties;
-using Microsoft.Azure.Management.Internal.Resources;
-using Microsoft.Azure.Management.Internal.Resources.Models;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using System;
 using System.Collections.Generic;
@@ -24,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Models
 {
-    public class RPRegistrationDelegatingHandler : DelegatingHandler, ICloneable
+    public class RPRegistrationDelegatingHandler<TClient> : DelegatingHandler, ICloneable
     {
         private const short RetryCount = 3;
 
@@ -33,13 +31,13 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Models
         /// </summary>
         private HashSet<string> registeredProviders;
 
-        private Func<ResourceManagementClient> createClient;
+        private Func<TClient> createClient;
 
         private Action<string> writeDebug;
 
-        public ResourceManagementClient ResourceManagementClient { get; set; }
+        public TClient ResourceManagementClient { get; set; }
 
-        public RPRegistrationDelegatingHandler(Func<ResourceManagementClient> createClient, Action<string> writeDebug)
+        public RPRegistrationDelegatingHandler(Func<TClient> createClient, Action<string> writeDebug)
         {
             registeredProviders = new HashSet<string>();
             this.writeDebug = writeDebug;
@@ -61,8 +59,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Models
                     {
                         ResourceManagementClient = createClient();
                         writeDebug(string.Format(Resources.ResourceProviderRegisterAttempt, providerName));
-                        ResourceManagementClient.Providers.Register(providerName);
-                        Provider provider = null;
+                        var providers = typeof(TClient).GetProperty("Providers");
+                        var provider = providers.GetType().GetMethod("Register").Invoke(providers, new object[] { providerName });
+                        provider = null;
                         short retryCount = 0;
                         do
                         {
@@ -70,9 +69,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Models
                             {
                                 throw new TimeoutException();
                             }
-                            provider = ResourceManagementClient.Providers.Register(providerName);
+                            provider = providers.GetType().GetMethod("Register").Invoke(providers, new object[] { providerName });
                             TestMockSupport.Delay(1000);
-                        } while (provider.RegistrationState != RegistrationState.Registered.ToString());
+                        } while ((string)provider.GetType().GetProperty("RegistrationState").GetValue(provider) != "Registered");
                         writeDebug(string.Format(Resources.ResourceProviderRegisterSuccessful, providerName));
                     }
                     catch (Exception e)
@@ -108,7 +107,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Models
 
         public object Clone()
         {
-            return new RPRegistrationDelegatingHandler(createClient, writeDebug);
+            return new RPRegistrationDelegatingHandler<TClient>(createClient, writeDebug);
         }
     }
 }

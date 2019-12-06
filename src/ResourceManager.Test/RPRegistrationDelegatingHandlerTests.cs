@@ -12,7 +12,6 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.Azure.Commands.Common.Authentication.Models;
 using Microsoft.Azure.Management.Internal.Resources;
 using Microsoft.Azure.Management.Internal.Resources.Models;
 using Microsoft.Rest.Azure;
@@ -25,6 +24,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
+using RPRegistrationDelegatingHandler = Microsoft.Azure.Commands.Common.Authentication.Models.RPRegistrationDelegatingHandler<Microsoft.Azure.Management.Internal.Resources.ResourceManagementClient>;
 
 namespace Microsoft.Azure.Commands.ResourceManager.Test
 {

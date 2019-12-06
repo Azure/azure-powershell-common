@@ -11,13 +11,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ----------------------------------------------------------------------------------
-
+using Microsoft.Azure.Management.Internal.ResourceManager.Version2018_05_01;
+using Microsoft.Azure.Management.Internal.ResourceManager.Version2018_05_01.Models;
 using System;
 using System.Collections.Generic;
-using Microsoft.Azure.Management.Internal.Resources;
-using Microsoft.Azure.Management.Internal.Resources.Models;
 
-namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
+namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters.Version2018_05_01
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public class ResourceIdCompleterAttribute : ResourceIdCompleterAttributeTemplate

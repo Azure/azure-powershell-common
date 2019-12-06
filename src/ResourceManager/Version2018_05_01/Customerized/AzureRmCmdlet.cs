@@ -12,17 +12,14 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.Azure.Management.Internal.Resources.Models;
-using Microsoft.Azure.Management.Internal.Resources.Utilities.Models;
-using System.Collections.Generic;
+using Microsoft.Azure.Management.Internal.ResourceManager.Version2018_05_01;
 
-namespace Microsoft.Azure.Management.Internal.Resources.Utilities
+namespace Microsoft.Azure.Commands.ResourceManager.Common.Version2018_05_01
 {
-    public static class ResourceManagementClientExtensions
+    /// <summary>
+    /// Represents base class for Resource Manager cmdlets
+    /// </summary>
+    public abstract class AzureRMCmdlet : AzureRMCmdletTemplate<ResourceManagementClient>
     {
-        public static List<GenericResource> FilterResources(this IResourceManagementClient client, FilterResourcesOptions options)
-        {
-            return ResourceManagementClientExtensionsTemplate.FilterResources<IResourceManagementClient, GenericResource, GenericResourceFilter>(client, options);
-        }
     }
 }

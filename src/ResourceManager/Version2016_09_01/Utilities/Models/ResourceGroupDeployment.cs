@@ -12,13 +12,14 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.Azure.Management.Internal.Resources.Models;
+//using Microsoft.Azure.Management.Internal.Resources.Models;
 using System;
 using System.Collections.Generic;
 
 namespace Microsoft.Azure.Management.Internal.Resources.Utilities.Models
 {
-    public class ResourceGroupDeployment
+    //fixme
+    public class ResourceGroupDeployment<TMode, TLink> where TMode : struct, IConvertible
     {
         public string DeploymentName { get; set; }
 
@@ -30,9 +31,9 @@ namespace Microsoft.Azure.Management.Internal.Resources.Utilities.Models
 
         public DateTime? Timestamp { get; set; }
 
-        public DeploymentMode? Mode { get; set; }
+        public TMode? Mode { get; set; }
 
-        public TemplateLink TemplateLink { get; set; }
+        public TLink TemplateLink { get; set; }
 
         public string TemplateLinkString { get; set; }
 
@@ -42,14 +43,14 @@ namespace Microsoft.Azure.Management.Internal.Resources.Utilities.Models
 
         public string ParametersString
         {
-            get { return ResourcesExtensions.ConstructDeploymentVariableTable(Parameters); }
+            get { return ResourcesExtensionsTemplate.ConstructDeploymentVariableTable(Parameters); }
         }
 
         public Dictionary<string, DeploymentVariable> Outputs { get; set; }
 
         public string OutputsString
         {
-            get { return ResourcesExtensions.ConstructDeploymentVariableTable(Outputs); }
+            get { return ResourcesExtensionsTemplate.ConstructDeploymentVariableTable(Outputs); }
         }
     }
 }

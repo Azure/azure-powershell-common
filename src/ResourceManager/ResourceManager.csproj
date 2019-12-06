@@ -57,4 +57,8 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Version2018_06_01\Utilities\" />
+  </ItemGroup>
+
 </Project>

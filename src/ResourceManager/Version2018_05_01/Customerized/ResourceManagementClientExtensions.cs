@@ -12,11 +12,11 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.Azure.Management.Internal.Resources.Models;
+using Microsoft.Azure.Management.Internal.ResourceManager.Version2018_05_01.Models;
 using Microsoft.Azure.Management.Internal.Resources.Utilities.Models;
 using System.Collections.Generic;
 
-namespace Microsoft.Azure.Management.Internal.Resources.Utilities
+namespace Microsoft.Azure.Management.Internal.Resources.Utilities.Version2018_05_01
 {
     public static class ResourceManagementClientExtensions
     {

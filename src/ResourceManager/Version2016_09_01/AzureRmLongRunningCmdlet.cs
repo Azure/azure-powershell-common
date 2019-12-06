@@ -12,21 +12,15 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.WindowsAzure.Commands.Utilities.Common;
-using System;
-using System.Collections;
-using System.Linq;
+using Microsoft.Azure.Management.Internal.Resources;
 using System.Management.Automation;
-using System.Management.Automation.Host;
-using System.Threading;
-using Microsoft.Azure.Management.Internal.Resources.Utilities;
 
 namespace Microsoft.Azure.Commands.ResourceManager.Common
 {
     /// <summary>
     /// Cmdlet base class that implements AsJob using an AzureRmLongRunningJob
     /// </summary>
-    public class AzureRmLongRunningCmdlet : AzureRMCmdlet
+    public class AzureRmLongRunningCmdlet : AzureRMCmdletTemplate<ResourceManagementClient>
     {
         [Parameter(Mandatory=false, HelpMessage ="Run cmdlet in the background")]
         public SwitchParameter AsJob { get; set;}
