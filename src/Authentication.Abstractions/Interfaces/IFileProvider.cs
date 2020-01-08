@@ -28,6 +28,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         string FilePath { get; }
 
         /// <summary>
+        /// Determines whether the file exists
+        /// </summary>
+        bool FileExists { get; }
+
+        /// <summary>
         /// The stream of the files contents
         /// </summary>
         Stream Stream { get; }
