@@ -42,6 +42,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         public IAuthenticationFactory AuthenticationFactory { get; set; }
 
         /// <summary>
+        /// Gets or sets the Azure SSH authentication factory.
+        /// </summary>
+        public ISSHAuthenticationFactory SSHAuthenticationFactory { get; set; }
+
+        /// <summary>
         /// Gets or sets data persistence store.
         /// </summary>
         public IDataStore DataStore { get; set; }
