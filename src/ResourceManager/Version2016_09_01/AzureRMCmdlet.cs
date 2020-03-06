@@ -172,7 +172,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         /// Whether this cmdlet requires default context.
         /// If false, the logic of referencing default context would be omitted.
         /// </summary>
-        protected virtual bool RequireDefaultContext => true;
+        protected virtual bool RequireDefaultContext() { return true; }
 
         /// <summary>
         /// Return a default context safely if it is available, without throwing if it is not setup
@@ -333,7 +333,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
 
             IAzureContext context;
             _qosEvent.Uid = "defaultid";
-            if (RequireDefaultContext && TryGetDefaultContext(out context))
+            if (RequireDefaultContext() && TryGetDefaultContext(out context))
             {
                 _qosEvent.SubscriptionId = context.Subscription?.Id;
                 _qosEvent.TenantId = context.Tenant?.Id;
@@ -348,7 +348,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         {
             base.LogCmdletStartInvocationInfo();
             IAzureContext context;
-            if (RequireDefaultContext
+            if (RequireDefaultContext()
                 && TryGetDefaultContext(out context)
                 && context.Account != null
                 && context.Account.Id != null)
@@ -356,13 +356,6 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
                 WriteDebugWithTimestamp(string.Format("using account id '{0}'...",
                 context.Account.Id));
             }
-        }
-
-        protected override void LogCmdletEndInvocationInfo()
-        {
-            base.LogCmdletEndInvocationInfo();
-            string message = string.Format("{0} end processing.", this.GetType().Name);
-            WriteDebugWithTimestamp(message);
         }
 
         protected override void SetupDebuggingTraces()
@@ -397,7 +390,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             InitializeEventHandlers();
             AzureSession.Instance.ClientFactory.RemoveHandler(typeof(RPRegistrationDelegatingHandler));
             IAzureContext context;
-            if (RequireDefaultContext
+            if (RequireDefaultContext()
                 && TryGetDefaultContext(out context)
                 && context.Account != null
                 && context.Subscription != null)
