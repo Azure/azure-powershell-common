@@ -49,6 +49,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         public const string WriteDebugKey = "WriteDebug";
         public const string WriteVerboseKey = "WriteVerbose";
         public const string WriteWarningKey = "WriteWarning";
+        public const string EnqueueDebugKey = "EnqueueDebug";
 
         /// <summary>
         /// Creates new instance from AzureRMCmdlet and add the RPRegistration handler.
@@ -519,6 +520,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         private event EventHandler<StreamEventArgs> _writeDebugEvent;
         private event EventHandler<StreamEventArgs> _writeVerboseEvent;
         private event EventHandler<StreamEventArgs> _writeWarningEvent;
+        private event EventHandler<StreamEventArgs> _enqueueDebugEvent;
 
         private void InitializeEventHandlers()
         {
@@ -528,9 +530,12 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             _writeVerboseEvent += WriteVerboseSender;
             _writeWarningEvent -= WriteWarningSender;
             _writeWarningEvent += WriteWarningSender;
-            AzureSession.Instance.RegisterComponent(WriteDebugKey, () => _writeDebugEvent);
-            AzureSession.Instance.RegisterComponent(WriteVerboseKey, () => _writeVerboseEvent);
-            AzureSession.Instance.RegisterComponent(WriteWarningKey, () => _writeWarningEvent);
+            _enqueueDebugEvent -= EnqueueDebugSender;
+            _enqueueDebugEvent += EnqueueDebugSender;
+            AzureSession.Instance.RegisterComponent(WriteDebugKey, () => _writeDebugEvent, true);
+            AzureSession.Instance.RegisterComponent(WriteVerboseKey, () => _writeVerboseEvent, true);
+            AzureSession.Instance.RegisterComponent(WriteWarningKey, () => _writeWarningEvent, true);
+            AzureSession.Instance.RegisterComponent(EnqueueDebugKey, () => _enqueueDebugEvent, true);
         }
 
         private void WriteDebugSender(object sender, StreamEventArgs args)
@@ -546,6 +551,11 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         private void WriteWarningSender(object sender, StreamEventArgs args)
         {
             WriteWarning(args.Message);
+        }
+
+        private void EnqueueDebugSender(object sender, StreamEventArgs args)
+        {
+            DebugMessages.Enqueue(args.Message);
         }
     }
 }
