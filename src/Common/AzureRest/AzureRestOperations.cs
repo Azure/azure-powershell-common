@@ -38,7 +38,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.AzureRest
         /// </summary>
         public AzureRestClient Client { get; private set; }
 
-        public async Task<AzureOperationResponse<T>> BeginHttpMessagesAsync<T>(HttpMethod method, string path, Dictionary<string, List<string>> queries = null, string fragment = null, string content = null, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default)
+        public async Task<AzureOperationResponse<T>> BeginHttpMessagesAsync<T>(HttpMethod method, string path, Dictionary<string, List<string>> queries = null, string fragment = null, string content = null, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (path == null)
             {
