@@ -16,7 +16,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.AzureRest
         ServiceClientCredentials Credentials { get; }
 
         /// <summary>
-        /// Gets the IOperations.
+        /// Gets the IAzureRestOperations.
         /// </summary>
         IAzureRestOperations Operations { get; }
     }

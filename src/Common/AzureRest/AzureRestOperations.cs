@@ -12,7 +12,9 @@ namespace Microsoft.WindowsAzure.Commands.Common.AzureRest
 {
     internal partial class AzureRestOperations : IServiceOperations<AzureRestClient>, IAzureRestOperations
     {
+        private static readonly HttpMethod PATCH = new HttpMethod("PATCH");
 
+        private static readonly string API_VERSION = "api-version";
         /// <summary>
         /// Initializes a new instance of the AzureRestOperations class.
         /// </summary>
@@ -208,32 +210,11 @@ namespace Microsoft.WindowsAzure.Commands.Common.AzureRest
             return _result;
         }
 
-        public async Task<T> GetByResouceIdAsync<T>(string resourceId, string apiVersion, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<T> BeginHttpGetMessagesAsync<T>(string resourceUri, string apiVersion, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             Dictionary<string, List<string>> queries = new Dictionary<string, List<string>>();
-            queries.Add("api-version", new List<string> { apiVersion });
+            queries.Add(API_VERSION, new List<string> { apiVersion });
             using (var _result = await BeginHttpMessagesAsync<T>(method: HttpMethod.Get,
-                                                                path: resourceId,
-                                                                queries: queries,
-                                                                fragment: null,
-                                                                content: null,
-                                                                customHeaders: null,
-                                                                cancellationToken: cancellationToken).ConfigureAwait(false))
-            {
-                return _result.Body;
-            }
-        }
-
-        public T GetByResouceId<T>(string resourceId, string apiVersion, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return GetByResouceIdAsync<T>(resourceId, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
-        }
-
-        public async Task<List<T>> GetResouceListAsync<T>(string resourceUri, string apiVersion, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            Dictionary<string, List<string>> queries = new Dictionary<string, List<string>>();
-            queries.Add("api-version", new List<string> { apiVersion });
-            using (var _result = await BeginHttpMessagesAsync<List<T>>(method: HttpMethod.Get,
                                                                 path: resourceUri,
                                                                 queries: queries,
                                                                 fragment: null,
@@ -243,33 +224,72 @@ namespace Microsoft.WindowsAzure.Commands.Common.AzureRest
             {
                 return _result.Body;
             }
+        }
+
+        public async Task BeginHttpDeleteMessagesAsync(string resourceUri, string apiVersion, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            Dictionary<string, List<string>> queries = new Dictionary<string, List<string>>();
+            queries.Add(API_VERSION, new List<string> { apiVersion });
+            using (var _result = await BeginHttpMessagesAsync<Object>(method: HttpMethod.Delete,
+                                                                path: resourceUri,
+                                                                queries: queries,
+                                                                fragment: null,
+                                                                content: null,
+                                                                customHeaders: null,
+                                                                cancellationToken: cancellationToken).ConfigureAwait(false))
+            {
+                // no return required
+            }
+        }
+
+
+        public async Task<T> BeginHttpUpdateMessagesAsync<T>(HttpMethod method, string resourceUri, string apiVersion, string content, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            Dictionary<string, List<string>> queries = new Dictionary<string, List<string>>();
+            queries.Add(API_VERSION, new List<string> { apiVersion });
+            using (var _result = await BeginHttpMessagesAsync<T>(method: method,
+                                                                path: resourceUri,
+                                                                queries: queries,
+                                                                fragment: null,
+                                                                content: content,
+                                                                customHeaders: null,
+                                                                cancellationToken: cancellationToken).ConfigureAwait(false))
+            {
+                return _result.Body;
+            }
+        }
+        public T GetResouce<T>(string resourceId, string apiVersion, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return BeginHttpGetMessagesAsync<T>(resourceId, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
         }
 
         public List<T> GetResouceList<T>(string resourceUri, string apiVersion, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
-        { 
-            return GetResouceListAsync<T>(resourceUri, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
-        }
-
-        public async Task<IPage<T>> GetResoucePageAsync<T>(string resourceUri, string apiVersion, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            Dictionary<string, List<string>> queries = new Dictionary<string, List<string>>();
-            queries.Add("api-version", new List<string> { apiVersion });
-            using (var _result = await BeginHttpMessagesAsync<IPage<T>>(method: HttpMethod.Get,
-                                                                path: resourceUri,
-                                                                queries: queries,
-                                                                fragment: null,
-                                                                content: null,
-                                                                customHeaders: null,
-                                                                cancellationToken: cancellationToken).ConfigureAwait(false))
-            {
-                return _result.Body;
-            }
+            return BeginHttpGetMessagesAsync<List<T>>(resourceUri, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
         }
 
         public IPage<T> GetResoucePage<T>(string resourceUri, string apiVersion, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return GetResoucePageAsync<T>(resourceUri, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
+            return BeginHttpGetMessagesAsync<IPage<T>>(resourceUri, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
         }
 
+        public void DeleteResouce(string resourceUri, string apiVersion, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            BeginHttpDeleteMessagesAsync(resourceUri, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
+        }
+
+        public T PutResouce<T>(string resourceUri, string apiVersion, string content, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return BeginHttpUpdateMessagesAsync<T>(HttpMethod.Put, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
+        }
+
+        public T PostResouce<T>(string resourceUri, string apiVersion, string content, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return BeginHttpUpdateMessagesAsync<T>(HttpMethod.Post, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
+        }
+        public T PatchResouce<T>(string resourceUri, string apiVersion, string content, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return BeginHttpUpdateMessagesAsync<T>(PATCH, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
+        }
     }
 }
