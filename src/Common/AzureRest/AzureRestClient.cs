@@ -3,6 +3,7 @@ using Microsoft.Rest.Azure;
 using Microsoft.Rest.Serialization;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Net.Http;
 
 namespace Microsoft.WindowsAzure.Commands.Common.AzureRest
 {
@@ -24,7 +25,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.AzureRest
 
         public IAzureRestOperations Operations { get; private set; }
 
-        protected AzureRestClient(params System.Net.Http.DelegatingHandler[] handlers)
+        protected AzureRestClient(params DelegatingHandler[] handlers)
         {
             Initialize();
         }
@@ -35,6 +36,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.AzureRest
             {
                 throw new System.ArgumentNullException("baseUri");
             }
+            BaseUri = baseUri;
             if (credentials == null)
             {
                 throw new System.ArgumentNullException("credentials");
