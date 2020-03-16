@@ -635,7 +635,20 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
                 return ResourceManager.GetString("BreakingChangesAttributesUsageChangeMessageConsole", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   The cmdlet is in experimental stage. The function may not be enabled in current subscription.
+        /// </summary>
+        public static string ExperimentalCmdletMessage
+        {
+            get
+            {
+                return ResourceManager.GetString("ExperimentalCmdletMessage", resourceCulture);
+            }
+        }
+
         
+
         /// <summary>
         ///   Looks up a localized string similar to CACHERUNTIMEURL.
         /// </summary>
