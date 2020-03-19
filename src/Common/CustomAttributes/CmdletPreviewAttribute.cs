@@ -21,16 +21,16 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
     [AttributeUsage(
      AttributeTargets.Class,
      AllowMultiple = true)]
-    public class CmdletExperimentationAttribute : System.Attribute
+    public class CmdletPreviewAttribute : System.Attribute
     {
         public string _message;
 
-        public CmdletExperimentationAttribute()
+        public CmdletPreviewAttribute()
         {
-            this._message = Resources.ExperimentalCmdletMessage;
+            this._message = Resources.PreviewCmdletMessage;
         }
 
-        public CmdletExperimentationAttribute(string message)
+        public CmdletPreviewAttribute(string message)
         {
             this._message = message;
         }

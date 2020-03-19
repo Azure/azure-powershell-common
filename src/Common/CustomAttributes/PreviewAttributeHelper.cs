@@ -20,7 +20,7 @@ using System.Reflection;
 
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 {
-    public class ExperimentationAttributeHelper
+    public class PreviewAttributeHelper
     {
         public const string SUPPRESS_ERROR_OR_WARNING_MESSAGE_ENV_VARIABLE_NAME = "SuppressAzurePowerShellBreakingChangeWarnings";
 
@@ -49,36 +49,36 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
                 return;
             }
 
-            List<CmdletExperimentationAttribute> attributes = new List<CmdletExperimentationAttribute>(GetAllAttributesInType(type, invocationInfo));
+            List<CmdletPreviewAttribute> attributes = new List<CmdletPreviewAttribute>(GetAllAttributesInType(type, invocationInfo));
 
             if (attributes != null && attributes.Count > 0)
             {
-                foreach (CmdletExperimentationAttribute attribute in attributes)
+                foreach (CmdletPreviewAttribute attribute in attributes)
                 {
                     attribute.PrintCustomAttributeInfo(writeOutput);
                 }
             }
         }
 
-        private static IEnumerable<CmdletExperimentationAttribute> GetAllAttributesInType(Type type, InvocationInfo invocationInfo)
+        private static IEnumerable<CmdletPreviewAttribute> GetAllAttributesInType(Type type, InvocationInfo invocationInfo)
         {
-            List<CmdletExperimentationAttribute> attributeList = new List<CmdletExperimentationAttribute>();
+            List<CmdletPreviewAttribute> attributeList = new List<CmdletPreviewAttribute>();
 
-            attributeList.AddRange(type.GetCustomAttributes(typeof(CmdletExperimentationAttribute), false).Cast<CmdletExperimentationAttribute>());
+            attributeList.AddRange(type.GetCustomAttributes(typeof(CmdletPreviewAttribute), false).Cast<CmdletPreviewAttribute>());
 
             foreach (MethodInfo m in type.GetRuntimeMethods())
             {
-                attributeList.AddRange((m.GetCustomAttributes(typeof(CmdletExperimentationAttribute), false).Cast<CmdletExperimentationAttribute>()));
+                attributeList.AddRange((m.GetCustomAttributes(typeof(CmdletPreviewAttribute), false).Cast<CmdletPreviewAttribute>()));
             }
 
             foreach (FieldInfo f in type.GetRuntimeFields())
             {
-                attributeList.AddRange(f.GetCustomAttributes(typeof(CmdletExperimentationAttribute), false).Cast<CmdletExperimentationAttribute>());
+                attributeList.AddRange(f.GetCustomAttributes(typeof(CmdletPreviewAttribute), false).Cast<CmdletPreviewAttribute>());
             }
 
             foreach (PropertyInfo p in type.GetRuntimeProperties())
             {
-                attributeList.AddRange(p.GetCustomAttributes(typeof(CmdletExperimentationAttribute), false).Cast<CmdletExperimentationAttribute>());
+                attributeList.AddRange(p.GetCustomAttributes(typeof(CmdletPreviewAttribute), false).Cast<CmdletPreviewAttribute>());
             }
 
             return invocationInfo == null ? attributeList : attributeList.Where(e => e.IsApplicableToInvocation(invocationInfo));

@@ -2560,7 +2560,19 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
                 return ResourceManager.GetString("PortalInstructionsGit", resourceCulture);
             }
         }
+
+        /// <summary>
+        /// Looks up a localized string similar to This cmdlet is in preview. The functionality may not be available in the selected subscription.
+        /// </summary>
+        public static string PreviewCmdletMessage
+        {
+            get
+            {
+                return ResourceManager.GetString("PreviewCmdletMessage", resourceCulture);
+            }
+        }
         
+
         /// <summary>
         ///   Looks up a localized string similar to A value for the Primary Peer Subnet has to be provided..
         /// </summary>
