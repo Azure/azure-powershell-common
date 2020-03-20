@@ -20,7 +20,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 {
     [AttributeUsage(
      AttributeTargets.Class,
-     AllowMultiple = true)]
+     AllowMultiple = false)]
     public class CmdletPreviewAttribute : System.Attribute
     {
         public string _message;

@@ -20,7 +20,7 @@ using System.Reflection;
 
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 {
-    public class PreviewAttributeHelper
+    internal class PreviewAttributeHelper
     {
         public const string SUPPRESS_ERROR_OR_WARNING_MESSAGE_ENV_VARIABLE_NAME = "SuppressAzurePowerShellBreakingChangeWarnings";
 
