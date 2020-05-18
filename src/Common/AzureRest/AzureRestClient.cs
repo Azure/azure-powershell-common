@@ -31,6 +31,8 @@ namespace Microsoft.Azure.Internal.Common
 
         public IAzureRestOperations Operations { get; private set; }
 
+        public IAzureRestGenericOperations GenericOperations { get; private set; }
+
         public bool EndsWithSlash { get; private set; }
 
         protected AzureRestClient(params DelegatingHandler[] handlers) : base(handlers)
@@ -67,6 +69,7 @@ namespace Microsoft.Azure.Internal.Common
         private void Initialize()
         {
             Operations = new AzureRestOperations(this);
+            GenericOperations = new AzureRestGenericOperations(this);
             BaseUri = new System.Uri("https://management.azure.com");
             AcceptLanguage = "en-US";
             LongRunningOperationRetryTimeout = 30;
