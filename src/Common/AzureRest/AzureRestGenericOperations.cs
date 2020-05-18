@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Azure.Internal.Common
 {
-    internal partial class AzureRestOperations : IServiceOperations<AzureRestClient>, IAzureRestOperations
+    internal partial class AzureRestGenericOperations : IServiceOperations<AzureRestClient>, IAzureRestOperations
     {
         private static readonly HttpMethod PATCH = new HttpMethod("PATCH");
 
