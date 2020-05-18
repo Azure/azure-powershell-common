@@ -24,7 +24,7 @@ namespace Microsoft.Azure.Internal.Common
         /// <exception cref="System.ArgumentNullException">
         /// Thrown when a required parameter is null
         /// </exception>
-        internal AzureRestOperations(AzureRestClient client)
+        internal AzureRestGenericOperations(AzureRestClient client)
         {
             if (client == null)
             {
