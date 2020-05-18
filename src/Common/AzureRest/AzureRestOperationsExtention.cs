@@ -210,7 +210,7 @@ namespace Microsoft.Azure.Internal.Common
             }
         }
 
-        public async Task BeginHttpDeleteMessagesAsyncGeneric(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<string> BeginHttpDeleteMessagesAsyncGeneric(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             IDictionary<string, IList<string>> queries = new Dictionary<string, IList<string>>();
             if (apiVersion != null)
@@ -255,7 +255,7 @@ namespace Microsoft.Azure.Internal.Common
 
         public string DeleteResouceGeneric(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            BeginHttpDeleteMessagesAsyncGeneric(resourceUri, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
+            return BeginHttpDeleteMessagesAsyncGeneric(resourceUri, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
         }
 
         public string PutResouceGeneric(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
