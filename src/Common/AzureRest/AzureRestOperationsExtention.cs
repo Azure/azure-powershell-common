@@ -210,6 +210,25 @@ namespace Microsoft.Azure.Internal.Common
             }
         }
 
+        public async Task<AzureOperationResponse<string>> BeginHttpGetMessagesAsyncGenericFullResponse(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            IDictionary<string, IList<string>> queries = new Dictionary<string, IList<string>>();
+            if(apiVersion != null)
+            {
+                queries.Add(API_VERSION, new List<string> { apiVersion });
+            }
+            using (var _result = await BeginHttpMessagesAsyncGeneric(method: HttpMethod.Get,
+                                                                path: resourceUri,
+                                                                queries: queries,
+                                                                fragment: null,
+                                                                content: null,
+                                                                customHeaders: null,
+                                                                cancellationToken: cancellationToken).ConfigureAwait(false))
+            {
+                return _result;
+            }
+        }
+
         public async Task<string> BeginHttpDeleteMessagesAsyncGeneric(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             IDictionary<string, IList<string>> queries = new Dictionary<string, IList<string>>();
@@ -229,6 +248,24 @@ namespace Microsoft.Azure.Internal.Common
             }
         }
 
+        public async Task<AzureOperationResponse<string>> BeginHttpDeleteMessagesAsyncGenericFullResponse(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            IDictionary<string, IList<string>> queries = new Dictionary<string, IList<string>>();
+            if (apiVersion != null)
+            {
+                queries.Add(API_VERSION, new List<string> { apiVersion });
+            }
+            using (var _result = await BeginHttpMessagesAsyncGeneric(method: HttpMethod.Delete,
+                                                                path: resourceUri,
+                                                                queries: queries,
+                                                                fragment: null,
+                                                                content: null,
+                                                                customHeaders: null,
+                                                                cancellationToken: cancellationToken).ConfigureAwait(false))
+            {
+                return (_result==null)? default(AzureOperationResponse<string>) : _result;
+            }
+        }
 
         public async Task<string> BeginHttpUpdateMessagesAsyncGeneric(HttpMethod method, string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -248,6 +285,26 @@ namespace Microsoft.Azure.Internal.Common
                 return (_result==null)? default(string) : _result.Body;
             }
         }
+
+        public async Task<AzureOperationResponse<string>> BeginHttpUpdateMessagesAsyncGenericFullResponse(HttpMethod method, string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            IDictionary<string, IList<string>> queries = new Dictionary<string, IList<string>>();
+            if (apiVersion != null)
+            {
+                queries.Add(API_VERSION, new List<string> { apiVersion });
+            }
+            using (var _result = await BeginHttpMessagesAsyncGeneric(method: method,
+                                                                path: resourceUri,
+                                                                queries: queries,
+                                                                fragment: null,
+                                                                content: content,
+                                                                customHeaders: null,
+                                                                cancellationToken: cancellationToken).ConfigureAwait(false))
+            {
+                return (_result==null)? default(AzureOperationResponse<string>) : _result;
+            }
+        }
+
         public string GetResouceGeneric(string resourceId, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             return BeginHttpGetMessagesAsyncGeneric(resourceId, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
@@ -270,6 +327,30 @@ namespace Microsoft.Azure.Internal.Common
         public string PatchResouceGeneric(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             return BeginHttpUpdateMessagesAsyncGeneric(PATCH, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
+        }
+
+        public AzureOperationResponse<string> GetResouceGenericFullResponse(string resourceId, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return BeginHttpGetMessagesAsyncGenericFullResponse(resourceId, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
+        }
+
+        public AzureOperationResponse<string> DeleteResouceGenericFullResponse(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return BeginHttpDeleteMessagesAsyncGenericFullResponse(resourceUri, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
+        }
+
+        public AzureOperationResponse<string> PutResouceGenericFullResponse(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return BeginHttpUpdateMessagesAsyncGenericFullResponse(HttpMethod.Put, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
+        }
+
+        public AzureOperationResponse<string> PostResouceGenericFullResponse(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return BeginHttpUpdateMessagesAsyncGenericFullResponse(HttpMethod.Post, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
+        }
+        public AzureOperationResponse<string> PatchResouceGenericFullResponse(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return BeginHttpUpdateMessagesAsyncGenericFullResponse(PATCH, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
         }
     }
 }
