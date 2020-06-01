@@ -217,16 +217,13 @@ namespace Microsoft.Azure.Internal.Common
             {
                 queries.Add(API_VERSION, new List<string> { apiVersion });
             }
-            using (var _result = await BeginHttpMessagesAsyncGeneric(method: HttpMethod.Get,
+            return await BeginHttpMessagesAsyncGeneric(method: HttpMethod.Get,
                                                                 path: resourceUri,
                                                                 queries: queries,
                                                                 fragment: null,
                                                                 content: null,
                                                                 customHeaders: null,
-                                                                cancellationToken: cancellationToken).ConfigureAwait(false))
-            {
-                return _result;
-            }
+                                                                cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<string> BeginHttpDeleteMessagesAsyncGeneric(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
@@ -255,16 +252,14 @@ namespace Microsoft.Azure.Internal.Common
             {
                 queries.Add(API_VERSION, new List<string> { apiVersion });
             }
-            using (var _result = await BeginHttpMessagesAsyncGeneric(method: HttpMethod.Delete,
+            
+            return await BeginHttpMessagesAsyncGeneric(method: HttpMethod.Delete,
                                                                 path: resourceUri,
                                                                 queries: queries,
                                                                 fragment: null,
                                                                 content: null,
                                                                 customHeaders: null,
-                                                                cancellationToken: cancellationToken).ConfigureAwait(false))
-            {
-                return (_result==null)? default(AzureOperationResponse<string>) : _result;
-            }
+                                                                cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<string> BeginHttpUpdateMessagesAsyncGeneric(HttpMethod method, string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
@@ -293,16 +288,14 @@ namespace Microsoft.Azure.Internal.Common
             {
                 queries.Add(API_VERSION, new List<string> { apiVersion });
             }
-            using (var _result = await BeginHttpMessagesAsyncGeneric(method: method,
+
+            return await BeginHttpMessagesAsyncGeneric(method: method,
                                                                 path: resourceUri,
                                                                 queries: queries,
                                                                 fragment: null,
                                                                 content: content,
                                                                 customHeaders: null,
-                                                                cancellationToken: cancellationToken).ConfigureAwait(false))
-            {
-                return (_result==null)? default(AzureOperationResponse<string>) : _result;
-            }
+                                                                cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
         public string GetResouceGeneric(string resourceId, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
