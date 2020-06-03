@@ -112,57 +112,7 @@ namespace Microsoft.Azure.Internal.Common
             }
             HttpStatusCode _statusCode = _httpResponse.StatusCode;
             cancellationToken.ThrowIfCancellationRequested();
-            /*string _responseContent = null;
-            if ((int)_statusCode >= 300 && (int)_statusCode < 400)
-            {
-                var ex = new NotImplementedException(string.Format("Redirection status code '{0}' is not supported", _statusCode));
-                throw ex;
-            }
-            else if ((int)_statusCode >= 400 && (int)_statusCode < 500)
-            {
-                var ex = new CloudException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                try
-                {
-                    _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    CloudError _errorBody = Rest.Serialization.SafeJsonConvert.DeserializeObject<CloudError>(_responseContent, Client.DeserializationSettings);
-                    if (_errorBody != null)
-                    {
-                        ex = new CloudException(_errorBody.Message);
-                        ex.Body = _errorBody;
-                    }
-                }
-                catch (Newtonsoft.Json.JsonException)
-                {
-                    // Ignore the exception
-                }
-                ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
-                ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
-                if (_httpResponse.Headers.Contains("x-ms-request-id"))
-                {
-                    ex.RequestId = _httpResponse.Headers.GetValues("x-ms-request-id").FirstOrDefault();
-                }
-                if (_shouldTrace)
-                {
-                    ServiceClientTracing.Error(_invocationId, ex);
-                }
-                _httpRequest.Dispose();
-                if (_httpResponse != null)
-                {
-                    _httpResponse.Dispose();
-                }
-                throw ex;
-            }
-            else if ((int)_statusCode >= 500 && (int)_statusCode < 600)
-            {
-                var ex = new CloudException(string.Format("Server Error with status code '{0}'", _statusCode));
-                throw ex;
-            }
-            else if ((int)_statusCode < 200 && (int)_statusCode > 600)
-            {
-                var ex = new CloudException(string.Format("Unknow status code '{0}'", _statusCode));
-                throw ex;
-            }*/
-
+            
             // Create Result
             var _result = new AzureOperationResponse<string>();
             _result.Request = _httpRequest;
@@ -171,17 +121,6 @@ namespace Microsoft.Azure.Internal.Common
             {
                 _result.RequestId = _httpResponse.Headers.GetValues("x-ms-request-id").FirstOrDefault();
             }
-            // Deserialize Response
-            /*if ((int)_statusCode == 200)
-            {
-                _result.Body = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-            }
-            if ((int)_statusCode > 200)
-            {
-                _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return null;
-            }*/
-
 
             _result.Body = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             if (_shouldTrace)
