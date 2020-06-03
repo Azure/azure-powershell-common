@@ -88,10 +88,8 @@ namespace Microsoft.Azure.Internal.Common
                 }
             }
             // Serialize Request
-            string _requestContent = null;
             if (content != null)
             {
-                //_requestContent = Rest.Serialization.SafeJsonConvert.SerializeObject(content, Client.SerializationSettings);
                 _httpRequest.Content = new StringContent((string)content, System.Text.Encoding.UTF8);
                 _httpRequest.Content.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json; charset=utf-8");
             }
@@ -114,7 +112,7 @@ namespace Microsoft.Azure.Internal.Common
             }
             HttpStatusCode _statusCode = _httpResponse.StatusCode;
             cancellationToken.ThrowIfCancellationRequested();
-            string _responseContent = null;
+            /*string _responseContent = null;
             if ((int)_statusCode >= 300 && (int)_statusCode < 400)
             {
                 var ex = new NotImplementedException(string.Format("Redirection status code '{0}' is not supported", _statusCode));
@@ -163,7 +161,7 @@ namespace Microsoft.Azure.Internal.Common
             {
                 var ex = new CloudException(string.Format("Unknow status code '{0}'", _statusCode));
                 throw ex;
-            }
+            }*/
 
             // Create Result
             var _result = new AzureOperationResponse<string>();
@@ -174,7 +172,7 @@ namespace Microsoft.Azure.Internal.Common
                 _result.RequestId = _httpResponse.Headers.GetValues("x-ms-request-id").FirstOrDefault();
             }
             // Deserialize Response
-            if ((int)_statusCode == 200)
+            /*if ((int)_statusCode == 200)
             {
                 _result.Body = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             }
@@ -182,8 +180,10 @@ namespace Microsoft.Azure.Internal.Common
             {
                 _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 return null;
-            }
+            }*/
 
+
+            _result.Body = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             if (_shouldTrace)
             {
                 ServiceClientTracing.Exit(_invocationId, _result);
