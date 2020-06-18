@@ -518,50 +518,26 @@ namespace Microsoft.Azure.Internal.Common
                                                                 cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
-        public string GetResourceGeneric(string resourceId, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return BeginHttpGetMessagesAsyncGeneric(resourceId, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
-        }
-
-        public string DeleteResourceGeneric(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return BeginHttpDeleteMessagesAsyncGeneric(resourceUri, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
-        }
-
-        public string PutResourceGeneric(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return BeginHttpUpdateMessagesAsyncGeneric(HttpMethod.Put, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
-        }
-
-        public string PostResourceGeneric(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return BeginHttpUpdateMessagesAsyncGeneric(HttpMethod.Post, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
-        }
-        public string PatchResourceGeneric(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return BeginHttpUpdateMessagesAsyncGeneric(PATCH, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
-        }
-
-        public AzureOperationResponse<string> GetResourceGenericFullResponse(string resourceId, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public AzureOperationResponse<string> GetResourceWithFullResponse(string resourceId, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             return BeginHttpGetMessagesAsyncGenericFullResponse(resourceId, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
         }
 
-        public AzureOperationResponse<string> DeleteResourceGenericFullResponse(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public AzureOperationResponse<string> DeleteResourceWithFullResponse(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             return BeginHttpDeleteMessagesAsyncGenericFullResponse(resourceUri, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
         }
 
-        public AzureOperationResponse<string> PutResourceGenericFullResponse(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public AzureOperationResponse<string> PutResourceWithFullResponse(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             return BeginHttpUpdateMessagesAsyncGenericFullResponse(HttpMethod.Put, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
         }
 
-        public AzureOperationResponse<string> PostResourceGenericFullResponse(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public AzureOperationResponse<string> PostResourceWithFullResponse(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             return BeginHttpUpdateMessagesAsyncGenericFullResponse(HttpMethod.Post, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
         }
-        public AzureOperationResponse<string> PatchResourceGenericFullResponse(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public AzureOperationResponse<string> PatchResourceWithFullResponse(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             return BeginHttpUpdateMessagesAsyncGenericFullResponse(PATCH, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
         }
