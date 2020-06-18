@@ -197,7 +197,6 @@ namespace Microsoft.Azure.Internal.Common
             }
         }
 
-
         public async Task<T> BeginHttpUpdateMessagesAsync<T>(HttpMethod method, string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             IDictionary<string, IList<string>> queries = new Dictionary<string, IList<string>>();
@@ -216,40 +215,82 @@ namespace Microsoft.Azure.Internal.Common
                 return (_result==null)? default(T) : _result.Body;
             }
         }
+
+        [Obsolete]
         public T GetResouce<T>(string resourceId, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             return BeginHttpGetMessagesAsync<T>(resourceId, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
         }
 
+        [Obsolete]
         public List<T> GetResouceList<T>(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             return BeginHttpGetMessagesAsync<List<T>>(resourceUri, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
         }
 
+        [Obsolete]
         public P GetResoucePage<P, T>(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken)) where P : IPage<T>
         {
             return BeginHttpGetMessagesAsync<P>(resourceUri, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
         }
 
+        [Obsolete]
         public void DeleteResouce(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             BeginHttpDeleteMessagesAsync(resourceUri, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
         }
 
+        [Obsolete]
         public T PutResouce<T>(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             return BeginHttpUpdateMessagesAsync<T>(HttpMethod.Put, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
         }
 
+        [Obsolete]
         public T PostResouce<T>(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             return BeginHttpUpdateMessagesAsync<T>(HttpMethod.Post, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
         }
+
+        [Obsolete]
         public T PatchResouce<T>(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             return BeginHttpUpdateMessagesAsync<T>(PATCH, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
         }
 
+        public T GetResource<T>(string resourceId, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return BeginHttpGetMessagesAsync<T>(resourceId, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
+        }
+
+        public List<T> GetResourceList<T>(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return BeginHttpGetMessagesAsync<List<T>>(resourceUri, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
+        }
+
+        public P GetResourcePage<P, T>(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken)) where P : IPage<T>
+        {
+            return BeginHttpGetMessagesAsync<P>(resourceUri, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
+        }
+
+        public void DeleteResource(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            BeginHttpDeleteMessagesAsync(resourceUri, apiVersion, customHeaders, cancellationToken).GetAwaiter().GetResult();
+        }
+
+        public T PutResource<T>(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return BeginHttpUpdateMessagesAsync<T>(HttpMethod.Put, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
+        }
+
+        public T PostResource<T>(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return BeginHttpUpdateMessagesAsync<T>(HttpMethod.Post, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
+        }
+        public T PatchResource<T>(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return BeginHttpUpdateMessagesAsync<T>(PATCH, resourceUri, apiVersion, content, customHeaders, cancellationToken).GetAwaiter().GetResult();
+        }
 
         /*Generic section*/
         public async Task<AzureOperationResponse<string>> BeginHttpMessagesAsyncGeneric(HttpMethod method, string path, IDictionary<string, IList<string>> queries = null, string fragment = null, Object content = null, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
