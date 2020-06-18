@@ -92,25 +92,25 @@ namespace Microsoft.Azure.Internal.Common
         /// </exception>
         Task<T> BeginHttpUpdateMessagesAsync<T>(HttpMethod method, string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
-        [Obsolete]
+        [Obsolete("GetResouce<T> is deprecated, please use GetResource<T> instead.", true)]
         T GetResouce<T>(string resourceId, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
-        [Obsolete]
+        [Obsolete("GetResouceList<T> is deprecated, please use GetResourceList<T> instead.", true)]
         List<T> GetResouceList<T>(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
-        [Obsolete]
+        [Obsolete("GetResoucePage<T> is deprecated, please use GetResourcePage<T> instead.", true)]
         P GetResoucePage<P, T>(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken)) where P : IPage<T>;
 
-        [Obsolete]
+        [Obsolete("DeleteResouce is deprecated, please use DeleteResource instead.", true)]
         void DeleteResouce(string resourceUri, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
-        [Obsolete]
+        [Obsolete("PutResouce<T> is deprecated, please use PutResource<T> instead.", true)]
         T PutResouce<T>(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
-        [Obsolete]
+        [Obsolete("PostResouce<T> is deprecated, please use PostResource<T> instead.", true)]
         T PostResouce<T>(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
-        [Obsolete]
+        [Obsolete("PatchResouce<T> is deprecated, please use PatchResource<T> instead.", true)]
         T PatchResouce<T>(string resourceUri, string apiVersion, Object content, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         T GetResource<T>(string resourceId, string apiVersion, IDictionary<string, IList<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
