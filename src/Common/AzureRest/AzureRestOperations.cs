@@ -57,7 +57,7 @@ namespace Microsoft.Azure.Internal.Common
                 _requestContent = Rest.Serialization.SafeJsonConvert.SerializeObject(content, Client.SerializationSettings);
             }
 
-            AzureOperationResponse<string> _generic = await BeginHttpMessagesAsyncGeneric(method, path, queries, fragment, _requestContent, customHeaders, cancellationToken).ConfigureAwait(false);
+            AzureOperationResponse<string> _generic = await BeginHttpMessagesAsyncWithFullResponse(method, path, queries, fragment, _requestContent, customHeaders, cancellationToken).ConfigureAwait(false);
             HttpResponseMessage _httpResponse = _generic.Response;
             HttpRequestMessage _httpRequest = _generic.Request;
 
