@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Microsoft.Azure.Management.Internal.Resources.Utilities.Models
@@ -32,41 +33,58 @@ namespace Microsoft.Azure.Management.Internal.Resources.Utilities.Models
 
         public ResourceIdentifier() { }
 
+        private class UrlTagName
+        {
+            public const string subscriptions = "subscriptions",
+                resourceGroups = "resourceGroups",
+                providers = "providers";
+        }
+
         public ResourceIdentifier(string idFromServer)
         {
             if (!string.IsNullOrEmpty(idFromServer))
             {
                 string[] tokens = idFromServer.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-                if (tokens.Length < 8)
+                if (tokens.Length % 2 > 0 || tokens.Length < 8)
                 {
                     throw new ArgumentException("Invalid format of the resource identifier.", "idFromServer");
                 }
-                Subscription = tokens[1];
-                ResourceGroupName = tokens[3];
-                ResourceName = tokens[tokens.Length - 1];
 
-                List<string> resourceTypeBuilder = new List<string>();
-                resourceTypeBuilder.Add(tokens[5]);
-
-                List<string> parentResourceBuilder = new List<string>();
-                for (int i = 6; i <= tokens.Length - 3; i++)
+                List<string> resourceNameBuilder = new List<string>(), resourceTypeBuilder = new List<string>();
+                for (int i = 0; i < tokens.Length; ++i)
                 {
-                    parentResourceBuilder.Add(tokens[i]);
-                    // Add every other token to type
-                    if (i % 2 == 0)
+                    if (tokens[i].Equals(UrlTagName.subscriptions, StringComparison.OrdinalIgnoreCase))
+                    {
+                        Subscription = tokens[++i];
+                    }
+                    else if(tokens[i].Equals(UrlTagName.resourceGroups, StringComparison.OrdinalIgnoreCase))
+                    {
+                        ResourceGroupName = tokens[++i];
+                    }
+                    else if(tokens[i].Equals(UrlTagName.providers, StringComparison.OrdinalIgnoreCase))
+                    {
+                        resourceTypeBuilder.Add(tokens[++i]);
+                    }
+                    else
                     {
                         resourceTypeBuilder.Add(tokens[i]);
+                        resourceNameBuilder.Add(tokens[++i]);
                     }
                 }
-                resourceTypeBuilder.Add(tokens[tokens.Length - 2]);
+                List<string> parentResourceBuilder = resourceTypeBuilder.GetRange(1, resourceTypeBuilder.Count - 2);
 
-                if (parentResourceBuilder.Count > 0)
+                if (parentResourceBuilder.Any())
                 {
+                    parentResourceBuilder.Add(resourceNameBuilder.First());
                     ParentResource = string.Join("/", parentResourceBuilder);
                 }
-                if (resourceTypeBuilder.Count > 0)
+                if (resourceTypeBuilder.Any())
                 {
                     ResourceType = string.Join("/", resourceTypeBuilder);
+                }
+                if(resourceNameBuilder.Any())
+                {
+                    ResourceName = string.Join("/", resourceNameBuilder);
                 }
             }
         }
@@ -137,7 +155,13 @@ namespace Microsoft.Azure.Management.Internal.Resources.Utilities.Models
             AppendIfNotNull(resourceId, "/resourceGroups/{0}", ResourceGroupName);
             AppendIfNotNull(resourceId, "/providers/{0}", provider);
             AppendIfNotNull(resourceId, "/{0}", parentAndType);
-            AppendIfNotNull(resourceId, "/{0}", ResourceName);
+            string subResourceName = ResourceName;
+            int lastIndexOfSlash = ResourceName.LastIndexOf('/');
+            if (lastIndexOfSlash > 0)
+            {
+                subResourceName = ResourceName.Substring(lastIndexOfSlash + 1);
+            }
+            AppendIfNotNull(resourceId, "/{0}", subResourceName);
 
             return resourceId.ToString();
         }
