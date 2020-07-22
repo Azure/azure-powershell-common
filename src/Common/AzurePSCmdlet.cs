@@ -571,8 +571,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             _qosEvent = new AzurePSQoSEvent()
             {
                 CommandName = commandAlias,
-                ModuleName = this.GetType().Assembly.GetName().Name,
-                ModuleVersion = this.GetType().Assembly.GetName().Version.ToString(),
                 ClientRequestId = this._clientRequestId,
                 SessionId = _sessionId,
                 IsSuccess = true,
@@ -589,6 +587,17 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
             _qosEvent.AzVersion = AzVersion;
             _qosEvent.UserAgent = UserAgent;
+
+            if (this.MyInvocation != null && this.MyInvocation.MyCommand != null)
+            {
+                _qosEvent.ModuleName = this.MyInvocation.MyCommand.ModuleName;
+                _qosEvent.ModuleVersion = this.MyInvocation.MyCommand.Version.ToString();
+            }
+            else
+            {
+                _qosEvent.ModuleName = this.GetType().Assembly.GetName().Name;
+                _qosEvent.ModuleVersion = this.GetType().Assembly.GetName().Version.ToString();
+            }
 
             if (this.MyInvocation != null && !string.IsNullOrWhiteSpace(this.MyInvocation.InvocationName))
             {
