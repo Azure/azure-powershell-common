@@ -562,15 +562,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         protected virtual void InitializeQosEvent()
         {
-            var commandAlias = this.GetType().Name;
-            if (this.MyInvocation != null && this.MyInvocation.MyCommand != null)
-            {
-                commandAlias = this.MyInvocation.MyCommand.Name;
-            }
-
             _qosEvent = new AzurePSQoSEvent()
             {
-                CommandName = commandAlias,
                 ClientRequestId = this._clientRequestId,
                 SessionId = _sessionId,
                 IsSuccess = true,
@@ -590,11 +583,13 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
             if (this.MyInvocation != null && this.MyInvocation.MyCommand != null)
             {
+                _qosEvent.CommandName = this.MyInvocation.MyCommand.Name;
                 _qosEvent.ModuleName = this.MyInvocation.MyCommand.ModuleName;
                 _qosEvent.ModuleVersion = this.MyInvocation.MyCommand.Version.ToString();
             }
             else
             {
+                _qosEvent.CommandName = this.GetType().Name;
                 _qosEvent.ModuleName = this.GetType().Assembly.GetName().Name;
                 _qosEvent.ModuleVersion = this.GetType().Assembly.GetName().Version.ToString();
             }
