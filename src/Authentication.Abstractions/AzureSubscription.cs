@@ -82,9 +82,18 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             public const string RegisteredResourceProviders = "RegisteredResourceProviders",
 
             /// <summary>
-            /// Associated tenants
+            /// Tenants to be compatible with previous version
+            /// Equivalent to retrieved by tenant
             /// </summary>
             Tenants = "Tenants",
+            /// <summary>
+            /// Home tenant
+            /// </summary>
+            HomeTenant = "HomeTenant",
+            /// <summary>
+            /// Associated tenants
+            /// </summary>
+            ManagedByTenants = "ManagedByTenants",
 
             /// <summary>
             /// If this property existed on the subscription indicates that it's default one.
