@@ -175,7 +175,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// Get the subscription polices associated with this subscription
         /// </summary>
         /// <param name="subscription">The subscription to check</param>
-        /// <returns>The list of tenants</returns>
+        /// <returns>The subscription polices</returns>
         public static string GetSubscriptionPolicies(this IAzureSubscription subscription)
         {
             return subscription.GetProperty(AzureSubscription.Property.SubscriptionPolices);
@@ -185,7 +185,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// Set the subscription polices associated with this subscription
         /// </summary>
         /// <param name="subscription">The subscription to set</param>
-        /// <param name="subscriptionPolicies">The tenants associated with the subscription</param>
+        /// <param name="subscriptionPolicies">The subscription polices associated with the subscription</param>
         public static void SetSubscriptionPolicies(this IAzureSubscription subscription, string subscriptionPolicies)
         {
             subscription.SetOrAppendProperty(AzureSubscription.Property.SubscriptionPolices, subscriptionPolicies);
