@@ -26,7 +26,6 @@ using Microsoft.WindowsAzure.Commands.Common;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
 using System.Net.Http.Headers;
@@ -291,46 +290,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
 
         protected override void InitializeQosEvent()
         {
-            var commandAlias = this.GetType().Name;
-            if (this.MyInvocation != null && this.MyInvocation.MyCommand != null)
-            {
-                commandAlias = this.MyInvocation.MyCommand.Name;
-            }
-
-            _qosEvent = new AzurePSQoSEvent()
-            {
-                CommandName = commandAlias,
-                ModuleName = this.GetType().Assembly.GetName().Name,
-                ModuleVersion = this.GetType().Assembly.GetName().Version.ToString(),
-                ClientRequestId = this._clientRequestId,
-                SessionId = _sessionId,
-                IsSuccess = true,
-                ParameterSetName = this.ParameterSetName
-            };
-
-            if (AzVersion == null)
-            {
-                AzVersion = this.LoadAzVersion();
-                UserAgent = new ProductInfoHeaderValue("AzurePowershell", string.Format("Az{0}", AzVersion)).ToString();
-                string HostEnv = Environment.GetEnvironmentVariable("AZUREPS_HOST_ENVIRONMENT");
-                if (!String.IsNullOrWhiteSpace(HostEnv))
-                    UserAgent += string.Format(";{0}", HostEnv.Trim());
-            }
-            _qosEvent.AzVersion = AzVersion;
-            _qosEvent.UserAgent = UserAgent;
-
-            if (this.MyInvocation != null && !string.IsNullOrWhiteSpace(this.MyInvocation.InvocationName))
-            {
-                _qosEvent.InvocationName = this.MyInvocation.InvocationName;
-            }
-
-            if (this.MyInvocation != null && this.MyInvocation.BoundParameters != null
-                && this.MyInvocation.BoundParameters.Keys != null)
-            {
-                _qosEvent.Parameters = string.Join(" ",
-                    this.MyInvocation.BoundParameters.Keys.Select(
-                        s => string.Format(CultureInfo.InvariantCulture, "-{0} ***", s)));
-            }
+            base.InitializeQosEvent();
 
             IAzureContext context;
             _qosEvent.Uid = "defaultid";
@@ -427,12 +387,22 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
 
                 if (!string.IsNullOrEmpty(name))
                 {
-                    WildcardPattern pattern = new WildcardPattern(name, WildcardOptions.IgnoreCase);
-                    output = output.Select(t => new { Id = new ResourceIdentifier((string)GetPropertyValue(t, idProperty)), Resource = t })
-                                   .Where(p => IsMatch(p.Id, "ResourceName", pattern))
-                                   .Select(r => r.Resource);
+                    string[] parts = name.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                    List<WildcardPattern> patterns = new List<WildcardPattern>();
+                    parts.ForEach(p => patterns.Add(new WildcardPattern(p, WildcardOptions.IgnoreCase)));
+                    if (parts.Length == 1)
+                    {
+                        output = output.Select(t => new { Id = new ResourceIdentifier((string)GetPropertyValue(t, idProperty)), Resource = t })
+                                     .Where(p => IsMatch(p.Id, "ResourceName", patterns.Last()))
+                                     .Select(r => r.Resource);
+                    }
+                    else if (parts.Length == 2)
+                    {
+                        output = output.Select(t => new { Id = new ResourceIdentifier((string)GetPropertyValue(t, idProperty)), Resource = t })
+                            .Where(p => IsMatch(p.Id, "ResourceName", patterns.Last()) && IsParentNameMatch(p.Id, patterns.First()))
+                            .Select(r => r.Resource);
+                    }
                 }
-
             }
             else
             {
@@ -479,6 +449,21 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         {
             var value = (string)GetPropertyValue(resource, property);
             return !string.IsNullOrEmpty(value) && pattern.IsMatch(value);
+        }
+
+        private bool IsParentNameMatch<T>(T resource, WildcardPattern pattern)
+        {
+            string value = (string)GetPropertyValue(resource, "ParentResource");
+            if (!string.IsNullOrEmpty(value))
+            {
+                int parentNameStartIdx = value.LastIndexOf('/');
+                if (parentNameStartIdx > 0)
+                {
+                    value = value.Substring(parentNameStartIdx + 1);
+                }
+                return !string.IsNullOrEmpty(value) && pattern.IsMatch(value);
+            }
+            return false;
         }
 
         public bool ShouldListBySubscription(string resourceGroupName, string name)

@@ -141,6 +141,36 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             subscription.SetProperty(AzureSubscription.Property.Tenants, tenant);
         }
 
+        public static string GetHomeTenant(this IAzureSubscription subscription)
+        {
+            return subscription.GetProperty(AzureSubscription.Property.HomeTenant);
+        }
+
+        public static void SetHomeTenant(this IAzureSubscription subscription, string tenant)
+        {
+            subscription.SetProperty(AzureSubscription.Property.HomeTenant, tenant);
+        }
+
+        /// <summary>
+        /// Get the tenants associated with this subscription
+        /// </summary>
+        /// <param name="subscription">The subscription to check</param>
+        /// <returns>The list of tenants</returns>
+        public static string[] GetManagedByTenants(this IAzureSubscription subscription)
+        {
+            return subscription.GetPropertyAsArray(AzureSubscription.Property.ManagedByTenants);
+        }
+
+        /// <summary>
+        /// Set the tenants associated with thsi susbcription
+        /// </summary>
+        /// <param name="subscription">The subscription to set</param>
+        /// <param name="tenants">The tenants associated with the subscription</param>
+        public static void SetManagedByTenants(this IAzureSubscription subscription, params string[] tenants)
+        {
+            subscription.SetOrAppendProperty(AzureSubscription.Property.ManagedByTenants, tenants);
+        }
+
         /// <summary>
         /// Copy the properties from the given subscription
         /// </summary>
