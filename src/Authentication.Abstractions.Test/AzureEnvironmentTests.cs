@@ -53,6 +53,17 @@ namespace Authentication.Abstractions.Test
         }
 
         [Fact]
+        public void TestArmResponseNoAzureCloud()
+        {
+            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData\ArmResponseNoAzureCloud.json");
+            var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
+
+            // Check AzureCloud is added to public environment list even discovery endpoint doesn't return AzureCloud.
+            Assert.True(AzureEnvironment.PublicEnvironments.ContainsKey(EnvironmentName.AzureCloud));
+            Assert.Equal(AzureEnvironment.TypeBuiltIn, AzureEnvironment.PublicEnvironments[EnvironmentName.AzureCloud].Type);
+        }
+
+        [Fact]
         public void TestFallbackWhenArmCloudMetadataInitFails()
         {
             Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData\BadArmResponse.json");
