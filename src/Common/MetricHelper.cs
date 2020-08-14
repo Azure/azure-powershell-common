@@ -285,6 +285,11 @@ namespace Microsoft.WindowsAzure.Commands.Common
             eventProperties.Add("subscription-id", qos.SubscriptionId);
             eventProperties.Add("tenant-id", qos.TenantId);
 
+            if(qos.Exception != null)
+            {
+                eventProperties.Add("exception-type", qos.Exception.GetType().ToString());
+            }
+
             if (qos.InputFromPipeline != null)
             {
                 eventProperties.Add("InputFromPipeline", qos.InputFromPipeline.Value.ToString());
