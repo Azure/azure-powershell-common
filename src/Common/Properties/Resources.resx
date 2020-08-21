@@ -1656,8 +1656,7 @@ Use the Enable-AzureDataCollection cmdlet to turn the feature On. The cmdlet can
     <value>The parameter : '{0}' is being replaced by mandatory parameter : '{1}'.</value>
   </data>
   <data name="BreakingChangesAttributesChangeDescriptionMessage" xml:space="preserve">
-    <value>	Change description : {0}
-</value>
+    <value>Change description : {0} </value>
   </data>
   <data name="BreakingChangesAttributesCmdLetDeprecationMessageNoReplacement" xml:space="preserve">
     <value>The cmdlet is being deprecated. There will be no replacement for it.</value>
@@ -1672,36 +1671,28 @@ Use the Enable-AzureDataCollection cmdlet to turn the feature On. The cmdlet can
     <value>"The output type '{0}' is changing"</value>
   </data>
   <data name="BreakingChangesAttributesCmdLetOutputPropertiesAdded" xml:space="preserve">
-    <value>
-- The following properties are being added to the output type :
+    <value>- The following properties are being added to the output type :
 </value>
   </data>
   <data name="BreakingChangesAttributesCmdLetOutputPropertiesRemoved" xml:space="preserve">
-    <value>
- - The following properties in the output type are being deprecated :
-</value>
+    <value>- The following properties in the output type are being deprecated :
+    </value>
   </data>
   <data name="BreakingChangesAttributesDeclarationMessage" xml:space="preserve">
-    <value> - {0}
-
-</value>
+    <value> - {0}</value>
   </data>
   <data name="BreakingChangesAttributesDeclarationMessageWithCmdletName" xml:space="preserve">
     <value> - Cmdlet : '{0}'
- - {1}
-</value>
+ - {1}</value>
   </data>
   <data name="BreakingChangesAttributesHeaderMessage" xml:space="preserve">
     <value>Breaking changes in the cmdlet '{0}' :</value>
   </data>
   <data name="BreakingChangesAttributesInEffectByDateMessage" xml:space="preserve">
-    <value>	Note : This change will take effect on '{0}'
-</value>
+    <value>Note : This change will take effect on '{0}'</value>
   </data>
   <data name="BreakingChangesAttributesInEffectByVersion" xml:space="preserve">
-    <value>Note :The change is expected to take effect from the version :  '{0}'
-
-</value>
+    <value>Note :The change is expected to take effect from the version :  '{0}'</value>
   </data>
   <data name="BreakingChangesAttributesUsageChangeMessage" xml:space="preserve">
     <value>```powershell
@@ -1711,7 +1702,6 @@ Use the Enable-AzureDataCollection cmdlet to turn the feature On. The cmdlet can
 # New
 {1}
 ```
-
 </value>
   </data>
   <data name="BreakingChangesAttributesUsageChangeMessageConsole" xml:space="preserve">
@@ -1723,7 +1713,7 @@ Use the Enable-AzureDataCollection cmdlet to turn the feature On. The cmdlet can
     <value>The output type '{0}' is being deprecated without a replacement.</value>
   </data>
   <data name="BreakingChangeAttributeParameterTypeChange" xml:space="preserve">
-    <value>	The type of the parameter is changing from '{0}' to '{1}'.</value>
+    <value>The type of the parameter is changing from '{0}' to '{1}'.</value>
   </data>
   <data name="BreakingChangesAttributesFooterMessage" xml:space="preserve">
     <value>NOTE : Go to {0} for steps to suppress this breaking change warning, and other information on breaking changes in Azure PowerShell.</value>
