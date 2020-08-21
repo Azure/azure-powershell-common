@@ -1675,7 +1675,7 @@ Use the Enable-AzureDataCollection cmdlet to turn the feature On. The cmdlet can
   </data>
   <data name="BreakingChangesAttributesCmdLetOutputChange2" xml:space="preserve">
     <value>
-    - "The output type '{0}' is changing"</value>
+    - The output type '{0}' is changing</value>
   </data>
   <data name="BreakingChangesAttributesCmdLetOutputPropertiesAdded" xml:space="preserve">
     <value>
@@ -1686,8 +1686,7 @@ Use the Enable-AzureDataCollection cmdlet to turn the feature On. The cmdlet can
     - The following properties in the output type are being deprecated :</value>
   </data>
   <data name="BreakingChangesAttributesDeclarationMessage" xml:space="preserve">
-    <value>
-    {0}</value>
+    <value>{0}</value>
   </data>
   <data name="BreakingChangesAttributesDeclarationMessageWithCmdletName" xml:space="preserve">
     <value>
