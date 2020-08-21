@@ -1694,8 +1694,7 @@ Use the Enable-AzureDataCollection cmdlet to turn the feature On. The cmdlet can
      - {1}</value>
   </data>
   <data name="BreakingChangesAttributesHeaderMessage" xml:space="preserve">
-    <value>
-    Breaking changes in the cmdlet '{0}' :</value>
+    <value>Breaking changes in the cmdlet '{0}' :</value>
   </data>
   <data name="BreakingChangesAttributesInEffectByDateMessage" xml:space="preserve">
     <value>
