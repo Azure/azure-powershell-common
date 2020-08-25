@@ -129,7 +129,9 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         public void PrintCustomAttributeInfo(Type type, bool withCmdletName, Action<string> writeOutput)
         {
             if (!withCmdletName) {
-                writeOutput(string.Format(Resources.BreakingChangesAttributesDeclarationMessage, GetAttributeSpecificMessage()));
+                if(!string.IsNullOrWhiteSpace(GetAttributeSpecificMessage())){
+                    writeOutput(string.Format(Resources.BreakingChangesAttributesDeclarationMessage, GetAttributeSpecificMessage()));
+                }
             } else
             {
                 writeOutput(string.Format(Resources.BreakingChangesAttributesDeclarationMessageWithCmdletName, Utilities.GetNameFromCmdletType(type), GetAttributeSpecificMessage()));
