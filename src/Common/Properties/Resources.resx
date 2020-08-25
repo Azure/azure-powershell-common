@@ -1686,7 +1686,8 @@ Use the Enable-AzureDataCollection cmdlet to turn the feature On. The cmdlet can
 - The following properties in the output type are being deprecated :</value>
   </data>
   <data name="BreakingChangesAttributesDeclarationMessage" xml:space="preserve">
-    <value>{0}</value>
+    <value>
+{0}</value>
   </data>
   <data name="BreakingChangesAttributesDeclarationMessageWithCmdletName" xml:space="preserve">
     <value>
@@ -1698,11 +1699,11 @@ Use the Enable-AzureDataCollection cmdlet to turn the feature On. The cmdlet can
   </data>
   <data name="BreakingChangesAttributesInEffectByDateMessage" xml:space="preserve">
     <value>
-Note : This change will take effect on '{0}'</value>
+- This change will take effect on '{0}'</value>
   </data>
   <data name="BreakingChangesAttributesInEffectByVersion" xml:space="preserve">
     <value>
-Note : The change is expected to take effect from the version : '{0}'</value>
+- The change is expected to take effect from the version : '{0}'</value>
   </data>
   <data name="BreakingChangesAttributesUsageChangeMessage" xml:space="preserve">
     <value>```powershell
