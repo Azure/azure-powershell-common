@@ -129,9 +129,9 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         public void PrintCustomAttributeInfo(Type type, bool withCmdletName, Action<string> writeOutput)
         {
             if (!withCmdletName) {
-                if (!GetAttributeSpecificMessage().StartsWith("\r\n"))
+                if (!GetAttributeSpecificMessage().StartsWith(Environment.NewLine))
                 {
-                    writeOutput("\r\n");
+                    writeOutput(Environment.NewLine);
                 }
                 writeOutput(string.Format(Resources.BreakingChangesAttributesDeclarationMessage, GetAttributeSpecificMessage()));
             } else
