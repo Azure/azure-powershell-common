@@ -340,7 +340,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     break;
                 case AzureEnvironment.ExtendedEndpoint.ManagedHsmServiceEndpointSuffix:
                 case AzureEnvironment.ExtendedEndpoint.ManagedHsmServiceEndpointResourceId:
-                    resource = AzureEnvironment.ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId;
+                    resource = AzureEnvironment.ExtendedEndpoint.ManagedHsmServiceEndpointResourceId;
                     break;
                 default:
                     resource = AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId;
