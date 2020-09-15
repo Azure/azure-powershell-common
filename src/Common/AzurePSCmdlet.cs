@@ -41,6 +41,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         public ConcurrentQueue<string> DebugMessages { get; private set; }
 
+        IAzureEventListener _azureEventListener;
         protected static ConcurrentQueue<string> InitializationWarnings { get; set; } = new ConcurrentQueue<string>();
 
         private RecordingTracingInterceptor _httpTracingInterceptor;
@@ -313,12 +314,23 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             _adalListener = _adalListener ?? new DebugStreamTraceListener(DebugMessages);
             RecordingTracingInterceptor.AddToContext(_httpTracingInterceptor);
             DebugStreamTraceListener.AddAdalTracing(_adalListener);
+
+            if (AzureSession.Instance.TryGetComponent(nameof(IAzureEventListenerFactory), out IAzureEventListenerFactory factory))
+            {
+                _azureEventListener = factory.GetAzureEventListener(
+                    (message) =>
+                    {
+                        DebugMessages.Enqueue(message);
+                    });
+            }
         }
 
         protected virtual void TearDownDebuggingTraces()
         {
             RecordingTracingInterceptor.RemoveFromContext(_httpTracingInterceptor);
             DebugStreamTraceListener.RemoveAdalTracing(_adalListener);
+            _azureEventListener?.Dispose();
+            _azureEventListener = null;
             FlushDebugMessages();
         }
 
