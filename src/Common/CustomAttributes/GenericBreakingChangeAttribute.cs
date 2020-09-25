@@ -68,8 +68,11 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             this.DeprecateByVersion = deprecateByVersion;
             this.DeprecateByVersionSet = true;
 
-            this.ChangeInEfectByDate = DateTime.Parse(changeInEfectByDate);
-            this.ChangeInEfectByDateSet = true;
+            if (DateTime.TryParse(changeInEfectByDate, out DateTime result))
+            {
+                this.ChangeInEfectByDate = DateTime.Parse(changeInEfectByDate);
+                this.ChangeInEfectByDateSet = true;
+            }
         }
 
         public DateTime getInEffectByDate()
