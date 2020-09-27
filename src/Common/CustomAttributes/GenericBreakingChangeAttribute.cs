@@ -69,10 +69,9 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             this.DeprecateByVersion = deprecateByVersion;
             this.DeprecateByVersionSet = true;
 
-            string[] formats = { "MM/dd/yyyy", "MM/d/yyyy", "M/dd/yyyy", "M/d/yyyy" };
-            if (DateTime.TryParseExact(changeInEfectByDate, formats, new CultureInfo("en-US"), DateTimeStyles.None, out DateTime result))
-            {
-                this.ChangeInEfectByDate = DateTime.Parse(changeInEfectByDate);
+            if (DateTime.TryParse(changeInEfectByDate, new CultureInfo("en-US"), DateTimeStyles.None, out DateTime result))
+            { 
+                this.ChangeInEfectByDate = result;
                 this.ChangeInEfectByDateSet = true;
             }
         }
