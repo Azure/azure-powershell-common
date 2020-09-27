@@ -15,6 +15,7 @@
 using Microsoft.WindowsAzure.Commands.Common.Properties;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
 using System.Text;
@@ -68,7 +69,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             this.DeprecateByVersion = deprecateByVersion;
             this.DeprecateByVersionSet = true;
 
-            if (DateTime.TryParse(changeInEfectByDate, out DateTime result))
+            string[] formats = { "MM/dd/yyyy", "MM/d/yyyy", "M/dd/yyyy", "M/d/yyyy" };
+            if (DateTime.TryParseExact(changeInEfectByDate, formats, new CultureInfo("en-US"), DateTimeStyles.None, out DateTime result))
             {
                 this.ChangeInEfectByDate = DateTime.Parse(changeInEfectByDate);
                 this.ChangeInEfectByDateSet = true;
