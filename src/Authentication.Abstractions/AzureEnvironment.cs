@@ -100,6 +100,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 GraphEndpointResourceId = AzureEnvironmentConstants.AzureGraphEndpoint,
                 DataLakeEndpointResourceId = AzureEnvironmentConstants.AzureDataLakeServiceEndpointResourceId,
                 BatchEndpointResourceId = AzureEnvironmentConstants.BatchEndpointResourceId,
+                AzureContainerRegistryEndpointSuffix = AzureEnvironmentConstants.AzureContainerRegistryEndpointSuffix,
                 AdTenant = "Common"
             };
 
@@ -125,6 +126,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 DataLakeEndpointResourceId = null,
                 GraphEndpointResourceId = AzureEnvironmentConstants.ChinaGraphEndpoint,
                 BatchEndpointResourceId = AzureEnvironmentConstants.ChinaBatchEndpointResourceId,
+                AzureContainerRegistryEndpointSuffix = AzureEnvironmentConstants.ChinaContainerRegistryEndpointSuffix,
                 AdTenant = "Common"
             };
 
@@ -150,6 +152,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 DataLakeEndpointResourceId = null,
                 GraphEndpointResourceId = AzureEnvironmentConstants.USGovernmentGraphEndpoint,
                 BatchEndpointResourceId = AzureEnvironmentConstants.USGovernmentBatchEndpointResourceId,
+                AzureContainerRegistryEndpointSuffix = AzureEnvironmentConstants.USGovernmentContainerRegistryEndpointSuffix,
                 AdTenant = "Common"
             };
 
@@ -245,7 +248,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureAttestationServiceEndpointResourceId, AzureEnvironmentConstants.AzureAttestationServiceEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointSuffix, AzureEnvironmentConstants.AzureSynapseAnalyticsEndpointSuffix);
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId, AzureEnvironmentConstants.AzureSynapseAnalyticsEndpointResourceId);
-                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureContainerRegistryEndpointSuffix, AzureEnvironmentConstants.AzureContainerRegistryEndpointSuffix);
             }
 
             if(azureEnvironments.ContainsKey(EnvironmentName.AzureChinaCloud))
@@ -254,7 +256,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointResourceId, AzureEnvironmentConstants.ChinaAnalysisServicesEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointSuffix, AzureEnvironmentConstants.ChinaSynapseAnalyticsEndpointSuffix);
                 azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId, AzureEnvironmentConstants.ChinaSynapseAnalyticsEndpointResourceId);
-                azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.AzureContainerRegistryEndpointSuffix, AzureEnvironmentConstants.ChinaContainerRegistryEndpointSuffix);
             }
 
             if(azureEnvironments.ContainsKey(EnvironmentName.AzureUSGovernment))
@@ -263,7 +264,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.OperationalInsightsEndpointResourceId, AzureEnvironmentConstants.USGovernmentOperationalInsightsEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointSuffix, AzureEnvironmentConstants.USGovernmentAnalysisServicesEndpointSuffix);
                 azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointResourceId, AzureEnvironmentConstants.USGovernmentAnalysisServicesEndpointResourceId);
-                azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.AzureContainerRegistryEndpointSuffix, AzureEnvironmentConstants.USGovernmentContainerRegistryEndpointSuffix);
             }
 
             if(azureEnvironments.ContainsKey(EnvironmentName.AzureGermanCloud))
@@ -302,7 +302,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 GraphEndpointResourceId = armMetadata.Graph,
                 BatchEndpointResourceId = armMetadata.Batch,
                 AdTenant = armMetadata.Authentication.Tenant,
-                AzureContainerRegistryEndpointSuffix = armMetadata.acrLoginServer;
+                AzureContainerRegistryEndpointSuffix = armMetadata.Suffixes.AcrLoginServer
             };
 
             // There are mismatches between metadata built in Azure PowerShell/CLI and from ARM endpoint. 
@@ -541,6 +541,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public string AdTenant { get; set; }
 
         /// <summary>
+        /// The domain name suffix for Azure Container Registry
+        /// </summary>
+        public string AzureContainerRegistryEndpointSuffix { get; set; }
+
+        /// <summary>
         /// The set of Azure Version Profiles supported in this environment
         /// </summary>
         public IList<string> VersionProfiles { get; } = new List<string>();
@@ -634,8 +639,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 AzureAttestationServiceEndpointSuffix = "AzureAttestationServiceEndpointSuffix",
                 AzureAttestationServiceEndpointResourceId = "AzureAttestationServiceEndpointResourceId",
                 AzureSynapseAnalyticsEndpointSuffix = "AzureSynapseAnalyticsEndpointSuffix",
-                AzureSynapseAnalyticsEndpointResourceId = "AzureSynapseAnalyticsEndpointResourceId",
-                AzureContainerRegistryEndpointSuffix = "AzureContainerRegistryEndpointSuffix";
+                AzureSynapseAnalyticsEndpointResourceId = "AzureSynapseAnalyticsEndpointResourceId";
         }
     }
 }
