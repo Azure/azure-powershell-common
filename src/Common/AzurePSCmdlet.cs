@@ -310,7 +310,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             WriteDebugWithTimestamp(message);
         }
 
-        protected virtual void AddDebuggingFilter(Regex matcher)
+        protected void AddDebuggingFilter(Regex matcher)
         {
             _matchers.Add(matcher);
         }
