@@ -376,7 +376,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
             InitializeQosEvent();
             LogCmdletStartInvocationInfo();
-            AddDebuggingFilter(_defaultMatcher);
             InitDebuggingFilter();
             SetupDebuggingTraces();
             SetupHttpClientPipeline();
