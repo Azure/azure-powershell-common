@@ -25,12 +25,8 @@ namespace Microsoft.Azure.ServiceManagement.Common.Models
 {
     public class RecordingTracingInterceptor : Hyak.Common.ICloudTracingInterceptor
     {
-        public RecordingTracingInterceptor(ConcurrentQueue<string> queue)
-        {
-            MessageQueue = queue;
-        }
 
-        public RecordingTracingInterceptor(ConcurrentQueue<string> queue, IList<Regex> matchers)
+        public RecordingTracingInterceptor(ConcurrentQueue<string> queue, IList<Regex> matchers = null)
         {
             MessageQueue = queue;
             Matchers = matchers;
