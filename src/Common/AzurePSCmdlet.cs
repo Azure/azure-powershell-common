@@ -20,6 +20,7 @@ using Microsoft.WindowsAzure.Commands.Common;
 using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -27,6 +28,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 {
@@ -45,6 +47,9 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         private RecordingTracingInterceptor _httpTracingInterceptor;
         private object lockObject = new object();
         private AzurePSDataCollectionProfile _cachedProfile = null;
+
+        private IList<Regex> _matchers;
+        private Regex _defaultMatcher = new Regex("(\\s*\"refresh_token\"\\s*:\\s*)\"[^\"]+\"");
 
         protected AzurePSDataCollectionProfile _dataCollectionProfile
         {
@@ -305,10 +310,20 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             WriteDebugWithTimestamp(message);
         }
 
+        protected virtual void AddDebuggingFilter(Regex matcher)
+        {
+            _matchers.Add(matcher);
+        }
+
+        protected virtual void InitDebuggingFilter()
+        {
+            AddDebuggingFilter(_defaultMatcher);
+        }
+
         protected virtual void SetupDebuggingTraces()
         {
             _httpTracingInterceptor = _httpTracingInterceptor ?? new
-                RecordingTracingInterceptor(DebugMessages);
+                RecordingTracingInterceptor(DebugMessages, _matchers);
             _adalListener = _adalListener ?? new DebugStreamTraceListener(DebugMessages);
             RecordingTracingInterceptor.AddToContext(_httpTracingInterceptor);
             DebugStreamTraceListener.AddAdalTracing(_adalListener);
@@ -361,6 +376,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
             InitializeQosEvent();
             LogCmdletStartInvocationInfo();
+            AddDebuggingFilter(_defaultMatcher);
+            InitDebuggingFilter();
             SetupDebuggingTraces();
             SetupHttpClientPipeline();
             base.BeginProcessing();

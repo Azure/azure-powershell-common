@@ -267,14 +267,13 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             return GetHttpResponseLog(statusCode, ConvertHttpHeadersToWebHeaderCollection(headers), body, matchers);
         }
 
-        public static string TransformBody(string inBody, IList<Regex> matchers=null)
+        public static string TransformBody(string inBody, IList<Regex> matchers = null)
         {
             foreach (Regex match in matchers)
             {
                 inBody = match.Replace(inBody, "$1\"<redacted>\"");
             }
-            Regex matcher = new Regex("(\\s*\"access_token\"\\s*:\\s*)\"[^\"]+\"");
-            return matcher.Replace(inBody, "$1\"<redacted>\"");
+            return inBody;
         }
 
         public static string GetHttpRequestLog(
@@ -282,7 +281,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             string requestUri,
             IDictionary<string, IEnumerable<string>> headers,
             string body,
-            IList<Regex> matchers=null)
+            IList<Regex> matchers = null)
         {
             StringBuilder httpRequestLog = new StringBuilder();
             httpRequestLog.AppendLine(string.Format("============================ HTTP REQUEST ============================{0}", Environment.NewLine));
@@ -294,12 +293,12 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             return httpRequestLog.ToString();
         }
 
-        public static string GetHttpRequestLog(string method, string requestUri, HttpHeaders headers, string body, IList<Regex> matchers=null)
+        public static string GetHttpRequestLog(string method, string requestUri, HttpHeaders headers, string body, IList<Regex> matchers = null)
         {
             return GetHttpRequestLog(method, requestUri, ConvertHttpHeadersToWebHeaderCollection(headers), body, matchers);
         }
 
-        public static string GetLog(HttpResponseMessage response, IList<Regex> matchers=null)
+        public static string GetLog(HttpResponseMessage response, IList<Regex> matchers = null)
         {
             string body = response.Content == null ? string.Empty
                 : FormatString(response.Content.ReadAsStringAsync().Result);
