@@ -315,6 +315,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             _matchers.Add(matcher);
         }
 
+        //Override this method in cmdlet if customized regedx filters needed for debugging message
         protected virtual void InitDebuggingFilter()
         {
             AddDebuggingFilter(_defaultMatcher);
