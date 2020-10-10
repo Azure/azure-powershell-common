@@ -310,11 +310,12 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             WriteDebugWithTimestamp(message);
         }
 
-        protected virtual void AddDebuggingFilter(Regex matcher)
+        protected void AddDebuggingFilter(Regex matcher)
         {
             _matchers.Add(matcher);
         }
 
+        //Override this method in cmdlet if customized regedx filters needed for debugging message
         protected virtual void InitDebuggingFilter()
         {
             AddDebuggingFilter(_defaultMatcher);
@@ -376,7 +377,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
             InitializeQosEvent();
             LogCmdletStartInvocationInfo();
-            AddDebuggingFilter(_defaultMatcher);
             InitDebuggingFilter();
             SetupDebuggingTraces();
             SetupHttpClientPipeline();
