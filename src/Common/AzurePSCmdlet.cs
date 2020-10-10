@@ -49,7 +49,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         private AzurePSDataCollectionProfile _cachedProfile = null;
 
         private IList<Regex> _matchers;
-        private Regex _defaultMatcher = new Regex("(\\s*\"refresh_token\"\\s*:\\s*)\"[^\"]+\"");
+        private static readonly Regex _defaultMatcher = new Regex("(\\s*\"refresh_token\"\\s*:\\s*)\"[^\"]+\"");
 
         protected AzurePSDataCollectionProfile _dataCollectionProfile
         {
