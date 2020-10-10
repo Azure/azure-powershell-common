@@ -100,7 +100,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 GraphEndpointResourceId = AzureEnvironmentConstants.AzureGraphEndpoint,
                 DataLakeEndpointResourceId = AzureEnvironmentConstants.AzureDataLakeServiceEndpointResourceId,
                 BatchEndpointResourceId = AzureEnvironmentConstants.BatchEndpointResourceId,
-                AzureContainerRegistryEndpointSuffix = AzureEnvironmentConstants.AzureContainerRegistryEndpointSuffix,
+                ContainerRegistryEndpointSuffix = AzureEnvironmentConstants.AzureContainerRegistryEndpointSuffix,
                 AdTenant = "Common"
             };
 
@@ -126,7 +126,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 DataLakeEndpointResourceId = null,
                 GraphEndpointResourceId = AzureEnvironmentConstants.ChinaGraphEndpoint,
                 BatchEndpointResourceId = AzureEnvironmentConstants.ChinaBatchEndpointResourceId,
-                AzureContainerRegistryEndpointSuffix = AzureEnvironmentConstants.ChinaContainerRegistryEndpointSuffix,
+                ContainerRegistryEndpointSuffix = AzureEnvironmentConstants.ChinaContainerRegistryEndpointSuffix,
                 AdTenant = "Common"
             };
 
@@ -152,7 +152,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 DataLakeEndpointResourceId = null,
                 GraphEndpointResourceId = AzureEnvironmentConstants.USGovernmentGraphEndpoint,
                 BatchEndpointResourceId = AzureEnvironmentConstants.USGovernmentBatchEndpointResourceId,
-                AzureContainerRegistryEndpointSuffix = AzureEnvironmentConstants.USGovernmentContainerRegistryEndpointSuffix,
+                ContainerRegistryEndpointSuffix = AzureEnvironmentConstants.USGovernmentContainerRegistryEndpointSuffix,
                 AdTenant = "Common"
             };
 
@@ -302,7 +302,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 GraphEndpointResourceId = armMetadata.Graph,
                 BatchEndpointResourceId = armMetadata.Batch,
                 AdTenant = armMetadata.Authentication.Tenant,
-                AzureContainerRegistryEndpointSuffix = armMetadata.Suffixes.AcrLoginServer
+                ContainerRegistryEndpointSuffix = armMetadata.Suffixes.AcrLoginServer
             };
 
             // There are mismatches between metadata built in Azure PowerShell/CLI and from ARM endpoint. 
@@ -543,7 +543,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// The domain name suffix for Azure Container Registry
         /// </summary>
-        public string AzureContainerRegistryEndpointSuffix { get; set; }
+        public string ContainerRegistryEndpointSuffix { get; set; }
 
         /// <summary>
         /// The set of Azure Version Profiles supported in this environment
@@ -600,7 +600,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                    && string.Equals(this.AzureDataLakeAnalyticsCatalogAndJobEndpointSuffix, other.AzureDataLakeAnalyticsCatalogAndJobEndpointSuffix, StringComparison.OrdinalIgnoreCase)
                    && string.Equals(this.AzureDataLakeStoreFileSystemEndpointSuffix, other.AzureDataLakeStoreFileSystemEndpointSuffix, StringComparison.OrdinalIgnoreCase)
                    && string.Equals(this.AdTenant?.TrimEnd('/'), other.AdTenant?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase)
-                   && string.Equals(this.AzureContainerRegistryEndpointSuffix?.TrimEnd('/'), other.AzureContainerRegistryEndpointSuffix?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
+                   && string.Equals(this.ContainerRegistryEndpointSuffix?.TrimEnd('/'), other.ContainerRegistryEndpointSuffix?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
         }
 
 
