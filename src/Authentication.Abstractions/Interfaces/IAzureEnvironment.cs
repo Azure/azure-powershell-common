@@ -135,6 +135,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// The domain name suffix for Azure Container Registry
         /// </summary>
-        string AzureContainerRegistryEndpointSuffix { get; set; }
+        string ContainerRegistryEndpointSuffix { get; set; }
     }
 }
