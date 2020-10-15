@@ -629,7 +629,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 DataLakeEndpointResourceId = "DataLakeEndpointResourceId",
                 ContainerRegistryEndpointSuffix = "ContainerRegistryEndpointSuffix",
                 BatchEndpointResourceId = "BatchEndpointResourceId";
-
         }
 
         public static class ExtendedEndpoint
