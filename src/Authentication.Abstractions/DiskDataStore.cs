@@ -223,7 +223,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             X509StoreWrapper(StoreName.My, StoreLocation.CurrentUser, (store) =>
             {
                 store.Open(OpenFlags.ReadWrite);
-                store.Add(certificate);
+                X509Certificate2 storedCertificate = new X509Certificate2(certificate.RawData, string.Empty, X509KeyStorageFlags.PersistKeySet);
+                store.Add(storedCertificate);
             });
         }
 
