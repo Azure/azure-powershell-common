@@ -144,6 +144,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 context.Account.Update(other.Account);
                 context.Subscription.Update(other.Subscription);
                 context.Tenant.Update(other.Tenant);
+                context.Environment.Update(other.Environment);
                 context.UpdateProperties(other);
             }
         }
