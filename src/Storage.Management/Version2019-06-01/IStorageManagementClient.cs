@@ -114,45 +114,5 @@ namespace Microsoft.Azure.Management.Profiles.Storage.Version2019_06_01
         /// </summary>
         IEncryptionScopesOperations EncryptionScopes { get; }
 
-        /// <summary>
-        /// Gets the IBlobServicesOperations.
-        /// </summary>
-        IBlobServicesOperations BlobServices { get; }
-
-        /// <summary>
-        /// Gets the IBlobContainersOperations.
-        /// </summary>
-        IBlobContainersOperations BlobContainers { get; }
-
-        /// <summary>
-        /// Gets the IFileServicesOperations.
-        /// </summary>
-        IFileServicesOperations FileServices { get; }
-
-        /// <summary>
-        /// Gets the IFileSharesOperations.
-        /// </summary>
-        IFileSharesOperations FileShares { get; }
-
-        /// <summary>
-        /// Gets the IQueueServicesOperations.
-        /// </summary>
-        IQueueServicesOperations QueueServices { get; }
-
-        /// <summary>
-        /// Gets the IQueueOperations.
-        /// </summary>
-        IQueueOperations Queue { get; }
-
-        /// <summary>
-        /// Gets the ITableServicesOperations.
-        /// </summary>
-        ITableServicesOperations TableServices { get; }
-
-        /// <summary>
-        /// Gets the ITableOperations.
-        /// </summary>
-        ITableOperations Table { get; }
-
     }
 }
