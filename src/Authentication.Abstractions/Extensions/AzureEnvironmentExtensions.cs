@@ -268,6 +268,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     case AzureEnvironment.Endpoint.ServiceManagement:
                         environment.ServiceManagementUrl = propertyValue;
                         break;
+                    case AzureEnvironment.Endpoint.ContainerRegistryEndpointSuffix:
+                        environment.ContainerRegistryEndpointSuffix = propertyValue;
+                        break;
                     case AzureEnvironment.ExtendedEndpoint.OperationalInsightsEndpointResourceId:
                         environment.SetProperty(AzureEnvironment.ExtendedEndpoint.OperationalInsightsEndpointResourceId, propertyValue);
                         break;
@@ -297,9 +300,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                         break;
                     case AzureEnvironment.ExtendedEndpoint.ManagedHsmServiceEndpointResourceId:
                         environment.SetProperty(AzureEnvironment.ExtendedEndpoint.ManagedHsmServiceEndpointResourceId, propertyValue);
-                        break;
-                    case AzureEnvironment.Endpoint.ContainerRegistryEndpointSuffix:
-                        environment.SetProperty(AzureEnvironment.Endpoint.ContainerRegistryEndpointSuffix, propertyValue);
                         break;
                 }
             }
