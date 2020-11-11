@@ -89,30 +89,5 @@ namespace Microsoft.Azure.Management.Profiles.Storage.Version2019_06_01
         /// </summary>
         IUsagesOperations Usages { get; }
 
-        /// <summary>
-        /// Gets the IManagementPoliciesOperations.
-        /// </summary>
-        IManagementPoliciesOperations ManagementPolicies { get; }
-
-        /// <summary>
-        /// Gets the IPrivateEndpointConnectionsOperations.
-        /// </summary>
-        IPrivateEndpointConnectionsOperations PrivateEndpointConnections { get; }
-
-        /// <summary>
-        /// Gets the IPrivateLinkResourcesOperations.
-        /// </summary>
-        IPrivateLinkResourcesOperations PrivateLinkResources { get; }
-
-        /// <summary>
-        /// Gets the IObjectReplicationPoliciesOperations.
-        /// </summary>
-        IObjectReplicationPoliciesOperations ObjectReplicationPolicies { get; }
-
-        /// <summary>
-        /// Gets the IEncryptionScopesOperations.
-        /// </summary>
-        IEncryptionScopesOperations EncryptionScopes { get; }
-
     }
 }

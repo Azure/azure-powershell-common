@@ -19,12 +19,7 @@ namespace Microsoft.Azure.Management.Profiles.Storage.Version2019_06_01
           {
               return new Tuple<string, string, string>[]
               {
-                new Tuple<string, string, string>("Storage", "EncryptionScopes", "2019-06-01"),
-                new Tuple<string, string, string>("Storage", "ManagementPolicies", "2019-06-01"),
-                new Tuple<string, string, string>("Storage", "ObjectReplicationPolicies", "2019-06-01"),
                 new Tuple<string, string, string>("Storage", "Operations", "2019-06-01"),
-                new Tuple<string, string, string>("Storage", "PrivateEndpointConnections", "2019-06-01"),
-                new Tuple<string, string, string>("Storage", "PrivateLinkResources", "2019-06-01"),
                 new Tuple<string, string, string>("Storage", "Skus", "2019-06-01"),
                 new Tuple<string, string, string>("Storage", "StorageAccounts", "2019-06-01"),
                 new Tuple<string, string, string>("Storage", "Usages", "2019-06-01"),

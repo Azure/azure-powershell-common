@@ -95,31 +95,6 @@ namespace Microsoft.Azure.Management.Profiles.Storage.Version2019_06_01
         public virtual IUsagesOperations Usages { get; private set; }
 
         /// <summary>
-        /// Gets the IManagementPoliciesOperations.
-        /// </summary>
-        public virtual IManagementPoliciesOperations ManagementPolicies { get; private set; }
-
-        /// <summary>
-        /// Gets the IPrivateEndpointConnectionsOperations.
-        /// </summary>
-        public virtual IPrivateEndpointConnectionsOperations PrivateEndpointConnections { get; private set; }
-
-        /// <summary>
-        /// Gets the IPrivateLinkResourcesOperations.
-        /// </summary>
-        public virtual IPrivateLinkResourcesOperations PrivateLinkResources { get; private set; }
-
-        /// <summary>
-        /// Gets the IObjectReplicationPoliciesOperations.
-        /// </summary>
-        public virtual IObjectReplicationPoliciesOperations ObjectReplicationPolicies { get; private set; }
-
-        /// <summary>
-        /// Gets the IEncryptionScopesOperations.
-        /// </summary>
-        public virtual IEncryptionScopesOperations EncryptionScopes { get; private set; }
-
-        /// <summary>
         /// Initializes a new instance of the StorageManagementClient class.
         /// </summary>
         /// <param name='httpClient'>
@@ -364,11 +339,6 @@ namespace Microsoft.Azure.Management.Profiles.Storage.Version2019_06_01
             Skus = new SkusOperations(this);
             StorageAccounts = new StorageAccountsOperations(this);
             Usages = new UsagesOperations(this);
-            ManagementPolicies = new ManagementPoliciesOperations(this);
-            PrivateEndpointConnections = new PrivateEndpointConnectionsOperations(this);
-            PrivateLinkResources = new PrivateLinkResourcesOperations(this);
-            ObjectReplicationPolicies = new ObjectReplicationPoliciesOperations(this);
-            EncryptionScopes = new EncryptionScopesOperations(this);
             BaseUri = new System.Uri("https://management.azure.com");
             ApiVersion = "2019-06-01";
             AcceptLanguage = "en-US";
