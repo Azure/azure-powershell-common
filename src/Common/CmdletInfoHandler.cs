@@ -56,21 +56,26 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
             if (Cmdlet != null)
             {
-                request.Headers.Add("CommandName", Cmdlet);
+                UpdateRequestHeader(request, "CommandName", Cmdlet);
             }
             if (ParameterSet != null)
             {
-                request.Headers.Add("ParameterSetName", ParameterSet);
+                UpdateRequestHeader(request, "ParameterSetName", ParameterSet);
             }
             if (ClientRequestId != null)
             {
-                if (request.Headers.Contains("x-ms-client-request-id"))
-                {
-                    request.Headers.Remove("x-ms-client-request-id");
-                }
-                request.Headers.TryAddWithoutValidation("x-ms-client-request-id", ClientRequestId);
+                UpdateRequestHeader(request, "x-ms-client-request-id", ClientRequestId);
             }
             return base.SendAsync(request, cancellationToken);
+        }
+
+        private static void UpdateRequestHeader(HttpRequestMessage request, string name, string value)
+        {
+            if (request.Headers.Contains(name))
+            {
+                request.Headers.Remove(name);
+            }
+            request.Headers.TryAddWithoutValidation(name, value);
         }
 
         public object Clone()

@@ -18,21 +18,25 @@ using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.Azure.Commands.ResourceManager.Common
 {
     public class ServiceClientTracingInterceptor : IServiceClientTracingInterceptor
     {
-        public ServiceClientTracingInterceptor(ConcurrentQueue<string> queue, IList<Regex> matchers = null)
+        public ServiceClientTracingInterceptor(ConcurrentQueue<string> queue, IList<Regex> matchers = null, string clientRequestId = null)
         {
             MessageQueue = queue;
             Matchers = matchers;
+            this.clientRequestId = clientRequestId;
         }
 
         public ConcurrentQueue<string> MessageQueue { get; private set; }
 
         private IList<Regex> Matchers { get; set; }
+
+        private string clientRequestId;
 
         public void Configuration(string source, string name, string value)
         {
@@ -62,8 +66,21 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
 
         public void SendRequest(string invocationId, System.Net.Http.HttpRequestMessage request)
         {
-            string requestAsString = request == null ? string.Empty : GeneralUtilities.GetLog(request, Matchers);
-            MessageQueue.CheckAndEnqueue(requestAsString);
+            if(request != null)
+            {
+                // CmdletInfoHandler sets/updates x-ms-client-request-id during SendAsync() no matter if SDK sets x-ms-client-request-id.
+                // Update request here to ensure its value consistent with real result.
+                if (clientRequestId != null)
+                {
+                    if (request.Headers.Contains("x-ms-client-request-id"))
+                    {
+                        request.Headers.Remove("x-ms-client-request-id");
+                    }
+                    request.Headers.TryAddWithoutValidation("x-ms-client-request-id", clientRequestId);
+                }
+                string requestAsString = GeneralUtilities.GetLog(request, Matchers);
+                MessageQueue.CheckAndEnqueue(requestAsString);
+            }
         }
 
         public void TraceError(string invocationId, Exception exception)
