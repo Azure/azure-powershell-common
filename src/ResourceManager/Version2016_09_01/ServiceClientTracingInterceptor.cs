@@ -18,7 +18,6 @@ using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.Azure.Commands.ResourceManager.Common
@@ -66,21 +65,17 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
 
         public void SendRequest(string invocationId, System.Net.Http.HttpRequestMessage request)
         {
-            if(request != null)
+            // CmdletInfoHandler sets/updates x-ms-client-request-id during SendAsync() no matter if SDK sets x-ms-client-request-id.
+            // Update request here to ensure its value consistent with real result.
+            if (request != null && clientRequestId != null)
             {
-                // CmdletInfoHandler sets/updates x-ms-client-request-id during SendAsync() no matter if SDK sets x-ms-client-request-id.
-                // Update request here to ensure its value consistent with real result.
-                if (clientRequestId != null)
+                if (request.Headers.Contains(ApiConstants.HeaderNameClientRequestId))
                 {
-                    if (request.Headers.Contains("x-ms-client-request-id"))
-                    {
-                        request.Headers.Remove("x-ms-client-request-id");
-                    }
-                    request.Headers.TryAddWithoutValidation("x-ms-client-request-id", clientRequestId);
+                    request.Headers.Remove(ApiConstants.HeaderNameClientRequestId);
                 }
-                string requestAsString = GeneralUtilities.GetLog(request, Matchers);
-                MessageQueue.CheckAndEnqueue(requestAsString);
+                request.Headers.TryAddWithoutValidation(ApiConstants.HeaderNameClientRequestId, clientRequestId);
             }
+            MessageQueue.CheckAndEnqueue(GeneralUtilities.GetLog(request, Matchers));
         }
 
         public void TraceError(string invocationId, Exception exception)

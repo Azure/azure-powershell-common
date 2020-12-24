@@ -18,7 +18,6 @@ using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 
@@ -69,18 +68,15 @@ namespace Microsoft.Azure.ServiceManagement.Common.Models
 
         public void SendRequest(string invocationId, HttpRequestMessage request)
         {
-            if (request != null)
+            // CmdletInfoHandler sets/updates x-ms-client-request-id during SendAsync() no matter if SDK sets x-ms-client-request-id.
+            // Update request here to ensure its value consistent with real result.
+            if (clientRequestId != null)
             {
-                // CmdletInfoHandler sets/updates x-ms-client-request-id during SendAsync() no matter if SDK sets x-ms-client-request-id.
-                // Update request here to ensure its value consistent with real result.
-                if (clientRequestId != null)
+                if (request.Headers.Contains(ApiConstants.HeaderNameClientRequestId))
                 {
-                    if (request.Headers.Contains(ApiConstants.HeaderNameClientRequestId))
-                    {
-                        request.Headers.Remove(ApiConstants.HeaderNameClientRequestId);
-                    }
-                    request.Headers.TryAddWithoutValidation(ApiConstants.HeaderNameClientRequestId, clientRequestId);
+                    request.Headers.Remove(ApiConstants.HeaderNameClientRequestId);
                 }
+                request.Headers.TryAddWithoutValidation(ApiConstants.HeaderNameClientRequestId, clientRequestId);
             }
             Write(GeneralUtilities.GetLog(request, Matchers));
         }
