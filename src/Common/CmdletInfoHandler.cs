@@ -64,7 +64,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             }
             if (ClientRequestId != null)
             {
-                UpdateRequestHeader(request, "x-ms-client-request-id", ClientRequestId);
+                UpdateRequestHeader(request, ApiConstants.HeaderNameClientRequestId, ClientRequestId);
             }
             return base.SendAsync(request, cancellationToken);
         }

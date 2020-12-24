@@ -75,11 +75,11 @@ namespace Microsoft.Azure.ServiceManagement.Common.Models
                 // Update request here to ensure its value consistent with real result.
                 if (clientRequestId != null)
                 {
-                    if (request.Headers.Contains("x-ms-client-request-id"))
+                    if (request.Headers.Contains(ApiConstants.HeaderNameClientRequestId))
                     {
-                        request.Headers.Remove("x-ms-client-request-id");
+                        request.Headers.Remove(ApiConstants.HeaderNameClientRequestId);
                     }
-                    request.Headers.TryAddWithoutValidation("x-ms-client-request-id", clientRequestId);
+                    request.Headers.TryAddWithoutValidation(ApiConstants.HeaderNameClientRequestId, clientRequestId);
                 }
             }
             Write(GeneralUtilities.GetLog(request, Matchers));

@@ -26,6 +26,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         public const string VersionHeaderContentLatest = "2013-08-01";
         public const string VersionHeaderName = "x-ms-version";
 
+        public const string HeaderNameClientRequestId = "x-ms-client-request-id";
     }
 
     public static class StorSimpleConstants
