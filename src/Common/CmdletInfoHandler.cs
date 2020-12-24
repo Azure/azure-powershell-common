@@ -56,15 +56,19 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
             if (Cmdlet != null)
             {
-                UpdateRequestHeader(request, "CommandName", Cmdlet);
+                request.Headers.Add("CommandName", Cmdlet);
             }
             if (ParameterSet != null)
             {
-                UpdateRequestHeader(request, "ParameterSetName", ParameterSet);
+                request.Headers.Add("ParameterSetName", ParameterSet);
             }
             if (ClientRequestId != null)
             {
-                UpdateRequestHeader(request, ApiConstants.HeaderNameClientRequestId, ClientRequestId);
+                if (request.Headers.Contains(ApiConstants.HeaderNameClientRequestId))
+                {
+                    request.Headers.Remove(ApiConstants.HeaderNameClientRequestId);
+                }
+                request.Headers.TryAddWithoutValidation(ApiConstants.HeaderNameClientRequestId, ClientRequestId);
             }
             return base.SendAsync(request, cancellationToken);
         }
