@@ -73,15 +73,6 @@ namespace Microsoft.WindowsAzure.Commands.Common
             return base.SendAsync(request, cancellationToken);
         }
 
-        private static void UpdateRequestHeader(HttpRequestMessage request, string name, string value)
-        {
-            if (request.Headers.Contains(name))
-            {
-                request.Headers.Remove(name);
-            }
-            request.Headers.TryAddWithoutValidation(name, value);
-        }
-
         public object Clone()
         {
             return new CmdletInfoHandler(this.Cmdlet, this.ParameterSet, this.ClientRequestId);
