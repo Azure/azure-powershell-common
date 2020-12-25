@@ -14,6 +14,7 @@
 
 using Hyak.Common;
 using Microsoft.WindowsAzure.Commands.Common;
+using Microsoft.WindowsAzure.Commands.Common.Extensions;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using System;
 using System.Collections.Concurrent;
@@ -72,11 +73,7 @@ namespace Microsoft.Azure.ServiceManagement.Common.Models
             // Update request here to ensure its value consistent with real result.
             if (clientRequestId != null)
             {
-                if (request.Headers.Contains(ApiConstants.HeaderNameClientRequestId))
-                {
-                    request.Headers.Remove(ApiConstants.HeaderNameClientRequestId);
-                }
-                request.Headers.TryAddWithoutValidation(ApiConstants.HeaderNameClientRequestId, clientRequestId);
+                request.AddClientRequestId(clientRequestId);
             }
             Write(GeneralUtilities.GetLog(request, Matchers));
         }

@@ -14,6 +14,7 @@
 
 using Microsoft.Rest;
 using Microsoft.WindowsAzure.Commands.Common;
+using Microsoft.WindowsAzure.Commands.Common.Extensions;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using System;
 using System.Collections.Concurrent;
@@ -69,11 +70,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             // Update request here to ensure its value consistent with real result.
             if (request != null && clientRequestId != null)
             {
-                if (request.Headers.Contains(ApiConstants.HeaderNameClientRequestId))
-                {
-                    request.Headers.Remove(ApiConstants.HeaderNameClientRequestId);
-                }
-                request.Headers.TryAddWithoutValidation(ApiConstants.HeaderNameClientRequestId, clientRequestId);
+                request.AddClientRequestId(clientRequestId);
             }
             MessageQueue.CheckAndEnqueue(GeneralUtilities.GetLog(request, Matchers));
         }

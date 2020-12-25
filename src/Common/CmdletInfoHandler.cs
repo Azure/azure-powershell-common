@@ -12,6 +12,7 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using Microsoft.WindowsAzure.Commands.Common.Extensions;
 using System;
 using System.Net.Http;
 using System.Threading;
@@ -64,11 +65,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             }
             if (ClientRequestId != null)
             {
-                if (request.Headers.Contains(ApiConstants.HeaderNameClientRequestId))
-                {
-                    request.Headers.Remove(ApiConstants.HeaderNameClientRequestId);
-                }
-                request.Headers.TryAddWithoutValidation(ApiConstants.HeaderNameClientRequestId, ClientRequestId);
+                request.AddClientRequestId(ClientRequestId);
             }
             return base.SendAsync(request, cancellationToken);
         }
