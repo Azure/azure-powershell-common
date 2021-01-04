@@ -12,12 +12,12 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces
+namespace Microsoft.Azure.Commands.Common
 {
     /// <summary>
-    /// Represent error info that should be sent to telemetry
+    /// Represent Error Data
     /// </summary>
-    public interface IContainsTelemetryErrorData
+    public interface IContainsAzPSErrorData
     {
         /// <summary>
         /// Error Kind: User, Serivce, Internal
@@ -35,12 +35,15 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces
         int? ErrorLineNumber { get; }
 
         /// <summary>
-        /// File name in which exceptions is thrown
+        /// File name in which exception is thrown
         /// </summary>
         string ErrorFileName { get; }
 
     }
 
+    /// <summary>
+    /// Represent Error Kind
+    /// </summary>
     public class ErrorKind
     {
         public string Value { get; private set; }
@@ -52,10 +55,19 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces
 
         public static implicit operator string(ErrorKind error) => error.Value;
 
+        /// <summary>
+        /// Error caused by user input
+        /// </summary>
         public static ErrorKind UserError = new ErrorKind("User");
 
+        /// <summary>
+        /// Error caused by Azure services
+        /// </summary>
         public static ErrorKind ServiceError = new ErrorKind("Service");
 
+        /// <summary>
+        /// Error that belongs to neither UserError nor ServiceError
+        /// </summary>
         public static ErrorKind InternalError = new ErrorKind("Internal");
     }
 }

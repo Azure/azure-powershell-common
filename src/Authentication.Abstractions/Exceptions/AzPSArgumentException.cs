@@ -16,80 +16,80 @@ using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 
-using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces;
-
-namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Exceptions
+namespace Microsoft.Azure.Commands.Common.Exceptions
 {
-    public class AzPSArgumentException : ArgumentException, IContainsTelemetryErrorData
+    public class AzPSArgumentException : ArgumentException, IContainsAzPSErrorData
     {
         public ErrorKind ErrorKind
         {
             get
             {
-                return Data.Contains(AzurePSTelemetryKeys.ErrorKindKey) ?
-                    Data[AzurePSTelemetryKeys.ErrorKindKey] as ErrorKind : null;
+                return Data.Contains(AzurePSErrorDataKeys.ErrorKindKey) ?
+                    Data[AzurePSErrorDataKeys.ErrorKindKey] as ErrorKind : null;
             }
 
-            private set { Data[AzurePSTelemetryKeys.ErrorKindKey] = value; }
+            private set { Data[AzurePSErrorDataKeys.ErrorKindKey] = value; }
         }
 
         public string DesensitizedErrorMessage
         {
             get
             {
-                return Data.Contains(AzurePSTelemetryKeys.DesensitizedErrorMessageKey) ?
-                    Data[AzurePSTelemetryKeys.DesensitizedErrorMessageKey]?.ToString() : null;
+                return Data.Contains(AzurePSErrorDataKeys.DesensitizedErrorMessageKey) ?
+                    Data[AzurePSErrorDataKeys.DesensitizedErrorMessageKey]?.ToString() : null;
             }
 
-            private set { Data[AzurePSTelemetryKeys.DesensitizedErrorMessageKey] = value; }
+            private set { Data[AzurePSErrorDataKeys.DesensitizedErrorMessageKey] = value; }
         }
 
         public int? ErrorLineNumber
         {
             get
             {
-                return Data.Contains(AzurePSTelemetryKeys.ErrorLineNumberKey) ?
-                    (int?)Data[AzurePSTelemetryKeys.ErrorLineNumberKey] :
+                return Data.Contains(AzurePSErrorDataKeys.ErrorLineNumberKey) ?
+                    (int?)Data[AzurePSErrorDataKeys.ErrorLineNumberKey] :
                     null;
             }
 
-            private set { Data[AzurePSTelemetryKeys.ErrorLineNumberKey] = value; }
+            private set { Data[AzurePSErrorDataKeys.ErrorLineNumberKey] = value; }
         }
 
         public string ErrorFileName
         {
             get
             {
-                return Data.Contains(AzurePSTelemetryKeys.ErrorFileNameKey) ?
-                    Data[AzurePSTelemetryKeys.ErrorFileNameKey]?.ToString() : null;
+                return Data.Contains(AzurePSErrorDataKeys.ErrorFileNameKey) ?
+                    Data[AzurePSErrorDataKeys.ErrorFileNameKey]?.ToString() : null;
             }
 
-            private set { Data[AzurePSTelemetryKeys.ErrorFileNameKey] = value; }
+            private set { Data[AzurePSErrorDataKeys.ErrorFileNameKey] = value; }
         }
 
         public AzPSArgumentException(
             string message,
             string paramName,
-            string desensitizedErrorMessage,
+            string desensitizedMessage = null,
+            Exception innerException = null,
             [CallerLineNumber] int lineNumber = 0,
             [CallerFilePath] string filePath = null)
-            : this(message, paramName, desensitizedErrorMessage, ErrorKind.UserError, lineNumber, filePath)
+            : this(message, paramName, ErrorKind.UserError, desensitizedMessage, innerException, lineNumber, filePath)
         {
         }
 
         public AzPSArgumentException(
             string message,
             string paramName,
-            string desensitizedErrorMessage,
             ErrorKind errorKind,
+            string desensitizedMessage = null,
+            Exception innerException = null,
             [CallerLineNumber] int lineNumber = 0,
             [CallerFilePath] string filePath = null)
-            :base(paramName, message)
+            :base(message, paramName)
         {
             ErrorKind = errorKind;
-            if (!string.IsNullOrEmpty(desensitizedErrorMessage))
+            if (!string.IsNullOrEmpty(desensitizedMessage))
             {
-                DesensitizedErrorMessage = desensitizedErrorMessage;
+                DesensitizedErrorMessage = desensitizedMessage;
             }
             ErrorLineNumber = lineNumber;
             if (!string.IsNullOrEmpty(filePath))
