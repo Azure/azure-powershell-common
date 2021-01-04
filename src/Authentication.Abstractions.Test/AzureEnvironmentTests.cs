@@ -12,11 +12,8 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace Authentication.Abstractions.Test
@@ -24,37 +21,89 @@ namespace Authentication.Abstractions.Test
     public class AzureEnvironmentTests
     {
         private const string ArmMetadataEnvVariable = "ARM_CLOUD_METADATA_URL";
-        readonly IDictionary<string, AzureEnvironment> hardCodedEnvironments = AzureEnvironment.PublicEnvironments;
 
         [Fact]
         public void TestArmAndNonArmBasedCloudMetadataInit()
         {
             Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData\GoodArmResponse.json");
-            var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(TestOperationsFactory.Create().GetHttpOperations());
+            var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
 
-            var unequalItemsDict = armEnvironments
-                .Where(keyValuePair => !hardCodedEnvironments[keyValuePair.Key].Equals(keyValuePair.Value))
-                .ToDictionary(entry => entry.Key, entry => entry.Value);
-
-            if (unequalItemsDict.Any())
+            // Check all discovered environments are loaded.
+            Assert.Equal(4, armEnvironments.Count);
+            foreach (var env in armEnvironments.Values)
             {
-                Assert.True(false, "Hard coded and ARM based cloud metadata initializations have different values.");
+                Assert.Equal(AzureEnvironment.TypeDiscovered, env.Type);
             }
+        }
+
+        [Fact]
+        public void TestArmCloudMetadata20190501Init()
+        {
+            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData\ArmResponse2019-05-01.json");
+            var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
+
+            // Check all discovered environments are loaded.
+            Assert.Equal(4, armEnvironments.Count);
+            foreach (var env in armEnvironments.Values)
+            {
+                Assert.Equal(AzureEnvironment.TypeDiscovered, env.Type);
+                Assert.EndsWith("/", env.ServiceManagementUrl);
+                Assert.StartsWith(".", env.SqlDatabaseDnsSuffix);
+            }
+        }
+
+        [Fact]
+        public void TestArmResponseNoAzureCloud()
+        {
+            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData\ArmResponseNoAzureCloud.json");
+            var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
+
+            // Check AzureCloud is added to public environment list even discovery endpoint doesn't return AzureCloud.
+            Assert.Equal(4, armEnvironments.Count);
+            Assert.Equal(AzureEnvironment.TypeBuiltIn, armEnvironments[EnvironmentName.AzureCloud].Type);
+            Assert.Equal(AzureEnvironment.TypeBuiltIn, armEnvironments[EnvironmentName.AzureChinaCloud].Type);
+            Assert.Equal(AzureEnvironment.TypeDiscovered, armEnvironments[EnvironmentName.AzureGermanCloud].Type);
+            Assert.Equal(AzureEnvironment.TypeDiscovered, armEnvironments[EnvironmentName.AzureUSGovernment].Type);
+        }
+
+        [Fact]
+        public void TestArmResponseOneEntry()
+        {
+            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData\ArmResponseOneEntry.json");
+            var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
+
+            Assert.Equal(5, armEnvironments.Count);
+            Assert.Equal(AzureEnvironment.TypeBuiltIn, armEnvironments[EnvironmentName.AzureCloud].Type);
+            Assert.Equal(AzureEnvironment.TypeBuiltIn, armEnvironments[EnvironmentName.AzureChinaCloud].Type);
+            Assert.Equal(AzureEnvironment.TypeBuiltIn, armEnvironments[EnvironmentName.AzureGermanCloud].Type);
+            Assert.Equal(AzureEnvironment.TypeBuiltIn, armEnvironments[EnvironmentName.AzureUSGovernment].Type);
         }
 
         [Fact]
         public void TestFallbackWhenArmCloudMetadataInitFails()
         {
             Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData\BadArmResponse.json");
-            var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(TestOperationsFactory.Create().GetHttpOperations());
+            var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
 
-            var unequalItemsDict = armEnvironments
-                .Where(keyValuePair => !hardCodedEnvironments[keyValuePair.Key].Equals(keyValuePair.Value))
-                .ToDictionary(entry => entry.Key, entry => entry.Value);
-
-            if (unequalItemsDict.Any())
+            // Check all built-in environments are loaded because discover is failed
+            Assert.Equal(4, armEnvironments.Count);
+            foreach (var env in armEnvironments.Values)
             {
-                Assert.True(false, "Hard coded and ARM based cloud metadata initializations have different values.");
+                Assert.Equal(AzureEnvironment.TypeBuiltIn, env.Type);
+            }
+        }
+
+        [Fact]
+        public void TestDisableArmCloudMetadataInit()
+        {
+            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, "disabled");
+            var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
+
+            // Check all built-in environments are loaded because discover is disabled
+            Assert.Equal(4, armEnvironments.Count);
+            foreach (var env in armEnvironments.Values)
+            {
+                Assert.Equal(AzureEnvironment.TypeBuiltIn, env.Type);
             }
         }
     }

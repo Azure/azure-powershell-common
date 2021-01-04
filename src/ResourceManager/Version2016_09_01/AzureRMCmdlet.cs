@@ -26,9 +26,9 @@ using Microsoft.WindowsAzure.Commands.Common;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
+using System.Net.Http.Headers;
 using System.Security.Authentication;
 using System.Text;
 
@@ -46,6 +46,10 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         public const string AUX_HEADER_NAME = "x-ms-authorization-auxiliary";
         public const string AUX_TOKEN_PREFIX = "Bearer";
         public const string AUX_TOKEN_APPEND_CHAR = ";";
+        public const string WriteDebugKey = "WriteDebug";
+        public const string WriteVerboseKey = "WriteVerbose";
+        public const string WriteWarningKey = "WriteWarning";
+        public const string EnqueueDebugKey = "EnqueueDebug";
 
         /// <summary>
         /// Creates new instance from AzureRMCmdlet and add the RPRegistration handler.
@@ -57,7 +61,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         /// <summary>
         /// Gets or sets the global profile for ARM cmdlets.
         /// </summary>
-        [Parameter(Mandatory =false, HelpMessage= "The credentials, account, tenant, and subscription used for communication with Azure.")]
+        [Parameter(Mandatory = false, HelpMessage = "The credentials, account, tenant, and subscription used for communication with Azure.")]
         [Alias("AzContext", "AzureRmContext", "AzureCredential")]
         public IAzureContextContainer DefaultProfile
         {
@@ -123,7 +127,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             List<IAzureSubscription> subscriptionObjects = DefaultProfile.Subscriptions.Where(s => subscriptions.Contains(s.GetId().ToString())).ToList();
             if (subscriptionsNotInDefaultProfile.Any())
             {
-                //So we didnt find some subscriptions in the default profile.. 
+                //So we didnt find some subscriptions in the default profile..
                 //this does not mean that the user does not have access to the subs, it just menas that the local context did not have them
                 //We gotta now call into the subscription RP and see if the user really does not have access to these subscriptions
 
@@ -163,6 +167,13 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
                 return Resources.ARMDataCollectionMessage;
             }
         }
+
+        /// <summary>
+        /// Whether this cmdlet requires default context.
+        /// If false, the logic of referencing default context would be omitted.
+        /// </summary>
+        protected virtual bool RequireDefaultContext() { return true; }
+
         /// <summary>
         /// Return a default context safely if it is available, without throwing if it is not setup
         /// </summary>
@@ -172,6 +183,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         {
             bool result = false;
             context = null;
+
             if (DefaultProfile != null && DefaultProfile.DefaultContext != null && DefaultProfile.DefaultContext.Account != null)
             {
                 context = DefaultProfile.DefaultContext;
@@ -198,10 +210,10 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         }
 
         /// <summary>
-        /// Guards execution of the given action using ShouldProcess and ShouldContinue.  The optional 
-        /// useSHouldContinue predicate determines whether SHouldContinue should be called for this 
-        /// particular action (e.g. a resource is being overwritten). By default, both 
-        /// ShouldProcess and ShouldContinue will be executed.  Cmdlets that use this method overload 
+        /// Guards execution of the given action using ShouldProcess and ShouldContinue.  The optional
+        /// useSHouldContinue predicate determines whether SHouldContinue should be called for this
+        /// particular action (e.g. a resource is being overwritten). By default, both
+        /// ShouldProcess and ShouldContinue will be executed.  Cmdlets that use this method overload
         /// must have a force parameter.
         /// </summary>
         /// <param name="force">Do not ask for confirmation</param>
@@ -214,7 +226,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         {
             ConfirmAction(force, continueMessage, processMessage, target, action, () => true);
         }
-        
+
         /// <summary>
         /// Prompt for confirmation for the specified change to the specified ARM resource
         /// </summary>
@@ -242,7 +254,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         /// <param name="action">The code action to perform if confirmation is successful</param>
         /// <param name="promptForContinuation">Predicate to determine whether a ShouldContinue prompt is necessary</param>
         protected void ConfirmResourceAction(string resourceType, string resourceName, string resourceGroupName,
-            bool force, string continueMessage, string processMessage, Action action, Func<bool> promptForContinuation = null )
+            bool force, string continueMessage, string processMessage, Action action, Func<bool> promptForContinuation = null)
         {
             ConfirmAction(force, continueMessage, processMessage, string.Format(Resources.ResourceConfirmTarget,
                 resourceType, resourceName, resourceGroupName), action, promptForContinuation);
@@ -269,7 +281,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         /// <param name="actionName">A description of the change to the resource</param>
         /// <param name="action">The code action to perform if confirmation is successful</param>
         /// <param name="promptForContinuation">Predicate to determine whether a ShouldContinue prompt is necessary</param>
-        protected void ConfirmResourceAction(string resourceId, bool force, string continueMessage, string actionName, 
+        protected void ConfirmResourceAction(string resourceId, bool force, string continueMessage, string actionName,
             Action action, Func<bool> promptForContinuation = null)
         {
             ConfirmAction(force, continueMessage, actionName, string.Format(Resources.ResourceIdConfirmTarget,
@@ -278,46 +290,18 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
 
         protected override void InitializeQosEvent()
         {
-            var commandAlias = this.GetType().Name;
-            if (this.MyInvocation != null && this.MyInvocation.MyCommand != null)
-            {
-                commandAlias = this.MyInvocation.MyCommand.Name;
-            }
-
-            _qosEvent = new AzurePSQoSEvent()
-            {
-                CommandName = commandAlias,
-                ModuleName = this.GetType().Assembly.GetName().Name,
-                ModuleVersion = this.GetType().Assembly.GetName().Version.ToString(),
-                ClientRequestId = this._clientRequestId,
-                SessionId = _sessionId,
-                IsSuccess = true,
-                ParameterSetName = this.ParameterSetName
-            };
-
-            if (this.MyInvocation != null && !string.IsNullOrWhiteSpace(this.MyInvocation.InvocationName))
-            {
-                _qosEvent.InvocationName = this.MyInvocation.InvocationName;
-            }
-
-            if (this.MyInvocation != null && this.MyInvocation.BoundParameters != null 
-                && this.MyInvocation.BoundParameters.Keys != null)
-            {
-                _qosEvent.Parameters = string.Join(" ",
-                    this.MyInvocation.BoundParameters.Keys.Select(
-                        s => string.Format(CultureInfo.InvariantCulture, "-{0} ***", s)));
-            }
+            base.InitializeQosEvent();
 
             IAzureContext context;
-            if (TryGetDefaultContext(out context) 
-                && context.Account != null 
-                && !string.IsNullOrWhiteSpace(context.Account.Id))
+            _qosEvent.Uid = "defaultid";
+            if (RequireDefaultContext() && TryGetDefaultContext(out context))
             {
-                _qosEvent.Uid = MetricHelper.GenerateSha256HashString(context.Account.Id.ToString());
-            }
-            else
-            {
-                _qosEvent.Uid = "defaultid";
+                _qosEvent.SubscriptionId = context.Subscription?.Id;
+                _qosEvent.TenantId = context.Tenant?.Id;
+                if(context.Account != null && !String.IsNullOrWhiteSpace(context.Account.Id))
+                {
+                    _qosEvent.Uid = MetricHelper.GenerateSha256HashString(context.Account.Id.ToString());
+                }
             }
         }
 
@@ -325,20 +309,14 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         {
             base.LogCmdletStartInvocationInfo();
             IAzureContext context;
-            if (TryGetDefaultContext(out context)
+            if (RequireDefaultContext()
+                && TryGetDefaultContext(out context)
                 && context.Account != null
                 && context.Account.Id != null)
             {
-                    WriteDebugWithTimestamp(string.Format("using account id '{0}'...",
-                    context.Account.Id));
+                WriteDebugWithTimestamp(string.Format("using account id '{0}'...",
+                context.Account.Id));
             }
-        }
-
-        protected override void LogCmdletEndInvocationInfo()
-        {
-            base.LogCmdletEndInvocationInfo();
-            string message = string.Format("{0} end processing.", this.GetType().Name);
-            WriteDebugWithTimestamp(message);
         }
 
         protected override void SetupDebuggingTraces()
@@ -346,7 +324,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             ServiceClientTracing.IsEnabled = true;
             base.SetupDebuggingTraces();
             _serviceClientTracingInterceptor = _serviceClientTracingInterceptor
-                ?? new ServiceClientTracingInterceptor(DebugMessages);
+                ?? new ServiceClientTracingInterceptor(DebugMessages, _matchers, _clientRequestId);
             ServiceClientTracing.AddTracingInterceptor(_serviceClientTracingInterceptor);
         }
 
@@ -370,9 +348,11 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
 
         protected override void BeginProcessing()
         {
+            InitializeEventHandlers();
             AzureSession.Instance.ClientFactory.RemoveHandler(typeof(RPRegistrationDelegatingHandler));
             IAzureContext context;
-            if (TryGetDefaultContext(out context)
+            if (RequireDefaultContext()
+                && TryGetDefaultContext(out context)
                 && context.Account != null
                 && context.Subscription != null)
             {
@@ -400,19 +380,29 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
                 if (!string.IsNullOrEmpty(resourceGroupName))
                 {
                     WildcardPattern pattern = new WildcardPattern(resourceGroupName, WildcardOptions.IgnoreCase);
-                    output = output.Select(t => new { Id = new ResourceIdentifier((string) GetPropertyValue(t, idProperty)), Resource = t })
+                    output = output.Select(t => new { Id = new ResourceIdentifier((string)GetPropertyValue(t, idProperty)), Resource = t })
                                    .Where(p => IsMatch(p.Id, "ResourceGroupName", pattern))
                                    .Select(r => r.Resource);
                 }
 
                 if (!string.IsNullOrEmpty(name))
                 {
-                    WildcardPattern pattern = new WildcardPattern(name, WildcardOptions.IgnoreCase);
-                    output = output.Select(t => new { Id = new ResourceIdentifier((string) GetPropertyValue(t, idProperty)), Resource = t })
-                                   .Where(p => IsMatch(p.Id, "ResourceName", pattern))
-                                   .Select(r => r.Resource);
+                    string[] parts = name.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                    List<WildcardPattern> patterns = new List<WildcardPattern>();
+                    parts.ForEach(p => patterns.Add(new WildcardPattern(p, WildcardOptions.IgnoreCase)));
+                    if (parts.Length == 1)
+                    {
+                        output = output.Select(t => new { Id = new ResourceIdentifier((string)GetPropertyValue(t, idProperty)), Resource = t })
+                                     .Where(p => IsMatch(p.Id, "ResourceName", patterns.Last()))
+                                     .Select(r => r.Resource);
+                    }
+                    else if (parts.Length == 2)
+                    {
+                        output = output.Select(t => new { Id = new ResourceIdentifier((string)GetPropertyValue(t, idProperty)), Resource = t })
+                            .Where(p => IsMatch(p.Id, "ResourceName", patterns.Last()) && IsParentNameMatch(p.Id, patterns.First()))
+                            .Select(r => r.Resource);
+                    }
                 }
-
             }
             else
             {
@@ -461,6 +451,21 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             return !string.IsNullOrEmpty(value) && pattern.IsMatch(value);
         }
 
+        private bool IsParentNameMatch<T>(T resource, WildcardPattern pattern)
+        {
+            string value = (string)GetPropertyValue(resource, "ParentResource");
+            if (!string.IsNullOrEmpty(value))
+            {
+                int parentNameStartIdx = value.LastIndexOf('/');
+                if (parentNameStartIdx > 0)
+                {
+                    value = value.Substring(parentNameStartIdx + 1);
+                }
+                return !string.IsNullOrEmpty(value) && pattern.IsMatch(value);
+            }
+            return false;
+        }
+
         public bool ShouldListBySubscription(string resourceGroupName, string name)
         {
             if (string.IsNullOrEmpty(resourceGroupName))
@@ -499,6 +504,47 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             }
 
             return false;
+        }
+
+        private event EventHandler<StreamEventArgs> _writeDebugEvent;
+        private event EventHandler<StreamEventArgs> _writeVerboseEvent;
+        private event EventHandler<StreamEventArgs> _writeWarningEvent;
+        private event EventHandler<StreamEventArgs> _enqueueDebugEvent;
+
+        private void InitializeEventHandlers()
+        {
+            _writeDebugEvent -= WriteDebugSender;
+            _writeDebugEvent += WriteDebugSender;
+            _writeVerboseEvent -= WriteVerboseSender;
+            _writeVerboseEvent += WriteVerboseSender;
+            _writeWarningEvent -= WriteWarningSender;
+            _writeWarningEvent += WriteWarningSender;
+            _enqueueDebugEvent -= EnqueueDebugSender;
+            _enqueueDebugEvent += EnqueueDebugSender;
+            AzureSession.Instance.RegisterComponent(WriteDebugKey, () => _writeDebugEvent, true);
+            AzureSession.Instance.RegisterComponent(WriteVerboseKey, () => _writeVerboseEvent, true);
+            AzureSession.Instance.RegisterComponent(WriteWarningKey, () => _writeWarningEvent, true);
+            AzureSession.Instance.RegisterComponent(EnqueueDebugKey, () => _enqueueDebugEvent, true);
+        }
+
+        private void WriteDebugSender(object sender, StreamEventArgs args)
+        {
+            WriteDebug(args.Message);
+        }
+
+        private void WriteVerboseSender(object sender, StreamEventArgs args)
+        {
+            WriteVerbose(args.Message);
+        }
+
+        private void WriteWarningSender(object sender, StreamEventArgs args)
+        {
+            WriteWarning(args.Message);
+        }
+
+        private void EnqueueDebugSender(object sender, StreamEventArgs args)
+        {
+            DebugMessages.Enqueue(args.Message);
         }
     }
 }

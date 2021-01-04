@@ -151,6 +151,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     case AzureEnvironment.Endpoint.BatchEndpointResourceId:
                         propertyValue = environment.BatchEndpointResourceId;
                         break;
+                    case AzureEnvironment.Endpoint.ContainerRegistryEndpointSuffix:
+                        propertyValue = environment.ContainerRegistryEndpointSuffix;
+                        break;
                     default:
                         // get property from the extended properties of the environment
                         propertyValue = environment.GetProperty(endpointName);
@@ -265,6 +268,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     case AzureEnvironment.Endpoint.ServiceManagement:
                         environment.ServiceManagementUrl = propertyValue;
                         break;
+                    case AzureEnvironment.Endpoint.ContainerRegistryEndpointSuffix:
+                        environment.ContainerRegistryEndpointSuffix = propertyValue;
+                        break;
                     case AzureEnvironment.ExtendedEndpoint.OperationalInsightsEndpointResourceId:
                         environment.SetProperty(AzureEnvironment.ExtendedEndpoint.OperationalInsightsEndpointResourceId, propertyValue);
                         break;
@@ -282,6 +288,18 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                         break;
                     case AzureEnvironment.ExtendedEndpoint.AzureAttestationServiceEndpointResourceId:
                         environment.SetProperty(AzureEnvironment.ExtendedEndpoint.AzureAttestationServiceEndpointResourceId, propertyValue);
+                        break;
+                    case AzureEnvironment.ExtendedEndpoint.AzureSynapseAnalyticsEndpointSuffix:
+                        environment.SetProperty(AzureEnvironment.ExtendedEndpoint.AzureSynapseAnalyticsEndpointSuffix, propertyValue);
+                        break;
+                    case AzureEnvironment.ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId:
+                        environment.SetProperty(AzureEnvironment.ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId, propertyValue);
+                        break;
+                    case AzureEnvironment.ExtendedEndpoint.ManagedHsmServiceEndpointSuffix:
+                        environment.SetProperty(AzureEnvironment.ExtendedEndpoint.ManagedHsmServiceEndpointSuffix, propertyValue);
+                        break;
+                    case AzureEnvironment.ExtendedEndpoint.ManagedHsmServiceEndpointResourceId:
+                        environment.SetProperty(AzureEnvironment.ExtendedEndpoint.ManagedHsmServiceEndpointResourceId, propertyValue);
                         break;
                 }
             }
@@ -321,6 +339,17 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 case AzureEnvironment.ExtendedEndpoint.AzureAttestationServiceEndpointSuffix:
                 case AzureEnvironment.ExtendedEndpoint.AzureAttestationServiceEndpointResourceId:
                     resource = AzureEnvironment.ExtendedEndpoint.AzureAttestationServiceEndpointResourceId;
+                    break;
+                case AzureEnvironment.ExtendedEndpoint.AzureSynapseAnalyticsEndpointSuffix:
+                case AzureEnvironment.ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId:
+                    resource = AzureEnvironment.ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId;
+                    break;
+                case AzureEnvironment.ExtendedEndpoint.ManagedHsmServiceEndpointSuffix:
+                case AzureEnvironment.ExtendedEndpoint.ManagedHsmServiceEndpointResourceId:
+                    resource = AzureEnvironment.ExtendedEndpoint.ManagedHsmServiceEndpointResourceId;
+                    break;
+                case AzureEnvironment.Endpoint.ContainerRegistryEndpointSuffix:
+                    resource = AzureEnvironment.Endpoint.ContainerRegistryEndpointSuffix;
                     break;
                 default:
                     resource = AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId;
@@ -504,6 +533,10 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 {
                     environment.BatchEndpointResourceId = other.BatchEndpointResourceId;
                 }
+                if (other.IsEndpointSet(AzureEnvironment.Endpoint.ContainerRegistryEndpointSuffix))
+                {
+                    environment.ContainerRegistryEndpointSuffix = other.ContainerRegistryEndpointSuffix;
+                }
 
                 environment.VersionProfiles.Clear();
                 foreach (var profile in other.VersionProfiles)
@@ -518,7 +551,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 
         public static void Update(this IAzureEnvironment environment, IAzureEnvironment other)
         {
-            if (environment != null && other != null)
+            if (environment != null && other != null && environment != other)
             {
                 environment.OnPremise = other.OnPremise;
                 if (other.IsEndpointSet(AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId))
@@ -594,6 +627,10 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 if (other.IsEndpointSet(AzureEnvironment.Endpoint.DataLakeEndpointResourceId))
                 {
                     environment.DataLakeEndpointResourceId = other.DataLakeEndpointResourceId;
+                }
+                if (other.IsEndpointSet(AzureEnvironment.Endpoint.ContainerRegistryEndpointSuffix))
+                {
+                    environment.ContainerRegistryEndpointSuffix = other.ContainerRegistryEndpointSuffix;
                 }
 
                 foreach (var profile in other.VersionProfiles)

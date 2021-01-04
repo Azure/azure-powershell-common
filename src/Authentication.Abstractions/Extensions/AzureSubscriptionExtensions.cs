@@ -141,6 +141,56 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             subscription.SetProperty(AzureSubscription.Property.Tenants, tenant);
         }
 
+        public static string GetHomeTenant(this IAzureSubscription subscription)
+        {
+            return subscription.GetProperty(AzureSubscription.Property.HomeTenant);
+        }
+
+        public static void SetHomeTenant(this IAzureSubscription subscription, string tenant)
+        {
+            subscription.SetProperty(AzureSubscription.Property.HomeTenant, tenant);
+        }
+
+        /// <summary>
+        /// Get the tenants associated with this subscription
+        /// </summary>
+        /// <param name="subscription">The subscription to check</param>
+        /// <returns>The list of tenants</returns>
+        public static string[] GetManagedByTenants(this IAzureSubscription subscription)
+        {
+            return subscription.GetPropertyAsArray(AzureSubscription.Property.ManagedByTenants);
+        }
+
+        /// <summary>
+        /// Set the tenants associated with thsi susbcription
+        /// </summary>
+        /// <param name="subscription">The subscription to set</param>
+        /// <param name="tenants">The tenants associated with the subscription</param>
+        public static void SetManagedByTenants(this IAzureSubscription subscription, params string[] tenants)
+        {
+            subscription.SetOrAppendProperty(AzureSubscription.Property.ManagedByTenants, tenants);
+        }
+
+        /// <summary>
+        /// Get the subscription polices associated with this subscription
+        /// </summary>
+        /// <param name="subscription">The subscription to check</param>
+        /// <returns>The subscription polices</returns>
+        public static string GetSubscriptionPolicies(this IAzureSubscription subscription)
+        {
+            return subscription.GetProperty(AzureSubscription.Property.SubscriptionPolices);
+        }
+
+        /// <summary>
+        /// Set the subscription polices associated with this subscription
+        /// </summary>
+        /// <param name="subscription">The subscription to set</param>
+        /// <param name="subscriptionPolicies">The subscription polices associated with the subscription</param>
+        public static void SetSubscriptionPolicies(this IAzureSubscription subscription, string subscriptionPolicies)
+        {
+            subscription.SetOrAppendProperty(AzureSubscription.Property.SubscriptionPolices, subscriptionPolicies);
+        }
+
         /// <summary>
         /// Copy the properties from the given subscription
         /// </summary>

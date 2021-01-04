@@ -28,35 +28,60 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
     /// A record of metadata necessary to manage assets in a specific azure cloud, including necessary endpoints,
     /// location fo service-specific endpoints, and information for bootstrapping authentication
     /// </summary>
-    [Serializable]    
+    [Serializable]
     public class AzureEnvironment : IAzureEnvironment, IEquatable<AzureEnvironment>
     {
         private const string ArmMetadataEnvVariable = "ARM_CLOUD_METADATA_URL";
 
-        internal static IDictionary<string, AzureEnvironment> InitializeBuiltInEnvironments(IHttpOperations httpOperations)
+        private const string DefaultArmMetaDataEndpoint = "http://discover.azure.com/";
+        private const string DisableArmMetaDataEndpoint = "DISABLED";
+
+        internal static IDictionary<string, AzureEnvironment> InitializeBuiltInEnvironments(string armMetadataRequestUri, Action<string> debugLogger = null, Action<string> warningLogger = null, IHttpOperations httpOperations = null)
         {
-            IDictionary<string, AzureEnvironment> armAzureEnvironments = null;
+            IDictionary<string, AzureEnvironment> armAzureEnvironments = new Dictionary<string, AzureEnvironment>(StringComparer.InvariantCultureIgnoreCase);
             try
             {
-                var armMetadataRequestUri = Environment.GetEnvironmentVariable(ArmMetadataEnvVariable);
+                if (string.IsNullOrEmpty(armMetadataRequestUri))
+                {
+                    armMetadataRequestUri = Environment.GetEnvironmentVariable(ArmMetadataEnvVariable);
+                    if (string.IsNullOrEmpty(armMetadataRequestUri))
+                    {
+                        armMetadataRequestUri = DefaultArmMetaDataEndpoint;
+                    }
+                    else
+                    {
+                        debugLogger?.Invoke($"Get {armMetadataRequestUri} from environment variable {ArmMetadataEnvVariable}");
+                    }
+                }
+                if (DisableArmMetaDataEndpoint.Equals(armMetadataRequestUri?.Trim().ToUpper()))
+                {
+                    warningLogger?.Invoke($"Discover feature is disabled by environment variable {ArmMetadataEnvVariable}");
+                    armMetadataRequestUri = null;
+                }
                 if (!string.IsNullOrEmpty(armMetadataRequestUri))
                 {
-                    armAzureEnvironments = InitializeEnvironmentsFromArm(httpOperations, armMetadataRequestUri).Result;
+                    debugLogger?.Invoke($"Discover environments via {armMetadataRequestUri}");
+                    List<ArmMetadata> list = InitializeEnvironmentsFromArm(armMetadataRequestUri, httpOperations).ConfigureAwait(false).GetAwaiter().GetResult();
+                    foreach (var metadata in list)
+                    {
+                        var env = MapArmToAzureEnvironment(metadata);
+                        env.Type = TypeDiscovered;
+                        armAzureEnvironments[env.Name] = env;
+                        debugLogger?.Invoke($"Added discovered environment {env.Name}");
+                    }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                armAzureEnvironments = null;
+                warningLogger?.Invoke("Cannot discover environments with error");
+                warningLogger?.Invoke(e.StackTrace);
             }
 
-            if (armAzureEnvironments != null)
-            {
-                return armAzureEnvironments;
-            }
-
+            debugLogger?.Invoke($"Load built-in environments");
             var azureCloud = new AzureEnvironment
             {
                 Name = EnvironmentName.AzureCloud,
+                Type = TypeBuiltIn,
                 PublishSettingsFileUrl = AzureEnvironmentConstants.AzurePublishSettingsFileUrl,
                 ServiceManagementUrl = AzureEnvironmentConstants.AzureServiceEndpoint,
                 ResourceManagerUrl = AzureEnvironmentConstants.AzureResourceManagerEndpoint,
@@ -75,12 +100,14 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 GraphEndpointResourceId = AzureEnvironmentConstants.AzureGraphEndpoint,
                 DataLakeEndpointResourceId = AzureEnvironmentConstants.AzureDataLakeServiceEndpointResourceId,
                 BatchEndpointResourceId = AzureEnvironmentConstants.BatchEndpointResourceId,
+                ContainerRegistryEndpointSuffix = AzureEnvironmentConstants.AzureContainerRegistryEndpointSuffix,
                 AdTenant = "Common"
             };
 
             var azureChina = new AzureEnvironment
             {
                 Name = EnvironmentName.AzureChinaCloud,
+                Type = TypeBuiltIn,
                 PublishSettingsFileUrl = AzureEnvironmentConstants.ChinaPublishSettingsFileUrl,
                 ServiceManagementUrl = AzureEnvironmentConstants.ChinaServiceEndpoint,
                 ResourceManagerUrl = AzureEnvironmentConstants.ChinaResourceManagerEndpoint,
@@ -99,12 +126,14 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 DataLakeEndpointResourceId = null,
                 GraphEndpointResourceId = AzureEnvironmentConstants.ChinaGraphEndpoint,
                 BatchEndpointResourceId = AzureEnvironmentConstants.ChinaBatchEndpointResourceId,
+                ContainerRegistryEndpointSuffix = AzureEnvironmentConstants.ChinaContainerRegistryEndpointSuffix,
                 AdTenant = "Common"
             };
 
             var azureUSGovernment = new AzureEnvironment
             {
                 Name = EnvironmentName.AzureUSGovernment,
+                Type = TypeBuiltIn,
                 PublishSettingsFileUrl = AzureEnvironmentConstants.USGovernmentPublishSettingsFileUrl,
                 ServiceManagementUrl = AzureEnvironmentConstants.USGovernmentServiceEndpoint,
                 ResourceManagerUrl = AzureEnvironmentConstants.USGovernmentResourceManagerEndpoint,
@@ -123,12 +152,14 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 DataLakeEndpointResourceId = null,
                 GraphEndpointResourceId = AzureEnvironmentConstants.USGovernmentGraphEndpoint,
                 BatchEndpointResourceId = AzureEnvironmentConstants.USGovernmentBatchEndpointResourceId,
+                ContainerRegistryEndpointSuffix = AzureEnvironmentConstants.USGovernmentContainerRegistryEndpointSuffix,
                 AdTenant = "Common"
             };
 
             var azureGermany = new AzureEnvironment
             {
                 Name = EnvironmentName.AzureGermanCloud,
+                Type = TypeBuiltIn,
                 PublishSettingsFileUrl = AzureEnvironmentConstants.GermanPublishSettingsFileUrl,
                 ServiceManagementUrl = AzureEnvironmentConstants.GermanServiceEndpoint,
                 ResourceManagerUrl = AzureEnvironmentConstants.GermanResourceManagerEndpoint,
@@ -150,47 +181,55 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 AdTenant = "Common"
             };
 
-            var result = new ConcurrentDictionary<string, AzureEnvironment>(StringComparer.InvariantCultureIgnoreCase)
+            if (!armAzureEnvironments.ContainsKey(EnvironmentName.AzureCloud))
             {
-                [EnvironmentName.AzureCloud] = azureCloud,
-                [EnvironmentName.AzureChinaCloud] = azureChina,
-                [EnvironmentName.AzureUSGovernment] = azureUSGovernment,
-                [EnvironmentName.AzureGermanCloud] = azureGermany
-            };
+                armAzureEnvironments[EnvironmentName.AzureCloud] = azureCloud;
+            }
+            if (!armAzureEnvironments.ContainsKey(EnvironmentName.AzureChinaCloud))
+            {
+                armAzureEnvironments[EnvironmentName.AzureChinaCloud] = azureChina;
+            }
+            if (!armAzureEnvironments.ContainsKey(EnvironmentName.AzureUSGovernment))
+            {
+                armAzureEnvironments[EnvironmentName.AzureUSGovernment] = azureUSGovernment;
+            }
+            if (!armAzureEnvironments.ContainsKey(EnvironmentName.AzureGermanCloud))
+            {
+                armAzureEnvironments[EnvironmentName.AzureGermanCloud] = azureGermany;
+            }
 
-            SetExtendedProperties(result);
-            return result;
+            SetExtendedProperties(armAzureEnvironments);
+
+            return armAzureEnvironments;
         }
 
         /// <summary>
         /// Initializes cloud metadata dynamically from ARM.
         /// </summary>
-        private static async Task<IDictionary<string, AzureEnvironment>> InitializeEnvironmentsFromArm(
-            IHttpOperations httpOperations, 
-            string armMetadataRequestUri)
+        private static async Task<List<ArmMetadata>> InitializeEnvironmentsFromArm(string armMetadataRequestUri, IHttpOperations httpOperations = null)
         {
+            if (httpOperations == null)
+            {
+                httpOperations = HttpClientOperationsFactory.Create().GetHttpOperations();
+            }
             var armResponseMessage = await httpOperations.GetAsync(armMetadataRequestUri);
             if (armResponseMessage?.StatusCode != HttpStatusCode.OK)
             {
-                throw new Exception("Failed to load cloud metadata from the url specified by ARM_CLOUD_METADATA_URL.");
+                throw new Exception($"Failed to load cloud metadata from the url {armMetadataRequestUri}.");
             }
 
-            var armMetadataContent = await armResponseMessage.Content?.ReadAsStringAsync();
+            string armMetadataContent = null;
+
+            if (armResponseMessage.Content != null)
+            {
+                armMetadataContent = await armResponseMessage.Content.ReadAsStringAsync();
+            }
             if (string.IsNullOrEmpty(armMetadataContent))
             {
-                throw new Exception("Failed to load cloud metadata from the url specified by ARM_CLOUD_METADATA_URL.");
+                throw new Exception($"Failed to load cloud metadata from the url {armMetadataRequestUri}.");
             }
 
-            var armMetadataList = JsonConvert.DeserializeObject<List<ArmMetadata>>(armMetadataContent);
-            var result = new ConcurrentDictionary<string, AzureEnvironment>(StringComparer.InvariantCultureIgnoreCase);
-            foreach (var armMetadata in armMetadataList)
-            {
-                result[armMetadata.Name] = MapArmToAzureEnvironment(armMetadataList.First(a =>
-                    a.Name.Equals(armMetadata.Name, StringComparison.InvariantCultureIgnoreCase)));
-            }
-
-            SetExtendedProperties(result);
-            return result;
+            return JsonConvert.DeserializeObject<List<ArmMetadata>>(armMetadataContent);
         }
 
         /// <summary>
@@ -199,23 +238,49 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <param name="azureEnvironments">Collection of AzureEnvironments</param>
         private static void SetExtendedProperties(IDictionary<string, AzureEnvironment> azureEnvironments)
         {
-            azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.OperationalInsightsEndpoint, AzureEnvironmentConstants.AzureOperationalInsightsEndpoint);
-            azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.OperationalInsightsEndpointResourceId, AzureEnvironmentConstants.AzureOperationalInsightsEndpointResourceId);
-            azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointSuffix, AzureEnvironmentConstants.AzureAnalysisServicesEndpointSuffix);
-            azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointResourceId, AzureEnvironmentConstants.AzureAnalysisServicesEndpointResourceId);
-            azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureAttestationServiceEndpointSuffix, AzureEnvironmentConstants.AzureAttestationServiceEndpointSuffix);
-            azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureAttestationServiceEndpointResourceId, AzureEnvironmentConstants.AzureAttestationServiceEndpointResourceId);
+            if (azureEnvironments.ContainsKey(EnvironmentName.AzureCloud))
+            {
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.OperationalInsightsEndpoint, AzureEnvironmentConstants.AzureOperationalInsightsEndpoint);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.OperationalInsightsEndpointResourceId, AzureEnvironmentConstants.AzureOperationalInsightsEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointSuffix, AzureEnvironmentConstants.AzureAnalysisServicesEndpointSuffix);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointResourceId, AzureEnvironmentConstants.AzureAnalysisServicesEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureAttestationServiceEndpointSuffix, AzureEnvironmentConstants.AzureAttestationServiceEndpointSuffix);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureAttestationServiceEndpointResourceId, AzureEnvironmentConstants.AzureAttestationServiceEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointSuffix, AzureEnvironmentConstants.AzureSynapseAnalyticsEndpointSuffix);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId, AzureEnvironmentConstants.AzureSynapseAnalyticsEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointResourceId, AzureEnvironmentConstants.AzureManagedHsmServiceEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointSuffix, AzureEnvironmentConstants.AzureManagedHsmDnsSuffix);
+            }
 
-            azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointSuffix, AzureEnvironmentConstants.ChinaAnalysisServicesEndpointSuffix);
-            azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointResourceId, AzureEnvironmentConstants.ChinaAnalysisServicesEndpointResourceId);
+            if (azureEnvironments.ContainsKey(EnvironmentName.AzureChinaCloud))
+            {
+                azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointSuffix, AzureEnvironmentConstants.ChinaAnalysisServicesEndpointSuffix);
+                azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointResourceId, AzureEnvironmentConstants.ChinaAnalysisServicesEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointSuffix, AzureEnvironmentConstants.ChinaSynapseAnalyticsEndpointSuffix);
+                azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId, AzureEnvironmentConstants.ChinaSynapseAnalyticsEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointResourceId, AzureEnvironmentConstants.ChineManagedHsmServiceEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointSuffix, AzureEnvironmentConstants.ChinaManagedHsmDnsSuffix);
+            }
 
-            azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.OperationalInsightsEndpoint, AzureEnvironmentConstants.USGovernmentOperationalInsightsEndpoint);
-            azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.OperationalInsightsEndpointResourceId, AzureEnvironmentConstants.USGovernmentOperationalInsightsEndpointResourceId);
-            azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointSuffix, AzureEnvironmentConstants.USGovernmentAnalysisServicesEndpointSuffix);
-            azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointResourceId, AzureEnvironmentConstants.USGovernmentAnalysisServicesEndpointResourceId);
+            if (azureEnvironments.ContainsKey(EnvironmentName.AzureUSGovernment))
+            {
+                azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.OperationalInsightsEndpoint, AzureEnvironmentConstants.USGovernmentOperationalInsightsEndpoint);
+                azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.OperationalInsightsEndpointResourceId, AzureEnvironmentConstants.USGovernmentOperationalInsightsEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointSuffix, AzureEnvironmentConstants.USGovernmentAnalysisServicesEndpointSuffix);
+                azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointResourceId, AzureEnvironmentConstants.USGovernmentAnalysisServicesEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointSuffix, AzureEnvironmentConstants.USGovernmentSynapseAnalyticsEndpointSuffix);
+                azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId, AzureEnvironmentConstants.USGovernmentSynapseAnalyticsEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointResourceId, AzureEnvironmentConstants.USGovernmeneManagedHsmServiceEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointSuffix, AzureEnvironmentConstants.USGovernmentManagedHsmDnsSuffix);
+            }
 
-            azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointSuffix, AzureEnvironmentConstants.GermanAnalysisServicesEndpointSuffix);
-            azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointResourceId, AzureEnvironmentConstants.GermanAnalysisServicesEndpointResourceId);
+            if (azureEnvironments.ContainsKey(EnvironmentName.AzureGermanCloud))
+            {
+                azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointSuffix, AzureEnvironmentConstants.GermanAnalysisServicesEndpointSuffix);
+                azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointResourceId, AzureEnvironmentConstants.GermanAnalysisServicesEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointResourceId, AzureEnvironmentConstants.GermanAzureManagedHsmServiceEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointSuffix, AzureEnvironmentConstants.GermanManagedHsmDnsSuffix);
+            }
         }
 
         /// <summary>
@@ -246,8 +311,22 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 DataLakeEndpointResourceId = armMetadata.ActiveDirectoryDataLake,
                 GraphEndpointResourceId = armMetadata.Graph,
                 BatchEndpointResourceId = armMetadata.Batch,
-                AdTenant = armMetadata.Authentication.Tenant
+                AdTenant = armMetadata.Authentication.Tenant,
+                ContainerRegistryEndpointSuffix = armMetadata.Suffixes.AcrLoginServer
             };
+
+            // There are mismatches between metadata built in Azure PowerShell/CLI and from ARM endpoint.
+            // Considering compatibility, below hard coded logic accommodates those mismatches
+            // SqlDatabaseDnsSuffix requires value leading with period
+            // ServiceManagementUrl as audience needs to end with slash
+            if (azureEnvironment.SqlDatabaseDnsSuffix != null && !azureEnvironment.SqlDatabaseDnsSuffix.StartsWith("."))
+            {
+                azureEnvironment.SqlDatabaseDnsSuffix = "." + azureEnvironment.SqlDatabaseDnsSuffix;
+            }
+            if (azureEnvironment.ServiceManagementUrl != null && !azureEnvironment.ServiceManagementUrl.EndsWith("/"))
+            {
+                azureEnvironment.ServiceManagementUrl += "/";
+            }
 
             return azureEnvironment;
         }
@@ -324,8 +403,25 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// Predefined Microsoft Azure environments
         /// </summary>
-        public static IDictionary<string, AzureEnvironment> PublicEnvironments { get; } =
-            InitializeBuiltInEnvironments(HttpClientOperationsFactory.Create().GetHttpOperations());
+        public static IDictionary<string, AzureEnvironment> PublicEnvironments { get; } = new ConcurrentDictionary<string, AzureEnvironment>(StringComparer.InvariantCultureIgnoreCase);
+
+        static AzureEnvironment()
+        {
+            DiscoverEnvironments();
+        }
+
+        /// <summary>
+        /// Discover environments and load built-in environments
+        /// </summary>
+        public static void DiscoverEnvironments(string uri = null, Action<string> debugLogger = null, Action<string> warningLogger = null)
+        {
+            PublicEnvironments.Clear();
+            var environments = InitializeBuiltInEnvironments(uri, debugLogger, warningLogger);
+            foreach (var env in environments)
+            {
+                PublicEnvironments.Add(env.Key, env.Value);
+            }
+        }
 
         public AzureEnvironment()
         {
@@ -344,6 +440,15 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// The name of the environment
         /// </summary>
         public string Name { get; set; }
+
+        public const string TypeUserDefined = "User-defined";
+        public const string TypeDiscovered = "Discovered";
+        public const string TypeBuiltIn = "Built-in";
+
+        /// <summary>
+        /// Type of environment
+        /// </summary>
+        public string Type { get; set; } = TypeUserDefined;
 
         /// <summary>
         /// Whether the environment uses AAD (false) or ADFS (true) authentication
@@ -446,6 +551,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public string AdTenant { get; set; }
 
         /// <summary>
+        /// The domain name suffix for Azure Container Registry
+        /// </summary>
+        public string ContainerRegistryEndpointSuffix { get; set; }
+
+        /// <summary>
         /// The set of Azure Version Profiles supported in this environment
         /// </summary>
         public IList<string> VersionProfiles { get; } = new List<string>();
@@ -499,7 +609,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                    && string.Equals(this.BatchEndpointResourceId?.TrimEnd('/'), other.BatchEndpointResourceId?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase)
                    && string.Equals(this.AzureDataLakeAnalyticsCatalogAndJobEndpointSuffix, other.AzureDataLakeAnalyticsCatalogAndJobEndpointSuffix, StringComparison.OrdinalIgnoreCase)
                    && string.Equals(this.AzureDataLakeStoreFileSystemEndpointSuffix, other.AzureDataLakeStoreFileSystemEndpointSuffix, StringComparison.OrdinalIgnoreCase)
-                   && string.Equals(this.AdTenant?.TrimEnd('/'), other.AdTenant?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
+                   && string.Equals(this.AdTenant?.TrimEnd('/'), other.AdTenant?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase)
+                   && string.Equals(this.ContainerRegistryEndpointSuffix?.TrimEnd('/'), other.ContainerRegistryEndpointSuffix?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
         }
 
 
@@ -526,6 +637,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 AzureDataLakeAnalyticsCatalogAndJobEndpointSuffix = "AzureDataLakeAnalyticsCatalogAndJobEndpointSuffix",
                 AzureDataLakeStoreFileSystemEndpointSuffix = "AzureDataLakeStoreFileSystemEndpointSuffix",
                 DataLakeEndpointResourceId = "DataLakeEndpointResourceId",
+                ContainerRegistryEndpointSuffix = "ContainerRegistryEndpointSuffix",
                 BatchEndpointResourceId = "BatchEndpointResourceId";
         }
 
@@ -533,10 +645,14 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         {
             public const string OperationalInsightsEndpointResourceId = "OperationalInsightsEndpointResourceId",
                 OperationalInsightsEndpoint = "OperationalInsightsEndpoint",
+                ManagedHsmServiceEndpointSuffix = "ManagedHsmServiceEndpointSuffix",
+                ManagedHsmServiceEndpointResourceId = "ManagedHsmServiceEndpointResourceId",
                 AnalysisServicesEndpointSuffix = "AzureAnalysisServicesEndpointSuffix",
                 AnalysisServicesEndpointResourceId = "AnalysisServicesEndpointResourceId",
                 AzureAttestationServiceEndpointSuffix = "AzureAttestationServiceEndpointSuffix",
-                AzureAttestationServiceEndpointResourceId = "AzureAttestationServiceEndpointResourceId";
+                AzureAttestationServiceEndpointResourceId = "AzureAttestationServiceEndpointResourceId",
+                AzureSynapseAnalyticsEndpointSuffix = "AzureSynapseAnalyticsEndpointSuffix",
+                AzureSynapseAnalyticsEndpointResourceId = "AzureSynapseAnalyticsEndpointResourceId";
         }
     }
 }

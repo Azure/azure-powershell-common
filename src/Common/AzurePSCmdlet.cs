@@ -15,18 +15,21 @@
 using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
-using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
 using Microsoft.Azure.ServiceManagement.Common.Models;
 using Microsoft.WindowsAzure.Commands.Common;
-using Microsoft.WindowsAzure.Commands.Utilities.Common;
+using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Management.Automation;
+using System.Net.Http.Headers;
 using System.Text;
-using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 {
@@ -40,9 +43,15 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         public ConcurrentQueue<string> DebugMessages { get; private set; }
 
+        IAzureEventListener _azureEventListener;
+        protected static ConcurrentQueue<string> InitializationWarnings { get; set; } = new ConcurrentQueue<string>();
+
         private RecordingTracingInterceptor _httpTracingInterceptor;
         private object lockObject = new object();
         private AzurePSDataCollectionProfile _cachedProfile = null;
+
+        protected IList<Regex> _matchers { get;  private set; }  = new List<Regex>();
+        private static readonly Regex _defaultMatcher = new Regex("(\\s*\"access_token\"\\s*:\\s*)\"[^\"]+\"");
 
         protected AzurePSDataCollectionProfile _dataCollectionProfile
         {
@@ -133,7 +142,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         protected string ModuleVersion { get { return AzurePowerShell.AssemblyVersion; } }
 
         /// <summary>
-        /// The context for management cmdlet requests - includes account, tenant, subscription, 
+        /// The context for management cmdlet requests - includes account, tenant, subscription,
         /// and credential information for targeting and authorizing management calls.
         /// </summary>
         protected abstract IAzureContext DefaultContext { get; }
@@ -303,26 +312,48 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             WriteDebugWithTimestamp(message);
         }
 
+        protected void AddDebuggingFilter(Regex matcher)
+        {
+            _matchers.Add(matcher);
+        }
+
+        //Override this method in cmdlet if customized regedx filters needed for debugging message
+        protected virtual void InitDebuggingFilter()
+        {
+            AddDebuggingFilter(_defaultMatcher);
+        }
+
         protected virtual void SetupDebuggingTraces()
         {
             _httpTracingInterceptor = _httpTracingInterceptor ?? new
-                RecordingTracingInterceptor(DebugMessages);
+                RecordingTracingInterceptor(DebugMessages, _matchers);
             _adalListener = _adalListener ?? new DebugStreamTraceListener(DebugMessages);
             RecordingTracingInterceptor.AddToContext(_httpTracingInterceptor);
             DebugStreamTraceListener.AddAdalTracing(_adalListener);
+
+            if (AzureSession.Instance.TryGetComponent(nameof(IAzureEventListenerFactory), out IAzureEventListenerFactory factory))
+            {
+                _azureEventListener = factory.GetAzureEventListener(
+                    (message) =>
+                    {
+                        DebugMessages.Enqueue(message);
+                    });
+            }
         }
 
         protected virtual void TearDownDebuggingTraces()
         {
             RecordingTracingInterceptor.RemoveFromContext(_httpTracingInterceptor);
             DebugStreamTraceListener.RemoveAdalTracing(_adalListener);
+            _azureEventListener?.Dispose();
+            _azureEventListener = null;
             FlushDebugMessages();
         }
 
 
         protected virtual void SetupHttpClientPipeline()
         {
-            AzureSession.Instance.ClientFactory.AddUserAgent(ModuleName, string.Format("v{0}", ModuleVersion));
+            AzureSession.Instance.ClientFactory.AddUserAgent(ModuleName, string.Format("v{0}", AzVersion));
             AzureSession.Instance.ClientFactory.AddUserAgent(PSVERSION, string.Format("v{0}", PSVersion));
 
             AzureSession.Instance.ClientFactory.AddHandler(
@@ -341,6 +372,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// </summary>
         protected override void BeginProcessing()
         {
+            FlushInitializationWarnings();
             SessionState = base.SessionState;
             var profile = _dataCollectionProfile;
             //TODO: Inject from CI server
@@ -358,6 +390,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
             InitializeQosEvent();
             LogCmdletStartInvocationInfo();
+            InitDebuggingFilter();
             SetupDebuggingTraces();
             SetupHttpClientPipeline();
             base.BeginProcessing();
@@ -365,6 +398,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             //Now see if the cmdlet has any Breaking change attributes on it and process them if it does
             //This will print any breaking change attribute messages that are applied to the cmdlet
             BreakingChangeAttributeHelper.ProcessCustomAttributesAtRuntime(this.GetType(), this.MyInvocation, WriteWarning);
+            PreviewAttributeHelper.ProcessCustomAttributesAtRuntime(this.GetType(), this.MyInvocation, WriteDebug);
         }
 
         /// <summary>
@@ -403,8 +437,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 _qosEvent.Exception = errorRecord.Exception;
                 _qosEvent.IsSuccess = false;
             }
-
             base.WriteError(errorRecord);
+            PreviewAttributeHelper.ProcessCustomAttributesAtRuntime(this.GetType(), this.MyInvocation, WriteWarning);
         }
 
         protected new void ThrowTerminatingError(ErrorRecord errorRecord)
@@ -542,7 +576,70 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
-        protected abstract void InitializeQosEvent();
+        public void WriteInitializationWarnings(string message)
+        {
+            InitializationWarnings.Enqueue(message);
+        }
+
+        protected void FlushInitializationWarnings()
+        {
+            string message;
+            while (InitializationWarnings.TryDequeue(out message))
+            {
+                base.WriteWarning(message);
+            }
+        }
+
+        protected virtual void InitializeQosEvent()
+        {
+            _qosEvent = new AzurePSQoSEvent()
+            {
+                ClientRequestId = this._clientRequestId,
+                SessionId = _sessionId,
+                IsSuccess = true,
+                ParameterSetName = this.ParameterSetName
+            };
+
+            if (AzVersion == null)
+            {
+                AzVersion = this.LoadAzVersion();
+                UserAgent = new ProductInfoHeaderValue("AzurePowershell", string.Format("Az{0}", AzVersion)).ToString();
+                string hostEnv = Environment.GetEnvironmentVariable("AZUREPS_HOST_ENVIRONMENT");
+                if (!String.IsNullOrWhiteSpace(hostEnv))
+                    UserAgent += string.Format(" {0}", hostEnv.Trim());
+            }
+            _qosEvent.AzVersion = AzVersion;
+            _qosEvent.UserAgent = UserAgent;
+
+            if (this.MyInvocation != null && this.MyInvocation.MyCommand != null)
+            {
+                _qosEvent.CommandName = this.MyInvocation.MyCommand.Name;
+                _qosEvent.ModuleName = this.MyInvocation.MyCommand.ModuleName;
+                if (this.MyInvocation.MyCommand.Version != null)
+                {
+                    _qosEvent.ModuleVersion = this.MyInvocation.MyCommand.Version.ToString();
+                }
+            }
+            else
+            {
+                _qosEvent.CommandName = this.GetType().Name;
+                _qosEvent.ModuleName = this.GetType().Assembly.GetName().Name;
+                _qosEvent.ModuleVersion = this.GetType().Assembly.GetName().Version.ToString();
+            }
+
+            if (this.MyInvocation != null && !string.IsNullOrWhiteSpace(this.MyInvocation.InvocationName))
+            {
+                _qosEvent.InvocationName = this.MyInvocation.InvocationName;
+            }
+
+            if (this.MyInvocation != null && this.MyInvocation.BoundParameters != null
+                && this.MyInvocation.BoundParameters.Keys != null)
+            {
+                _qosEvent.Parameters = string.Join(" ",
+                    this.MyInvocation.BoundParameters.Keys.Select(
+                        s => string.Format(CultureInfo.InvariantCulture, "-{0} ***", s)));
+            }
+        }
 
         private void RecordDebugMessages()
         {
@@ -629,7 +726,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         }
 
         /// <summary>
-        /// Guards execution of the given action using ShouldProcess and ShouldContinue.  This is a legacy 
+        /// Guards execution of the given action using ShouldProcess and ShouldContinue.  This is a legacy
         /// version forcompatibility with older RDFE cmdlets.
         /// </summary>
         /// <param name="force">Do not ask for confirmation</param>
@@ -659,10 +756,10 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         }
 
         /// <summary>
-        /// Guards execution of the given action using ShouldProcess and ShouldContinue.  The optional 
-        /// useSHouldContinue predicate determines whether SHouldContinue should be called for this 
-        /// particular action (e.g. a resource is being overwritten). By default, both 
-        /// ShouldProcess and ShouldContinue will be executed.  Cmdlets that use this method overload 
+        /// Guards execution of the given action using ShouldProcess and ShouldContinue.  The optional
+        /// useSHouldContinue predicate determines whether SHouldContinue should be called for this
+        /// particular action (e.g. a resource is being overwritten). By default, both
+        /// ShouldProcess and ShouldContinue will be executed.  Cmdlets that use this method overload
         /// must have a force parameter.
         /// </summary>
         /// <param name="force">Do not ask for confirmation</param>
@@ -696,8 +793,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         }
 
         /// <summary>
-        /// Prompt for confirmation depending on the ConfirmLevel. By default No confirmation prompt 
-        /// occurs unless ConfirmLevel >= $ConfirmPreference.  Guarding the actions of a cmdlet with this 
+        /// Prompt for confirmation depending on the ConfirmLevel. By default No confirmation prompt
+        /// occurs unless ConfirmLevel >= $ConfirmPreference.  Guarding the actions of a cmdlet with this
         /// method will enable the cmdlet to support -WhatIf and -Confirm parameters.
         /// </summary>
         /// <param name="processMessage">The change being made to the resource</param>
@@ -842,6 +939,60 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
 
             return false;
+        }
+        //The latest version of Az Wrapper in local. It will be loaded in runtime when the first cmdlet is executed.
+        //If there is no Az module, the version is "0.0.0"
+        public static string AzVersion { set; get; }
+
+        //Initialized once AzVersion is loaded.
+        //Format: AzurePowershell/Az0.0.0 %AZUREPS_HOST_ENVIROMENT%
+        public static string UserAgent { set; get; }
+
+        protected string LoadAzVersion()
+        {
+            Version defaultVersion = new Version("0.0.0");
+            if (this.Host == null)
+            {
+                WriteDebug("Cannot fetch Az version due to no host in current environment");
+                return defaultVersion.ToString();
+            }
+
+            Version latestAz = defaultVersion;
+            string latestSuffix = "";
+
+            try
+            {
+                var outputs = this.ExecuteScript<PSObject>("Get-Module -Name Az -ListAvailable");
+                foreach (PSObject obj in outputs)
+                {
+                    string psVersion = obj.Properties["Version"].Value.ToString();
+                    int pos = psVersion.IndexOf('-');
+                    string currentSuffix = (pos == -1 || pos == psVersion.Length - 1) ? "" : psVersion.Substring(pos + 1);
+                    Version currentAz = (pos == -1) ? new Version(psVersion) : new Version(psVersion.Substring(0, pos));
+                    if (currentAz > latestAz)
+                    {
+                        latestAz = currentAz;
+                        latestSuffix = currentSuffix;
+                    }
+                    else if (currentAz == latestAz)
+                    {
+                        latestSuffix = String.Compare(latestSuffix, currentSuffix) > 0 ? latestSuffix : currentSuffix;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                WriteDebug(string.Format("Cannot fetch Az version due to exception: {0}", e.Message));
+                return defaultVersion.ToString();
+            }
+
+            string ret = latestAz.ToString();
+            if (!String.IsNullOrEmpty(latestSuffix))
+            {
+                ret += "-" + latestSuffix;
+            }
+            WriteDebug(string.Format("Sought all Az modules and got latest version {0}", ret));
+            return ret;
         }
     }
 }
