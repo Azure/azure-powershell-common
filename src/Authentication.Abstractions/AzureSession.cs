@@ -259,7 +259,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
 
         void ChangeRegistry(Action changeAction)
         {
-                    changeAction();
+            changeAction();
         }
 
         private class ComponentKey : IComparable<ComponentKey>, IEquatable<ComponentKey>
@@ -345,6 +345,14 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             {
                 return obj.GetHashCode();
             }
+        }
+
+        public static class Property
+        {
+            /// <summary>
+            /// Name of the current environment
+            /// </summary>
+            public const string Environment = "Environment";
         }
     }
 }
