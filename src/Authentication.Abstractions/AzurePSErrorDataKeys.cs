@@ -59,7 +59,7 @@ namespace Microsoft.Azure.Commands.Common
         /// <summary>
         /// Key for dictionary key which usually used in AzPSKeyNotFoundException
         /// </summary>
-        public static readonly string MapKeyNameKey = KeyPrefix + "MapKeyName";
+        public static readonly string NotFoundKeyNameKey = KeyPrefix + "NotFoundKeyName";
 
         /// <summary>
         /// Key for line number where exception is thrown
@@ -70,6 +70,11 @@ namespace Microsoft.Azure.Commands.Common
         /// Key for file name in which exception is thrown
         /// </summary>
         public static readonly string ErrorFileNameKey = KeyPrefix + "ErrorFileName";
+
+        /// <summary>
+        /// Key for hresult returned from underlying OS API
+        /// </summary>
+        public static readonly string ErrorHResultKey = KeyPrefix + "HResult";
 
         /// <summary>
         /// Determine whether the "key" is predefined one
@@ -91,9 +96,10 @@ namespace Microsoft.Azure.Commands.Common
             AuthErrorCodeKey,
             ParamNameKey,
             FileNameKey,
-            MapKeyNameKey,
+            NotFoundKeyNameKey,
             ErrorLineNumberKey,
-            ErrorFileNameKey
+            ErrorFileNameKey,
+            ErrorHResultKey,
         });
     }
 }
