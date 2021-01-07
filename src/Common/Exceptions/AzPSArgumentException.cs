@@ -20,59 +20,44 @@ namespace Microsoft.Azure.Commands.Common.Exceptions
 {
     public class AzPSArgumentException : ArgumentException, IContainsAzPSErrorData
     {
+        private string ErrorParamName
+        {
+            get => Data.GetValue<string>(AzurePSErrorDataKeys.ParamNameKey);
+            set => Data.SetValue(AzurePSErrorDataKeys.ParamNameKey, value);
+        }
+
         public ErrorKind ErrorKind
         {
-            get
-            {
-                return Data.Contains(AzurePSErrorDataKeys.ErrorKindKey) ?
-                    Data[AzurePSErrorDataKeys.ErrorKindKey] as ErrorKind : null;
-            }
-
-            private set { Data[AzurePSErrorDataKeys.ErrorKindKey] = value; }
+            get => Data.GetValue<ErrorKind>(AzurePSErrorDataKeys.ErrorKindKey);
+            private set => Data.SetValue(AzurePSErrorDataKeys.ErrorKindKey, value);
         }
 
         public string DesensitizedErrorMessage
         {
-            get
-            {
-                return Data.Contains(AzurePSErrorDataKeys.DesensitizedErrorMessageKey) ?
-                    Data[AzurePSErrorDataKeys.DesensitizedErrorMessageKey]?.ToString() : null;
-            }
-
-            private set { Data[AzurePSErrorDataKeys.DesensitizedErrorMessageKey] = value; }
+            get => Data.GetValue<string>(AzurePSErrorDataKeys.DesensitizedErrorMessageKey);
+            private set => Data.SetValue(AzurePSErrorDataKeys.DesensitizedErrorMessageKey, value);
         }
 
         public int? ErrorLineNumber
         {
-            get
-            {
-                return Data.Contains(AzurePSErrorDataKeys.ErrorLineNumberKey) ?
-                    (int?)Data[AzurePSErrorDataKeys.ErrorLineNumberKey] :
-                    null;
-            }
-
-            private set { Data[AzurePSErrorDataKeys.ErrorLineNumberKey] = value; }
+            get => Data.GetNullableValue<int>(AzurePSErrorDataKeys.ErrorLineNumberKey);
+            private set => Data.SetValue(AzurePSErrorDataKeys.ErrorLineNumberKey, value);
         }
 
         public string ErrorFileName
         {
-            get
-            {
-                return Data.Contains(AzurePSErrorDataKeys.ErrorFileNameKey) ?
-                    Data[AzurePSErrorDataKeys.ErrorFileNameKey]?.ToString() : null;
-            }
-
-            private set { Data[AzurePSErrorDataKeys.ErrorFileNameKey] = value; }
+            get => Data.GetValue<string>(AzurePSErrorDataKeys.ErrorFileNameKey);
+            private set => Data.SetValue(AzurePSErrorDataKeys.ErrorFileNameKey, value);
         }
 
         public AzPSArgumentException(
             string message,
             string paramName,
-            string desensitizedMessage = null,
             Exception innerException = null,
+            string desensitizedMessage = null,
             [CallerLineNumber] int lineNumber = 0,
             [CallerFilePath] string filePath = null)
-            : this(message, paramName, ErrorKind.UserError, desensitizedMessage, innerException, lineNumber, filePath)
+            : this(message, paramName, ErrorKind.UserError, innerException, desensitizedMessage, lineNumber, filePath)
         {
         }
 
@@ -80,18 +65,17 @@ namespace Microsoft.Azure.Commands.Common.Exceptions
             string message,
             string paramName,
             ErrorKind errorKind,
-            string desensitizedMessage = null,
             Exception innerException = null,
+            string desensitizedMessage = null,
             [CallerLineNumber] int lineNumber = 0,
             [CallerFilePath] string filePath = null)
-            :base(message, paramName)
+            :base(message, paramName, innerException)
         {
+            ErrorParamName = paramName;
             ErrorKind = errorKind;
-            if (!string.IsNullOrEmpty(desensitizedMessage))
-            {
-                DesensitizedErrorMessage = desensitizedMessage;
-            }
+            DesensitizedErrorMessage = desensitizedMessage;
             ErrorLineNumber = lineNumber;
+
             if (!string.IsNullOrEmpty(filePath))
             {
                 ErrorFileName = Path.GetFileNameWithoutExtension(filePath);
