@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Management.Automation.Host;
-using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -312,9 +311,9 @@ namespace Microsoft.WindowsAzure.Commands.Common
             if (qos.Exception != null && populateException)
             {
                 eventProperties["exception-type"] = qos.Exception.GetType().ToString();
-                if (qos.Exception is CloudException)
+                if (qos.Exception is CloudException cloudException)
                 {
-                    eventProperties["exception-httpcode"] = ((CloudException)qos.Exception).Response?.StatusCode.ToString();
+                    eventProperties["exception-httpcode"] = cloudException.Response?.StatusCode.ToString();
                 }
                 Exception innerException = qos.Exception.InnerException;
                 List<Exception> innerExceptions = new List<Exception>();
@@ -350,13 +349,13 @@ namespace Microsoft.WindowsAzure.Commands.Common
                     foreach (var key in qos.Exception.Data?.Keys)
                     {
                         if (AzurePSErrorDataKeys.IsKeyPredefined(key.ToString()) 
-                            && !AzurePSErrorDataKeys.ErrorKindKey.Equals(key))
+                            && !AzurePSErrorDataKeys.HttpStatusCode.Equals(key))
                         {
                             if (sb.Length > 0)
                             {
                                 sb.Append(";");
                             }
-                            sb.Append($"{key}={qos.Exception.Data[key]}");
+                            sb.Append($"{key.ToString().Substring(AzurePSErrorDataKeys.KeyPrefix.Length)}={qos.Exception.Data[key]}");
                         }
                     }
                     if(sb.Length > 0)
@@ -535,7 +534,7 @@ public class AzurePSQoSEvent
     public override string ToString()
     {
         string ret = string.Format(
-            "AzureQoSEvent: CommandName - {0}; IsSuccess - {1}; Duration - {2};", CommandName, IsSuccess, Duration);
+            "AzureQoSEvent: CommandName - {0}; IsSuccess - {1}; Duration - {2}", CommandName, IsSuccess, Duration);
         if (Exception != null)
         {
             ret = $"{ret}; Exception - {Exception};";
