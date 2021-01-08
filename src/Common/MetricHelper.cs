@@ -204,7 +204,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                         Timestamp = qos.StartTime
                     };
                     LoadTelemetryClientContext(qos, pageViewTelemetry.Context);
-                    //For better tracking, exception information is recorded in pageView when cmdlet execution is failed.
+                    //we only need to populate exception details into pageview
                     PopulatePropertiesFromQos(qos, pageViewTelemetry.Properties, true);
                     client.TrackPageView(pageViewTelemetry);
                 }
@@ -304,17 +304,17 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 eventProperties.Add("interval", ((TimeSpan)(qos.StartTime - qos.PreviousEndTime)).ToString("c"));
             }
 
-            if (!qos.IsSuccess && qos?.Exception?.Data?.Contains(AzurePSErrorDataKeys.ErrorKindKey) == true)
+            if (!qos.IsSuccess && qos.Exception?.Data?.Contains(AzurePSErrorDataKeys.ErrorKindKey) == true)
             {
                 eventProperties.Add("pebcak", (qos.Exception.Data[AzurePSErrorDataKeys.ErrorKindKey] == ErrorKind.UserError).ToString());
             }
 
             if (qos.Exception != null && populateException)
             {
-                eventProperties.Add("exception-type", qos.Exception.GetType().ToString());
+                eventProperties["exception-type"] = qos.Exception.GetType().ToString();
                 if (qos.Exception is CloudException)
                 {
-                    eventProperties.Add("exception-httpcode", ((CloudException)qos.Exception).Response?.StatusCode.ToString());
+                    eventProperties["exception-httpcode"] = ((CloudException)qos.Exception).Response?.StatusCode.ToString();
                 }
                 Exception innerException = qos.Exception.InnerException;
                 List<Exception> innerExceptions = new List<Exception>();
@@ -324,40 +324,44 @@ namespace Microsoft.WindowsAzure.Commands.Common
                     innerExceptions.Add(innerException);
                     if (innerException is CloudException)
                     {
-                        eventProperties.Add("exception-httpcode", ((CloudException)innerException).Response?.StatusCode.ToString());
+                        eventProperties["exception-httpcode"] = ((CloudException)qos.Exception).Response?.StatusCode.ToString();
                     }
                     innerException = innerException.InnerException;
                 }
                 if (innerExceptions.Count > 0)
                 {
-                    eventProperties.Add("exception-inner", string.Join(";", innerExceptions.Select(e => e.GetType().ToString())));
+                    eventProperties["exception-inner"] = string.Join(";", innerExceptions.Select(e => e.GetType().ToString()));
                 }
-                if (exceptionTrackAcceptModuleList.Contains(qos.ModuleName) || exceptionTrackAcceptCmdletList.Contains(qos.CommandName))
+                if (exceptionTrackAcceptModuleList.Contains(qos.ModuleName, StringComparer.InvariantCultureIgnoreCase)
+                    || exceptionTrackAcceptCmdletList.Contains(qos.CommandName, StringComparer.InvariantCultureIgnoreCase))
                 {
                     StackTrace trace = new StackTrace(qos.Exception);
                     string stack = string.Join(";", trace.GetFrames().Take(2).Select(f => ConvertFrameToString(f)));
-                    eventProperties.Add("exception-stack", stack);
+                    eventProperties["exception-stack"] = stack;
                 }
 
                 if (qos.Exception.Data != null)
                 {
                     if (qos.Exception.Data.Contains(AzurePSErrorDataKeys.HttpStatusCode))
                     {
-                        eventProperties.Add("exception-httpcode", qos.Exception.Data[AzurePSErrorDataKeys.HttpStatusCode].ToString());
+                        eventProperties["exception-httpcode"] = qos.Exception.Data[AzurePSErrorDataKeys.HttpStatusCode].ToString();
                     }
-                    IList<string> exceptionData = new List<string>();
-                    foreach (var key in qos.Exception.Data.Keys)
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var key in qos.Exception.Data?.Keys)
                     {
                         if (AzurePSErrorDataKeys.IsKeyPredefined(key.ToString()) 
-                            && !AzurePSErrorDataKeys.HttpStatusCode.Equals(key)
                             && !AzurePSErrorDataKeys.ErrorKindKey.Equals(key))
                         {
-                            exceptionData.Add(key.ToString() + "=" + qos.Exception.Data[key].ToString());
+                            if (sb.Length > 0)
+                            {
+                                sb.Append(";");
+                            }
+                            sb.Append($"{key}={qos.Exception.Data[key]}");
                         }
                     }
-                    if(exceptionData.Count > 0)
+                    if(sb.Length > 0)
                     {
-                        eventProperties.Add("exception-data", string.Join(";", exceptionData));
+                        eventProperties["exception-data"] = sb.ToString();
                     }
                 }
             }
@@ -376,8 +380,8 @@ namespace Microsoft.WindowsAzure.Commands.Common
             }
         }
 
-        private static string[] exceptionTrackAcceptModuleList = { "Az.Compute", "Az.AKS", "Az.ContainerRegistry" };
-        private static string[] exceptionTrackAcceptCmdletList = { "Connect-AzAccount", "Get-AzKeyVaultSecret", "Get-AzKeyVaultCert" };
+        private static string[] exceptionTrackAcceptModuleList = { "Az.Accounts", "Az.Compute", "Az.AKS", "Az.ContainerRegistry" };
+        private static string[] exceptionTrackAcceptCmdletList = { "Get-AzKeyVaultSecret", "Get-AzKeyVaultCert" };
 
         private static string ConvertFrameToString(StackFrame frame)
         {
@@ -387,11 +391,15 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 return null;
             }
 
-            string ret = string.Join(", ", frame.GetMethod().GetParameters().Select(p => p.ParameterType.Name));
+            string ret = string.Join(",", frame.GetMethod().GetParameters().Select(p => p.ParameterType.Name));
             ret = $"{fullNameParts[fullNameParts.Length - 1]}({ret})";
             if (fullNameParts.Length > 1)
             {
-                ret = string.Join(".", fullNameParts.Take(fullNameParts.Length - 1).Select(s => s.Substring(0, 1)))
+                ret = $"{fullNameParts[fullNameParts.Length - 2]}.{ret}";
+            }
+            if (fullNameParts.Length > 2)
+            {
+                ret = string.Join(".", fullNameParts.Take(fullNameParts.Length - 2).Select(s => s.Substring(0, 1)))
                     + $".{ret}";
             }
             return ret;
