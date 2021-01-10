@@ -391,14 +391,10 @@ namespace Microsoft.WindowsAzure.Commands.Common
             }
 
             string ret = string.Join(",", frame.GetMethod().GetParameters().Select(p => p.ParameterType.Name));
-            ret = $"{fullNameParts[fullNameParts.Length - 1]}({ret})";
+            ret = $"{fullNameParts[fullNameParts.Length - 1]}.{frame.GetMethod().Name}({ret})";
             if (fullNameParts.Length > 1)
             {
-                ret = $"{fullNameParts[fullNameParts.Length - 2]}.{ret}";
-            }
-            if (fullNameParts.Length > 2)
-            {
-                ret = string.Join(".", fullNameParts.Take(fullNameParts.Length - 2).Select(s => s.Substring(0, 1)))
+                ret = string.Join(".", fullNameParts.Take(fullNameParts.Length - 1).Select(s => s.Substring(0, 1)))
                     + $".{ret}";
             }
             return ret;
