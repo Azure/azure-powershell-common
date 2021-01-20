@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Diagnostics;
 using System.Collections.Concurrent;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models;
 
 namespace Microsoft.Azure.Commands.Common.Authentication
 {
@@ -30,6 +31,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         static bool _initialized = false;
         static ReaderWriterLockSlim sessionLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
         private IDictionary<ComponentKey, object> _componentRegistry = new ConcurrentDictionary<ComponentKey, object>(new ComponentKeyComparer());
+        private event EventHandler<AzureSessionEventArgs> _onClearContextHandler;
 
         /// <summary>
         /// Gets or sets Azure client factory.
@@ -218,7 +220,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
 
         public void RegisterComponent<T>(string componentName, Func<T> componentInitializer) where T : class
         {
-            RegisterComponent(componentName, componentInitializer, false); ;
+            RegisterComponent(componentName, componentInitializer, false);
         }
 
         public void RegisterComponent<T>(string componentName, Func<T> componentInitializer, bool overwrite) where T : class
@@ -229,7 +231,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                     var key = new ComponentKey(componentName, typeof(T));
                     if (!_componentRegistry.ContainsKey(key) || overwrite)
                     {
-                        _componentRegistry[key] = componentInitializer();
+                        var component = componentInitializer();
+                        _componentRegistry[key] = component;
+                        if (component is IAzureSessionListener)
+                        {
+                            _onClearContextHandler += (component as IAzureSessionListener).OnEvent;
+                        }
                     }
                 });
         }
@@ -242,6 +249,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                     var key = new ComponentKey(componentName, typeof(T));
                     if (_componentRegistry.ContainsKey(key))
                     {
+                        var component = _componentRegistry[key];
+                        if (component is IAzureSessionListener)
+                        {
+                            _onClearContextHandler -= (component as IAzureSessionListener).OnEvent;
+                        }
                         _componentRegistry.Remove(key);
                     }
                 });
@@ -249,7 +261,23 @@ namespace Microsoft.Azure.Commands.Common.Authentication
 
         public void ClearComponents()
         {
+            ChangeRegistry(clearHandlers);
             ChangeRegistry(_componentRegistry.Clear);
+        }
+
+        private void clearHandlers()
+        {
+            _onClearContextHandler = null;
+        }
+
+        public void ClearComponentsOnClearAzContext()
+        {
+            this.OnClearAzContext(new AzureSessionEventArgs(AzureSessionEventType.OnClearContext));
+        }
+
+        protected virtual void OnClearAzContext(AzureSessionEventArgs e)
+        {
+            _onClearContextHandler?.Invoke(this, e);
         }
 
         void ChangeRegistry(Action changeAction)
