@@ -233,9 +233,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                     {
                         var component = componentInitializer();
                         _componentRegistry[key] = component;
-                        if (component is IAzureSessionListener)
+                        if (component is IAzureSessionListener listener)
                         {
-                            _onClearContextHandler += (component as IAzureSessionListener).OnEvent;
+                            _onClearContextHandler += listener.OnEvent;
                         }
                     }
                 });
@@ -250,9 +250,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                     if (_componentRegistry.ContainsKey(key))
                     {
                         var component = _componentRegistry[key];
-                        if (component is IAzureSessionListener)
+                        if (component is IAzureSessionListener listener)
                         {
-                            _onClearContextHandler -= (component as IAzureSessionListener).OnEvent;
+                            _onClearContextHandler -= listener.OnEvent;
                         }
                         _componentRegistry.Remove(key);
                     }
