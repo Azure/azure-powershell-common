@@ -31,7 +31,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         static bool _initialized = false;
         static ReaderWriterLockSlim sessionLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
         private IDictionary<ComponentKey, object> _componentRegistry = new ConcurrentDictionary<ComponentKey, object>(new ComponentKeyComparer());
-        private event EventHandler<AzureSessionEventArgs> _onClearContextHandler;
+        private event EventHandler<AzureSessionEventArgs> _eventHandler;
 
         /// <summary>
         /// Gets or sets Azure client factory.
@@ -235,7 +235,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                         _componentRegistry[key] = component;
                         if (component is IAzureSessionListener listener)
                         {
-                            _onClearContextHandler += listener.OnEvent;
+                            _eventHandler += listener.OnEvent;
                         }
                     }
                 });
@@ -252,7 +252,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                         var component = _componentRegistry[key];
                         if (component is IAzureSessionListener listener)
                         {
-                            _onClearContextHandler -= listener.OnEvent;
+                            _eventHandler -= listener.OnEvent;
                         }
                         _componentRegistry.Remove(key);
                     }
@@ -267,17 +267,17 @@ namespace Microsoft.Azure.Commands.Common.Authentication
 
         private void clearHandlers()
         {
-            _onClearContextHandler = null;
+            _eventHandler = null;
         }
 
         public void ClearComponentsOnClearAzContext()
         {
-            this.OnClearAzContext(new AzureSessionEventArgs(AzureSessionEventType.OnClearContext));
+            OnEvent(new AzureSessionEventArgs(AzureSessionEventType.OnClearContext));
         }
 
-        protected virtual void OnClearAzContext(AzureSessionEventArgs e)
+        protected virtual void OnEvent(AzureSessionEventArgs e)
         {
-            _onClearContextHandler?.Invoke(this, e);
+            _eventHandler?.Invoke(this, e);
         }
 
         void ChangeRegistry(Action changeAction)
