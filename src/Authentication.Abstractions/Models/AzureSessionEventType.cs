@@ -16,6 +16,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models
 {
     public enum AzureSessionEventType
     {
-        OnClearContext
+        ContextCleared
     }
 }

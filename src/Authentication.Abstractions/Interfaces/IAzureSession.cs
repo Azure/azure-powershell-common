@@ -127,9 +127,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         void ClearComponents();
 
         /// <summary>
-        /// Remove all components from the session shared component registry with on clear-azcontext event
+        /// Remove components from the session shared component registry with on clear-azcontext event
         /// </summary>
-        void ClearComponentsOnClearAzContext();
+        void RaiseContextClearedEvent();
 
         /// <summary>
         /// The trace level for authentication

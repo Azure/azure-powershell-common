@@ -17,7 +17,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models
 {
     public class AzureSessionEventArgs : EventArgs
     {
-        public AzureSessionEventType Type;
+        public AzureSessionEventType Type { get; private set; }
 
         public AzureSessionEventArgs(AzureSessionEventType type)
         {
