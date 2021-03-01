@@ -22,7 +22,7 @@
     <ItemGroup>
       <PackagePaths Include="$(PackDir)*.nupkg" Exclude="$(PackDir)*symbols.nupkg" />
     </ItemGroup>
-    <Exec Command="$(NuGet) push %(PackagePaths.FullPath) -ApiKey $(NuGetApiKey) -Source https://www.myget.org/F/azure-powershell/api/v2/package -SymbolSource https://www.myget.org/F/azure-powershell/symbols/api/v2/package -SymbolApiKey $(NuGetApiKey)" />
+    <Exec Command="$(NuGet) push %(PackagePaths.FullPath) -ApiKey az -Source https://pkgs.dev.azure.com/azure-sdk/internal/_packaging/yabo-test-feed/nuget/v3/index.json" />
     <PropertyGroup>
       <!-- https://stackoverflow.com/a/41618979/294804 -->
       <!-- https://stackoverflow.com/a/38054505/294804 -->
