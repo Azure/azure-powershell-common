@@ -12,7 +12,8 @@ pool:
 steps:
 - powershell: |
    # Write your PowerShell commands here.
-   
+   write-host $env:VERSION"1"
+   write-host $(VERSION)"2"
    if (-not ($(VERSION) -match "\d+\.\d+\.\d+"))
    {
      throw "The value of Version $(VERSION) must be format of X.X.X"
