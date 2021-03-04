@@ -7,15 +7,15 @@ trigger:
 - master
 
 pool:
-  vmImage: ubuntu-latest
+  name: Hosted VS2017
 
 steps:
 - powershell: |
    # Write your PowerShell commands here.
    
-   if (-not ($env:VERSION -match "\d+\.\d+\.\d+"))
+   if (-not ($(VERSION) -match "\d+\.\d+\.\d+"))
    {
-     throw "The value of Version $env:VERSION must be format of X.X.X"
+     throw "The value of Version $(VERSION) must be format of X.X.X"
    }
    
   displayName: 'Check Version'
@@ -25,7 +25,7 @@ steps:
   inputs:
     version: 2.1.302
 
-- powershell: '$(Agent.ToolsDirectory)/dotnet/dotnet msbuild build.proj /t:Build /p:Configuration=Release /p:FileVersion=$env:VERSION /NoLogo'
+- powershell: '$(Agent.ToolsDirectory)/dotnet/dotnet msbuild build.proj /t:Build /p:Configuration=Release /p:FileVersion=$(VERSION) /NoLogo'
   displayName: build
 
 - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
@@ -77,11 +77,11 @@ steps:
      ]
 
 - powershell: |
-   $(Agent.ToolsDirectory)/dotnet/dotnet msbuild build.proj  /t:Pack /p:Configuration=Release /p:PackageVersion=$env:VERSION /NoLogo
+   $(Agent.ToolsDirectory)/dotnet/dotnet msbuild build.proj  /t:Pack /p:Configuration=Release /p:PackageVersion=$(VERSION) /NoLogo
   displayName: pack
 
 - powershell: |
-   dotnet msbuild build\publish.proj /p:Configuration=Release /p:NuGetApiKey=$(myget-azure-powershell-accesstoken) /p:GitHubAccessToken=$(Github-azuresdkci-personalaccesstoken) /p:ReleaseVersion=$env:VERSION /p:CommitId=$env:Build_SourceVersion  /NoLogo
+   dotnet msbuild build\publish.proj /p:Configuration=Release /p:NuGetApiKey=$(myget-azure-powershell-accesstoken) /p:GitHubAccessToken=$(Github-azuresdkci-personalaccesstoken) /p:ReleaseVersion=$(VERSION) /p:CommitId=$(Build_SourceVersion)  /NoLogo
   displayName: 'publish package to myget and github'
 
 - task: PublishBuildArtifacts@1
