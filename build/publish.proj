@@ -20,7 +20,8 @@
     <ItemGroup>
       <PackagePaths Include="$(PackDir)*.nupkg" Exclude="$(PackDir)*symbols.nupkg" />
     </ItemGroup>
-    <Exec Command="$(NuGet) push %(PackagePaths.FullPath) -ApiKey az -Source azure-powershell -ApiKey 1234" />
+    <Exec Command="$(NuGet) push %(PackagePaths.FullPath) -ApiKey az -Source azure-powershell -SymbolApiKey 1234
+ -ApiKey 1234 " />
     <PropertyGroup>
       <!-- https://stackoverflow.com/a/41618979/294804 -->
       <!-- https://stackoverflow.com/a/38054505/294804 -->
