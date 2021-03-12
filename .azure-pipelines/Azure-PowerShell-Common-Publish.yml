@@ -87,7 +87,7 @@ steps:
   inputs:
     command: push
     packagesToPush: 'artifacts/Package/Release/*.nupkg; !artifacts/Package/Release/*.symbols.nupkg'
-    publishVstsFeed: $env:AZURE-POWERSHELL-FEED-ID
+    publishVstsFeed: azure-powershell
 
 - powershell: |
    dotnet msbuild build\publish.proj /p:Configuration=Release /p:ReleaseVersion=$env:VERSION /p:CommitId=$env:Build_SourceVersion /p:GitHubAccessToken=$(Github-azuresdkci-personalaccesstoken)  /NoLogo
