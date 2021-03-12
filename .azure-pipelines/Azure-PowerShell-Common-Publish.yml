@@ -79,9 +79,19 @@ steps:
    $(Agent.ToolsDirectory)/dotnet/dotnet msbuild build.proj  /t:Pack /p:Configuration=Release /p:PackageVersion=$env:VERSION /NoLogo
   displayName: pack
 
+- task: NuGetAuthenticate@0
+  displayName: 'NuGet Authenticate'
+
+- task: NuGetCommand@2
+  displayName: 'NuGet push'
+  inputs:
+    command: push
+    packagesToPush: 'artifacts/Package/Release/*.nupkg; !artifacts/Package/Release/*.symbols.nupkg'
+    publishVstsFeed: $env:AZURE-POWERSHELL-FEED-ID
+
 - powershell: |
-   dotnet msbuild build\publish.proj /p:Configuration=Release /p:ReleaseVersion=$env:VERSION /p:CommitId=$env:Build_SourceVersion  /NoLogo
-  displayName: 'publish package to myget and github'
+   dotnet msbuild build\publish.proj /p:Configuration=Release /p:ReleaseVersion=$env:VERSION /p:CommitId=$env:Build_SourceVersion /p:GitHubAccessToken=$(Github-azuresdkci-personalaccesstoken)  /NoLogo
+  displayName: 'publish package github'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'
