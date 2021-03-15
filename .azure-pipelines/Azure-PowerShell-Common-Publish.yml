@@ -7,7 +7,7 @@ trigger:
 - master
 
 variables:
-- group: my-variable-group
+- group: GitHub Release Variables
 
 pool:
   name: Hosted VS2017
