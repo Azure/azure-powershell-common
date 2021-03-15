@@ -98,6 +98,3 @@ steps:
   inputs:
     PathtoPublish: artifacts/Package/Release/
     ArtifactName: aitifacts
-
-- task: NuGetAuthenticate@0
-  displayName: 'NuGet Authenticate'
