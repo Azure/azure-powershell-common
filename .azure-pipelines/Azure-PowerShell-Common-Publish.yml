@@ -6,11 +6,11 @@
 trigger:
 - master
 
-variables:
-- group: GitHub Release Variables
-
 pool:
   name: Hosted VS2017
+
+variables:
+- group: GitHub Release Variables
 
 steps:
 - powershell: |
@@ -89,7 +89,7 @@ steps:
   displayName: 'NuGet push'
   inputs:
     command: push
-    packagesToPush: 'artifacts/Package/Release/microsoft.azure.powershell.*.nupkg; !artifacts/Package/Release/*.symbols.nupkg'
+    packagesToPush: 'artifacts/Package/Release/Microsoft.Azure.Powershell.*.nupkg; !artifacts/Package/Release/*.symbols.nupkg'
     publishVstsFeed: public/azure-powershell
 
 - powershell: |
