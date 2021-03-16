@@ -358,9 +358,9 @@ namespace Microsoft.WindowsAzure.Commands.Common
                         // For the time being, we consider ResourceNotFound and ResourceGroupNotFound as user's input error. 
                         // We are considering if ResourceNotFound should be false positive error.
                         if (("ResourceNotFound".Equals(cloudErrorCode) || "ResourceGroupNotFound".Equals(cloudErrorCode))
-                            && existingErrorKind != ErrorKind.FalseError)
+                            && !ErrorKind.FalseError.ToString().Equals(existingErrorKind))
                         {
-                            qos.Exception.Data[AzurePSErrorDataKeys.ErrorKindKey] = ErrorKind.UserError;
+                            qos.Exception.Data[AzurePSErrorDataKeys.ErrorKindKey] = ErrorKind.UserError.ToString();
                         }
                     }
 
@@ -390,8 +390,8 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
                 if (!qos.IsSuccess && qos.Exception?.Data?.Contains(AzurePSErrorDataKeys.ErrorKindKey) == true)
                 {
-                    eventProperties["pebcak"] = (qos.Exception.Data[AzurePSErrorDataKeys.ErrorKindKey] == ErrorKind.UserError).ToString();
-                    if (qos.Exception.Data[AzurePSErrorDataKeys.ErrorKindKey] == ErrorKind.FalseError)
+                    eventProperties["pebcak"] = (ErrorKind.UserError.ToString().Equals(qos.Exception.Data[AzurePSErrorDataKeys.ErrorKindKey])).ToString();
+                    if (ErrorKind.FalseError.ToString().Equals(qos.Exception.Data[AzurePSErrorDataKeys.ErrorKindKey]))
                     {
                         eventProperties["IsSuccess"] = true.ToString();
                     }
@@ -566,7 +566,7 @@ public class AzurePSQoSEvent
             "AzureQoSEvent: CommandName - {0}; IsSuccess - {1}; Duration - {2}", CommandName, IsSuccess, Duration);
         if (Exception != null)
         {
-            ret = $"{ret}; Exception - {Exception};";
+            ret = $"{ret}; Exception - {Exception.Message};";
         }
         return ret;
     }
