@@ -303,9 +303,10 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 GalleryUrl = armMetadata.Gallery,
                 SqlDatabaseDnsSuffix = armMetadata.Suffixes.SqlServerHostname,
                 GraphUrl = armMetadata.Graph,
+                //TODO, ARM endpoint doesn't have TrafficManagerDnsSuffix
                 TrafficManagerDnsSuffix = GetTrafficManagerDnsSuffix(armMetadata.Name),
                 AzureKeyVaultDnsSuffix = armMetadata.Suffixes.KeyVaultDns,
-                AzureKeyVaultServiceEndpointResourceId = GetKeyVaultServiceEndpointResourceId(armMetadata.Name),
+                AzureKeyVaultServiceEndpointResourceId = $"https://{armMetadata.Suffixes.KeyVaultDns}",
                 AzureDataLakeAnalyticsCatalogAndJobEndpointSuffix = armMetadata.Suffixes.AzureDataLakeAnalyticsCatalogAndJob,
                 AzureDataLakeStoreFileSystemEndpointSuffix = armMetadata.Suffixes.AzureDataLakeStoreFileSystem,
                 DataLakeEndpointResourceId = armMetadata.ActiveDirectoryDataLake,
