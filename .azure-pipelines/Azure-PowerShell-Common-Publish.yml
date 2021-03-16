@@ -84,9 +84,11 @@ steps:
 
 - task: NuGetAuthenticate@0
   displayName: 'NuGet Authenticate'
+  condition: and(succeeded(), ne(variables['publish'], 'false'))
 
 - task: NuGetCommand@2
   displayName: 'NuGet push'
+  condition: and(succeeded(), ne(variables['publish'], 'false'))
   inputs:
     command: push
     packagesToPush: 'artifacts/Package/Release/Microsoft.Azure.PowerShell.*.nupkg; !artifacts/Package/Release/*.symbols.nupkg'
@@ -95,6 +97,7 @@ steps:
 - powershell: |
    dotnet msbuild build\publish.proj /p:Configuration=Release /p:ReleaseVersion=$env:VERSION /p:CommitId=$env:Build_SourceVersion /p:GitHubAccessToken=$(Github-azuresdkci-personalaccesstoken)  /NoLogo
   displayName: 'publish package github'
+  condition: and(succeeded(), ne(variables['publish'], 'false'))
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'
