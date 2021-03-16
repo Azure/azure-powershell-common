@@ -89,7 +89,7 @@ steps:
   displayName: 'NuGet push'
   inputs:
     command: push
-    packagesToPush: 'artifacts/Package/Release/*.nupkg; !artifacts/Package/Release/*.symbols.nupkg'
+    packagesToPush: 'artifacts/Package/Release/microsoft.azure.powershell.*.nupkg; !artifacts/Package/Release/*.symbols.nupkg'
     publishVstsFeed: public/azure-powershell
 
 - powershell: |
