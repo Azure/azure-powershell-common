@@ -358,9 +358,9 @@ namespace Microsoft.WindowsAzure.Commands.Common
                         // For the time being, we consider ResourceNotFound and ResourceGroupNotFound as user's input error. 
                         // We are considering if ResourceNotFound should be false positive error.
                         if (("ResourceNotFound".Equals(cloudErrorCode) || "ResourceGroupNotFound".Equals(cloudErrorCode))
-                            && !ErrorKind.FalseError.ToString().Equals(existingErrorKind))
+                            && existingErrorKind != ErrorKind.FalseError)
                         {
-                            qos.Exception.Data[AzurePSErrorDataKeys.ErrorKindKey] = ErrorKind.UserError.ToString();
+                            qos.Exception.Data[AzurePSErrorDataKeys.ErrorKindKey] = ErrorKind.UserError;
                         }
                     }
 
@@ -390,8 +390,8 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
                 if (!qos.IsSuccess && qos.Exception?.Data?.Contains(AzurePSErrorDataKeys.ErrorKindKey) == true)
                 {
-                    eventProperties["pebcak"] = (ErrorKind.UserError.ToString().Equals(qos.Exception.Data[AzurePSErrorDataKeys.ErrorKindKey])).ToString();
-                    if (ErrorKind.FalseError.ToString().Equals(qos.Exception.Data[AzurePSErrorDataKeys.ErrorKindKey]))
+                    eventProperties["pebcak"] = (qos.Exception.Data[AzurePSErrorDataKeys.ErrorKindKey] == ErrorKind.UserError).ToString();
+                    if (qos.Exception.Data[AzurePSErrorDataKeys.ErrorKindKey] == ErrorKind.FalseError)
                     {
                         eventProperties["IsSuccess"] = true.ToString();
                     }
