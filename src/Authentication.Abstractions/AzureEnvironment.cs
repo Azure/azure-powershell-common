@@ -306,6 +306,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 //TODO, ARM endpoint doesn't have TrafficManagerDnsSuffix
                 TrafficManagerDnsSuffix = GetTrafficManagerDnsSuffix(armMetadata.Name),
                 AzureKeyVaultDnsSuffix = armMetadata.Suffixes.KeyVaultDns,
+                //ARM endpoint doens't provide KeyVault service resource id. We reuse the value of KeyVaultDns
                 AzureKeyVaultServiceEndpointResourceId = $"https://{armMetadata.Suffixes.KeyVaultDns}",
                 AzureDataLakeAnalyticsCatalogAndJobEndpointSuffix = armMetadata.Suffixes.AzureDataLakeAnalyticsCatalogAndJob,
                 AzureDataLakeStoreFileSystemEndpointSuffix = armMetadata.Suffixes.AzureDataLakeStoreFileSystem,
