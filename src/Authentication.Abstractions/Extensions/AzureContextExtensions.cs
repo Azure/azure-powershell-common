@@ -148,5 +148,24 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 context.UpdateProperties(other);
             }
         }
+
+        // maybe internal?
+        public static IAzureContext Clone(this IAzureContext context)
+        {
+            if (context == null)
+            {
+                return null;
+            }
+            var clone = new AzureContext()
+            {
+                Account = context.Account?.Clone(),
+                Tenant = context.Tenant?.Clone(),
+                Subscription = context.Subscription?.Clone(),
+                Environment = context.Environment?.Clone(),
+                VersionProfile = context.VersionProfile
+            };
+            clone.CopyPropertiesFrom(context);
+            return clone;
+        }
     }
 }

@@ -205,6 +205,21 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
                     throw new PSInvalidOperationException(Resources.RunConnectAccount);
                 }
 
+                if (this is ICustomSubscription cmdlet)
+                {
+                    var matchingSub = DefaultProfile.Subscriptions.FirstOrDefault(sub => sub.GetId().Equals(cmdlet.SubscriptionId));
+                    if (matchingSub != null)
+                    {
+                        DefaultProfile.DefaultContext.Subscription = matchingSub.Clone();
+                        DefaultProfile.DefaultContext.Tenant.Id = matchingSub.GetTenant();
+                        var matchingUser = DefaultProfile.Accounts.FirstOrDefault(account => account.Id.Equals(matchingSub.GetAccount()));
+                        if (matchingUser != null)
+                        {
+                            DefaultProfile.DefaultContext.Account = matchingUser.Clone();
+                        }
+                    }
+                }
+
                 return DefaultProfile.DefaultContext;
             }
         }

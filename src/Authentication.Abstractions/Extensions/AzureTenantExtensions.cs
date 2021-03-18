@@ -54,5 +54,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 tenant.UpdateProperties(other);
             }
         }
+
+        public static IAzureTenant Clone(this IAzureTenant tenant)
+        {
+            var clone = new AzureTenant();
+            clone.CopyFrom(tenant);
+            return clone;
+        }
     }
 }

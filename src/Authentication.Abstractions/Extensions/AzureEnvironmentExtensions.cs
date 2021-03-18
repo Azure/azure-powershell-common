@@ -646,6 +646,13 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 
         }
 
+        public static IAzureEnvironment Clone(this IAzureEnvironment environment)
+        {
+            var clone = new AzureEnvironment();
+            clone.CopyFrom(environment);
+            return clone;
+        }
+
     }
 
 }

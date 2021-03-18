@@ -221,5 +221,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 subscription.UpdateProperties(other);
             }
         }
+
+        public static IAzureSubscription Clone(this IAzureSubscription subscription)
+        {
+            var clone = new AzureSubscription();
+            clone.CopyFrom(subscription);
+            return clone;
+        }
     }
 }
