@@ -19,11 +19,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
     public static class ServiceClientExtension
     {
         /// <summary>
-        /// Set max retry times when receive a response with retry-after header
+        /// Set max retry times of retry after handler that is used to handle the response with retry-after header
         /// </summary>
         /// <param name="retrytimes">Max retry times</param>
         /// <returns>Whether succeed to set max retry times or not</returns>
-        public static bool SetMaxTimesOfRetryAfter<TClient>(this Microsoft.Rest.ServiceClient<TClient> serviceClient, uint retrytimes) where TClient : Microsoft.Rest.ServiceClient<TClient>
+        public static bool SetMaxTimesForRetryAfterHandler<TClient>(this Microsoft.Rest.ServiceClient<TClient> serviceClient, uint retrytimes) where TClient : Microsoft.Rest.ServiceClient<TClient>
         {
             bool findRetryHandler = false;
             foreach(var handler in serviceClient.HttpMessageHandlers)
