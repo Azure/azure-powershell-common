@@ -30,6 +30,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Net.Http.Headers;
 using System.Security.Authentication;
+using System.Threading;
 using System.Text;
 
 namespace Microsoft.Azure.Commands.ResourceManager.Common
@@ -298,7 +299,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             {
                 _qosEvent.SubscriptionId = context.Subscription?.Id;
                 _qosEvent.TenantId = context.Tenant?.Id;
-                if(context.Account != null && !String.IsNullOrWhiteSpace(context.Account.Id))
+                if (context.Account != null && !String.IsNullOrWhiteSpace(context.Account.Id))
                 {
                     _qosEvent.Uid = MetricHelper.GenerateSha256HashString(context.Account.Id.ToString());
                 }
@@ -545,6 +546,25 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         private void EnqueueDebugSender(object sender, StreamEventArgs args)
         {
             DebugMessages.Enqueue(args.Message);
+        }
+
+        private CancellationTokenSource _cancellationtokensource = null;
+        protected CancellationTokenSource CancelTokenSource
+        {
+            get
+            {
+                if (_cancellationtokensource == null)
+                {
+                    _cancellationtokensource = new CancellationTokenSource();
+                }
+                return _cancellationtokensource;
+            }
+        }
+
+        protected override void StopProcessing()
+        {
+            CancelTokenSource?.Cancel();
+            base.StopProcessing();
         }
     }
 }
