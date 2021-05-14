@@ -18,6 +18,7 @@ using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 using Microsoft.Azure.ServiceManagement.Common.Models;
 using Microsoft.WindowsAzure.Commands.Common;
 using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
+using Microsoft.WindowsAzure.Commands.Common.Survey;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -25,7 +26,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Management.Automation;
 using System.Net.Http.Headers;
 using System.Text;
@@ -410,6 +410,10 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// </summary>
         protected override void EndProcessing()
         {
+            if (SurveyHelper.GetInstance().ShouldPropmtSurvey(ModuleName, ModuleVersion))
+            {
+                WriteSurvey();
+            }
             LogQosEvent();
             LogCmdletEndInvocationInfo();
             TearDownDebuggingTraces();
@@ -432,6 +436,25 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             bool verbose = MyInvocation.BoundParameters.ContainsKey("Verbose")
                 && ((SwitchParameter)MyInvocation.BoundParameters["Verbose"]).ToBool();
             return verbose;
+        }
+
+        protected void WriteSurvey()
+        {
+            HostInformationMessage msg = new HostInformationMessage()
+            {
+                Message = string.Format("Survey: How was your experience using {0}.{1}?`\nRun ", ModuleName, ModuleVersion),
+                NoNewLine = true
+            };
+            HostInformationMessage msg2 = new HostInformationMessage()
+            {
+                Message = "Open-AzSurveyLink",
+                NoNewLine = true,
+                ForegroundColor = (ConsoleColor)Host.PrivateData.Properties.Match("ProgressBackgroundColor").SingleOrDefault().Value
+            };
+            HostInformationMessage msg3 = new HostInformationMessage()
+            {
+                Message = " to fill out a short Survey"
+            };
         }
 
         protected new void WriteError(ErrorRecord errorRecord)

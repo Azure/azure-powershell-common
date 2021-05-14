@@ -51,5 +51,9 @@ namespace Microsoft.WindowsAzure.Commands.Common
 #endif
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "Windows Azure PowerShell");
+
+        public static string SurveyScheduleInfoDirectory = Path.Combine(ProfileDirectory, "AzureRmSurvey.json");
+
+        public const string AzurePSInterceptSurvey = "Azure_PS_Intercept_Survey";
     }
 }
