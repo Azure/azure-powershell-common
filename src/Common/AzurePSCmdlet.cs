@@ -445,12 +445,24 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 Message = string.Format("Survey: How was your experience using {0}.{1}?`\nRun ", ModuleName, ModuleVersion),
                 NoNewLine = true
             };
-            HostInformationMessage msg2 = new HostInformationMessage()
+            HostInformationMessage msg2;
+            try
             {
-                Message = "Open-AzSurveyLink",
-                NoNewLine = true,
-                ForegroundColor = (ConsoleColor)Host.PrivateData.Properties.Match("ProgressBackgroundColor").SingleOrDefault().Value
-            };
+                msg2 = new HostInformationMessage()
+                {
+                    Message = "Open-AzSurveyLink",
+                    NoNewLine = true,
+                    ForegroundColor = (ConsoleColor)Host.PrivateData.Properties.Match("ProgressBackgroundColor").SingleOrDefault().Value
+                };
+            }
+            catch
+            {
+                msg2 = new HostInformationMessage()
+                {
+                    Message = "Open-AzSurveyLink",
+                    NoNewLine = true,
+                };
+            } 
             HostInformationMessage msg3 = new HostInformationMessage()
             {
                 Message = " to fill out a short Survey"
