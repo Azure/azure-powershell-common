@@ -17,14 +17,16 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
         private const int _lockExpiredDays = 30;
         private const int _surveyTriggerCount = 3;
         private const int _flushFrequecy = 5;
+        private const int _maxConsecutivePromptTimes = 3;
 
         private SurveyHelper()
         {
             CurrentDate = DateTime.UtcNow.ToString("yyyy'-'MM'-'dd");
             IgnoreSchedule = "Disabled".Equals(Environment.GetEnvironmentVariable(AzurePowerShell.AzurePSInterceptSurvey));
-            Lock = DateTime.MinValue;
+            LastPromptDate = DateTime.MinValue;
             InternalMap = new ConcurrentDictionary<string, ModuleInfo>();
             FlushCount = 0;
+            PromptTimes = 0;
         }
 
         private static SurveyHelper _instance
@@ -41,9 +43,11 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
 
         private int FlushCount;
 
+        private int PromptTimes;
+
         private static string SurveySchedulePath = AzurePowerShell.SurveyScheduleInfoDirectory;
 
-        private DateTime Lock { get; set; }
+        private DateTime LastPromptDate { get; set; }
 
         private IDictionary<string, ModuleInfo> InternalMap { get; set; }
 
@@ -81,9 +85,9 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
             ModuleInfo cur = InternalMap[moduleName];
 
             //Lock.CompareTo(DateTime.MinValue) > 0 means survey is locked, otherwise lock free
-            if (Lock.CompareTo(DateTime.MinValue) > 0 && Convert.ToDateTime(CurrentDate).CompareTo(Lock.AddDays(_lockExpiredDays)) > 0)
+            if (LastPromptDate.CompareTo(DateTime.MinValue) > 0 && Convert.ToDateTime(CurrentDate).CompareTo(LastPromptDate.AddDays(_lockExpiredDays)) > 0)
             {
-                Lock = DateTime.MinValue;
+                LastPromptDate = DateTime.MinValue;
             }
 
             //if version is not current version and not deprecated, start count for this version
@@ -98,12 +102,12 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
             else if (majorVersion == cur.Version)
             {
                 //prompt surey
-                if (cur.Count == _surveyTriggerCount && Lock.CompareTo(DateTime.MinValue) == 0)
+                if (cur.Count == _surveyTriggerCount && LastPromptDate.CompareTo(DateTime.MinValue) == 0)
                 {
                     if (TryPrompt(moduleName))
                     {
                         InternalMap[moduleName].Deprecate(CurrentDate);
-                        Lock = Convert.ToDateTime(CurrentDate);
+                        LastPromptDate = Convert.ToDateTime(CurrentDate);
                         TryFlush();
                     }
                     return true;
@@ -137,16 +141,16 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
         {
             bool hasDiff = false;
             bool shouldPrompt = false;
-            DateTime externalLock = Convert.ToDateTime(externalScheduleInfo.Lock);
-            if (Lock.CompareTo(externalLock) != 0 && externalLock.CompareTo(DateTime.MinValue) > 0 && externalLock.AddDays(_lockExpiredDays).CompareTo(Convert.ToDateTime(CurrentDate)) >= 0)
+            DateTime externalLock = Convert.ToDateTime(externalScheduleInfo.LastPromptDate);
+            if (LastPromptDate.CompareTo(externalLock) != 0 && externalLock.CompareTo(DateTime.MinValue) > 0 && externalLock.AddDays(_lockExpiredDays).CompareTo(Convert.ToDateTime(CurrentDate)) >= 0)
             {
                 //no need to write to file if only lock changed
                 //if current process is lock free, take external lock only if external lock is later than current date
                 //if current process has lock and external is lock free, keep lock
-                Lock = externalLock;
+                LastPromptDate = externalLock;
             }
 
-            ScheduleInfo tmp = new ScheduleInfo() { Lock = Lock.ToString("yyyy'-'MM'-'dd"), Modules = new List<ModuleInfo>() };
+            ScheduleInfo tmp = new ScheduleInfo() { LastPromptDate = LastPromptDate.ToString("yyyy'-'MM'-'dd"), Modules = new List<ModuleInfo>() };
             IDictionary<string, ModuleInfo> externalMap = new Dictionary<string, ModuleInfo>();
             externalScheduleInfo?.Modules?.ForEach<ModuleInfo>(x => externalMap[x.Name] = x);
 
