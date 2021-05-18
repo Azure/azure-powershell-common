@@ -467,6 +467,9 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             {
                 Message = " to fill out a short Survey"
             };
+            WriteInformation(msg, new string[] { "PSHOST" });
+            WriteInformation(msg2, new string[] { "PSHOST" });
+            WriteInformation(msg3, new string[] { "PSHOST" });
         }
 
         protected new void WriteError(ErrorRecord errorRecord)
