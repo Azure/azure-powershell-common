@@ -17,7 +17,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
         private const int _lockExpiredDays = 30;
         private const int _surveyTriggerCount = 3;
         private const int _flushFrequecy = 5;
-        private const int _maxConsecutivePromptTimes = 3;
+        private const int _delayForSecondPrompt = 2;
+        private const int _delayForThirdPrompt = 5;
 
         private SurveyHelper()
         {
@@ -26,24 +27,21 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
             LastPromptDate = DateTime.MinValue;
             InternalMap = new ConcurrentDictionary<string, ModuleInfo>();
             FlushCount = 0;
-            PromptTimes = 0;
+            InterceptTriggered = 0;
+            ActiveModuleName = null;
         }
 
         private static SurveyHelper _instance
         {
             get
             {
-                if (_instance == null)
-                {
-                    return new SurveyHelper();
-                }
-                return _instance;
+                return _instance ?? new SurveyHelper();
             }
         }
 
         private int FlushCount;
 
-        private int PromptTimes;
+        private int InterceptTriggered;
 
         private static string SurveySchedulePath = AzurePowerShell.SurveyScheduleInfoDirectory;
 
@@ -54,6 +52,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
         private bool IgnoreSchedule;
 
         private readonly string CurrentDate;
+
+        private string ActiveModuleName;
 
         public static SurveyHelper GetInstance()
         {
@@ -67,7 +67,23 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
                 return false;
             }
 
-            int majorVersion = Int32.Parse(moduleVersion.Split('.')[0]);
+            int majorVersion = Version.Parse(moduleVersion).Major;
+
+            DateTime today = Convert.ToDateTime(CurrentDate);
+            int delay = InterceptTriggered == 1 ? today.CompareTo(LastPromptDate.AddDays(_delayForSecondPrompt)) : (InterceptTriggered == 2 ? today.CompareTo(LastPromptDate.AddDays(_delayForThirdPrompt)) : -1);
+            if (delay == 0 && !string.IsNullOrEmpty(ActiveModuleName) && ActiveModuleName.Equals(moduleName) && TryPrompt(moduleName))
+            {
+                ActiveModuleName = InterceptTriggered == 1 ? ActiveModuleName : null;
+                InterceptTriggered = InterceptTriggered == 1 ? 2 : 0;
+                LastPromptDate = today;
+                TryFlush();
+                return true;
+            }
+            else if (delay > 0)
+            {
+                InterceptTriggered = 0;
+                ActiveModuleName = null;
+            }
 
             if (!InternalMap.ContainsKey(moduleName))
             {
@@ -84,14 +100,14 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
 
             ModuleInfo cur = InternalMap[moduleName];
 
-            //Lock.CompareTo(DateTime.MinValue) > 0 means survey is locked, otherwise lock free
+            //LastPromptDate.CompareTo(DateTime.MinValue) > 0 means survey is locked, otherwise lock free
             if (LastPromptDate.CompareTo(DateTime.MinValue) > 0 && Convert.ToDateTime(CurrentDate).CompareTo(LastPromptDate.AddDays(_lockExpiredDays)) > 0)
             {
                 LastPromptDate = DateTime.MinValue;
             }
 
             //if version is not current version and not deprecated, start count for this version
-            if (majorVersion != cur.Version && !cur.IsDeprecatedVersion(majorVersion))
+            if (majorVersion > cur.Version)
             {
                 cur.Version = majorVersion;
                 cur.FirstActiveDate = CurrentDate;
@@ -106,13 +122,13 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
                 {
                     if (TryPrompt(moduleName))
                     {
-                        InternalMap[moduleName].Deprecate(CurrentDate);
                         LastPromptDate = Convert.ToDateTime(CurrentDate);
+                        cur.Count += 1;
                         TryFlush();
-                    }
-                    return true;
+                        return true;
+                    }               
                 }
-                else
+                else if (cur.Count < _surveyTriggerCount)
                 {
                     DateTime date = Convert.ToDateTime(CurrentDate);
                     //date is later than last active date and not expired
@@ -135,8 +151,6 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
             return false;
         }
 
-        
-
         private bool MergeScheduleInfo(ScheduleInfo externalScheduleInfo, string moduleName, out bool prompt, out ScheduleInfo info)
         {
             bool hasDiff = false;
@@ -157,11 +171,10 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
             HashSet<string> moduleNames = new HashSet<string>(InternalMap.Keys);
             moduleNames.UnionWith(new HashSet<string>(externalMap.Keys));
 
-
             moduleNames.ForEach<string>(name =>
             {
                 ModuleInfo item = null;
-                if (InternalMap.ContainsKey(name) && (!externalMap.ContainsKey(name) || Convert.ToDateTime(InternalMap[name].LastActiveDate).CompareTo(Convert.ToDateTime(externalMap[name])) > 0))
+                if (InternalMap.ContainsKey(name) && (!externalMap.ContainsKey(name) || Convert.ToDateTime(InternalMap[name].LastActiveDate).CompareTo(Convert.ToDateTime(externalMap[name].LastActiveDate)) > 0))
                 {
                     item = new ModuleInfo(InternalMap[name]);
                     if (moduleName != null && moduleName.Equals(name))

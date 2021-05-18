@@ -13,8 +13,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
         [JsonProperty(PropertyName = "modules")]
         internal IList<ModuleInfo> Modules { get; set; }
 
-        [JsonProperty(PropertyName = "propmptTimes")]
-        internal int PromptTimes { get; set; }
+        [JsonProperty(PropertyName = "interceptTriggered")]
+        internal int InterceptTriggered { get; set; }
 
         public void MergeScheduleInfo(ScheduleInfo externalScheduleInfo) { }
     }

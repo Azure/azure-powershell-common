@@ -40,46 +40,5 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
         }
 
         internal ModuleInfo() { }
-
-        internal bool IsDeprecatedVersion(int version)
-        {
-            string str = Convert.ToString(DeprecatedVersions, 2);
-            return version == 0 ? false : str[str.Length - version].Equals('1');
-        }
-
-        internal void Deprecate(string date)
-        {
-            DeprecateVersion();
-            FirstActiveDate = date;
-            LastActiveDate = date;
-            Count = 0;
-        }
-
-        private void DeprecateVersion()
-        {
-            string str = Convert.ToString(DeprecatedVersions, 2);
-            if (Version > str.Length)
-            {
-                string prefix = "";
-                for (int i = 0; i < Version - str.Length; i++)
-                {
-                    prefix += "0";
-                }
-                str = prefix + str;
-            }
-            char[] arr = str.ToCharArray();
-            arr[arr.Length - Version] = '1';
-            int two = 1;
-            DeprecatedVersions = 0;
-            for (int i = arr.Length - 1; i >= 0; i--)
-            {
-                if ('1'.Equals(arr[i]))
-                {
-                    DeprecatedVersions += two;
-                }
-                two *= 2;
-            }
-            Version = 0;
-        }
     }
 }
