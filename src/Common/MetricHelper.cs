@@ -285,6 +285,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             eventProperties.Add("start-time", qos.StartTime.ToUniversalTime().ToString("o"));
             eventProperties.Add("end-time", qos.EndTime.ToUniversalTime().ToString("o"));
             eventProperties.Add("duration", qos.Duration.ToString("c"));
+            eventProperties.Add("survey-prompted", qos.SurveyPrompted.ToString());
             if (qos.Uid != null)
             {
                 eventProperties.Add("UserId", qos.Uid);
@@ -530,6 +531,7 @@ public class AzurePSQoSEvent
     public string SessionId { get; set; }
     public string SubscriptionId { get; set; }
     public string TenantId { get; set; }
+    public bool SurveyPrompted { get; set; }
 
     public string ParameterSetName { get; set; }
     public string InvocationName { get; set; }

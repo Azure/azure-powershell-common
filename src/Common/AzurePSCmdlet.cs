@@ -410,9 +410,10 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// </summary>
         protected override void EndProcessing()
         {
-            if (SurveyHelper.GetInstance().ShouldPropmtSurvey(ModuleName, ModuleVersion))
+            if (IsInteractiveMode() && SurveyHelper.GetInstance().ShouldPropmtSurvey(ModuleName, ModuleVersion))
             {
                 WriteSurvey();
+                _qosEvent.SurveyPrompted = true;
             }
             LogQosEvent();
             LogCmdletEndInvocationInfo();
@@ -470,6 +471,11 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             WriteInformation(msg, new string[] { "PSHOST" });
             WriteInformation(msg2, new string[] { "PSHOST" });
             WriteInformation(msg3, new string[] { "PSHOST" });
+        }
+
+        protected bool IsInteractiveMode()
+        {
+            return _qosEvent.PreviousEndTime.HasValue ? (_qosEvent.StartTime - _qosEvent.PreviousEndTime.Value).Seconds > 1 : true;
         }
 
         protected new void WriteError(ErrorRecord errorRecord)
