@@ -442,7 +442,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         {
             HostInformationMessage msg = new HostInformationMessage()
             {
-                Message = string.Format("Survey: How was your experience using {0}.{1}?`\nRun ", ModuleName, ModuleVersion),
+                Message = string.Format("Survey: How was your experience using Azure PowerShell?`\nRun ", ModuleName, ModuleVersion),
                 NoNewLine = true
             };
             HostInformationMessage msg2;
