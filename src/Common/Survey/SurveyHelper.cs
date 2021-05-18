@@ -124,6 +124,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
                     {
                         LastPromptDate = Convert.ToDateTime(CurrentDate);
                         cur.Count += 1;
+                        InterceptTriggered = 1;
                         TryFlush();
                         return true;
                     }               
