@@ -36,9 +36,10 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
 
         private int FlushCount;
 
-        private int InterceptTriggered;
-
         private static string SurveySchedulePath = AzurePowerShell.SurveyScheduleInfoFile;
+
+        //threads in same could only have done exactly same change to InterceptTriggered, volatile is enough no lock needed
+        private volatile int InterceptTriggered;
 
         private DateTime LastPromptDate { get; set; }
 
@@ -99,7 +100,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
                 };
                 if (ReadFromStream(null, out updatedInfo) && updatedInfo.ShouldWrite)
                 {
-                    TryFlushAsync(updatedInfo.Info);
+                    TryFlushAsync(updatedInfo.Info, updatedInfo.ShouldPrompt);
                 }
                 return updatedInfo.ShouldPrompt;
             }
@@ -137,7 +138,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
                     InterceptTriggered = InterceptTriggered + 1;                  
                     if (ReadFromStream(moduleName, out updatedInfo) && updatedInfo.ShouldWrite)
                     {
-                        TryFlushAsync(updatedInfo.Info);
+                        TryFlushAsync(updatedInfo.Info, updatedInfo.ShouldPrompt);
                         return updatedInfo.ShouldPrompt;
                     }             
                 }
@@ -260,7 +261,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
                     {
                         sr.Dispose();
                     }
-                    TryEmptyAsync();
+                    TryFlushAsync(null);
                 }
                 return false;
             }
@@ -300,8 +301,13 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
             return true;
         }
 
-        private void Flush(ScheduleInfo info)
+        private void TryFlush(ScheduleInfo info, bool outOfCycleFlush = false)
         {
+            if (outOfCycleFlush)
+            {
+                WriteToStream(info);
+                return;
+            }
             int beforeExchange = Interlocked.CompareExchange(ref FlushCount, 0, FlushFrequecy);
             if(beforeExchange < FlushFrequecy)
             {
@@ -320,19 +326,11 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
             }
         }
 
-        private async void TryFlushAsync(ScheduleInfo info)
+        private async void TryFlushAsync(ScheduleInfo info, bool outOfCycleFlush = false)
         {
             await Task.Run(() =>
             {
-                Flush(info);
-            });
-        }
-
-        private async void TryEmptyAsync()
-        {
-            await Task.Run(() =>
-            {
-                WriteToStream(null);
+                TryFlush(info, outOfCycleFlush);
             });
         }
     }
