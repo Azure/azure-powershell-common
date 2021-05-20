@@ -38,8 +38,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
 
         private static string SurveySchedulePath = AzurePowerShell.SurveyScheduleInfoFile;
 
-        //threads in same could only have done exactly same change to InterceptTriggered, volatile is enough no lock needed
-        private volatile int InterceptTriggered;
+        //InterceptTriggered could be incorrect because shared by different threads
+        private int InterceptTriggered;
 
         private DateTime LastPromptDate { get; set; }
 
@@ -100,12 +100,12 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
                 };
                 if (ReadFromStream(null, out updatedInfo) && updatedInfo.ShouldWrite)
                 {
-                    TryFlushAsync(updatedInfo.Info, updatedInfo.ShouldPrompt);
+                    TryFlushAsync(updatedInfo.Info);
                 }
-                return updatedInfo.ShouldPrompt;
+                return false;
             }
-            ModuleInfo cur = InternalMap[moduleName];
 
+            ModuleInfo cur = InternalMap[moduleName];
             //LastPromptDate.CompareTo(DateTime.MinValue) > 0 means survey is locked, otherwise lock free
             if (LastPromptDate > DateTime.MinValue && Today > LastPromptDate.AddDays(LockExpiredDays))
             {
@@ -128,14 +128,14 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
             else if (majorVersion == cur.MajorVersion)
             {
                 //prompt surey
-                if (cur.ActiveDays == SurveyTriggerCount && LastPromptDate == DateTime.MinValue
+                if (cur.ActiveDays == SurveyTriggerCount && InterceptTriggered == 0 && LastPromptDate == DateTime.MinValue
                  || cur.ActiveDays == SurveyTriggerCount + 1 && InterceptTriggered == 1 && LastPromptDate == Convert.ToDateTime(cur.LastActiveDate) && Today == LastPromptDate.AddDays(DelayForSecondPrompt)
                  || cur.ActiveDays == SurveyTriggerCount + 2 && InterceptTriggered == 2 && LastPromptDate == Convert.ToDateTime(cur.LastActiveDate) && Today == LastPromptDate.AddDays(DelayForThirdPrompt))
                 {
                     LastPromptDate = Today;                   
                     cur.LastActiveDate = CurrentDate;
-                    cur.ActiveDays = cur.ActiveDays == SurveyTriggerCount + 2 ? 0 : cur.ActiveDays + 1;
-                    InterceptTriggered = InterceptTriggered + 1;                  
+                    cur.ActiveDays = cur.ActiveDays + 1;
+                    InterceptTriggered = InterceptTriggered == 2 ? 0 : InterceptTriggered + 1;                  
                     if (ReadFromStream(moduleName, out updatedInfo) && updatedInfo.ShouldWrite)
                     {
                         TryFlushAsync(updatedInfo.Info, updatedInfo.ShouldPrompt);
