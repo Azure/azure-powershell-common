@@ -12,20 +12,16 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Newtonsoft.Json;
-using System.Collections.Generic;
-
 namespace Microsoft.WindowsAzure.Commands.Common.Survey
 {
-    internal class ScheduleInfo
+    internal class UpdatedScheduleInfo
     {
-        [JsonProperty(PropertyName = "lastPromptDate")]
-        internal string LastPromptDate { get; set; }
+        internal ScheduleInfo Info;
 
-        [JsonProperty(PropertyName = "modules")]
-        internal IList<ModuleInfo> Modules { get; set; }
+        internal bool ShouldWrite;
 
-        [JsonProperty(PropertyName = "interceptTriggered")]
-        internal int InterceptTriggered { get; set; }
+        internal bool ShouldPrompt;
+
+        internal UpdatedScheduleInfo() { }
     }
 }

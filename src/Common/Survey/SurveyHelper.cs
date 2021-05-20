@@ -1,11 +1,23 @@
-﻿using Microsoft.WindowsAzure.Commands.Utilities.Common;
+﻿// ----------------------------------------------------------------------------------
+//
+// Copyright Microsoft Corporation
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ----------------------------------------------------------------------------------
+
+using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,159 +25,164 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
 {
     public class SurveyHelper
     {
-        private const int _countExpiredDays = 30;
-        private const int _lockExpiredDays = 30;
-        private const int _surveyTriggerCount = 3;
-        private const int _flushFrequecy = 5;
-        private const int _delayForSecondPrompt = 2;
-        private const int _delayForThirdPrompt = 5;
+        private const int CountExpiredDays = 30;
+        private const int LockExpiredDays = 30;
+        private const int SurveyTriggerCount = 3;
+        private const int FlushFrequecy = 5;
+        private const int DelayForSecondPrompt = 2;
+        private const int DelayForThirdPrompt = 5;
 
-        private SurveyHelper()
-        {
-            CurrentDate = DateTime.UtcNow.ToString("yyyy'-'MM'-'dd");
-            IgnoreSchedule = "Disabled".Equals(Environment.GetEnvironmentVariable(AzurePowerShell.AzurePSInterceptSurvey));
-            LastPromptDate = DateTime.MinValue;
-            InternalMap = new ConcurrentDictionary<string, ModuleInfo>();
-            FlushCount = 0;
-            InterceptTriggered = 0;
-            ActiveModuleName = null;
-        }
-
-        private static SurveyHelper _instance
-        {
-            get
-            {
-                return _instance ?? new SurveyHelper();
-            }
-        }
+        private static SurveyHelper Instance;
 
         private int FlushCount;
 
         private int InterceptTriggered;
 
-        private static string SurveySchedulePath = AzurePowerShell.SurveyScheduleInfoDirectory;
+        private static string SurveySchedulePath = AzurePowerShell.SurveyScheduleInfoFile;
 
         private DateTime LastPromptDate { get; set; }
 
-        private IDictionary<string, ModuleInfo> InternalMap { get; set; }
+        private ConcurrentDictionary<string, ModuleInfo> InternalMap { get; set; }
 
         private bool IgnoreSchedule;
 
+        private bool IsDisabledFromEnv => "Disabled".Equals(Environment.GetEnvironmentVariable(AzurePowerShell.AzurePSInterceptSurvey), StringComparison.OrdinalIgnoreCase);
+
         private readonly string CurrentDate;
 
-        private string ActiveModuleName;
+        private readonly DateTime Today;
+
+        private SurveyHelper()
+        {
+            CurrentDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
+            Today = Convert.ToDateTime(CurrentDate);
+            IgnoreSchedule = false;
+            LastPromptDate = DateTime.MinValue;
+            InternalMap = new ConcurrentDictionary<string, ModuleInfo>();
+            Interlocked.Exchange(ref FlushCount, 0);
+            InterceptTriggered = 0;
+        }
 
         public static SurveyHelper GetInstance()
         {
-            return _instance;
+            if (Instance == null)
+            {
+                Instance = new SurveyHelper();
+            }
+            return Instance;
         }
 
-        public bool ShouldPropmtSurvey(string moduleName, string moduleVersion)
+        public bool ShouldPropmtSurvey(string moduleName, Version moduleVersion)
         {
-            if (IgnoreSchedule)
+            if (IgnoreSchedule || IsDisabledFromEnv)
             {
                 return false;
             }
 
-            int majorVersion = Version.Parse(moduleVersion).Major;
+            UpdatedScheduleInfo updatedInfo = null;
+            int majorVersion = moduleVersion.Major;
 
-            DateTime today = Convert.ToDateTime(CurrentDate);
-            int delay = InterceptTriggered == 1 ? today.CompareTo(LastPromptDate.AddDays(_delayForSecondPrompt)) : (InterceptTriggered == 2 ? today.CompareTo(LastPromptDate.AddDays(_delayForThirdPrompt)) : -1);
-            if (delay == 0 && !string.IsNullOrEmpty(ActiveModuleName) && ActiveModuleName.Equals(moduleName) && TryPrompt(moduleName))
+            if (InternalMap.Count == 0)
             {
-                ActiveModuleName = InterceptTriggered == 1 ? ActiveModuleName : null;
-                InterceptTriggered = InterceptTriggered == 1 ? 2 : 0;
-                LastPromptDate = today;
-                TryFlush();
-                return true;
-            }
-            else if (delay > 0)
-            {
-                InterceptTriggered = 0;
-                ActiveModuleName = null;
+                ReadFromStream(null, out updatedInfo);
             }
 
             if (!InternalMap.ContainsKey(moduleName))
             {
                 InternalMap[moduleName] = new ModuleInfo() {
                     Name = moduleName,
-                    Version = majorVersion,
-                    Count = 1,
+                    MajorVersion = majorVersion,
+                    ActiveDays = 1,
                     FirstActiveDate = CurrentDate,
                     LastActiveDate = CurrentDate,
-                    DeprecatedVersions = 0,
                     Enabled = true
                 };
+                if (ReadFromStream(null, out updatedInfo) && updatedInfo.ShouldWrite)
+                {
+                    TryFlushAsync(updatedInfo.Info);
+                }
+                return updatedInfo.ShouldPrompt;
             }
-
             ModuleInfo cur = InternalMap[moduleName];
 
             //LastPromptDate.CompareTo(DateTime.MinValue) > 0 means survey is locked, otherwise lock free
-            if (LastPromptDate.CompareTo(DateTime.MinValue) > 0 && Convert.ToDateTime(CurrentDate).CompareTo(LastPromptDate.AddDays(_lockExpiredDays)) > 0)
+            if (LastPromptDate > DateTime.MinValue && Today > LastPromptDate.AddDays(LockExpiredDays))
             {
                 LastPromptDate = DateTime.MinValue;
+                InterceptTriggered = 0;
             }
 
             //if version is not current version and not deprecated, start count for this version
-            if (majorVersion > cur.Version)
+            if (majorVersion > cur.MajorVersion)
             {
-                cur.Version = majorVersion;
+                cur.MajorVersion = majorVersion;
                 cur.FirstActiveDate = CurrentDate;
                 cur.LastActiveDate = CurrentDate;
-                cur.Count = 1;
-                TryFlush();
+                cur.ActiveDays = 1;
+                if (ReadFromStream(null, out updatedInfo) && updatedInfo.ShouldWrite)
+                {
+                    TryFlushAsync(updatedInfo.Info);
+                }
             }
-            else if (majorVersion == cur.Version)
+            else if (majorVersion == cur.MajorVersion)
             {
                 //prompt surey
-                if (cur.Count == _surveyTriggerCount && LastPromptDate.CompareTo(DateTime.MinValue) == 0)
+                if (cur.ActiveDays == SurveyTriggerCount && LastPromptDate == DateTime.MinValue
+                 || cur.ActiveDays == SurveyTriggerCount + 1 && InterceptTriggered == 1 && LastPromptDate == Convert.ToDateTime(cur.LastActiveDate) && Today == LastPromptDate.AddDays(DelayForSecondPrompt)
+                 || cur.ActiveDays == SurveyTriggerCount + 2 && InterceptTriggered == 2 && LastPromptDate == Convert.ToDateTime(cur.LastActiveDate) && Today == LastPromptDate.AddDays(DelayForThirdPrompt))
                 {
-                    if (TryPrompt(moduleName))
+                    LastPromptDate = Today;                   
+                    cur.LastActiveDate = CurrentDate;
+                    cur.ActiveDays = cur.ActiveDays == SurveyTriggerCount + 2 ? 0 : cur.ActiveDays + 1;
+                    InterceptTriggered = InterceptTriggered + 1;                  
+                    if (ReadFromStream(moduleName, out updatedInfo) && updatedInfo.ShouldWrite)
                     {
-                        LastPromptDate = Convert.ToDateTime(CurrentDate);
-                        cur.Count += 1;
-                        InterceptTriggered = 1;
-                        TryFlush();
-                        return true;
-                    }               
+                        TryFlushAsync(updatedInfo.Info);
+                        return updatedInfo.ShouldPrompt;
+                    }             
                 }
-                else if (cur.Count < _surveyTriggerCount)
+                else if (cur.ActiveDays == SurveyTriggerCount + 1 && InterceptTriggered == 1 && LastPromptDate == Convert.ToDateTime(cur.LastActiveDate) && Today > LastPromptDate.AddDays(DelayForSecondPrompt)
+                      || cur.ActiveDays == SurveyTriggerCount + 2 && InterceptTriggered == 2 && LastPromptDate == Convert.ToDateTime(cur.LastActiveDate) && Today > LastPromptDate.AddDays(DelayForThirdPrompt))
                 {
-                    DateTime date = Convert.ToDateTime(CurrentDate);
-                    //date is later than last active date and not expired
-                    if (date.CompareTo(Convert.ToDateTime(cur.LastActiveDate)) > 0 && date.CompareTo(Convert.ToDateTime(cur.FirstActiveDate).AddDays(_countExpiredDays)) <= 0)
+                    InterceptTriggered = 0;
+                    cur.ActiveDays = 0;
+                    if (ReadFromStream(null, out updatedInfo) && updatedInfo.ShouldWrite)
                     {
-                        cur.Count += 1;
-                        cur.LastActiveDate = CurrentDate;
-                        TryFlush();
+                        TryFlushAsync(updatedInfo.Info);
                     }
-                    //count expired, start over again
-                    else if (date.CompareTo(Convert.ToDateTime(cur.FirstActiveDate).AddDays(_countExpiredDays)) > 0)
+                }
+                else if (cur.ActiveDays < SurveyTriggerCount)
+                {
+                    //date is later than last active date and not expired
+                    if (Today > Convert.ToDateTime(cur.LastActiveDate))
                     {
-                        cur.FirstActiveDate = CurrentDate;
-                        cur.LastActiveDate = CurrentDate;
-                        cur.Count = 1;
-                        TryFlush();
+                        if (Today <= Convert.ToDateTime(cur.FirstActiveDate).AddDays(CountExpiredDays))
+                        {
+                            cur.ActiveDays += 1;
+                            cur.LastActiveDate = CurrentDate;
+                        }
+                        else
+                        {
+                            cur.FirstActiveDate = CurrentDate;
+                            cur.LastActiveDate = CurrentDate;
+                            cur.ActiveDays = 1;
+                        }
+                        if (ReadFromStream(null, out updatedInfo) && updatedInfo.ShouldWrite)
+                        {
+                            TryFlushAsync(updatedInfo.Info);
+                        }
                     }
                 }
             }
             return false;
         }
 
-        private bool MergeScheduleInfo(ScheduleInfo externalScheduleInfo, string moduleName, out bool prompt, out ScheduleInfo info)
+        private UpdatedScheduleInfo MergeScheduleInfo(ScheduleInfo externalScheduleInfo, string moduleName)
         {
-            bool hasDiff = false;
-            bool shouldPrompt = false;
-            DateTime externalLock = Convert.ToDateTime(externalScheduleInfo.LastPromptDate);
-            if (LastPromptDate.CompareTo(externalLock) != 0 && externalLock.CompareTo(DateTime.MinValue) > 0 && externalLock.AddDays(_lockExpiredDays).CompareTo(Convert.ToDateTime(CurrentDate)) >= 0)
-            {
-                //no need to write to file if only lock changed
-                //if current process is lock free, take external lock only if external lock is later than current date
-                //if current process has lock and external is lock free, keep lock
-                LastPromptDate = externalLock;
-            }
-
-            ScheduleInfo tmp = new ScheduleInfo() { LastPromptDate = LastPromptDate.ToString("yyyy'-'MM'-'dd"), Modules = new List<ModuleInfo>() };
+            bool ShouldWrite = false;
+            bool ShouldPrompt = false;
+            DateTime externalLastPromptDate = Convert.ToDateTime(externalScheduleInfo?.LastPromptDate);
+            ScheduleInfo tmp = new ScheduleInfo() { Modules = new List<ModuleInfo>() };
             IDictionary<string, ModuleInfo> externalMap = new Dictionary<string, ModuleInfo>();
             externalScheduleInfo?.Modules?.ForEach<ModuleInfo>(x => externalMap[x.Name] = x);
 
@@ -175,74 +192,60 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
             moduleNames.ForEach<string>(name =>
             {
                 ModuleInfo item = null;
-                if (InternalMap.ContainsKey(name) && (!externalMap.ContainsKey(name) || Convert.ToDateTime(InternalMap[name].LastActiveDate).CompareTo(Convert.ToDateTime(externalMap[name].LastActiveDate)) > 0))
+                if (InternalMap.ContainsKey(name) && (!externalMap.ContainsKey(name) || Convert.ToDateTime(InternalMap[name].LastActiveDate) > Convert.ToDateTime(externalMap[name].LastActiveDate)))
                 {
                     item = new ModuleInfo(InternalMap[name]);
-                    if (moduleName != null && moduleName.Equals(name))
-                    {
-                        shouldPrompt = true;
-                    }
-                    hasDiff = true;
+                    ShouldWrite = true;
+                    ShouldPrompt = name.Equals(moduleName);
                 }
                 else
                 {
+                    if (externalLastPromptDate != DateTime.MinValue && Convert.ToDateTime(externalMap[name].LastActiveDate) == externalLastPromptDate)
+                    {
+                        LastPromptDate = externalLastPromptDate;
+                        if (externalScheduleInfo.InterceptTriggered == 1 && externalMap[name].ActiveDays == SurveyTriggerCount + 1)
+                        {
+                            InterceptTriggered = 1;
+                        }
+                        else if (externalScheduleInfo.InterceptTriggered == 2 && externalMap[name].ActiveDays == SurveyTriggerCount + 2)
+                        {
+                            InterceptTriggered = 2;
+                        }
+                        else if (externalScheduleInfo.InterceptTriggered ==0 && externalMap[name].ActiveDays == SurveyTriggerCount + 3)
+                        {
+                            InterceptTriggered = 0;
+                        }
+                    }
                     item = new ModuleInfo(externalMap[name]);
                     InternalMap[name] = item;
                 }
                 tmp.Modules.Add(item);
             });
+            tmp.InterceptTriggered = InterceptTriggered;
+            tmp.LastPromptDate = LastPromptDate.ToString("yyyy-MM-dd");
 
-            info = tmp;
-            prompt = shouldPrompt;
-
-            return hasDiff;
+            return new UpdatedScheduleInfo() { Info = tmp, ShouldWrite = ShouldWrite, ShouldPrompt = ShouldPrompt};
         }
 
-        private bool ReadFromStream(string moduleName, out bool prompt)
+        private bool ReadFromStream(string moduleName, out UpdatedScheduleInfo info)
         {
-            ScheduleInfo info = null;
-            return ReadFromStream(moduleName, out prompt, out info);
-        }
-
-        private bool ReadFromStream(out ScheduleInfo info)
-        {
-            string name = null;
-            bool prompt = false;
-            return ReadFromStream(name, out prompt, out info);
-        }
-
-        private bool ReadFromStream(string moduleName, out bool prompt, out ScheduleInfo info)
-        {
-            FileStream fs = new FileStream(SurveySchedulePath, FileMode.Open, FileAccess.Read, FileShare.None);
+            StreamReader sr = null;
+            info = new UpdatedScheduleInfo() { Info = null, ShouldPrompt = false, ShouldWrite = false};
             try
             {
-                StringBuilder sb = new StringBuilder();
-                long size = fs.Length;
-                byte[] bytes = new byte[size];
-                int index = 0;
-                do
+                if (File.Exists(SurveySchedulePath))
                 {
-                    int subSize = size > Int32.MaxValue ? Int32.MaxValue : (int)size;
-                    if (subSize < bytes.Length)
-                    {
-                        bytes = new byte[subSize];
-                    }
-                    int count = subSize;
-                    while (count > 0)
-                    {
-                        int segment = fs.Read(bytes, index, count);
-                        if (segment == 0)
-                        {
-                            break;
-                        }
-                        index += segment;
-                        count -= segment;
-                    }
-                    sb.Append(Encoding.Default.GetString(bytes));
-                    size -= subSize;
+                    sr = new StreamReader(new FileStream(SurveySchedulePath, FileMode.Open, FileAccess.Read, FileShare.None));
+                    int size = (int)sr.BaseStream.Length;
+                    char[] buffer = new char[size];
+                    sr.ReadBlock(buffer, 0, size);
+                    ScheduleInfo tmp = JsonConvert.DeserializeObject<ScheduleInfo>(new string(buffer));
+                    info = MergeScheduleInfo(tmp, moduleName);
                 }
-                while (size > 0);
-                return MergeScheduleInfo(JsonConvert.DeserializeObject<ScheduleInfo>(sb.ToString()), moduleName, out prompt, out info);
+                else
+                {
+                    info = MergeScheduleInfo(null, moduleName);
+                }   
             }
             catch (Exception e)
             {
@@ -250,40 +253,34 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
                 {
                     this.IgnoreSchedule = true;
                 }
-                prompt = false;
-                info = null;
+                //deserialize failed, means content of file is incorrect, make file empty
+                if (e is JsonException)
+                {
+                    if (sr != null)
+                    {
+                        sr.Dispose();
+                    }
+                    TryEmptyAsync();
+                }
                 return false;
             }
             finally
             {
-                if (fs != null)
+                if (sr != null)
                 {
-                    fs.Dispose();
+                    sr.Dispose();
                 }
-            }      
+            }
+            return true;
         }
 
         private bool WriteToStream(ScheduleInfo info)
         {
-            if (info ==null)
-            {
-                return false;
-            }
-            FileStream fs = null;
+            StreamWriter sw = null;
             try
             {
-                fs = new FileStream(SurveySchedulePath, FileMode.Create, FileAccess.Write, FileShare.None);
-                byte[] bytes = Encoding.Default.GetBytes(JsonConvert.SerializeObject(info));
-                int size = bytes.Length;
-                int index = 0;
-                do
-                {
-                    int subSize = size > Int32.MaxValue ? Int32.MaxValue : (int)size;
-                    fs.Write(bytes, index, subSize);
-                    index += subSize;
-                    size -= subSize;
-                }
-                while (size > 0);
+                sw = new StreamWriter(new FileStream(SurveySchedulePath, FileMode.Create, FileAccess.Write, FileShare.None));
+                sw.Write(info == null ? string.Empty : JsonConvert.SerializeObject(info));
             }
             catch (Exception e)
             {
@@ -295,9 +292,9 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
             }
             finally
             {
-                if (fs != null)
+                if (sw != null)
                 {
-                    fs.Dispose();
+                    sw.Dispose();
                 }
             }
             return true;
@@ -305,32 +302,38 @@ namespace Microsoft.WindowsAzure.Commands.Common.Survey
 
         private void Flush(ScheduleInfo info)
         {
-            if (FlushCount >= _flushFrequecy && WriteToStream(info))
+            int beforeExchange = Interlocked.CompareExchange(ref FlushCount, 0, FlushFrequecy);
+            if(beforeExchange < FlushFrequecy)
+            {
+                Interlocked.Add(ref FlushCount, 1);
+            }
+            else if (beforeExchange > FlushFrequecy)
             {
                 Interlocked.Exchange(ref FlushCount, 0);
             }
             else
             {
-                Interlocked.Add(ref FlushCount, 1);
+                if (!WriteToStream(info))
+                {
+                    Interlocked.Exchange(ref FlushCount, beforeExchange);
+                }
             }
         }
 
-        private async void TryFlush()
+        private async void TryFlushAsync(ScheduleInfo info)
         {
             await Task.Run(() =>
             {
-                ScheduleInfo info = null;
-                if (!File.Exists(SurveySchedulePath) || ReadFromStream(out info))
-                {
-                    Flush(info);
-                }
+                Flush(info);
             });
         }
 
-        private bool TryPrompt(string moduleName)
+        private async void TryEmptyAsync()
         {
-            bool shouldPrompt = false;
-            return ReadFromStream(moduleName, out shouldPrompt) && shouldPrompt;
+            await Task.Run(() =>
+            {
+                WriteToStream(null);
+            });
         }
     }
 }

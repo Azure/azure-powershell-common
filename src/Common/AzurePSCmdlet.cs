@@ -410,10 +410,13 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// </summary>
         protected override void EndProcessing()
         {
-            if (IsInteractiveMode() && SurveyHelper.GetInstance().ShouldPropmtSurvey(ModuleName, ModuleVersion))
+            if (CheckIfInteractive() && SurveyHelper.GetInstance().ShouldPropmtSurvey(this.MyInvocation.MyCommand.ModuleName, this.MyInvocation.MyCommand.Version))
             {
                 WriteSurvey();
-                _qosEvent.SurveyPrompted = true;
+                if (_qosEvent != null)
+                {
+                    _qosEvent.SurveyPrompted = true;
+                }
             }
             LogQosEvent();
             LogCmdletEndInvocationInfo();
@@ -441,43 +444,55 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         protected void WriteSurvey()
         {
-            HostInformationMessage msg = new HostInformationMessage()
+            HostInformationMessage newLine = new HostInformationMessage()
             {
-                Message = string.Format("Survey: How was your experience using Azure PowerShell?`\nRun ", ModuleName, ModuleVersion),
+                Message = "\n"
+            };
+            HostInformationMessage howWas = new HostInformationMessage()
+            {
+                Message = ": How was your experience using Azure PowerShell?\nRun ",
                 NoNewLine = true
             };
-            HostInformationMessage msg2;
+            HostInformationMessage survey;
+            HostInformationMessage link;
             try
             {
-                msg2 = new HostInformationMessage()
+                survey = new HostInformationMessage()
+                {
+                    Message = "Survey",
+                    NoNewLine = true,
+                    ForegroundColor = (ConsoleColor)Host.PrivateData.Properties.Match("ProgressForegroundColor").SingleOrDefault().Value
+                };
+                link = new HostInformationMessage()
                 {
                     Message = "Open-AzSurveyLink",
                     NoNewLine = true,
-                    ForegroundColor = (ConsoleColor)Host.PrivateData.Properties.Match("ProgressBackgroundColor").SingleOrDefault().Value
+                    ForegroundColor = (ConsoleColor)Host.PrivateData.Properties.Match("ProgressbackgroundColor").SingleOrDefault().Value
                 };
             }
             catch
             {
-                msg2 = new HostInformationMessage()
+                survey = new HostInformationMessage()
+                {
+                    Message = "Survey",
+                    NoNewLine = true,
+                };
+                link = new HostInformationMessage()
                 {
                     Message = "Open-AzSurveyLink",
                     NoNewLine = true,
                 };
             } 
-            HostInformationMessage msg3 = new HostInformationMessage()
+            HostInformationMessage action = new HostInformationMessage()
             {
                 Message = " to fill out a short Survey"
             };
-            WriteInformation(msg, new string[] { "PSHOST" });
-            WriteInformation(msg2, new string[] { "PSHOST" });
-            WriteInformation(msg3, new string[] { "PSHOST" });
+            WriteInformation(newLine, new string[] { "PSHOST" });
+            WriteInformation(survey, new string[] { "PSHOST" });
+            WriteInformation(howWas, new string[] { "PSHOST" });
+            WriteInformation(link, new string[] { "PSHOST" });
+            WriteInformation(action, new string[] { "PSHOST" });
         }
-
-        protected bool IsInteractiveMode()
-        {
-            return _qosEvent.PreviousEndTime.HasValue ? (_qosEvent.StartTime - _qosEvent.PreviousEndTime.Value).Seconds > 1 : true;
-        }
-
         protected new void WriteError(ErrorRecord errorRecord)
         {
             FlushDebugMessages(IsDataCollectionAllowed());
