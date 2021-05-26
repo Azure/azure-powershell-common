@@ -12,7 +12,7 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-namespace Microsoft.WindowsAzure.Commands.Common.Survey
+namespace Microsoft.Azure.PowerShell.Share.Survey
 {
     internal class UpdatedScheduleInfo
     {

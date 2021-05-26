@@ -18,7 +18,7 @@ using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 using Microsoft.Azure.ServiceManagement.Common.Models;
 using Microsoft.WindowsAzure.Commands.Common;
 using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
-using Microsoft.WindowsAzure.Commands.Common.Survey;
+using Microsoft.Azure.PowerShell.Share.Survey;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

@@ -14,7 +14,7 @@
 
 using Newtonsoft.Json;
 
-namespace Microsoft.WindowsAzure.Commands.Common.Survey
+namespace Microsoft.Azure.PowerShell.Share.Survey
 {
     internal class ModuleInfo
     {

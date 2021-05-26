@@ -12,7 +12,6 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
@@ -21,7 +20,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.WindowsAzure.Commands.Common.Survey
+namespace Microsoft.Azure.PowerShell.Share.Survey
 {
     public class SurveyHelper
     {

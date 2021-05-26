@@ -15,7 +15,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace Microsoft.WindowsAzure.Commands.Common.Survey
+namespace Microsoft.Azure.PowerShell.Share.Survey
 {
     internal class ScheduleInfo
     {
