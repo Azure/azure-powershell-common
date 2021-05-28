@@ -24,8 +24,5 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
 
         [JsonProperty(PropertyName = "modules")]
         internal IList<ModuleInfo> Modules { get; set; }
-
-        [JsonProperty(PropertyName = "interceptTriggered")]
-        internal int InterceptTriggered { get; set; }
     }
 }
