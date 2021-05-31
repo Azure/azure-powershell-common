@@ -17,13 +17,14 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Microsoft.Azure.PowerShell.Share.Survey
 {
     using Condition = Func<SurveyHelper, string, int, bool>;
-    using Act = Action<SurveyHelper, string, int>;
+    using UpdateModule = Action<SurveyHelper, string, int>;
 
     public class SurveyHelper
     {
@@ -43,7 +44,7 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
 
         private DateTime LastPromptDate { get; set; }
 
-        private ConcurrentDictionary<string, ModuleInfo> InternalMap { get; set; }
+        private ConcurrentDictionary<string, ModuleInfo> Modules { get; set; }
 
         private bool IgnoreSchedule;
 
@@ -59,7 +60,7 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
             Today = Convert.ToDateTime(CurrentDate);
             IgnoreSchedule = false;
             LastPromptDate = DateTime.MinValue;
-            InternalMap = new ConcurrentDictionary<string, ModuleInfo>();
+            Modules = new ConcurrentDictionary<string, ModuleInfo>();
             Interlocked.Exchange(ref FlushCount, 0);
         }
 
@@ -79,19 +80,16 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
                 return false;
             }
 
-            ScheduleInfo info = null;
             int majorVersion = moduleVersion.Major;
 
-            if (InternalMap.Count == 0)
+            if (Modules.Count == 0)
             {
-                ReadFromStream(out info);
+                ReadFromStream();
             }
 
-            if (ShouldInternalUpdate(moduleName, majorVersion, InternalNotContains, Skip) 
-                && ReadFromStream(out info) 
-                && ShouldInternalUpdate(moduleName, majorVersion, InternalNotContains, UpdateInternalNotContains))
+            if (ShouldFlush(moduleName, majorVersion, ShouldModuleAdd, ModuleAdd))
             {
-                TryFlushAsync(info);
+                TryFlushAsync(GetModules());
                 return false;
             }
 
@@ -101,45 +99,38 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
                 LastPromptDate = DateTime.MinValue;
             }
 
-            if (ShouldInternalUpdate(moduleName, majorVersion, ShouldInternalPrompt, Skip)
-                && ReadFromStream(out info)
-                && ShouldInternalUpdate(moduleName, majorVersion, ShouldInternalPrompt, UpdateInternalPrompt))
+            if (ShouldFlush(moduleName, majorVersion, ShouldAzPredictorPrompt, AzPredictorPrompt) 
+                || ShouldFlush(moduleName, majorVersion, ShouldModulePrompt, ModulePrompt))
             {
-                TryFlushAsync(info);
+                TryFlushAsync(GetModules(), true);
                 return true;
             }
 
-            if ((ShouldInternalUpdate(moduleName, majorVersion, ShouldInternalBumpVersion, Skip) 
-                    || ShouldInternalUpdate(moduleName, majorVersion, ShouldInternalCount, Skip)
-                    || ShouldInternalUpdate(moduleName, majorVersion, IsInternalCountExpired, Skip)
-                    || ShouldInternalUpdate(moduleName, majorVersion, IsInternalPromptExpired, Skip))
-                && ReadFromStream(out info)
-                && (ShouldInternalUpdate(moduleName, majorVersion, ShouldInternalBumpVersion, UpdateInternalBumpVersion)
-                    || ShouldInternalUpdate(moduleName, majorVersion, ShouldInternalCount, UpdateInternalCount)
-                    || ShouldInternalUpdate(moduleName, majorVersion, IsInternalCountExpired, UpdateInternalCountExpired)
-                    || ShouldInternalUpdate(moduleName, majorVersion, IsInternalPromptExpired, UpdateInternalPromptExpired)))
+            if ((ShouldFlush(moduleName, majorVersion, ShouldModuleBumpVersion, ModuleBumpVersion)
+                || ShouldFlush(moduleName, majorVersion, ShouldModuleCount, ModuleCount)
+                || ShouldFlush(moduleName, majorVersion, ShouldModuleCountExpire, ModuleCountExpire)
+                || ShouldFlush(moduleName, majorVersion, ShouldModulePromptExpire, ModulePromptExpire)))
             {
-                TryFlushAsync(info);
+                TryFlushAsync(GetModules());
             }
             return false;
         }
 
-        private bool ShouldInternalUpdate(string moduleName, int majorVersion, Condition condition, Act updateInternal)
+        private bool ShouldFlush(string moduleName, int majorVersion, Condition condition, UpdateModule updateModule = null)
         {
-            if (condition.Invoke(this, moduleName, majorVersion))
+            if (condition.Invoke(this, moduleName, majorVersion) && ReadFromStream() && condition.Invoke(this, moduleName, majorVersion))
             {
-                updateInternal.Invoke(this, moduleName, majorVersion);
+                updateModule.Invoke(this, moduleName, majorVersion);
+                return true;
             }
             return false;
         }
 
-        private void Skip(SurveyHelper helper, string moduleName, int majorVersion) { }
+        private bool ShouldModuleAdd(SurveyHelper helper, string moduleName, int majorVersion) => !helper.Modules.ContainsKey(moduleName);
 
-        private bool InternalNotContains(SurveyHelper helper, string moduleName, int majorVersion) => !helper.InternalMap.ContainsKey(moduleName);
-
-        private void UpdateInternalNotContains(SurveyHelper helper, string moduleName, int majorVersion)
+        private void ModuleAdd(SurveyHelper helper, string moduleName, int majorVersion)
         {
-            helper.InternalMap[moduleName] = new ModuleInfo()
+            helper.Modules[moduleName] = new ModuleInfo()
             {
                 Name = moduleName,
                 MajorVersion = majorVersion,
@@ -150,84 +141,96 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
             };
         }
 
-        private bool ShouldInternalBumpVersion(SurveyHelper helper, string moduleName, int majorVersion) 
-            => majorVersion > helper.InternalMap[moduleName].MajorVersion;
+        private bool ShouldModuleBumpVersion(SurveyHelper helper, string moduleName, int majorVersion) 
+            => majorVersion > helper.Modules[moduleName].MajorVersion;
 
-        private void UpdateInternalBumpVersion(SurveyHelper helper, string moduleName, int majorVersion)
+        private void ModuleBumpVersion(SurveyHelper helper, string moduleName, int majorVersion)
         {
-            helper.InternalMap[moduleName].MajorVersion = majorVersion;
-            helper.InternalMap[moduleName].FirstActiveDate = CurrentDate;
-            helper.InternalMap[moduleName].LastActiveDate = CurrentDate;
-            helper.InternalMap[moduleName].ActiveDays = 1;
+            helper.Modules[moduleName].MajorVersion = majorVersion;
+            helper.Modules[moduleName].FirstActiveDate = CurrentDate;
+            helper.Modules[moduleName].LastActiveDate = CurrentDate;
+            helper.Modules[moduleName].ActiveDays = 1;
         }
 
-        private bool ShouldInternalCount(SurveyHelper helper, string moduleName, int majorVersion) 
-            => helper.InternalMap[moduleName].MajorVersion == majorVersion 
-            && helper.InternalMap[moduleName].ActiveDays < SurveyTriggerCount 
-            && helper.Today > Convert.ToDateTime(helper.InternalMap[moduleName].LastActiveDate)
-            && helper.Today <= Convert.ToDateTime(helper.InternalMap[moduleName].FirstActiveDate).AddDays(CountExpiredDays);
+        private bool ShouldModuleCount(SurveyHelper helper, string moduleName, int majorVersion) 
+            => helper.Modules[moduleName].MajorVersion == majorVersion 
+            && helper.Modules[moduleName].ActiveDays < SurveyTriggerCount 
+            && helper.Today > Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate)
+            && helper.Today <= Convert.ToDateTime(helper.Modules[moduleName].FirstActiveDate).AddDays(CountExpiredDays);
 
-        private void UpdateInternalCount(SurveyHelper helper, string moduleName, int majorVersion)
+        private void ModuleCount(SurveyHelper helper, string moduleName, int majorVersion)
         {
-            helper.InternalMap[moduleName].ActiveDays += 1;
-            helper.InternalMap[moduleName].LastActiveDate = CurrentDate;
+            helper.Modules[moduleName].ActiveDays += 1;
+            helper.Modules[moduleName].LastActiveDate = CurrentDate;
         }
 
-        private bool IsInternalCountExpired(SurveyHelper helper, string moduleName, int majorVersion)
-            => helper.InternalMap[moduleName].MajorVersion == majorVersion
-            && helper.InternalMap[moduleName].ActiveDays < SurveyTriggerCount
-            && helper.Today > Convert.ToDateTime(helper.InternalMap[moduleName].LastActiveDate)
-            && helper.Today > Convert.ToDateTime(helper.InternalMap[moduleName].FirstActiveDate).AddDays(CountExpiredDays);
+        private bool ShouldModuleCountExpire(SurveyHelper helper, string moduleName, int majorVersion)
+            => helper.Modules[moduleName].MajorVersion == majorVersion
+            && helper.Modules[moduleName].ActiveDays < SurveyTriggerCount
+            && helper.Today > Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate)
+            && helper.Today > Convert.ToDateTime(helper.Modules[moduleName].FirstActiveDate).AddDays(CountExpiredDays);
 
-        private void UpdateInternalCountExpired(SurveyHelper helper, string moduleName, int majorVersion)
+        private void ModuleCountExpire(SurveyHelper helper, string moduleName, int majorVersion)
         {
-            helper.InternalMap[moduleName].FirstActiveDate = CurrentDate;
-            helper.InternalMap[moduleName].LastActiveDate = CurrentDate;
-            helper.InternalMap[moduleName].ActiveDays = 1;
+            helper.Modules[moduleName].FirstActiveDate = CurrentDate;
+            helper.Modules[moduleName].LastActiveDate = CurrentDate;
+            helper.Modules[moduleName].ActiveDays = 1;
         }
 
-        private bool ShouldInternalPrompt(SurveyHelper helper, string moduleName, int majorVersion)
-            => helper.InternalMap[moduleName].MajorVersion == majorVersion
-            && ((helper.InternalMap[moduleName].ActiveDays == SurveyTriggerCount && helper.LastPromptDate == DateTime.MinValue)
-                 || helper.InternalMap[moduleName].ActiveDays == SurveyTriggerCount + 1 && helper.LastPromptDate == Convert.ToDateTime(helper.InternalMap[moduleName].LastActiveDate) && helper.Today == helper.LastPromptDate.AddDays(DelayForSecondPrompt)
-                 || helper.InternalMap[moduleName].ActiveDays == SurveyTriggerCount + 2 && helper.LastPromptDate == Convert.ToDateTime(helper.InternalMap[moduleName].LastActiveDate) && helper.Today == helper.LastPromptDate.AddDays(DelayForThirdPrompt));
+        private bool ShouldModulePrompt(SurveyHelper helper, string moduleName, int majorVersion)
+            => helper.Modules[moduleName].MajorVersion == majorVersion
+            && ((helper.Modules[moduleName].ActiveDays == SurveyTriggerCount && helper.LastPromptDate == DateTime.MinValue)
+                 || helper.Modules[moduleName].ActiveDays == SurveyTriggerCount + 1 && helper.LastPromptDate == Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate) && helper.Today == helper.LastPromptDate.AddDays(DelayForSecondPrompt)
+                 || helper.Modules[moduleName].ActiveDays == SurveyTriggerCount + 2 && helper.LastPromptDate == Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate) && helper.Today == helper.LastPromptDate.AddDays(DelayForThirdPrompt));
 
-        private void UpdateInternalPrompt(SurveyHelper helper, string moduleName, int majorVersion)
+        private void ModulePrompt(SurveyHelper helper, string moduleName, int majorVersion)
         {
             helper.LastPromptDate = Today;
-            helper.InternalMap[moduleName].LastActiveDate = CurrentDate;
-            helper.InternalMap[moduleName].ActiveDays += 1;
+            helper.Modules[moduleName].LastActiveDate = CurrentDate;
+            helper.Modules[moduleName].ActiveDays += 1;
         }
 
-        private bool IsInternalPromptExpired(SurveyHelper helper, string moduleName, int majorVersion)
-            => helper.InternalMap[moduleName].MajorVersion == majorVersion
-            && (InternalMap[moduleName].ActiveDays == SurveyTriggerCount + 1 && helper.LastPromptDate == Convert.ToDateTime(InternalMap[moduleName].LastActiveDate) && helper.Today > helper.LastPromptDate.AddDays(DelayForSecondPrompt)
-                || InternalMap[moduleName].ActiveDays == SurveyTriggerCount + 2 && helper.LastPromptDate == Convert.ToDateTime(InternalMap[moduleName].LastActiveDate) && helper.Today > LastPromptDate.AddDays(DelayForThirdPrompt));
+        private bool ShouldAzPredictorPrompt(SurveyHelper helper, string moduleName, int majorVersion)
+            => Predictor.Equals(moduleName, StringComparison.OrdinalIgnoreCase)
+            && helper.Modules[moduleName].MajorVersion == majorVersion
+            && ((helper.Modules[moduleName].ActiveDays == SurveyTriggerCount && helper.Today <= Convert.ToDateTime(helper.Modules[moduleName].FirstActiveDate).AddDays(CountExpiredDays))
+                 || helper.Modules[moduleName].ActiveDays == SurveyTriggerCount + 1 && helper.Today == Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate).AddDays(DelayForSecondPrompt)
+                 || helper.Modules[moduleName].ActiveDays == SurveyTriggerCount + 2 && helper.Today == Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate).AddDays(DelayForThirdPrompt));
 
-        private void UpdateInternalPromptExpired(SurveyHelper helper, string moduleName, int majorVersion)
+        private void AzPredictorPrompt(SurveyHelper helper, string moduleName, int majorVersion)
         {
-            helper.InternalMap[moduleName].ActiveDays = 0;
+            helper.Modules[moduleName].LastActiveDate = CurrentDate;
+            helper.Modules[moduleName].ActiveDays += 1;
         }
 
-        private ScheduleInfo MergeScheduleInfo(ScheduleInfo externalScheduleInfo)
+        private bool ShouldModulePromptExpire(SurveyHelper helper, string moduleName, int majorVersion)
+            => helper.Modules[moduleName].MajorVersion == majorVersion
+            && (Modules[moduleName].ActiveDays == SurveyTriggerCount + 1 && helper.LastPromptDate == Convert.ToDateTime(Modules[moduleName].LastActiveDate) && helper.Today > helper.LastPromptDate.AddDays(DelayForSecondPrompt)
+                || Modules[moduleName].ActiveDays == SurveyTriggerCount + 2 && helper.LastPromptDate == Convert.ToDateTime(Modules[moduleName].LastActiveDate) && helper.Today > LastPromptDate.AddDays(DelayForThirdPrompt));
+
+        private void ModulePromptExpire(SurveyHelper helper, string moduleName, int majorVersion)
+        {
+            helper.Modules[moduleName].ActiveDays = 0;
+        }
+
+        private void MergeScheduleInfo(ScheduleInfo externalScheduleInfo)
         {
             DateTime externalLastPromptDate = Convert.ToDateTime(externalScheduleInfo?.LastPromptDate);
-            ScheduleInfo tmp = new ScheduleInfo() { Modules = new List<ModuleInfo>() };
             IDictionary<string, ModuleInfo> externalMap = new Dictionary<string, ModuleInfo>();
             foreach(ModuleInfo info in externalScheduleInfo?.Modules)
             {
                 externalMap[info.Name] = info;
             }
 
-            HashSet<string> moduleNames = new HashSet<string>(InternalMap.Keys);
+            HashSet<string> moduleNames = new HashSet<string>(Modules.Keys);
             moduleNames.UnionWith(new HashSet<string>(externalMap.Keys));
 
             foreach (string name in moduleNames)
             {
                 ModuleInfo item = null;
-                if (InternalMap.ContainsKey(name) && (!externalMap.ContainsKey(name) || Convert.ToDateTime(InternalMap[name].LastActiveDate) > Convert.ToDateTime(externalMap[name].LastActiveDate)))
+                if (Modules.ContainsKey(name) && (!externalMap.ContainsKey(name) || Convert.ToDateTime(Modules[name].LastActiveDate) > Convert.ToDateTime(externalMap[name].LastActiveDate)))
                 {
-                    item = new ModuleInfo(InternalMap[name]);
+                    item = new ModuleInfo(Modules[name]);
                 }
                 else
                 {
@@ -236,18 +239,19 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
                         LastPromptDate = externalLastPromptDate;
                     }
                     item = new ModuleInfo(externalMap[name]);
-                    InternalMap[name] = item;
+                    Modules[name] = item;
                 }
-                tmp.Modules.Add(item);
             }
-            tmp.LastPromptDate = LastPromptDate.ToString("yyyy-MM-dd");
-            return tmp;
         }
 
-        private bool ReadFromStream(out ScheduleInfo info)
+        private ScheduleInfo GetModules()
+        { 
+            return new ScheduleInfo() { LastPromptDate = LastPromptDate.ToString("yyyy-MM-dd"), Modules = Modules.Values.ToList() };
+        }
+
+        private bool ReadFromStream()
         {
             StreamReader sr = null;
-            info = new ScheduleInfo();
             try
             {
                 if (File.Exists(SurveySchedulePath))
@@ -257,12 +261,8 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
                     char[] buffer = new char[size];
                     sr.ReadBlock(buffer, 0, size);
                     ScheduleInfo tmp = JsonConvert.DeserializeObject<ScheduleInfo>(new string(buffer));
-                    info = MergeScheduleInfo(tmp);
+                    MergeScheduleInfo(tmp);
                 }
-                else
-                {
-                    info = MergeScheduleInfo(null);
-                }   
             }
             catch (Exception e)
             {

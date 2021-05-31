@@ -55,6 +55,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Share\Share.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <ProjectReference Include="..\Authentication.Abstractions\Authentication.Abstractions.csproj" />
   </ItemGroup>
 
