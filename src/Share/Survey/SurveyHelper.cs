@@ -39,8 +39,13 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
 
         private int FlushCount;
 
-        private static string SurveySchedulePath = Constants.SurveyScheduleInfoFile;
-        private static string Predictor = Constants.Predictor;
+        private static string SurveyScheduleInfoFile = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            ".Azure", "AzureRmSurvey.json");
+
+        public const string AzurePSInterceptSurvey = "Azure_PS_Intercept_Survey";
+
+        public const string Predictor = "Az.Predictor";
 
         private DateTime LastPromptDate { get; set; }
 
@@ -48,7 +53,8 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
 
         private bool IgnoreSchedule;
 
-        private bool IsDisabledFromEnv => "Disabled".Equals(Environment.GetEnvironmentVariable(Constants.AzurePSInterceptSurvey), StringComparison.OrdinalIgnoreCase);
+        private bool IsDisabledFromEnv => "Disabled".Equals(Environment.GetEnvironmentVariable(AzurePSInterceptSurvey), StringComparison.OrdinalIgnoreCase)
+                                        || "False".Equals(Environment.GetEnvironmentVariable(AzurePSInterceptSurvey), StringComparison.OrdinalIgnoreCase);
 
         private readonly string CurrentDate;
 
@@ -89,7 +95,7 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
 
             if (ShouldFlush(moduleName, majorVersion, ShouldModuleAdd, ModuleAdd))
             {
-                TryFlushAsync(GetModules());
+                FlushWithWaitAsync();
                 return false;
             }
 
@@ -102,7 +108,7 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
             if (ShouldFlush(moduleName, majorVersion, ShouldAzPredictorPrompt, AzPredictorPrompt) 
                 || ShouldFlush(moduleName, majorVersion, ShouldModulePrompt, ModulePrompt))
             {
-                TryFlushAsync(GetModules(), true);
+                FlushAsync();
                 return true;
             }
 
@@ -111,7 +117,7 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
                 || ShouldFlush(moduleName, majorVersion, ShouldModuleCountExpire, ModuleCountExpire)
                 || ShouldFlush(moduleName, majorVersion, ShouldModulePromptExpire, ModulePromptExpire)))
             {
-                TryFlushAsync(GetModules());
+                FlushWithWaitAsync();
             }
             return false;
         }
@@ -120,7 +126,7 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
         {
             if (condition.Invoke(this, moduleName, majorVersion) && ReadFromStream() && condition.Invoke(this, moduleName, majorVersion))
             {
-                updateModule.Invoke(this, moduleName, majorVersion);
+                updateModule?.Invoke(this, moduleName, majorVersion);
                 return true;
             }
             return false;
@@ -216,35 +222,29 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
         private void MergeScheduleInfo(ScheduleInfo externalScheduleInfo)
         {
             DateTime externalLastPromptDate = Convert.ToDateTime(externalScheduleInfo?.LastPromptDate);
-            IDictionary<string, ModuleInfo> externalMap = new Dictionary<string, ModuleInfo>();
+            IDictionary<string, ModuleInfo> externalModules = new Dictionary<string, ModuleInfo>();
             foreach(ModuleInfo info in externalScheduleInfo?.Modules)
             {
-                externalMap[info.Name] = info;
+                externalModules[info.Name] = info;
             }
 
             HashSet<string> moduleNames = new HashSet<string>(Modules.Keys);
-            moduleNames.UnionWith(new HashSet<string>(externalMap.Keys));
+            moduleNames.UnionWith(new HashSet<string>(externalModules.Keys));
 
             foreach (string name in moduleNames)
             {
-                ModuleInfo item = null;
-                if (Modules.ContainsKey(name) && (!externalMap.ContainsKey(name) || Convert.ToDateTime(Modules[name].LastActiveDate) > Convert.ToDateTime(externalMap[name].LastActiveDate)))
+                if (externalModules.ContainsKey(name) && (!Modules.ContainsKey(name) || Convert.ToDateTime(Modules[name].LastActiveDate) < Convert.ToDateTime(externalModules[name].LastActiveDate)))
                 {
-                    item = new ModuleInfo(Modules[name]);
-                }
-                else
-                {
-                    if (externalLastPromptDate != DateTime.MinValue && Convert.ToDateTime(externalMap[name].LastActiveDate) == externalLastPromptDate)
+                    if (externalLastPromptDate != DateTime.MinValue && Convert.ToDateTime(externalModules[name].LastActiveDate) == externalLastPromptDate)
                     {
                         LastPromptDate = externalLastPromptDate;
                     }
-                    item = new ModuleInfo(externalMap[name]);
-                    Modules[name] = item;
+                    Modules[name] = new ModuleInfo(externalModules[name]);
                 }
             }
         }
 
-        private ScheduleInfo GetModules()
+        private ScheduleInfo GetScheduleInfo()
         { 
             return new ScheduleInfo() { LastPromptDate = LastPromptDate.ToString("yyyy-MM-dd"), Modules = Modules.Values.ToList() };
         }
@@ -254,14 +254,10 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
             StreamReader sr = null;
             try
             {
-                if (File.Exists(SurveySchedulePath))
+                if (File.Exists(SurveyScheduleInfoFile))
                 {
-                    sr = new StreamReader(new FileStream(SurveySchedulePath, FileMode.Open, FileAccess.Read, FileShare.None));
-                    int size = (int)sr.BaseStream.Length;
-                    char[] buffer = new char[size];
-                    sr.ReadBlock(buffer, 0, size);
-                    ScheduleInfo tmp = JsonConvert.DeserializeObject<ScheduleInfo>(new string(buffer));
-                    MergeScheduleInfo(tmp);
+                    sr = new StreamReader(new FileStream(SurveyScheduleInfoFile, FileMode.Open, FileAccess.Read, FileShare.None));                    
+                    MergeScheduleInfo(JsonConvert.DeserializeObject<ScheduleInfo>(sr.ReadToEnd()));
                 }
             }
             catch (Exception e)
@@ -277,7 +273,7 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
                     {
                         sr.Dispose();
                     }
-                    TryFlushAsync(null);
+                    EmptyFileAsync();
                 }
                 return false;
             }
@@ -291,13 +287,13 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
             return true;
         }
 
-        private bool WriteToStream(ScheduleInfo info)
+        private bool WriteToStream(string info)
         {
             StreamWriter sw = null;
             try
             {
-                sw = new StreamWriter(new FileStream(SurveySchedulePath, FileMode.Create, FileAccess.Write, FileShare.None));
-                sw.Write(info == null ? string.Empty : JsonConvert.SerializeObject(info));
+                sw = new StreamWriter(new FileStream(SurveyScheduleInfoFile, FileMode.Create, FileAccess.Write, FileShare.None));
+                sw.Write(info);
             }
             catch (Exception e)
             {
@@ -317,15 +313,34 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
             return true;
         }
 
-        private void TryFlush(ScheduleInfo info, bool outOfCycleFlush = false)
+        private async void FlushAsync()
         {
-            if (outOfCycleFlush)
+            await Task.Run(() =>
             {
-                WriteToStream(info);
-                return;
-            }
+                WriteToStream(JsonConvert.SerializeObject(GetScheduleInfo()));
+            });
+        }
+
+        private async void EmptyFileAsync()
+        {
+            await Task.Run(() =>
+            {
+                WriteToStream(string.Empty);
+            });
+        }
+
+        private async void FlushWithWaitAsync()
+        {
+            await Task.Run(() =>
+            {
+                FlushWithWait();
+            });
+        }
+
+        private void FlushWithWait()
+        {
             int beforeExchange = Interlocked.CompareExchange(ref FlushCount, 0, FlushFrequecy);
-            if(beforeExchange < FlushFrequecy)
+            if (beforeExchange < FlushFrequecy)
             {
                 Interlocked.Add(ref FlushCount, 1);
             }
@@ -335,19 +350,11 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
             }
             else
             {
-                if (!WriteToStream(info))
+                if (!WriteToStream(JsonConvert.SerializeObject(GetScheduleInfo())))
                 {
                     Interlocked.Exchange(ref FlushCount, beforeExchange);
                 }
             }
-        }
-
-        private async void TryFlushAsync(ScheduleInfo info, bool outOfCycleFlush = false)
-        {
-            await Task.Run(() =>
-            {
-                TryFlush(info, outOfCycleFlush);
-            });
         }
     }
 }

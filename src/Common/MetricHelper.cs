@@ -285,7 +285,10 @@ namespace Microsoft.WindowsAzure.Commands.Common
             eventProperties.Add("start-time", qos.StartTime.ToUniversalTime().ToString("o"));
             eventProperties.Add("end-time", qos.EndTime.ToUniversalTime().ToString("o"));
             eventProperties.Add("duration", qos.Duration.ToString("c"));
-            eventProperties.Add("survey-prompted", qos.SurveyPrompted.ToString());
+            if (qos.SurveyPrompted)
+            {
+                eventProperties.Add("survey-prompted", qos.SurveyPrompted.ToString());
+            }
             if (qos.Uid != null)
             {
                 eventProperties.Add("UserId", qos.Uid);
