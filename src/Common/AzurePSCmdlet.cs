@@ -265,9 +265,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         protected bool CheckIfInteractive()
         {
             bool interactive = true;
-            if (this.Host == null ||
-                this.Host.UI == null ||
-                this.Host.UI.RawUI == null ||
+            if (this.Host?.UI?.RawUI == null ||
                 Environment.GetCommandLineArgs().Any(s =>
                     s.Equals("-NonInteractive", StringComparison.OrdinalIgnoreCase)))
             {

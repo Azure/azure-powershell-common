@@ -17,6 +17,7 @@ using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Commands.Common;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using Microsoft.Azure.PowerShell.Share;
 using Microsoft.Rest.Azure;
 using Microsoft.WindowsAzure.Commands.Common.Utilities;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
@@ -285,6 +286,11 @@ namespace Microsoft.WindowsAzure.Commands.Common
             eventProperties.Add("start-time", qos.StartTime.ToUniversalTime().ToString("o"));
             eventProperties.Add("end-time", qos.EndTime.ToUniversalTime().ToString("o"));
             eventProperties.Add("duration", qos.Duration.ToString("c"));
+            if(!string.IsNullOrWhiteSpace(SharedVariable.PredictorCorrelationId))
+            {
+                eventProperties.Add("predictor-correlation-id", SharedVariable.PredictorCorrelationId);
+                SharedVariable.PredictorCorrelationId = null;
+            }
             if (qos.SurveyPrompted)
             {
                 eventProperties.Add("survey-prompted", qos.SurveyPrompted.ToString());
