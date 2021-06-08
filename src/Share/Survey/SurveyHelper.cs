@@ -342,7 +342,7 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
             int beforeExchange = Interlocked.CompareExchange(ref FlushCount, 0, FlushFrequecy);
             if (beforeExchange < FlushFrequecy)
             {
-                Interlocked.Add(ref FlushCount, 1);
+                Interlocked.Increment(ref FlushCount);
             }
             else if (beforeExchange > FlushFrequecy)
             {
