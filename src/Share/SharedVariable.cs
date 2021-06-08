@@ -19,9 +19,21 @@ namespace Microsoft.Azure.PowerShell.Share
     /// </summary>
     public static class SharedVariable
     {
+        private static volatile string _predictorCorrelationId;
+
         /// <summary>
         /// Id should be populated by Az.Tools.Predictor and recorded by AzPS cmdlet telemetry. Once it is recorded, value of id will be cleaned.
         /// </summary>
-        public static string PredictorCorrelationId { get; set; }
+        public static string PredictorCorrelationId 
+        { 
+            get 
+            {
+                return _predictorCorrelationId;
+            } 
+            set
+            {
+                _predictorCorrelationId = value;
+            }
+        }
     }
 }
