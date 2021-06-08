@@ -28,60 +28,60 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
 
     public class SurveyHelper
     {
-        private const int CountExpiredDays = 30;
-        private const int LockExpiredDays = 30;
-        private const int SurveyTriggerCount = 3;
-        private const int FlushFrequecy = 5;
-        private const int DelayForSecondPrompt = 2;
-        private const int DelayForThirdPrompt = 5;
+        private const int _countExpiredDays = 30;
+        private const int _lockExpiredDays = 30;
+        private const int _surveyTriggerCount = 3;
+        private const int _flushFrequecy = 5;
+        private const int _delayForSecondPrompt = 2;
+        private const int _delayForThirdPrompt = 5;
 
-        private static SurveyHelper Instance;
+        private static SurveyHelper _instance;
 
-        private int FlushCount;
+        private int _flushCount;
 
         private static string SurveyScheduleInfoFile = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             ".Azure", "AzureRmSurvey.json");
 
-        public const string AzurePSInterceptSurvey = "Azure_PS_Intercept_Survey";
+        private const string _azurePSInterceptSurvey = "Azure_PS_Intercept_Survey";
 
-        public const string Predictor = "Az.Predictor";
+        private const string _predictor = "Az.Predictor";
 
         private DateTime LastPromptDate { get; set; }
 
-        private ConcurrentDictionary<string, ModuleInfo> Modules { get; set; }
+        private ConcurrentDictionary<string, ModuleInfo> Modules { get; }
 
-        private bool IgnoreSchedule;
+        private bool _ignoreSchedule;
 
-        private bool IsDisabledFromEnv => "Disabled".Equals(Environment.GetEnvironmentVariable(AzurePSInterceptSurvey), StringComparison.OrdinalIgnoreCase)
-                                        || "False".Equals(Environment.GetEnvironmentVariable(AzurePSInterceptSurvey), StringComparison.OrdinalIgnoreCase);
+        private bool IsDisabledFromEnv => "Disabled".Equals(Environment.GetEnvironmentVariable(_azurePSInterceptSurvey), StringComparison.OrdinalIgnoreCase)
+                                        || "False".Equals(Environment.GetEnvironmentVariable(_azurePSInterceptSurvey), StringComparison.OrdinalIgnoreCase);
 
-        private readonly string CurrentDate;
+        public string CurrentDate { get; }
 
-        private readonly DateTime Today;
+        public DateTime Today { get; }
 
         private SurveyHelper()
         {
             CurrentDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
             Today = Convert.ToDateTime(CurrentDate);
-            IgnoreSchedule = false;
+            _ignoreSchedule = false;
             LastPromptDate = DateTime.MinValue;
             Modules = new ConcurrentDictionary<string, ModuleInfo>();
-            Interlocked.Exchange(ref FlushCount, 0);
+            Interlocked.Exchange(ref _flushCount, 0);
         }
 
         public static SurveyHelper GetInstance()
         {
-            if (Instance == null)
+            if (_instance == null)
             {
-                Instance = new SurveyHelper();
+                _instance = new SurveyHelper();
             }
-            return Instance;
+            return _instance;
         }
 
         public bool ShouldPropmtSurvey(string moduleName, Version moduleVersion)
         {
-            if (IgnoreSchedule || IsDisabledFromEnv)
+            if (_ignoreSchedule || IsDisabledFromEnv)
             {
                 return false;
             }
@@ -100,7 +100,7 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
             }
 
             //LastPromptDate.CompareTo(DateTime.MinValue) > 0 means survey is locked, otherwise lock free
-            if (LastPromptDate > DateTime.MinValue && Today > LastPromptDate.AddDays(LockExpiredDays))
+            if (LastPromptDate > DateTime.MinValue && Today > LastPromptDate.AddDays(_lockExpiredDays))
             {
                 LastPromptDate = DateTime.MinValue;
             }
@@ -160,9 +160,9 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
 
         private bool ShouldModuleCount(SurveyHelper helper, string moduleName, int majorVersion) 
             => helper.Modules[moduleName].MajorVersion == majorVersion 
-            && helper.Modules[moduleName].ActiveDays < SurveyTriggerCount 
+            && helper.Modules[moduleName].ActiveDays < _surveyTriggerCount 
             && helper.Today > Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate)
-            && helper.Today <= Convert.ToDateTime(helper.Modules[moduleName].FirstActiveDate).AddDays(CountExpiredDays);
+            && helper.Today <= Convert.ToDateTime(helper.Modules[moduleName].FirstActiveDate).AddDays(_countExpiredDays);
 
         private void ModuleCount(SurveyHelper helper, string moduleName, int majorVersion)
         {
@@ -172,9 +172,9 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
 
         private bool ShouldModuleCountExpire(SurveyHelper helper, string moduleName, int majorVersion)
             => helper.Modules[moduleName].MajorVersion == majorVersion
-            && helper.Modules[moduleName].ActiveDays < SurveyTriggerCount
+            && helper.Modules[moduleName].ActiveDays < _surveyTriggerCount
             && helper.Today > Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate)
-            && helper.Today > Convert.ToDateTime(helper.Modules[moduleName].FirstActiveDate).AddDays(CountExpiredDays);
+            && helper.Today > Convert.ToDateTime(helper.Modules[moduleName].FirstActiveDate).AddDays(_countExpiredDays);
 
         private void ModuleCountExpire(SurveyHelper helper, string moduleName, int majorVersion)
         {
@@ -185,9 +185,9 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
 
         private bool ShouldModulePrompt(SurveyHelper helper, string moduleName, int majorVersion)
             => helper.Modules[moduleName].MajorVersion == majorVersion
-            && ((helper.Modules[moduleName].ActiveDays == SurveyTriggerCount && helper.LastPromptDate == DateTime.MinValue)
-                 || helper.Modules[moduleName].ActiveDays == SurveyTriggerCount + 1 && helper.LastPromptDate == Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate) && helper.Today == helper.LastPromptDate.AddDays(DelayForSecondPrompt)
-                 || helper.Modules[moduleName].ActiveDays == SurveyTriggerCount + 2 && helper.LastPromptDate == Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate) && helper.Today == helper.LastPromptDate.AddDays(DelayForThirdPrompt));
+            && ((helper.Modules[moduleName].ActiveDays == _surveyTriggerCount && helper.LastPromptDate == DateTime.MinValue)
+                 || helper.Modules[moduleName].ActiveDays == _surveyTriggerCount + 1 && helper.LastPromptDate == Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate) && helper.Today == helper.LastPromptDate.AddDays(_delayForSecondPrompt)
+                 || helper.Modules[moduleName].ActiveDays == _surveyTriggerCount + 2 && helper.LastPromptDate == Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate) && helper.Today == helper.LastPromptDate.AddDays(_delayForThirdPrompt));
 
         private void ModulePrompt(SurveyHelper helper, string moduleName, int majorVersion)
         {
@@ -197,11 +197,11 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
         }
 
         private bool ShouldAzPredictorPrompt(SurveyHelper helper, string moduleName, int majorVersion)
-            => Predictor.Equals(moduleName, StringComparison.OrdinalIgnoreCase)
+            => _predictor.Equals(moduleName, StringComparison.OrdinalIgnoreCase)
             && helper.Modules[moduleName].MajorVersion == majorVersion
-            && ((helper.Modules[moduleName].ActiveDays == SurveyTriggerCount && helper.Today <= Convert.ToDateTime(helper.Modules[moduleName].FirstActiveDate).AddDays(CountExpiredDays))
-                 || helper.Modules[moduleName].ActiveDays == SurveyTriggerCount + 1 && helper.Today == Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate).AddDays(DelayForSecondPrompt)
-                 || helper.Modules[moduleName].ActiveDays == SurveyTriggerCount + 2 && helper.Today == Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate).AddDays(DelayForThirdPrompt));
+            && ((helper.Modules[moduleName].ActiveDays == _surveyTriggerCount && helper.Today <= Convert.ToDateTime(helper.Modules[moduleName].FirstActiveDate).AddDays(_countExpiredDays))
+                 || helper.Modules[moduleName].ActiveDays == _surveyTriggerCount + 1 && helper.Today == Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate).AddDays(_delayForSecondPrompt)
+                 || helper.Modules[moduleName].ActiveDays == _surveyTriggerCount + 2 && helper.Today == Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate).AddDays(_delayForThirdPrompt));
 
         private void AzPredictorPrompt(SurveyHelper helper, string moduleName, int majorVersion)
         {
@@ -211,8 +211,8 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
 
         private bool ShouldModulePromptExpire(SurveyHelper helper, string moduleName, int majorVersion)
             => helper.Modules[moduleName].MajorVersion == majorVersion
-            && (Modules[moduleName].ActiveDays == SurveyTriggerCount + 1 && helper.LastPromptDate == Convert.ToDateTime(Modules[moduleName].LastActiveDate) && helper.Today > helper.LastPromptDate.AddDays(DelayForSecondPrompt)
-                || Modules[moduleName].ActiveDays == SurveyTriggerCount + 2 && helper.LastPromptDate == Convert.ToDateTime(Modules[moduleName].LastActiveDate) && helper.Today > LastPromptDate.AddDays(DelayForThirdPrompt));
+            && (Modules[moduleName].ActiveDays == _surveyTriggerCount + 1 && helper.LastPromptDate == Convert.ToDateTime(Modules[moduleName].LastActiveDate) && helper.Today > helper.LastPromptDate.AddDays(_delayForSecondPrompt)
+                || Modules[moduleName].ActiveDays == _surveyTriggerCount + 2 && helper.LastPromptDate == Convert.ToDateTime(Modules[moduleName].LastActiveDate) && helper.Today > LastPromptDate.AddDays(_delayForThirdPrompt));
 
         private void ModulePromptExpire(SurveyHelper helper, string moduleName, int majorVersion)
         {
@@ -264,7 +264,7 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
             {
                 if (e is UnauthorizedAccessException)
                 {
-                    this.IgnoreSchedule = true;
+                    _ignoreSchedule = true;
                 }
                 //deserialize failed, means content of file is incorrect, make file empty
                 if (e is JsonException)
@@ -299,7 +299,7 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
             {
                 if (e is UnauthorizedAccessException)
                 {
-                    this.IgnoreSchedule = true;
+                    _ignoreSchedule = true;
                 }
                 return false;
             }
@@ -339,20 +339,20 @@ namespace Microsoft.Azure.PowerShell.Share.Survey
 
         private void FlushWithWait()
         {
-            int beforeExchange = Interlocked.CompareExchange(ref FlushCount, 0, FlushFrequecy);
-            if (beforeExchange < FlushFrequecy)
+            int beforeExchange = Interlocked.CompareExchange(ref _flushCount, 0, _flushFrequecy);
+            if (beforeExchange < _flushFrequecy)
             {
-                Interlocked.Increment(ref FlushCount);
+                Interlocked.Increment(ref _flushCount);
             }
-            else if (beforeExchange > FlushFrequecy)
+            else if (beforeExchange > _flushFrequecy)
             {
-                Interlocked.Exchange(ref FlushCount, 0);
+                Interlocked.Exchange(ref _flushCount, 0);
             }
             else
             {
                 if (!WriteToStream(JsonConvert.SerializeObject(GetScheduleInfo())))
                 {
-                    Interlocked.Exchange(ref FlushCount, beforeExchange);
+                    Interlocked.Exchange(ref _flushCount, beforeExchange);
                 }
             }
         }
