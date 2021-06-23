@@ -408,7 +408,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// </summary>
         protected override void EndProcessing()
         {
-            if (CheckIfInteractive() && SurveyHelper.GetInstance().ShouldPropmtSurvey(this.MyInvocation.MyCommand.ModuleName, this.MyInvocation.MyCommand.Version))
+            if (SurveyHelper.GetInstance().ShouldPropmtSurvey(this.MyInvocation.MyCommand.ModuleName, this.MyInvocation.MyCommand.Version))
             {
                 WriteSurvey();
                 if (_qosEvent != null)
