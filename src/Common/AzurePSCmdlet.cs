@@ -262,6 +262,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             return false;
         }
 
+        //Host.UI.RawUI could potentially make non-interactive powershell hung without press enter
         protected bool CheckIfInteractive()
         {
             bool interactive = true;
