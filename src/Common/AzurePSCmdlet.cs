@@ -262,36 +262,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             return false;
         }
 
-        //Host.UI.RawUI could potentially make non-interactive powershell hung without press enter
-        protected bool CheckIfInteractive()
-        {
-            bool interactive = true;
-            if (this.Host?.UI?.RawUI == null ||
-                Environment.GetCommandLineArgs().Any(s =>
-                    s.Equals("-NonInteractive", StringComparison.OrdinalIgnoreCase)))
-            {
-                interactive = false;
-            }
-            else
-            {
-                try
-                {
-                    var test = this.Host.UI.RawUI.KeyAvailable;
-                }
-                catch
-                {
-                    interactive = false;
-                }
-            }
-
-            if (!interactive && _dataCollectionProfile != null && !_dataCollectionProfile.EnableAzureDataCollection.HasValue)
-            {
-                _dataCollectionProfile.EnableAzureDataCollection = false;
-            }
-            return interactive;
-        }
-
-
         protected virtual void LogCmdletStartInvocationInfo()
         {
             if (string.IsNullOrEmpty(ParameterSetName))
