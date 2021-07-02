@@ -31,6 +31,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using Microsoft.ApplicationInsights.Extensibility;
+
 namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 {
     /// <summary>
@@ -337,6 +339,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             AzureSession.Instance.ClientFactory.RemoveUserAgent(ModuleName);
             AzureSession.Instance.ClientFactory.RemoveHandler(typeof(CmdletInfoHandler));
         }
+
         /// <summary>
         /// Cmdlet begin process. Write to logs, setup Http Tracing and initialize profile
         /// </summary>
@@ -353,10 +356,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                     if (_metricHelper == null)
                     {
                         _metricHelper = new MetricHelper(profile);
-                        _metricHelper.AddTelemetryClient(new TelemetryClient
-                        {
-                            InstrumentationKey = "7df6ff70-8353-4672-80d6-568517fed090"
-                        });
+                        _metricHelper.AddDefaultTelemetryClient();
                     }
                 }
             }
