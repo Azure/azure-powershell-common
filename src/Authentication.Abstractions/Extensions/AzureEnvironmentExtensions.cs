@@ -301,6 +301,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     case AzureEnvironment.ExtendedEndpoint.ManagedHsmServiceEndpointResourceId:
                         environment.SetProperty(AzureEnvironment.ExtendedEndpoint.ManagedHsmServiceEndpointResourceId, propertyValue);
                         break;
+                    case AzureEnvironment.ExtendedEndpoint.AzureStorageOAuthEndpointResourceId:
+                        environment.SetProperty(AzureEnvironment.ExtendedEndpoint.AzureStorageOAuthEndpointResourceId, propertyValue);
+                        break;
                 }
             }
         }
@@ -350,6 +353,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     break;
                 case AzureEnvironment.Endpoint.ContainerRegistryEndpointSuffix:
                     resource = AzureEnvironment.Endpoint.ContainerRegistryEndpointSuffix;
+                    break;
+                case AzureEnvironment.ExtendedEndpoint.AzureStorageOAuthEndpointResourceId:
+                    resource = AzureEnvironment.ExtendedEndpoint.AzureStorageOAuthEndpointResourceId;
                     break;
                 default:
                     resource = AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId;

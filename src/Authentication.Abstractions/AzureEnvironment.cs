@@ -250,6 +250,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId, AzureEnvironmentConstants.AzureSynapseAnalyticsEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointResourceId, AzureEnvironmentConstants.AzureManagedHsmServiceEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointSuffix, AzureEnvironmentConstants.AzureManagedHsmDnsSuffix);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureStorageOAuthEndpointResourceId, AzureEnvironmentConstants.AzureStorageOAuthEndpointResourceId);
             }
 
             if (azureEnvironments.ContainsKey(EnvironmentName.AzureChinaCloud))
@@ -262,6 +263,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId, AzureEnvironmentConstants.ChinaSynapseAnalyticsEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointResourceId, AzureEnvironmentConstants.ChinaManagedHsmServiceEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointSuffix, AzureEnvironmentConstants.ChinaManagedHsmDnsSuffix);
+                azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.AzureStorageOAuthEndpointResourceId, AzureEnvironmentConstants.AzureStorageOAuthEndpointResourceId);
             }
 
             if (azureEnvironments.ContainsKey(EnvironmentName.AzureUSGovernment))
@@ -274,6 +276,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId, AzureEnvironmentConstants.USGovernmentSynapseAnalyticsEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointResourceId, AzureEnvironmentConstants.USGovernmeneManagedHsmServiceEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointSuffix, AzureEnvironmentConstants.USGovernmentManagedHsmDnsSuffix);
+                azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.AzureStorageOAuthEndpointResourceId, AzureEnvironmentConstants.AzureStorageOAuthEndpointResourceId);
             }
 
             if (azureEnvironments.ContainsKey(EnvironmentName.AzureGermanCloud))
@@ -282,6 +285,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointResourceId, AzureEnvironmentConstants.GermanAnalysisServicesEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointResourceId, AzureEnvironmentConstants.GermanAzureManagedHsmServiceEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointSuffix, AzureEnvironmentConstants.GermanManagedHsmDnsSuffix);
+                azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.AzureStorageOAuthEndpointResourceId, AzureEnvironmentConstants.AzureStorageOAuthEndpointResourceId);
             }
         }
 
@@ -662,7 +666,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 AzureAttestationServiceEndpointSuffix = "AzureAttestationServiceEndpointSuffix",
                 AzureAttestationServiceEndpointResourceId = "AzureAttestationServiceEndpointResourceId",
                 AzureSynapseAnalyticsEndpointSuffix = "AzureSynapseAnalyticsEndpointSuffix",
-                AzureSynapseAnalyticsEndpointResourceId = "AzureSynapseAnalyticsEndpointResourceId";
+                AzureSynapseAnalyticsEndpointResourceId = "AzureSynapseAnalyticsEndpointResourceId",
+                AzureStorageOAuthEndpointResourceId = "AzureStorageOAuthEndpointResourceId";
         }
     }
 }
