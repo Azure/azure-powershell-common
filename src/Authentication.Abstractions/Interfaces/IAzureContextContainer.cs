@@ -49,5 +49,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// Remove all contexts from the container
         /// </summary>
         void Clear();
+
+        IAzureContextContainer Clone();
     }
 }

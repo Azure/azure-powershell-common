@@ -40,7 +40,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
     public abstract class AzureRMCmdlet : AzurePSCmdlet
     {
         protected ServiceClientTracingInterceptor _serviceClientTracingInterceptor;
-        IAzureContextContainer _profile;
+        IAzureContextContainer _inputProfile;
 
         public const int MAX_NUMBER_OF_TOKENS_ALLOWED_IN_AUX_HEADER = 3;
         public const string AUX_HEADER_NAME = "x-ms-authorization-auxiliary";
@@ -67,22 +67,32 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         {
             get
             {
-                if (_profile != null)
+                if (_clonedDefaultProfile == null)
                 {
-                    return _profile;
+                    _clonedDefaultProfile = GetDefaultProfile().Clone();
                 }
-                if (AzureRmProfileProvider.Instance == null)
-                {
-                    throw new InvalidOperationException(Resources.ProfileNotInitialized);
-                }
-
-                return AzureRmProfileProvider.Instance.Profile;
+                return _clonedDefaultProfile;
             }
             set
             {
-                _profile = value;
+                _inputProfile = value;
             }
         }
+
+        protected IAzureContextContainer GetDefaultProfile()
+        {
+            if (_inputProfile != null)
+            {
+                return _inputProfile;
+            }
+            if (AzureRmProfileProvider.Instance == null)
+            {
+                throw new InvalidOperationException(Resources.ProfileNotInitialized);
+            }
+            return AzureRmProfileProvider.Instance.Profile;
+        }
+
+        private IAzureContextContainer _clonedDefaultProfile;
 
         protected IDictionary<String, List<String>> GetAuxilaryAuthHeaderFromResourceIds(List<String> resourceIds)
         {
@@ -313,7 +323,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             {
                 _qosEvent.SubscriptionId = context.Subscription?.Id;
                 _qosEvent.TenantId = context.Tenant?.Id;
-                if(context.Account != null && !String.IsNullOrWhiteSpace(context.Account.Id))
+                if (context.Account != null && !String.IsNullOrWhiteSpace(context.Account.Id))
                 {
                     _qosEvent.Uid = MetricHelper.GenerateSha256HashString(context.Account.Id.ToString());
                 }
