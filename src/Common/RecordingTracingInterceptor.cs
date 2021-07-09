@@ -14,22 +14,31 @@
 
 using Hyak.Common;
 using Microsoft.WindowsAzure.Commands.Common;
+using Microsoft.WindowsAzure.Commands.Common.Extensions;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.Azure.ServiceManagement.Common.Models
 {
     public class RecordingTracingInterceptor : Hyak.Common.ICloudTracingInterceptor
     {
-        public RecordingTracingInterceptor(ConcurrentQueue<string> queue)
+
+        public RecordingTracingInterceptor(ConcurrentQueue<string> queue, IList<Regex> matchers = null, string clientRequestId = null)
         {
             MessageQueue = queue;
+            Matchers = matchers;
+            this.clientRequestId = clientRequestId;
         }
 
         public ConcurrentQueue<string> MessageQueue { get; private set; }
+
+        private IList<Regex> Matchers { get; set; }
+
+        private string clientRequestId;
 
         private void Write(string message, params object[] arguments)
         {
@@ -60,12 +69,18 @@ namespace Microsoft.Azure.ServiceManagement.Common.Models
 
         public void SendRequest(string invocationId, HttpRequestMessage request)
         {
-            Write(GeneralUtilities.GetLog(request));
+            // CmdletInfoHandler sets/updates x-ms-client-request-id during SendAsync() no matter if SDK sets x-ms-client-request-id.
+            // Update request here to ensure its value consistent with real result.
+            if (clientRequestId != null)
+            {
+                request.AddClientRequestId(clientRequestId);
+            }
+            Write(GeneralUtilities.GetLog(request, Matchers));
         }
 
         public void ReceiveResponse(string invocationId, HttpResponseMessage response)
         {
-            Write(GeneralUtilities.GetLog(response));
+            Write(GeneralUtilities.GetLog(response, Matchers));
         }
 
         public void Error(string invocationId, Exception ex)

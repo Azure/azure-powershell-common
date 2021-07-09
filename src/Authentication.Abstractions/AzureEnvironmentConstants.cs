@@ -113,6 +113,14 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string GermanKeyVaultDnsSuffix = "vault.microsoftazure.de";
 
         /// <summary>
+        /// The domain name suffix for azure keyvault managed hsms
+        /// </summary>
+        public const string AzureManagedHsmDnsSuffix = "managedhsm.azure.net";
+        public const string ChinaManagedHsmDnsSuffix = "managedhsm.azure.cn";
+        public const string USGovernmentManagedHsmDnsSuffix = "managedhsm.usgovcloudapi.net";
+        public const string GermanManagedHsmDnsSuffix = "managedhsm.microsoftazure.de";
+
+        /// <summary>
         /// The token audience for authorizing KeyVault requests
         /// </summary>
         public const string AzureKeyVaultServiceEndpointResourceId = "https://vault.azure.net";
@@ -121,15 +129,25 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string GermanAzureKeyVaultServiceEndpointResourceId = "https://vault.microsoftazure.de";
 
         /// <summary>
+        /// The token audience for authorizing managed hsm requests
+        /// </summary>
+        public const string AzureManagedHsmServiceEndpointResourceId = "https://managedhsm.azure.net";
+        public const string ChinaManagedHsmServiceEndpointResourceId = "https://managedhsm.azure.cn";
+        public const string USGovernmeneManagedHsmServiceEndpointResourceId = "https://managedhsm.usgovcloudapi.net";
+        public const string GermanAzureManagedHsmServiceEndpointResourceId = "https://managedhsm.microsoftazure.de";
+
+        /// <summary>
         /// The token audience for Log Analytics Queries
         /// </summary>
         public const string AzureOperationalInsightsEndpointResourceId = "https://api.loganalytics.io";
+        public const string ChinaOperationalInsightsEndpointResourceId = "https://api.loganalytics.azure.cn";
         public const string USGovernmentOperationalInsightsEndpointResourceId = "https://api.loganalytics.us";
 
         /// <summary>
         /// The endpoint URI for Log Analytics Queries
         /// </summary>
         public const string AzureOperationalInsightsEndpoint = "https://api.loganalytics.io/v1";
+        public const string ChinaOperationalInsightsEndpoint = "https://api.loganalytics.azure.cn/v1";
         public const string USGovernmentOperationalInsightsEndpoint = "https://api.loganalytics.us/v1";
 
         /// <summary>
@@ -187,11 +205,20 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// </summary>
         public const string AzureSynapseAnalyticsEndpointSuffix = "dev.azuresynapse.net";
         public const string ChinaSynapseAnalyticsEndpointSuffix = "dev.azuresynapse.azure.cn";
+        public const string USGovernmentSynapseAnalyticsEndpointSuffix = "dev.azuresynapse.usgovcloudapi.net";
 
         /// <summary>
         /// The token audience for authorizing Synapse Service requests
         /// </summary>
         public const string AzureSynapseAnalyticsEndpointResourceId = "https://dev.azuresynapse.net";
-        public const string ChinaSynapseAnalyticsEndpointResourceId = "https://dev.azuresynapse.net";
+        public const string ChinaSynapseAnalyticsEndpointResourceId = "https://dev.azuresynapse.azure.cn";
+        public const string USGovernmentSynapseAnalyticsEndpointResourceId = "https://dev.azuresynapse.usgovcloudapi.net";
+
+        /// <summary>
+        /// The domain name suffix for Azure Container Registry
+        /// </summary>
+        public const string AzureContainerRegistryEndpointSuffix = "azurecr.io";
+        public const string ChinaContainerRegistryEndpointSuffix = "azurecr.cn";
+        public const string USGovernmentContainerRegistryEndpointSuffix = "azurecr.us";
     }
 }

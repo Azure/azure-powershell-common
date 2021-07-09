@@ -12,7 +12,9 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
@@ -169,6 +171,36 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public static void SetManagedByTenants(this IAzureSubscription subscription, params string[] tenants)
         {
             subscription.SetOrAppendProperty(AzureSubscription.Property.ManagedByTenants, tenants);
+        }
+
+        /// <summary>
+        /// Get the subscription polices associated with this subscription
+        /// </summary>
+        /// <param name="subscription">The subscription to check</param>
+        /// <returns>The subscription polices</returns>
+        public static string GetSubscriptionPolicies(this IAzureSubscription subscription)
+        {
+            return subscription.GetProperty(AzureSubscription.Property.SubscriptionPolices);
+        }
+
+        /// <summary>
+        /// Set the subscription polices associated with this subscription
+        /// </summary>
+        /// <param name="subscription">The subscription to set</param>
+        /// <param name="subscriptionPolicies">The subscription polices associated with the subscription</param>
+        public static void SetSubscriptionPolicies(this IAzureSubscription subscription, string subscriptionPolicies)
+        {
+            subscription.SetOrAppendProperty(AzureSubscription.Property.SubscriptionPolices, subscriptionPolicies);
+        }
+
+        /// <summary>
+        /// Get the tags associated with this subscription
+        /// </summary>
+        /// <param name="subscription">The subscription to check</param>
+        /// <returns>The tags of the subscription</returns>
+        public static Dictionary<string,string> GetTags(this IAzureSubscription subscription)
+        {
+            return JsonConvert.DeserializeObject<Dictionary<string,string>>(subscription.GetProperty(AzureSubscription.Property.Tags));
         }
 
         /// <summary>

@@ -12,14 +12,15 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using Microsoft.Azure.PowerShell.Common.Share.Survey;
 using Microsoft.Azure.ServiceManagement.Common.Models;
 using Microsoft.WindowsAzure.Commands.Common;
 using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -27,6 +28,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 {
@@ -40,11 +42,15 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         public ConcurrentQueue<string> DebugMessages { get; private set; }
 
+        IAzureEventListener _azureEventListener;
         protected static ConcurrentQueue<string> InitializationWarnings { get; set; } = new ConcurrentQueue<string>();
 
         private RecordingTracingInterceptor _httpTracingInterceptor;
         private object lockObject = new object();
         private AzurePSDataCollectionProfile _cachedProfile = null;
+
+        protected IList<Regex> _matchers { get;  private set; }  = new List<Regex>();
+        private static readonly Regex _defaultMatcher = new Regex("(\\s*\"access_token\"\\s*:\\s*)\"[^\"]+\"");
 
         protected AzurePSDataCollectionProfile _dataCollectionProfile
         {
@@ -80,6 +86,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         protected static string _sessionId = Guid.NewGuid().ToString();
         protected const string _fileTimeStampSuffixFormat = "yyyy-MM-dd-THH-mm-ss-fff";
         protected string _clientRequestId = Guid.NewGuid().ToString();
+        protected static DateTimeOffset? _previousEndTime = null;
         protected MetricHelper _metricHelper;
         protected AzurePSQoSEvent _qosEvent;
         protected DebugStreamTraceListener _adalListener;
@@ -254,37 +261,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             return false;
         }
 
-        protected bool CheckIfInteractive()
-        {
-            bool interactive = true;
-            if (this.Host == null ||
-                this.Host.UI == null ||
-                this.Host.UI.RawUI == null ||
-                Environment.GetCommandLineArgs().Any(s =>
-                    s.Equals("-NonInteractive", StringComparison.OrdinalIgnoreCase)))
-            {
-                interactive = false;
-            }
-            else
-            {
-                try
-                {
-                    var test = this.Host.UI.RawUI.KeyAvailable;
-                }
-                catch
-                {
-                    interactive = false;
-                }
-            }
-
-            if (!interactive && _dataCollectionProfile != null && !_dataCollectionProfile.EnableAzureDataCollection.HasValue)
-            {
-                _dataCollectionProfile.EnableAzureDataCollection = false;
-            }
-            return interactive;
-        }
-
-
         protected virtual void LogCmdletStartInvocationInfo()
         {
             if (string.IsNullOrEmpty(ParameterSetName))
@@ -305,19 +281,41 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             WriteDebugWithTimestamp(message);
         }
 
+        protected void AddDebuggingFilter(Regex matcher)
+        {
+            _matchers.Add(matcher);
+        }
+
+        //Override this method in cmdlet if customized regedx filters needed for debugging message
+        protected virtual void InitDebuggingFilter()
+        {
+            AddDebuggingFilter(_defaultMatcher);
+        }
+
         protected virtual void SetupDebuggingTraces()
         {
             _httpTracingInterceptor = _httpTracingInterceptor ?? new
-                RecordingTracingInterceptor(DebugMessages);
+                RecordingTracingInterceptor(DebugMessages, _matchers);
             _adalListener = _adalListener ?? new DebugStreamTraceListener(DebugMessages);
             RecordingTracingInterceptor.AddToContext(_httpTracingInterceptor);
             DebugStreamTraceListener.AddAdalTracing(_adalListener);
+
+            if (AzureSession.Instance.TryGetComponent(nameof(IAzureEventListenerFactory), out IAzureEventListenerFactory factory))
+            {
+                _azureEventListener = factory.GetAzureEventListener(
+                    (message) =>
+                    {
+                        DebugMessages.Enqueue(message);
+                    });
+            }
         }
 
         protected virtual void TearDownDebuggingTraces()
         {
             RecordingTracingInterceptor.RemoveFromContext(_httpTracingInterceptor);
             DebugStreamTraceListener.RemoveAdalTracing(_adalListener);
+            _azureEventListener?.Dispose();
+            _azureEventListener = null;
             FlushDebugMessages();
         }
 
@@ -347,20 +345,21 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             SessionState = base.SessionState;
             var profile = _dataCollectionProfile;
             //TODO: Inject from CI server
-            lock (lockObject)
+            if(_metricHelper == null)
             {
-                if (_metricHelper == null)
+                lock (lockObject)
                 {
-                    _metricHelper = new MetricHelper(profile);
-                    _metricHelper.AddTelemetryClient(new TelemetryClient
+                    if (_metricHelper == null)
                     {
-                        InstrumentationKey = "7df6ff70-8353-4672-80d6-568517fed090"
-                    });
+                        _metricHelper = new MetricHelper(profile);
+                        _metricHelper.AddDefaultTelemetryClient();
+                    }
                 }
             }
 
             InitializeQosEvent();
             LogCmdletStartInvocationInfo();
+            InitDebuggingFilter();
             SetupDebuggingTraces();
             SetupHttpClientPipeline();
             base.BeginProcessing();
@@ -376,10 +375,19 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// </summary>
         protected override void EndProcessing()
         {
+            if (this.MyInvocation?.MyCommand?.Version != null && SurveyHelper.GetInstance().ShouldPropmtSurvey(this.MyInvocation.MyCommand.ModuleName, this.MyInvocation.MyCommand.Version))
+            {
+                WriteSurvey();
+                if (_qosEvent != null)
+                {
+                    _qosEvent.SurveyPrompted = true;
+                }
+            }
             LogQosEvent();
             LogCmdletEndInvocationInfo();
             TearDownDebuggingTraces();
             TearDownHttpClientPipeline();
+            _previousEndTime = DateTimeOffset.Now;
             base.EndProcessing();
         }
 
@@ -399,6 +407,57 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             return verbose;
         }
 
+        protected void WriteSurvey()
+        {
+            HostInformationMessage newLine = new HostInformationMessage()
+            {
+                Message = "\n"
+            };
+            HostInformationMessage howWas = new HostInformationMessage()
+            {
+                Message = ": How was your experience using Azure PowerShell?\nRun ",
+                NoNewLine = true
+            };
+            HostInformationMessage survey;
+            HostInformationMessage link;
+            try
+            {
+                survey = new HostInformationMessage()
+                {
+                    Message = "Survey",
+                    NoNewLine = true,
+                    ForegroundColor = (ConsoleColor)Host.PrivateData.Properties.Match("ProgressForegroundColor").SingleOrDefault().Value
+                };
+                link = new HostInformationMessage()
+                {
+                    Message = "Open-AzSurveyLink",
+                    NoNewLine = true,
+                    ForegroundColor = (ConsoleColor)Host.PrivateData.Properties.Match("ProgressbackgroundColor").SingleOrDefault().Value
+                };
+            }
+            catch
+            {
+                survey = new HostInformationMessage()
+                {
+                    Message = "Survey",
+                    NoNewLine = true,
+                };
+                link = new HostInformationMessage()
+                {
+                    Message = "Open-AzSurveyLink",
+                    NoNewLine = true,
+                };
+            } 
+            HostInformationMessage action = new HostInformationMessage()
+            {
+                Message = " to fill out a short Survey"
+            };
+            WriteInformation(newLine, new string[] { "PSHOST" });
+            WriteInformation(survey, new string[] { "PSHOST" });
+            WriteInformation(howWas, new string[] { "PSHOST" });
+            WriteInformation(link, new string[] { "PSHOST" });
+            WriteInformation(action, new string[] { "PSHOST" });
+        }
         protected new void WriteError(ErrorRecord errorRecord)
         {
             FlushDebugMessages(IsDataCollectionAllowed());
@@ -567,7 +626,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 ClientRequestId = this._clientRequestId,
                 SessionId = _sessionId,
                 IsSuccess = true,
-                ParameterSetName = this.ParameterSetName
+                ParameterSetName = this.ParameterSetName,
+                PreviousEndTime = _previousEndTime
             };
 
             if (AzVersion == null)
@@ -585,7 +645,10 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             {
                 _qosEvent.CommandName = this.MyInvocation.MyCommand.Name;
                 _qosEvent.ModuleName = this.MyInvocation.MyCommand.ModuleName;
-                _qosEvent.ModuleVersion = this.MyInvocation.MyCommand.Version.ToString();
+                if (this.MyInvocation.MyCommand.Version != null)
+                {
+                    _qosEvent.ModuleVersion = this.MyInvocation.MyCommand.Version.ToString();
+                }
             }
             else
             {
