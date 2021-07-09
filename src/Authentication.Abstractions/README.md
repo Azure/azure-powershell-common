@@ -14,32 +14,32 @@ NetStandard 2.0
 - Newtonsoft.Json (10.0.0.0)
 ## Interfaces
 ### IAccessToken
-Represents a renwable access token
+Represents a renewable access token
 ### IAuthenticationFactory
 Abstract factory for authentication classes compatible with .Net autorest-generated libraries
 ### IAzureAccount
-Abstract representation of  a logged-in principal
+Abstract representation of a logged-in principal
 ### IAzureContext
-Abstract representation of the default target for authentication and Azure PowerzShell commands (Environment, Tenant, Account, Subscription)
+Abstract representation of the default target for authentication and Azure PowerShell commands (Environment, Tenant, Account, Subscription)
 ### IAzureContextContainer
-A dictionary of IAzureContext objects
+A dictionary of IAzureContext objects.  The default context container will contain all of the possible contexts for the logged-in identities (one context per tenant x subscription, for each logged-in principal).
 ### IAzureEnvironment
-Abstract representation of a particular Azure Cloud
+Abstract representation of a particular Azure Cloud.  Contains the endpoints, authentication resources (scopes), and domain name suffixes associated with a particular cloud.  There are built-in environments for the Azure public clouds, and users may create an environment for any on-premise, private, or air-gapped clouds.
 ### IAzureSession
 ### IAzureSubscription
 Abstract representation of an ARM subscription.
 ### IAzureTenant
-Abstract represetnation of an AAD Tenant
+Abstract representation of an AAD Tenant
 ### IClientAction
-Abstract representation of an action that can be performed ona  client
+Abstract representation of an action that can be performed on a client.  This is generally used to alter the shape or processing of all or some requests and responses processed by the client.
 ### IClientFactory
-Abstract factory for .Net Autorest-generated clients
+Abstract factory for .Net Autorest-generated clients.  This is the main entry point that cmdlets based on management clients will use to create and authenticate their clients.
 ### IDataStore
-Methods representing a file store - used to abstract away file system details for testing purposes
+An abstract representation of a file store, used to abstract operations over the file system for items cached, written, or read by PowerShell cmdlets.  Used mainly to mock file operations in tests, but could also be used to store PowerShell files on some other medium (like blob storage).
 ### IExtensibleModel
-Base interface for all model interfaces - provides a dictionary of extended properties that can be used by any model.  Extensions over this interface implemented in this library allow adding basic extension storage and lookup functions once and having them apply ao all implementations of any interface in this library.
+Base interface for all model interfaces - provides a dictionary of extended properties that can be used by any model.  Extensions over this interface implemented in this library allow adding basic extension storage and lookup functions once and having them apply to all implementations of any interface in this library.  This is used as a mechanism for adding new data, or command-specific data into the metadata caches maintained by PowerShell.
 ### IExtensibleSettings
-Base interface for serializable settings classes.  Interface allows a single extension implementation that applies to all implementiung interfaces and classes.
+Base interface for serializable settings classes.  Interface allows a single extension implementation that applies to all implementing interfaces and classes.
 ### IFileProvider
 Base abstration for shared file data - allows implementations that provide thread-safe and process safe file access.
 ### IHyakAuthenticationFactory
