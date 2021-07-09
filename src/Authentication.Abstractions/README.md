@@ -16,7 +16,7 @@ NetStandard 2.0
 ### IAccessToken
 Represents a renewable access token
 ### IAuthenticationFactory
-Abstract factory for authentication classes compatible with .Net autorest-generated libraries
+Abstract factory for authentication classes compatible with .Net autorest-generated libraries.  Methods in this interface allow creating abstract self-renewing token-based credentials that could be applied to any client.  This is the primary mechanism for authenticating clients in track 2, or other non-management clients that use AAD or MSAL bearer token authentication.
 ### IAzureAccount
 Abstract representation of a logged-in principal
 ### IAzureContext
@@ -41,7 +41,7 @@ Base interface for all model interfaces - provides a dictionary of extended prop
 ### IExtensibleSettings
 Base interface for serializable settings classes.  Interface allows a single extension implementation that applies to all implementing interfaces and classes.
 ### IFileProvider
-Base abstration for shared file data - allows implementations that provide thread-safe and process safe file access.
+Base abstraction for shared file data, especially used in IProfileProvider implementations- allows implementations that provide thread-safe and process-safe file access to shared files, or store files in memory.
 ### IHyakAuthenticationFactory
 Abstract factory for authentication classes compatible with .Net Hyak generated clients
 ### IHyakClientAction
@@ -49,17 +49,17 @@ Abstract representation of a client configuration action for Hyak-generated clie
 ### IHyakClientFactory
 Abstract factory for Hyak=generated clients
 ### IProfileProvider
-Abstract collection of profile management methods, designed to be combined with an IFileProvider for any concreteimplementation
+Abstract collection of profile management methods, designed to be combined with an IFileProvider for any concrete implementation.  Specific implementations provide thread-safe access to shared files, or cache profiles in memory.
 ### IRenewableToken
-An abstract type for renewable tokens that are compatible with the ITokenProvider interfaces in autorest-generated clients
+An abstract type for renewable tokens that are compatible with the ITokenProvider interfaces in autorest-generated and other clients.  This is the primary mechanism for adapting authentication to Track 2 or non-autorest clients.
 ### IStorageContext
 Abstract representation of an Azure Storage data plane target - provides a single aabstraction for data plane access regardless of authentication method, and regardless of the storage data plane version.
 ### IStorageContextProvider
-Abstract representation of a factory for IStorageContext - allows using a single abstraction regardless of the implementation, which allows using thsi abstraction over multiple different versions of Azure Storage data and nanagement plane APIs.
+Abstract representation of a factory for IStorageContext - allows using a single abstraction regardless of the implementation, which allows using this abstraction over multiple different versions of Azure Storage data and management plane APIs.
 
 ## Classes
 ### AzureAccount
-Default implementation of IAzureAccount, includes extention property names for extension properties used in Azure Accounts.
+Default implementation of IAzureAccount, includes extension property names for extension properties used in Azure Accounts.
 ### AzureContext
 Default implementation of IAzureContext
 ### AzureEnvironment
@@ -71,11 +71,11 @@ Default ProfileProvider for AzureRM
 ### AzureSMProfileProvider
 Default Profile provider for RDFE
 ### AzureSubscription
-Default implementation of IAzureSubscription, including extension property names typically used with Subscriptions.]
+Default implementation of IAzureSubscription, including extension property names typically used with Subscriptions.
 ### AzureTenant
 Default implementation fo IAzureTenant.
 ### DataCollectionController
-Default im[lementation of client-side telemetry]
+Default implementation of client-side telemetry.
 ### DiskDataStore
 Default implementation of IDataStore using the file system.
 
