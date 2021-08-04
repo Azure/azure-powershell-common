@@ -12,13 +12,12 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using Microsoft.Azure.PowerShell.Common.Share.Survey;
 using Microsoft.Azure.ServiceManagement.Common.Models;
 using Microsoft.WindowsAzure.Commands.Common;
 using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
-using Microsoft.Azure.PowerShell.Common.Share.Survey;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -102,32 +101,12 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             get { return true; }
         }
 
-        /// <summary>
-        /// Indicates installed PowerShell version
-        /// </summary>
-        private string _psVersion;
-
-        /// <summary>
-        /// Get PsVersion returned from PowerShell.Runspace instance
-        /// </summary>
+        [Obsolete("Should use AzurePSCmdlet.PowerShellVersion")]
         protected string PSVersion
         {
             get
             {
-                if (string.IsNullOrEmpty(_psVersion))
-                {
-                    if (this.Host != null)
-                    {
-                        _psVersion = this.Host.Version.ToString();
-                    }
-                    else
-                    {
-                        //We are doing this for perf. reasons. This code will execute during tests and so reducing the perf. overhead while running tests.
-                        _psVersion = DEFAULT_PSVERSION;
-                    }
-                }
-
-                return _psVersion;
+                return LoadPowerShellVersion();
             }
         }
 
@@ -324,7 +303,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         protected virtual void SetupHttpClientPipeline()
         {
             AzureSession.Instance.ClientFactory.AddUserAgent(ModuleName, string.Format("v{0}", AzVersion));
-            AzureSession.Instance.ClientFactory.AddUserAgent(PSVERSION, string.Format("v{0}", PSVersion));
+            AzureSession.Instance.ClientFactory.AddUserAgent(PSVERSION, string.Format("v{0}", PowerShellVersion));
 
             AzureSession.Instance.ClientFactory.AddHandler(
                 new CmdletInfoHandler(this.CommandRuntime.ToString(),
@@ -353,10 +332,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                     if (_metricHelper == null)
                     {
                         _metricHelper = new MetricHelper(profile);
-                        _metricHelper.AddTelemetryClient(new TelemetryClient
-                        {
-                            InstrumentationKey = "7df6ff70-8353-4672-80d6-568517fed090"
-                        });
+                        _metricHelper.AddDefaultTelemetryClient();
                     }
                 }
             }
@@ -641,9 +617,16 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 string hostEnv = Environment.GetEnvironmentVariable("AZUREPS_HOST_ENVIRONMENT");
                 if (!String.IsNullOrWhiteSpace(hostEnv))
                     UserAgent += string.Format(" {0}", hostEnv.Trim());
+                PowerShellVersion = this.LoadPowerShellVersion();
+                PSHostName = this.Host?.Name;
+                PSHostVersion = this.Host?.Version?.ToString();
             }
+
             _qosEvent.AzVersion = AzVersion;
             _qosEvent.UserAgent = UserAgent;
+            _qosEvent.PSVersion = PowerShellVersion;
+            _qosEvent.HostVersion = PSHostVersion;
+            _qosEvent.PSHostName = PSHostName;
 
             if (this.MyInvocation != null && this.MyInvocation.MyCommand != null)
             {
@@ -747,7 +730,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
             try
             {
-                _metricHelper.SetPSHost(this.Host);
                 _metricHelper.LogQoSEvent(_qosEvent, IsUsageMetricEnabled, IsErrorMetricEnabled);
                 _metricHelper.FlushMetric();
                 WriteDebug("Finish sending metric.");
@@ -981,6 +963,9 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         //Initialized once AzVersion is loaded.
         //Format: AzurePowershell/Az0.0.0 %AZUREPS_HOST_ENVIROMENT%
         public static string UserAgent { set; get; }
+        public static string PowerShellVersion { set; get; }
+        public static string PSHostVersion { set; get; }
+        public static string PSHostName { set; get; }
 
         protected string LoadAzVersion()
         {
@@ -1027,6 +1012,24 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
             WriteDebug(string.Format("Sought all Az modules and got latest version {0}", ret));
             return ret;
+        }
+
+        private string LoadPowerShellVersion()
+        {
+            try
+            {
+                var outputs = this.ExecuteScript<PSObject>("$Host.Runspace.Version");
+                foreach (PSObject obj in outputs)
+                {
+                    string psVersion = obj.ToString();
+                    return string.IsNullOrWhiteSpace(psVersion) ? DEFAULT_PSVERSION: psVersion;
+                }
+            }
+            catch (Exception e)
+            {
+                WriteDebug(string.Format("Cannot fetch PowerShell version due to exception: {0}", e.Message));
+            }
+            return DEFAULT_PSVERSION;
         }
     }
 }
