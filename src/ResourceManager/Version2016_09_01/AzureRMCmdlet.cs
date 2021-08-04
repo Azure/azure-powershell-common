@@ -23,9 +23,11 @@ using Microsoft.Azure.Management.Internal.Resources;
 using Microsoft.Azure.Management.Internal.Resources.Utilities.Models;
 using Microsoft.Rest;
 using Microsoft.WindowsAzure.Commands.Common;
+using Microsoft.WindowsAzure.Commands.Common.Attributes;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Net.Http.Headers;
@@ -37,7 +39,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
     /// <summary>
     /// Represents base class for Resource Manager cmdlets
     /// </summary>
-    public abstract class AzureRMCmdlet : AzurePSCmdlet
+    public abstract class AzureRMCmdlet : AzurePSCmdlet, IDynamicParameters
     {
         protected ServiceClientTracingInterceptor _serviceClientTracingInterceptor;
         IAzureContextContainer _inputProfile;
@@ -65,8 +67,13 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         [Alias("AzContext", "AzureRmContext", "AzureCredential")]
         public IAzureContextContainer DefaultProfile
         {
-            get
+            get // need rewrite
             {
+                if (!ShouldCloneDefaultProfile())
+                {
+                    return GetDefaultProfile();
+                }
+
                 if (_clonedDefaultProfile == null)
                 {
                     _clonedDefaultProfile = GetDefaultProfile().Clone();
@@ -90,6 +97,11 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
                 throw new InvalidOperationException(Resources.ProfileNotInitialized);
             }
             return AzureRmProfileProvider.Instance.Profile;
+        }
+
+        private bool ShouldCloneDefaultProfile()
+        {
+            return Attribute.GetCustomAttribute(GetType(), typeof(SupportsSubscriptionIdAttribute)) != null;
         }
 
         private IAzureContextContainer _clonedDefaultProfile;
@@ -570,6 +582,23 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         private void EnqueueDebugSender(object sender, StreamEventArgs args)
         {
             DebugMessages.Enqueue(args.Message);
+        }
+
+        public object GetDynamicParameters()
+        {
+            var parameters = new RuntimeDefinedParameterDictionary();
+            if (Attribute.GetCustomAttribute(this.GetType(), typeof(SupportsSubscriptionIdAttribute)) != null)
+            {
+                parameters.Add("SubscriptionId", new RuntimeDefinedParameter( //todo: what's different about 2 subscription id strings
+                    "SubscriptionId", typeof(string),
+                    new Collection<Attribute>()
+                    {
+                        new ParameterAttribute { HelpMessage = "placeholder", Mandatory = false, ValueFromPipelineByPropertyName = true }
+                        // todo: why valuefrompi..? what's piping scenario?
+                    }
+                ));
+            }
+            return parameters;
         }
     }
 }
