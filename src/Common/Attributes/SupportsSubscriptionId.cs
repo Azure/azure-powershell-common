@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Management.Automation;
 
 namespace Microsoft.WindowsAzure.Commands.Common.Attributes
 {
@@ -9,5 +8,15 @@ namespace Microsoft.WindowsAzure.Commands.Common.Attributes
     /// </summary>
     public class SupportsSubscriptionIdAttribute : Attribute
     {
+    }
+
+    public static class SupportsSubscriptionIdAttributeExtensions
+    {
+        // todo: maybe move this to a common place
+        // todo: maybe: cmdlet.HasAttribute(typeof(xxxAttribute))
+        public static bool HasSupportsSubscriptionIdAttribute(this PSCmdlet cmdlet)
+        {
+            return Attribute.GetCustomAttribute(cmdlet.GetType(), typeof(SupportsSubscriptionIdAttribute)) != null;
+        }
     }
 }

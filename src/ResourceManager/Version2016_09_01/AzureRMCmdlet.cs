@@ -52,6 +52,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         public const string WriteVerboseKey = "WriteVerbose";
         public const string WriteWarningKey = "WriteWarning";
         public const string EnqueueDebugKey = "EnqueueDebug";
+        private const string SubscriptionIdParameter = "SubscriptionId";
 
         /// <summary>
         /// Creates new instance from AzureRMCmdlet and add the RPRegistration handler.
@@ -67,7 +68,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         [Alias("AzContext", "AzureRmContext", "AzureCredential")]
         public IAzureContextContainer DefaultProfile
         {
-            get // need rewrite
+            get
             {
                 if (!ShouldCloneDefaultProfile())
                 {
@@ -76,7 +77,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
 
                 if (_clonedDefaultProfile == null)
                 {
-                    _clonedDefaultProfile = GetDefaultProfile().Clone();
+                    _clonedDefaultProfile = CloneProfileAndModifyContext();
                 }
                 return _clonedDefaultProfile;
             }
@@ -86,7 +87,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             }
         }
 
-        protected IAzureContextContainer GetDefaultProfile()
+        private IAzureContextContainer GetDefaultProfile()
         {
             if (_inputProfile != null)
             {
@@ -99,9 +100,29 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             return AzureRmProfileProvider.Instance.Profile;
         }
 
+        private IAzureContextContainer CloneProfileAndModifyContext()
+        {
+            var clonedProfile = GetDefaultProfile().Clone();
+            if (MyInvocation.BoundParameters.TryGetValue(SubscriptionIdParameter, out var overriddenSub))
+            {
+                var matchingSub = clonedProfile.Subscriptions.FirstOrDefault(sub => sub.GetId().Equals(new Guid(overriddenSub as string)));
+                if (matchingSub != null)
+                {
+                    clonedProfile.DefaultContext.Subscription = matchingSub.Clone();
+                    clonedProfile.DefaultContext.Tenant.Id = matchingSub.GetTenant();
+                    var matchingUser = clonedProfile.Accounts.FirstOrDefault(account => account.Id.Equals(matchingSub.GetAccount()));
+                    if (matchingUser != null)
+                    {
+                        clonedProfile.DefaultContext.Account = matchingUser.Clone();
+                    }
+                }
+            }
+            return clonedProfile;
+        }
+
         private bool ShouldCloneDefaultProfile()
         {
-            return Attribute.GetCustomAttribute(GetType(), typeof(SupportsSubscriptionIdAttribute)) != null;
+            return this.HasSupportsSubscriptionIdAttribute();
         }
 
         private IAzureContextContainer _clonedDefaultProfile;
@@ -225,22 +246,6 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
                 if (DefaultProfile == null || DefaultProfile.DefaultContext == null || DefaultProfile.DefaultContext.Account == null)
                 {
                     throw new PSInvalidOperationException(Resources.RunConnectAccount);
-                }
-
-                if (ShouldCloneDefaultProfile() && MyInvocation.BoundParameters.TryGetValue("SubscriptionId", out var overriddenSub)) // todo: should not use ShoudClone... , should be like ShouldUseCustomSubId
-                // todo: should not hard code subscription id
-                {
-                    var matchingSub = DefaultProfile.Subscriptions.FirstOrDefault(sub => sub.GetId().Equals(overriddenSub));
-                    if (matchingSub != null)
-                    {
-                        DefaultProfile.DefaultContext.Subscription = matchingSub.Clone();
-                        DefaultProfile.DefaultContext.Tenant.Id = matchingSub.GetTenant();
-                        var matchingUser = DefaultProfile.Accounts.FirstOrDefault(account => account.Id.Equals(matchingSub.GetAccount()));
-                        if (matchingUser != null)
-                        {
-                            DefaultProfile.DefaultContext.Account = matchingUser.Clone();
-                        }
-                    }
                 }
 
                 return DefaultProfile.DefaultContext;
@@ -590,8 +595,8 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             var parameters = new RuntimeDefinedParameterDictionary();
             if (Attribute.GetCustomAttribute(this.GetType(), typeof(SupportsSubscriptionIdAttribute)) != null)
             {
-                parameters.Add("SubscriptionId", new RuntimeDefinedParameter( //todo: what's different about 2 subscription id strings
-                    "SubscriptionId", typeof(string),
+                parameters.Add(SubscriptionIdParameter, new RuntimeDefinedParameter( //todo: what's different about 2 subscription id strings
+                    SubscriptionIdParameter, typeof(string),
                     new Collection<Attribute>()
                     {
                         new ParameterAttribute { HelpMessage = "placeholder", Mandatory = false, ValueFromPipelineByPropertyName = true }
