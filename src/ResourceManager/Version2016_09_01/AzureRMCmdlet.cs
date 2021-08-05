@@ -227,9 +227,10 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
                     throw new PSInvalidOperationException(Resources.RunConnectAccount);
                 }
 
-                if (this is ICustomSubscription cmdlet)
+                if (ShouldCloneDefaultProfile() && MyInvocation.BoundParameters.TryGetValue("SubscriptionId", out var overriddenSub)) // todo: should not use ShoudClone... , should be like ShouldUseCustomSubId
+                // todo: should not hard code subscription id
                 {
-                    var matchingSub = DefaultProfile.Subscriptions.FirstOrDefault(sub => sub.GetId().Equals(cmdlet.SubscriptionId));
+                    var matchingSub = DefaultProfile.Subscriptions.FirstOrDefault(sub => sub.GetId().Equals(overriddenSub));
                     if (matchingSub != null)
                     {
                         DefaultProfile.DefaultContext.Subscription = matchingSub.Clone();
