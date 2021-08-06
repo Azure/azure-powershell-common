@@ -243,12 +243,5 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 
             return result;
         }
-
-        public static IAzureAccount Clone(this IAzureAccount account)
-        {
-            var clone = new AzureAccount();
-            clone.CopyFrom(account);
-            return clone;
-        }
     }
 }

@@ -149,23 +149,23 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             }
         }
 
-        // maybe internal?
-        public static IAzureContext Clone(this IAzureContext context)
+        // todo: maybe internal?
+        public static IAzureContext DeepCopy(this IAzureContext context)
         {
             if (context == null)
             {
                 return null;
             }
-            var clone = new AzureContext()
+            var deepCopy = new AzureContext()
             {
-                Account = context.Account?.Clone(),
-                Tenant = context.Tenant?.Clone(),
-                Subscription = context.Subscription?.Clone(),
-                Environment = context.Environment?.Clone(),
                 VersionProfile = context.VersionProfile
             };
-            clone.CopyPropertiesFrom(context);
-            return clone;
+            deepCopy.Account.CopyFrom(context.Account);
+            deepCopy.Tenant.CopyFrom(context.Tenant);
+            deepCopy.Subscription.CopyFrom(context.Subscription);
+            deepCopy.Environment.CopyFrom(context.Environment);
+            deepCopy.CopyPropertiesFrom(context);
+            return deepCopy;
         }
     }
 }

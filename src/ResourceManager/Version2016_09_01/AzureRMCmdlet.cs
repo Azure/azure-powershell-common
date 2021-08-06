@@ -102,18 +102,21 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
 
         private IAzureContextContainer CloneProfileAndModifyContext()
         {
-            var clonedProfile = GetDefaultProfile().Clone();
+            // going to modify default context, so only shallow copying other stuff
+            var clonedProfile = GetDefaultProfile().ShallowCopy();
+            clonedProfile.DefaultContext = clonedProfile.DefaultContext.DeepCopy();
+
             if (MyInvocation.BoundParameters.TryGetValue(SubscriptionIdParameter, out var overriddenSub))
             {
                 var matchingSub = clonedProfile.Subscriptions.FirstOrDefault(sub => sub.GetId().Equals(new Guid(overriddenSub as string)));
                 if (matchingSub != null)
                 {
-                    clonedProfile.DefaultContext.Subscription = matchingSub.Clone();
+                    clonedProfile.DefaultContext.Subscription.CopyFrom(matchingSub);
                     clonedProfile.DefaultContext.Tenant.Id = matchingSub.GetTenant();
                     var matchingUser = clonedProfile.Accounts.FirstOrDefault(account => account.Id.Equals(matchingSub.GetAccount()));
                     if (matchingUser != null)
                     {
-                        clonedProfile.DefaultContext.Account = matchingUser.Clone();
+                        clonedProfile.DefaultContext.Account.CopyFrom(matchingUser);
                     }
                 }
             }
@@ -122,7 +125,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
 
         private bool ShouldCloneDefaultProfile()
         {
-            return this.HasSupportsSubscriptionIdAttribute();
+            return GetType().IsDefined(typeof(SupportsSubscriptionIdAttribute), true);
         }
 
         private IAzureContextContainer _clonedDefaultProfile;
@@ -595,12 +598,16 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             var parameters = new RuntimeDefinedParameterDictionary();
             if (Attribute.GetCustomAttribute(this.GetType(), typeof(SupportsSubscriptionIdAttribute)) != null)
             {
-                parameters.Add(SubscriptionIdParameter, new RuntimeDefinedParameter( //todo: what's different about 2 subscription id strings
-                    SubscriptionIdParameter, typeof(string),
+                // todo: resource string
+                const string helpMessage = @"The ID of the subscription.
+By default, cmdlets are executed in the subscription that is set in the current context. If the user specifies another subscription, the current cmdlet is executed in the subscription specified by the user.
+Overriding subscriptions only take effect during the lifecycle of the current cmdlet. It does not change the subscription in the context, and does not affect subsequent cmdlets.";
+                parameters.Add(SubscriptionIdParameter, new RuntimeDefinedParameter(
+                    SubscriptionIdParameter,
+                    typeof(string),
                     new Collection<Attribute>()
                     {
-                        new ParameterAttribute { HelpMessage = "placeholder", Mandatory = false, ValueFromPipelineByPropertyName = true }
-                        // todo: why valuefrompi..? what's piping scenario?
+                        new ParameterAttribute { HelpMessage = helpMessage, Mandatory = false, ValueFromPipelineByPropertyName = true }
                     }
                 ));
             }
