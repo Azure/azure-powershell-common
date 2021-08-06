@@ -149,7 +149,10 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             }
         }
 
-        // todo: maybe internal?
+        /// <summary>
+        /// Deep copy a context.
+        /// </summary>
+        /// <returns>The copy.</returns>
         public static IAzureContext DeepCopy(this IAzureContext context)
         {
             if (context == null)

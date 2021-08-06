@@ -598,16 +598,12 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             var parameters = new RuntimeDefinedParameterDictionary();
             if (Attribute.GetCustomAttribute(this.GetType(), typeof(SupportsSubscriptionIdAttribute)) != null)
             {
-                // todo: resource string
-                const string helpMessage = @"The ID of the subscription.
-By default, cmdlets are executed in the subscription that is set in the current context. If the user specifies another subscription, the current cmdlet is executed in the subscription specified by the user.
-Overriding subscriptions only take effect during the lifecycle of the current cmdlet. It does not change the subscription in the context, and does not affect subsequent cmdlets.";
                 parameters.Add(SubscriptionIdParameter, new RuntimeDefinedParameter(
                     SubscriptionIdParameter,
                     typeof(string),
                     new Collection<Attribute>()
                     {
-                        new ParameterAttribute { HelpMessage = helpMessage, Mandatory = false, ValueFromPipelineByPropertyName = true }
+                        new ParameterAttribute { HelpMessage = Resources.SubscriptionIdHelpMessage, Mandatory = false, ValueFromPipelineByPropertyName = true }
                     }
                 ));
             }
