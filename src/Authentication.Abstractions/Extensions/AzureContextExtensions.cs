@@ -148,5 +148,27 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 context.UpdateProperties(other);
             }
         }
+
+        /// <summary>
+        /// Deep copy a context.
+        /// </summary>
+        /// <returns>The copy.</returns>
+        public static IAzureContext DeepCopy(this IAzureContext context)
+        {
+            if (context == null)
+            {
+                return null;
+            }
+            var deepCopy = new AzureContext()
+            {
+                VersionProfile = context.VersionProfile
+            };
+            deepCopy.Account.CopyFrom(context.Account);
+            deepCopy.Tenant.CopyFrom(context.Tenant);
+            deepCopy.Subscription.CopyFrom(context.Subscription);
+            deepCopy.Environment.CopyFrom(context.Environment);
+            deepCopy.CopyPropertiesFrom(context);
+            return deepCopy;
+        }
     }
 }

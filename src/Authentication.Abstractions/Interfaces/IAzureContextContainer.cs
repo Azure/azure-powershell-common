@@ -49,5 +49,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// Remove all contexts from the container
         /// </summary>
         void Clear();
+
+        /// <summary>
+        /// Shallow copy all properties.
+        /// </summary>
+        /// <returns>The copy.</returns>
+        IAzureContextContainer ShallowCopy();
     }
 }
