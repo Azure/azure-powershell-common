@@ -161,6 +161,10 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             }
             var deepCopy = new AzureContext()
             {
+                Account = new AzureAccount(),
+                Tenant = new AzureTenant(),
+                Subscription = new AzureSubscription(),
+                Environment = new AzureEnvironment(),
                 VersionProfile = context.VersionProfile
             };
             deepCopy.Account.CopyFrom(context.Account);

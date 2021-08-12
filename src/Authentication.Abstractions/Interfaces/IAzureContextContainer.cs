@@ -51,9 +51,10 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         void Clear();
 
         /// <summary>
-        /// Shallow copy all properties.
+        /// Copy the context container for overriding default context.
+        /// See <see cref="SupportsSubscriptionIdAttribute"/>
         /// </summary>
         /// <returns>The copy.</returns>
-        IAzureContextContainer ShallowCopy();
+        IAzureContextContainer CopyForContextOverriding();
     }
 }

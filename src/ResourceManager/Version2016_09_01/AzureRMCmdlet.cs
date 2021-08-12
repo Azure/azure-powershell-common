@@ -18,6 +18,7 @@ using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Core;
 #endif
 using Microsoft.Azure.Commands.Common.Authentication.Models;
+using Microsoft.Azure.Commands.Common.Exceptions;
 using Microsoft.Azure.Commands.ResourceManager.Common.Properties;
 using Microsoft.Azure.Management.Internal.Resources;
 using Microsoft.Azure.Management.Internal.Resources.Utilities.Models;
@@ -102,25 +103,30 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
 
         private IAzureContextContainer CloneProfileAndModifyContext()
         {
-            // going to modify default context, so only shallow copying other stuff
-            var clonedProfile = GetDefaultProfile().ShallowCopy();
-            clonedProfile.DefaultContext = clonedProfile.DefaultContext.DeepCopy();
-
+            var profile = GetDefaultProfile();
             if (MyInvocation.BoundParameters.TryGetValue(SubscriptionIdParameter, out var overriddenSub))
             {
-                var matchingSub = clonedProfile.Subscriptions.FirstOrDefault(sub => sub.GetId().Equals(new Guid(overriddenSub as string)));
+                var subGuid = new Guid(overriddenSub as string);
+                var matchingSub = profile.Subscriptions.FirstOrDefault(sub => sub.GetId().Equals(subGuid));
                 if (matchingSub != null)
                 {
-                    clonedProfile.DefaultContext.Subscription.CopyFrom(matchingSub);
-                    clonedProfile.DefaultContext.Tenant.Id = matchingSub.GetTenant();
-                    var matchingUser = clonedProfile.Accounts.FirstOrDefault(account => account.Id.Equals(matchingSub.GetAccount()));
+                    // going to modify default context, so only shallow copying other stuff
+                    profile = GetDefaultProfile().CopyForContextOverriding();
+                    profile.DefaultContext = profile.DefaultContext.DeepCopy();
+                    profile.DefaultContext.Subscription.CopyFrom(matchingSub);
+                    profile.DefaultContext.Tenant.Id = matchingSub.GetTenant();
+                    var matchingUser = profile.Accounts.FirstOrDefault(account => account.Id.Equals(matchingSub.GetAccount()));
                     if (matchingUser != null)
                     {
-                        clonedProfile.DefaultContext.Account.CopyFrom(matchingUser);
+                        profile.DefaultContext.Account.CopyFrom(matchingUser);
                     }
                 }
+                else
+                {
+                    throw new AzPSArgumentException(string.Format(Resources.CustomSubscriptionNotFound, overriddenSub), SubscriptionIdParameter);
+                }
             }
-            return clonedProfile;
+            return profile;
         }
 
         private bool ShouldCloneDefaultProfile()
@@ -600,15 +606,12 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             // add `-SubscriptionId` if the cmdlet has [SupportsSubscriptionId] attribute
             if (GetType().IsDefined(typeof(SupportsSubscriptionIdAttribute), true))
             {
-                const string helpMessage = @"The ID of the subscription.
-By default, cmdlets are executed in the subscription that is set in the current context. If the user specifies another subscription, the current cmdlet is executed in the subscription specified by the user.
-Overriding subscriptions only take effect during the lifecycle of the current cmdlet. It does not change the subscription in the context, and does not affect subsequent cmdlets.";
                 parameters.Add(SubscriptionIdParameter, new RuntimeDefinedParameter(
                     SubscriptionIdParameter,
                     typeof(string),
                     new Collection<Attribute>()
                     {
-                        new ParameterAttribute { HelpMessage = helpMessage, Mandatory = false, ValueFromPipelineByPropertyName = true }
+                        new ParameterAttribute { HelpMessage = Resources.SubscriptionIdHelpMessage, Mandatory = false, ValueFromPipelineByPropertyName = true }
                     }
                 ));
             }
