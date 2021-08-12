@@ -53,11 +53,11 @@ namespace Authentication.Abstractions.Test
             IAzureContext clone = original.DeepCopy();
 
             // references are not equal
-            Assert.False(ReferenceEquals(original, clone));
-            Assert.False(ReferenceEquals(original.Subscription, clone.Subscription));
-            Assert.False(ReferenceEquals(original.Account, clone.Account));
-            Assert.False(ReferenceEquals(original.Environment, clone.Environment));
-            Assert.False(ReferenceEquals(original.Tenant, clone.Tenant));
+            Assert.NotSame(original, clone);
+            Assert.NotSame(original.Subscription, clone.Subscription);
+            Assert.NotSame(original.Account, clone.Account);
+            Assert.NotSame(original.Environment, clone.Environment);
+            Assert.NotSame(original.Tenant, clone.Tenant);
 
             // values are equal
             Assert.Equal(original.Subscription.Id, clone.Subscription.Id);
