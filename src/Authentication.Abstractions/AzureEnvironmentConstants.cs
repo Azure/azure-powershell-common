@@ -222,7 +222,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string USGovernmentContainerRegistryEndpointSuffix = "azurecr.us";
 
         /// <summary>
-        /// The domain name suffix for MSGraph
+        /// MSGraph endpoints.
         /// </summary>
         public const string AzureMSGraphUrl = "https://graph.microsoft.com";
         public const string ChinaMSGraphUrl = "https://microsoftgraph.chinacloudapi.cn";
