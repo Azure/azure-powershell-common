@@ -87,5 +87,15 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models
         /// Gets or sets the Gallery endpoint.
         /// </summary>
         public string Gallery { get; set; }
+
+        /// <summary>
+        /// Gets or sets the MSGraphAudience endpoint.
+        /// </summary>
+        public string MSGraphAudience { get; set; }
+
+        /// <summary>
+        /// Gets or sets the MSGraph endpoint.
+        /// </summary>
+        public string MSGraph { get; set; }
     }
 }
