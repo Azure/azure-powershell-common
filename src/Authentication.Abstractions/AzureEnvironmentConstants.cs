@@ -59,9 +59,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// Location of the maagement portal for the environment
         /// </summary>
-        public const string AzureManagementPortalUrl = "https://go.microsoft.com/fwlink/?LinkId=254433";
-        public const string ChinaManagementPortalUrl = "https://go.microsoft.com/fwlink/?LinkId=301902";
-        public const string USGovernmentManagementPortalUrl = "https://manage.windowsazure.us";
+        public const string AzureManagementPortalUrl = "https://portal.azure.com/";
+        public const string ChinaManagementPortalUrl = "https://portal.azure.cn/";
+        public const string USGovernmentManagementPortalUrl = "https://portal.azure.us/";
         public const string GermanManagementPortalUrl = "https://portal.microsoftazure.de/";
 
         /// <summary>
@@ -220,5 +220,21 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureContainerRegistryEndpointSuffix = "azurecr.io";
         public const string ChinaContainerRegistryEndpointSuffix = "azurecr.cn";
         public const string USGovernmentContainerRegistryEndpointSuffix = "azurecr.us";
+
+        /// <summary>
+        /// MSGraph endpoints.
+        /// </summary>
+        public const string AzureMSGraphUrl = "https://graph.microsoft.com";
+        public const string ChinaMSGraphUrl = "https://microsoftgraph.chinacloudapi.cn";
+        public const string USGovernmentMSGraphUrl = "https://dod-graph.microsoft.us";
+        public const string GermanMSGraphUrl = "https://graph.microsoft.de";
+
+        /// <summary>
+        /// MSGraph Resource Url
+        /// </summary>
+        public const string AzureMSGraphEndpointResourceId = "https://graph.microsoft.com";
+        public const string ChinaMSGraphEndpointResourceId = "https://microsoftgraph.chinacloudapi.cn";
+        public const string USGovernmentMSGraphEndpointResourceId = "https://dod-graph.microsoft.us";
+        public const string GermanMSGraphEndpointResourceId = "https://graph.microsoft.de";
     }
 }
