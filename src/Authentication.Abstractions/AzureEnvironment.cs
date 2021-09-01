@@ -102,7 +102,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 BatchEndpointResourceId = AzureEnvironmentConstants.BatchEndpointResourceId,
                 ContainerRegistryEndpointSuffix = AzureEnvironmentConstants.AzureContainerRegistryEndpointSuffix,
                 MSGraphUrl = AzureEnvironmentConstants.AzureMSGraphUrl,
-                MSGraphResourceId = AzureEnvironmentConstants.AzureMSGraphEndpointResourceId,
+                MSGraphEndpointResourceId = AzureEnvironmentConstants.AzureMSGraphEndpointResourceId,
                 AdTenant = "Common"
             };
 
@@ -130,7 +130,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 BatchEndpointResourceId = AzureEnvironmentConstants.ChinaBatchEndpointResourceId,
                 ContainerRegistryEndpointSuffix = AzureEnvironmentConstants.ChinaContainerRegistryEndpointSuffix,
                 MSGraphUrl = AzureEnvironmentConstants.ChinaMSGraphUrl,
-                MSGraphResourceId = AzureEnvironmentConstants.ChinaMSGraphEndpointResourceId,
+                MSGraphEndpointResourceId = AzureEnvironmentConstants.ChinaMSGraphEndpointResourceId,
                 AdTenant = "Common"
             };
 
@@ -158,7 +158,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 BatchEndpointResourceId = AzureEnvironmentConstants.USGovernmentBatchEndpointResourceId,
                 ContainerRegistryEndpointSuffix = AzureEnvironmentConstants.USGovernmentContainerRegistryEndpointSuffix,
                 MSGraphUrl = AzureEnvironmentConstants.USGovernmentMSGraphUrl,
-                MSGraphResourceId = AzureEnvironmentConstants.USGovernmentMSGraphEndpointResourceId,
+                MSGraphEndpointResourceId = AzureEnvironmentConstants.USGovernmentMSGraphEndpointResourceId,
                 AdTenant = "Common"
             };
 
@@ -185,7 +185,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 GraphEndpointResourceId = AzureEnvironmentConstants.GermanGraphEndpoint,
                 BatchEndpointResourceId = AzureEnvironmentConstants.GermanBatchEndpointResourceId,
                 MSGraphUrl = AzureEnvironmentConstants.GermanMSGraphUrl,
-                MSGraphResourceId = AzureEnvironmentConstants.GermanMSGraphEndpointResourceId,
+                MSGraphEndpointResourceId = AzureEnvironmentConstants.GermanMSGraphEndpointResourceId,
                 AdTenant = "Common"
             };
 
@@ -325,7 +325,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 BatchEndpointResourceId = armMetadata.Batch,
                 AdTenant = armMetadata.Authentication.Tenant,
                 MSGraphUrl = armMetadata.MSGraph,
-                MSGraphResourceId = armMetadata.MSGraphAudience,
+                MSGraphEndpointResourceId = armMetadata.MSGraphAudience,
                 ContainerRegistryEndpointSuffix = armMetadata.Suffixes.AcrLoginServer
             };
 
@@ -493,7 +493,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// The token audience need for tokens that target MSGraph endpoints
         /// </summary>
-        public string MSGraphResourceId { get; set; }
+        public string MSGraphEndpointResourceId { get; set; }
 
         /// <summary>
         /// The location fo the AUX portal
@@ -642,7 +642,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                    && string.Equals(this.AdTenant?.TrimEnd('/'), other.AdTenant?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase)
                    && string.Equals(this.ContainerRegistryEndpointSuffix?.TrimEnd('/'), other.ContainerRegistryEndpointSuffix?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase)
                    && string.Equals(this.MSGraphUrl?.TrimEnd('/'), other.MSGraphUrl?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase)
-                   && string.Equals(this.MSGraphResourceId?.TrimEnd('/'), other.MSGraphResourceId?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
+                   && string.Equals(this.MSGraphEndpointResourceId?.TrimEnd('/'), other.MSGraphEndpointResourceId?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
         }
 
 
