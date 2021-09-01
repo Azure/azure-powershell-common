@@ -101,8 +101,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 DataLakeEndpointResourceId = AzureEnvironmentConstants.AzureDataLakeServiceEndpointResourceId,
                 BatchEndpointResourceId = AzureEnvironmentConstants.BatchEndpointResourceId,
                 ContainerRegistryEndpointSuffix = AzureEnvironmentConstants.AzureContainerRegistryEndpointSuffix,
-                MSGraphUrl = AzureEnvironmentConstants.AzureMSGraphUrl,
-                MSGraphEndpointResourceId = AzureEnvironmentConstants.AzureMSGraphEndpointResourceId,
+                MicrosoftGraphUrl = AzureEnvironmentConstants.AzureMicrosoftGraphUrl,
+                MicrosoftGraphEndpointResourceId = AzureEnvironmentConstants.AzureMicrosoftGraphEndpointResourceId,
                 AdTenant = "Common"
             };
 
@@ -129,8 +129,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 GraphEndpointResourceId = AzureEnvironmentConstants.ChinaGraphEndpoint,
                 BatchEndpointResourceId = AzureEnvironmentConstants.ChinaBatchEndpointResourceId,
                 ContainerRegistryEndpointSuffix = AzureEnvironmentConstants.ChinaContainerRegistryEndpointSuffix,
-                MSGraphUrl = AzureEnvironmentConstants.ChinaMSGraphUrl,
-                MSGraphEndpointResourceId = AzureEnvironmentConstants.ChinaMSGraphEndpointResourceId,
+                MicrosoftGraphUrl = AzureEnvironmentConstants.ChinaMicrosoftGraphUrl,
+                MicrosoftGraphEndpointResourceId = AzureEnvironmentConstants.ChinaMicrosoftGraphEndpointResourceId,
                 AdTenant = "Common"
             };
 
@@ -157,8 +157,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 GraphEndpointResourceId = AzureEnvironmentConstants.USGovernmentGraphEndpoint,
                 BatchEndpointResourceId = AzureEnvironmentConstants.USGovernmentBatchEndpointResourceId,
                 ContainerRegistryEndpointSuffix = AzureEnvironmentConstants.USGovernmentContainerRegistryEndpointSuffix,
-                MSGraphUrl = AzureEnvironmentConstants.USGovernmentMSGraphUrl,
-                MSGraphEndpointResourceId = AzureEnvironmentConstants.USGovernmentMSGraphEndpointResourceId,
+                MicrosoftGraphUrl = AzureEnvironmentConstants.USGovernmentMicrosoftGraphUrl,
+                MicrosoftGraphEndpointResourceId = AzureEnvironmentConstants.USGovernmentMicrosoftGraphEndpointResourceId,
                 AdTenant = "Common"
             };
 
@@ -184,8 +184,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 DataLakeEndpointResourceId = null,
                 GraphEndpointResourceId = AzureEnvironmentConstants.GermanGraphEndpoint,
                 BatchEndpointResourceId = AzureEnvironmentConstants.GermanBatchEndpointResourceId,
-                MSGraphUrl = AzureEnvironmentConstants.GermanMSGraphUrl,
-                MSGraphEndpointResourceId = AzureEnvironmentConstants.GermanMSGraphEndpointResourceId,
+                MicrosoftGraphUrl = AzureEnvironmentConstants.GermanMicrosoftGraphUrl,
+                MicrosoftGraphEndpointResourceId = AzureEnvironmentConstants.GermanMicrosoftGraphEndpointResourceId,
                 AdTenant = "Common"
             };
 
@@ -258,6 +258,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId, AzureEnvironmentConstants.AzureSynapseAnalyticsEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointResourceId, AzureEnvironmentConstants.AzureManagedHsmServiceEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointSuffix, AzureEnvironmentConstants.AzureManagedHsmDnsSuffix);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(Endpoint.MicrosoftGraphEndpointResourceId, AzureEnvironmentConstants.AzureMicrosoftGraphEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(Endpoint.MicrosoftGraphUrl, AzureEnvironmentConstants.AzureMicrosoftGraphUrl);
             }
 
             if (azureEnvironments.ContainsKey(EnvironmentName.AzureChinaCloud))
@@ -270,6 +272,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId, AzureEnvironmentConstants.ChinaSynapseAnalyticsEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointResourceId, AzureEnvironmentConstants.ChinaManagedHsmServiceEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointSuffix, AzureEnvironmentConstants.ChinaManagedHsmDnsSuffix);
+                azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(Endpoint.MicrosoftGraphEndpointResourceId, AzureEnvironmentConstants.ChinaMicrosoftGraphEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(Endpoint.MicrosoftGraphUrl, AzureEnvironmentConstants.ChinaMicrosoftGraphUrl);
             }
 
             if (azureEnvironments.ContainsKey(EnvironmentName.AzureUSGovernment))
@@ -282,6 +286,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId, AzureEnvironmentConstants.USGovernmentSynapseAnalyticsEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointResourceId, AzureEnvironmentConstants.USGovernmeneManagedHsmServiceEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointSuffix, AzureEnvironmentConstants.USGovernmentManagedHsmDnsSuffix);
+                azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(Endpoint.MicrosoftGraphEndpointResourceId, AzureEnvironmentConstants.USGovernmentMicrosoftGraphEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(Endpoint.MicrosoftGraphUrl, AzureEnvironmentConstants.USGovernmentMicrosoftGraphUrl);
             }
 
             if (azureEnvironments.ContainsKey(EnvironmentName.AzureGermanCloud))
@@ -290,6 +296,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointResourceId, AzureEnvironmentConstants.GermanAnalysisServicesEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointResourceId, AzureEnvironmentConstants.GermanAzureManagedHsmServiceEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointSuffix, AzureEnvironmentConstants.GermanManagedHsmDnsSuffix);
+                azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(Endpoint.MicrosoftGraphEndpointResourceId, AzureEnvironmentConstants.GermanMicrosoftGraphEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(Endpoint.MicrosoftGraphUrl, AzureEnvironmentConstants.GermanMicrosoftGraphUrl);
             }
         }
 
@@ -324,8 +332,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 GraphEndpointResourceId = armMetadata.Graph,
                 BatchEndpointResourceId = armMetadata.Batch,
                 AdTenant = armMetadata.Authentication.Tenant,
-                MSGraphUrl = armMetadata.MSGraph,
-                MSGraphEndpointResourceId = armMetadata.MSGraphAudience,
                 ContainerRegistryEndpointSuffix = armMetadata.Suffixes.AcrLoginServer
             };
 
@@ -488,12 +494,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// The MSGraph endpoint
         /// </summary>
-        public string MSGraphUrl { get; set; }
+        public string MicrosoftGraphUrl { get; set; }
 
         /// <summary>
         /// The token audience need for tokens that target MSGraph endpoints
         /// </summary>
-        public string MSGraphEndpointResourceId { get; set; }
+        public string MicrosoftGraphEndpointResourceId { get; set; }
 
         /// <summary>
         /// The location fo the AUX portal
@@ -641,8 +647,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                    && string.Equals(this.AzureDataLakeStoreFileSystemEndpointSuffix, other.AzureDataLakeStoreFileSystemEndpointSuffix, StringComparison.OrdinalIgnoreCase)
                    && string.Equals(this.AdTenant?.TrimEnd('/'), other.AdTenant?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase)
                    && string.Equals(this.ContainerRegistryEndpointSuffix?.TrimEnd('/'), other.ContainerRegistryEndpointSuffix?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase)
-                   && string.Equals(this.MSGraphUrl?.TrimEnd('/'), other.MSGraphUrl?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase)
-                   && string.Equals(this.MSGraphEndpointResourceId?.TrimEnd('/'), other.MSGraphEndpointResourceId?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
+                   && string.Equals(this.MicrosoftGraphUrl?.TrimEnd('/'), other.MicrosoftGraphUrl?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase)
+                   && string.Equals(this.MicrosoftGraphEndpointResourceId?.TrimEnd('/'), other.MicrosoftGraphEndpointResourceId?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
         }
 
 
@@ -671,7 +677,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 DataLakeEndpointResourceId = "DataLakeEndpointResourceId",
                 ContainerRegistryEndpointSuffix = "ContainerRegistryEndpointSuffix",
                 BatchEndpointResourceId = "BatchEndpointResourceId",
-                MSGraphUrl = "MSGraphUrl";
+                MicrosoftGraphUrl = "MicrosoftGraphUrl",
+                MicrosoftGraphEndpointResourceId = "MicrosoftGraphEndpointResourceId";
         }
 
         public static class ExtendedEndpoint
@@ -685,8 +692,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 AzureAttestationServiceEndpointSuffix = "AzureAttestationServiceEndpointSuffix",
                 AzureAttestationServiceEndpointResourceId = "AzureAttestationServiceEndpointResourceId",
                 AzureSynapseAnalyticsEndpointSuffix = "AzureSynapseAnalyticsEndpointSuffix",
-                AzureSynapseAnalyticsEndpointResourceId = "AzureSynapseAnalyticsEndpointResourceId",
-                MSGraphEndpointResourceId = "MSGraphEndpointResourceId";
+                AzureSynapseAnalyticsEndpointResourceId = "AzureSynapseAnalyticsEndpointResourceId";
         }
     }
 }
