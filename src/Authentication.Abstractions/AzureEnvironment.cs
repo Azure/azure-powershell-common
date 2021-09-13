@@ -671,7 +671,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 DataLakeEndpointResourceId = "DataLakeEndpointResourceId",
                 ContainerRegistryEndpointSuffix = "ContainerRegistryEndpointSuffix",
                 BatchEndpointResourceId = "BatchEndpointResourceId",
-                MSGraphUrl = "MSGraphUrl";
+                MSGraphUrl = "MSGraphUrl",
+                MSGraphEndpointResourceId = "MSGraphEndpointResourceId";
         }
 
         public static class ExtendedEndpoint
@@ -685,8 +686,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 AzureAttestationServiceEndpointSuffix = "AzureAttestationServiceEndpointSuffix",
                 AzureAttestationServiceEndpointResourceId = "AzureAttestationServiceEndpointResourceId",
                 AzureSynapseAnalyticsEndpointSuffix = "AzureSynapseAnalyticsEndpointSuffix",
-                AzureSynapseAnalyticsEndpointResourceId = "AzureSynapseAnalyticsEndpointResourceId",
-                MSGraphEndpointResourceId = "MSGraphEndpointResourceId";
+                AzureSynapseAnalyticsEndpointResourceId = "AzureSynapseAnalyticsEndpointResourceId";
         }
     }
 }

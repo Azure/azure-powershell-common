@@ -71,6 +71,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 case AzureEnvironment.Endpoint.MSGraphUrl:
                     endpoint = new Uri(environment.MSGraphUrl);
                     break;
+                case AzureEnvironment.Endpoint.MSGraphEndpointResourceId:
+                    endpoint = new Uri(environment.MSGraphEndpointResourceId);
+                    break;
                 default:
                     result = environment.IsPropertySet(endpointName);
                     if (result)
@@ -159,6 +162,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                         break;
                     case AzureEnvironment.Endpoint.MSGraphUrl:
                         propertyValue = environment.MSGraphUrl;
+                        break;
+                    case AzureEnvironment.Endpoint.MSGraphEndpointResourceId:
+                        propertyValue = environment.MSGraphEndpointResourceId;
                         break;
                     default:
                         // get property from the extended properties of the environment
@@ -310,6 +316,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     case AzureEnvironment.Endpoint.MSGraphUrl:
                         environment.MSGraphUrl = propertyValue;
                         break;
+                    case AzureEnvironment.Endpoint.MSGraphEndpointResourceId:
+                        environment.MSGraphEndpointResourceId = propertyValue;
+                        break;
                 }
             }
         }
@@ -361,8 +370,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     resource = AzureEnvironment.Endpoint.ContainerRegistryEndpointSuffix;
                     break;
                 case AzureEnvironment.Endpoint.MSGraphUrl:
-                case AzureEnvironment.ExtendedEndpoint.MSGraphEndpointResourceId:
-                    resource = AzureEnvironment.ExtendedEndpoint.MSGraphEndpointResourceId;
+                    resource = AzureEnvironment.Endpoint.MSGraphEndpointResourceId;
                     break;
                 default:
                     resource = AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId;
@@ -554,7 +562,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 {
                     environment.MSGraphUrl = other.MSGraphUrl;
                 }
-                if (other.IsEndpointSet(AzureEnvironment.ExtendedEndpoint.MSGraphEndpointResourceId))
+                if (other.IsEndpointSet(AzureEnvironment.Endpoint.MSGraphEndpointResourceId))
                 {
                     environment.MSGraphEndpointResourceId = other.MSGraphEndpointResourceId;
                 }
@@ -657,7 +665,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 {
                     environment.MSGraphUrl = other.MSGraphUrl;
                 }
-                if (other.IsEndpointSet(AzureEnvironment.ExtendedEndpoint.MSGraphEndpointResourceId))
+                if (other.IsEndpointSet(AzureEnvironment.Endpoint.MSGraphEndpointResourceId))
                 {
                     environment.MSGraphEndpointResourceId = other.MSGraphEndpointResourceId;
                 }
