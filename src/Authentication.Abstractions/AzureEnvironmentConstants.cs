@@ -224,17 +224,17 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// MSGraph endpoints.
         /// </summary>
-        public const string AzureMSGraphUrl = "https://graph.microsoft.com";
-        public const string ChinaMSGraphUrl = "https://microsoftgraph.chinacloudapi.cn";
-        public const string USGovernmentMSGraphUrl = "https://dod-graph.microsoft.us";
-        public const string GermanMSGraphUrl = "https://graph.microsoft.de";
+        public const string AzureMicrosoftGraphUrl = "https://graph.microsoft.com";
+        public const string ChinaMicrosoftGraphUrl = "https://microsoftgraph.chinacloudapi.cn";
+        public const string USGovernmentMicrosoftGraphUrl = "https://graph.microsoft.us";
+        public const string GermanMicrosoftGraphUrl = "https://graph.microsoft.de";
 
         /// <summary>
         /// MSGraph Resource Url
         /// </summary>
-        public const string AzureMSGraphEndpointResourceId = "https://graph.microsoft.com";
-        public const string ChinaMSGraphEndpointResourceId = "https://microsoftgraph.chinacloudapi.cn";
-        public const string USGovernmentMSGraphEndpointResourceId = "https://dod-graph.microsoft.us";
-        public const string GermanMSGraphEndpointResourceId = "https://graph.microsoft.de";
+        public const string AzureMicrosoftGraphEndpointResourceId = "https://graph.microsoft.com/";
+        public const string ChinaMicrosoftGraphEndpointResourceId = "https://microsoftgraph.chinacloudapi.cn/";
+        public const string USGovernmentMicrosoftGraphEndpointResourceId = "https://graph.microsoft.us/";
+        public const string GermanMicrosoftGraphEndpointResourceId = "https://graph.microsoft.de/";
     }
 }
