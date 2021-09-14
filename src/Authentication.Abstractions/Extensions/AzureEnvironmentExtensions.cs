@@ -71,6 +71,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 case AzureEnvironment.Endpoint.MicrosoftGraphUrl:
                     endpoint = new Uri(environment.MicrosoftGraphUrl);
                     break;
+                case AzureEnvironment.Endpoint.MicrosoftGraphEndpointResourceId:
+                    endpoint = new Uri(environment.MicrosoftGraphEndpointResourceId);
+                    break;
                 default:
                     result = environment.IsPropertySet(endpointName);
                     if (result)
@@ -159,6 +162,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                         break;
                     case AzureEnvironment.Endpoint.MicrosoftGraphUrl:
                         propertyValue = environment.MicrosoftGraphUrl;
+                        break;
+                    case AzureEnvironment.Endpoint.MicrosoftGraphEndpointResourceId:
+                        propertyValue = environment.MicrosoftGraphEndpointResourceId;
                         break;
                     default:
                         // get property from the extended properties of the environment

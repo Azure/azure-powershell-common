@@ -45,6 +45,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authentication.Abstractions
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Share", "src\Share\Share.csproj", "{29ECE00D-4FD5-4AFC-BEBF-136002E9CB9C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicrosoftGraph", "src\MicrosoftGraph\MicrosoftGraph.csproj", "{9E283CCA-7923-4062-A0A7-289C14324E43}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,14 +125,14 @@ Global
 		{E4CBF250-E488-4DE1-B6FC-80341A910F15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E4CBF250-E488-4DE1-B6FC-80341A910F15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4CBF250-E488-4DE1-B6FC-80341A910F15}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{19D8A2BB-CA57-4EC0-9F5B-66AD3372A0B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{19D8A2BB-CA57-4EC0-9F5B-66AD3372A0B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{19D8A2BB-CA57-4EC0-9F5B-66AD3372A0B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{19D8A2BB-CA57-4EC0-9F5B-66AD3372A0B0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{29ECE00D-4FD5-4AFC-BEBF-136002E9CB9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{29ECE00D-4FD5-4AFC-BEBF-136002E9CB9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29ECE00D-4FD5-4AFC-BEBF-136002E9CB9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29ECE00D-4FD5-4AFC-BEBF-136002E9CB9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E283CCA-7923-4062-A0A7-289C14324E43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E283CCA-7923-4062-A0A7-289C14324E43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E283CCA-7923-4062-A0A7-289C14324E43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E283CCA-7923-4062-A0A7-289C14324E43}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
