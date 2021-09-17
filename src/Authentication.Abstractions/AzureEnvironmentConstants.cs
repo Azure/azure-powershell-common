@@ -220,5 +220,10 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureContainerRegistryEndpointSuffix = "azurecr.io";
         public const string ChinaContainerRegistryEndpointSuffix = "azurecr.cn";
         public const string USGovernmentContainerRegistryEndpointSuffix = "azurecr.us";
+
+        /// <summary>
+        /// The OAuth endpoint for storage, global and governant clouds share same resource id
+        /// </summary>
+        public const string AzureStorageOAuthEndpointResourceId = "https://storage.azure.com";
     }
 }
