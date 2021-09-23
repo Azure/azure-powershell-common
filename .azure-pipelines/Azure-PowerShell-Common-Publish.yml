@@ -94,14 +94,15 @@ steps:
     packagesToPush: 'artifacts/Package/Release/Microsoft.Azure.PowerShell.*.nupkg; !artifacts/Package/Release/*.symbols.nupkg'
     publishVstsFeed: public/azure-powershell
 
-# comment publish github release step since we do not have valid access token right now
-#- powershell: |
-#   dotnet msbuild build\publish.proj /p:Configuration=Release /p:ReleaseVersion=$env:VERSION /p:CommitId=$env:Build_SourceVersion /p:GitHubAccessToken=$(Github-azuresdkci-personalaccesstoken)  /NoLogo
-#  displayName: 'publish package github'
-#  condition: and(succeeded(), ne(variables['publish'], 'false'))
+ comment publish github release step since we do not have valid access token right now
+- powershell: |
+   dotnet msbuild build\publish.proj /p:Configuration=Release /p:ReleaseVersion=$env:VERSION /p:CommitId=$env:Build_SourceVersion /p:GitHubAccessToken=$(Github-azuresdkci-personalaccesstoken)  /NoLogo
+  displayName: 'publish package github'
+  condition: and(succeeded(), ne(variables['publish'], 'false'))
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'
   inputs:
     PathtoPublish: artifacts/Package/Release/
     ArtifactName: aitifacts
+  condition: succeededOrFailed()
