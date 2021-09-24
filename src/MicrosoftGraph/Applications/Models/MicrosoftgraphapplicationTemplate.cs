@@ -8,26 +8,26 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications.Models
 {
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class MicrosoftgraphapplicationTemplate : Microsoftgraphentity
+    public partial class MicrosoftGraphApplicationTemplate : MicrosoftGraphEntity
     {
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphapplicationTemplate
+        /// Initializes a new instance of the MicrosoftGraphApplicationTemplate
         /// class.
         /// </summary>
-        public MicrosoftgraphapplicationTemplate()
+        public MicrosoftGraphApplicationTemplate()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphapplicationTemplate
+        /// Initializes a new instance of the MicrosoftGraphApplicationTemplate
         /// class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
@@ -54,7 +54,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// <param name="supportedSingleSignOnModes">The list of single sign-on
         /// modes supported by this application. The supported values are oidc,
         /// password, saml, and notSupported.</param>
-        public MicrosoftgraphapplicationTemplate(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), IList<string> categories = default(IList<string>), string description = default(string), string displayName = default(string), string homePageUrl = default(string), string logoUrl = default(string), string publisher = default(string), IList<string> supportedProvisioningTypes = default(IList<string>), IList<string> supportedSingleSignOnModes = default(IList<string>))
+        public MicrosoftGraphApplicationTemplate(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), IList<string> categories = default(IList<string>), string description = default(string), string displayName = default(string), string homePageUrl = default(string), string logoUrl = default(string), string publisher = default(string), IList<string> supportedProvisioningTypes = default(IList<string>), IList<string> supportedSingleSignOnModes = default(IList<string>))
             : base(additionalProperties, id)
         {
             Categories = categories;

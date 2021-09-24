@@ -8,7 +8,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Users.Models
 {
     using Newtonsoft.Json;
     using System.Collections;
@@ -18,23 +18,23 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users.Models
     /// <summary>
     /// entity
     /// </summary>
-    public partial class Microsoftgraphentity
+    public partial class MicrosoftGraphEntity
     {
         /// <summary>
-        /// Initializes a new instance of the Microsoftgraphentity class.
+        /// Initializes a new instance of the MicrosoftGraphEntity class.
         /// </summary>
-        public Microsoftgraphentity()
+        public MicrosoftGraphEntity()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the Microsoftgraphentity class.
+        /// Initializes a new instance of the MicrosoftGraphEntity class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
         /// <param name="id">Read-only.</param>
-        public Microsoftgraphentity(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string))
+        public MicrosoftGraphEntity(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string))
         {
             AdditionalProperties = additionalProperties;
             Id = id;

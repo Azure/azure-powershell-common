@@ -8,14 +8,14 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications.Models
 {
     using Microsoft.Rest;
 
     /// <summary>
-    /// Exception thrown for an invalid response with Odataerror information.
+    /// Exception thrown for an invalid response with OdataError information.
     /// </summary>
-    public partial class OdataerrorException : RestException
+    public partial class OdataErrorException : RestException
     {
         /// <summary>
         /// Gets information about the associated HTTP request.
@@ -30,30 +30,30 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// <summary>
         /// Gets or sets the body object.
         /// </summary>
-        public Odataerror Body { get; set; }
+        public OdataError Body { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the OdataerrorException class.
+        /// Initializes a new instance of the OdataErrorException class.
         /// </summary>
-        public OdataerrorException()
+        public OdataErrorException()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the OdataerrorException class.
+        /// Initializes a new instance of the OdataErrorException class.
         /// </summary>
         /// <param name="message">The exception message.</param>
-        public OdataerrorException(string message)
+        public OdataErrorException(string message)
             : this(message, null)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the OdataerrorException class.
+        /// Initializes a new instance of the OdataErrorException class.
         /// </summary>
         /// <param name="message">The exception message.</param>
         /// <param name="innerException">Inner exception.</param>
-        public OdataerrorException(string message, System.Exception innerException)
+        public OdataErrorException(string message, System.Exception innerException)
             : base(message, innerException)
         {
         }

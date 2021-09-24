@@ -8,7 +8,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications.Models
 {
     using Microsoft.Rest;
     using Newtonsoft.Json;
@@ -16,22 +16,22 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class Odataerror
+    public partial class OdataError
     {
         /// <summary>
-        /// Initializes a new instance of the Odataerror class.
+        /// Initializes a new instance of the OdataError class.
         /// </summary>
-        public Odataerror()
+        public OdataError()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the Odataerror class.
+        /// Initializes a new instance of the OdataError class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
-        public Odataerror(Odataerrormain error, IDictionary<string, object> additionalProperties = default(IDictionary<string, object>))
+        public OdataError(OdataErrorMain error, IDictionary<string, object> additionalProperties = default(IDictionary<string, object>))
         {
             AdditionalProperties = additionalProperties;
             Error = error;
@@ -53,7 +53,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "error")]
-        public Odataerrormain Error { get; set; }
+        public OdataErrorMain Error { get; set; }
 
         /// <summary>
         /// Validate the object.

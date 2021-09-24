@@ -8,7 +8,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications
 {
     using Models;
     using System.Collections;
@@ -22,7 +22,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications
     public static partial class ServicePrincipalsOperationsExtensions
     {
             /// <summary>
-            /// Get entities from ServicePrincipalsOperations
+            /// Get entities from servicePrincipals
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
@@ -61,7 +61,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications
             }
 
             /// <summary>
-            /// Get entities from ServicePrincipalsOperations
+            /// Get entities from servicePrincipals
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
@@ -106,7 +106,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications
             }
 
             /// <summary>
-            /// Add new entity to ServicePrincipalsOperations
+            /// Add new entity to servicePrincipals
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
@@ -114,13 +114,13 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications
             /// <param name='body'>
             /// New entity
             /// </param>
-            public static MicrosoftgraphservicePrincipal CreateServicePrincipal(this IServicePrincipalsOperations operations, MicrosoftgraphservicePrincipal body)
+            public static MicrosoftGraphServicePrincipal CreateServicePrincipal(this IServicePrincipalsOperations operations, MicrosoftGraphServicePrincipal body)
             {
                 return operations.CreateServicePrincipalAsync(body).GetAwaiter().GetResult();
             }
 
             /// <summary>
-            /// Add new entity to ServicePrincipalsOperations
+            /// Add new entity to servicePrincipals
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
@@ -131,12 +131,164 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<MicrosoftgraphservicePrincipal> CreateServicePrincipalAsync(this IServicePrincipalsOperations operations, MicrosoftgraphservicePrincipal body, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<MicrosoftGraphServicePrincipal> CreateServicePrincipalAsync(this IServicePrincipalsOperations operations, MicrosoftGraphServicePrincipal body, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.CreateServicePrincipalWithHttpMessagesAsync(body, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Body;
                 }
+            }
+
+            /// <summary>
+            /// Delete entity from servicePrincipals
+            /// </summary>
+            /// <remarks>
+            /// Represents an Azure Active Directory object. The directoryObject type is
+            /// the base type for many other directory entity types.
+            /// </remarks>
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='servicePrincipalId'>
+            /// key: id of servicePrincipal
+            /// </param>
+            /// <param name='ifMatch'>
+            /// ETag
+            /// </param>
+            public static void DeleteServicePrincipal(this IServicePrincipalsOperations operations, string servicePrincipalId, string ifMatch = default(string))
+            {
+                operations.DeleteServicePrincipalAsync(servicePrincipalId, ifMatch).GetAwaiter().GetResult();
+            }
+
+            /// <summary>
+            /// Delete entity from servicePrincipals
+            /// </summary>
+            /// <remarks>
+            /// Represents an Azure Active Directory object. The directoryObject type is
+            /// the base type for many other directory entity types.
+            /// </remarks>
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='servicePrincipalId'>
+            /// key: id of servicePrincipal
+            /// </param>
+            /// <param name='ifMatch'>
+            /// ETag
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task DeleteServicePrincipalAsync(this IServicePrincipalsOperations operations, string servicePrincipalId, string ifMatch = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                (await operations.DeleteServicePrincipalWithHttpMessagesAsync(servicePrincipalId, ifMatch, null, cancellationToken).ConfigureAwait(false)).Dispose();
+            }
+
+            /// <summary>
+            /// Get entity from servicePrincipals by key
+            /// </summary>
+            /// <remarks>
+            /// Represents an Azure Active Directory object. The directoryObject type is
+            /// the base type for many other directory entity types.
+            /// </remarks>
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='servicePrincipalId'>
+            /// key: id of servicePrincipal
+            /// </param>
+            /// <param name='consistencyLevel'>
+            /// Indicates the requested consistency level. Documentation URL:
+            /// https://developer.microsoft.com/en-us/office/blogs/microsoft-graph-advanced-queries-for-directory-objects-are-now-generally-available/
+            /// </param>
+            /// <param name='select'>
+            /// Select properties to be returned
+            /// </param>
+            /// <param name='expand'>
+            /// Expand related entities
+            /// </param>
+            public static MicrosoftGraphServicePrincipal GetServicePrincipal(this IServicePrincipalsOperations operations, string servicePrincipalId, string consistencyLevel = default(string), IList<string> select = default(IList<string>), IList<string> expand = default(IList<string>))
+            {
+                return operations.GetServicePrincipalAsync(servicePrincipalId, consistencyLevel, select, expand).GetAwaiter().GetResult();
+            }
+
+            /// <summary>
+            /// Get entity from servicePrincipals by key
+            /// </summary>
+            /// <remarks>
+            /// Represents an Azure Active Directory object. The directoryObject type is
+            /// the base type for many other directory entity types.
+            /// </remarks>
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='servicePrincipalId'>
+            /// key: id of servicePrincipal
+            /// </param>
+            /// <param name='consistencyLevel'>
+            /// Indicates the requested consistency level. Documentation URL:
+            /// https://developer.microsoft.com/en-us/office/blogs/microsoft-graph-advanced-queries-for-directory-objects-are-now-generally-available/
+            /// </param>
+            /// <param name='select'>
+            /// Select properties to be returned
+            /// </param>
+            /// <param name='expand'>
+            /// Expand related entities
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<MicrosoftGraphServicePrincipal> GetServicePrincipalAsync(this IServicePrincipalsOperations operations, string servicePrincipalId, string consistencyLevel = default(string), IList<string> select = default(IList<string>), IList<string> expand = default(IList<string>), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.GetServicePrincipalWithHttpMessagesAsync(servicePrincipalId, consistencyLevel, select, expand, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <summary>
+            /// Update entity in servicePrincipals
+            /// </summary>
+            /// <remarks>
+            /// Represents an Azure Active Directory object. The directoryObject type is
+            /// the base type for many other directory entity types.
+            /// </remarks>
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='servicePrincipalId'>
+            /// key: id of servicePrincipal
+            /// </param>
+            /// <param name='body'>
+            /// New property values
+            /// </param>
+            public static void UpdateServicePrincipal(this IServicePrincipalsOperations operations, string servicePrincipalId, MicrosoftGraphServicePrincipal body)
+            {
+                operations.UpdateServicePrincipalAsync(servicePrincipalId, body).GetAwaiter().GetResult();
+            }
+
+            /// <summary>
+            /// Update entity in servicePrincipals
+            /// </summary>
+            /// <remarks>
+            /// Represents an Azure Active Directory object. The directoryObject type is
+            /// the base type for many other directory entity types.
+            /// </remarks>
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='servicePrincipalId'>
+            /// key: id of servicePrincipal
+            /// </param>
+            /// <param name='body'>
+            /// New property values
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task UpdateServicePrincipalAsync(this IServicePrincipalsOperations operations, string servicePrincipalId, MicrosoftGraphServicePrincipal body, CancellationToken cancellationToken = default(CancellationToken))
+            {
+                (await operations.UpdateServicePrincipalWithHttpMessagesAsync(servicePrincipalId, body, null, cancellationToken).ConfigureAwait(false)).Dispose();
             }
 
     }

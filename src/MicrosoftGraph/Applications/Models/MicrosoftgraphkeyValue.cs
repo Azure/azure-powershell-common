@@ -8,7 +8,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications.Models
 {
     using Newtonsoft.Json;
     using System.Collections;
@@ -18,24 +18,24 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
     /// <summary>
     /// keyValue
     /// </summary>
-    public partial class MicrosoftgraphkeyValue
+    public partial class MicrosoftGraphKeyValue
     {
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphkeyValue class.
+        /// Initializes a new instance of the MicrosoftGraphKeyValue class.
         /// </summary>
-        public MicrosoftgraphkeyValue()
+        public MicrosoftGraphKeyValue()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphkeyValue class.
+        /// Initializes a new instance of the MicrosoftGraphKeyValue class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
         /// <param name="key">Key.</param>
         /// <param name="value">Value.</param>
-        public MicrosoftgraphkeyValue(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string key = default(string), string value = default(string))
+        public MicrosoftGraphKeyValue(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string key = default(string), string value = default(string))
         {
             AdditionalProperties = additionalProperties;
             Key = key;

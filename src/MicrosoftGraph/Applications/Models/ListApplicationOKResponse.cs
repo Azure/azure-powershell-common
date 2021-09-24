@@ -8,7 +8,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications.Models
 {
     using Newtonsoft.Json;
     using System.Collections;
@@ -33,7 +33,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
-        public ListApplicationOKResponse(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string odatanextLink = default(string), IList<Microsoftgraphapplication> value = default(IList<Microsoftgraphapplication>))
+        public ListApplicationOKResponse(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string odatanextLink = default(string), IList<MicrosoftGraphApplication> value = default(IList<MicrosoftGraphApplication>))
         {
             AdditionalProperties = additionalProperties;
             OdatanextLink = odatanextLink;
@@ -61,7 +61,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "value")]
-        public IList<Microsoftgraphapplication> Value { get; set; }
+        public IList<MicrosoftGraphApplication> Value { get; set; }
 
     }
 }

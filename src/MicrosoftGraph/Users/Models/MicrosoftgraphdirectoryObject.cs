@@ -8,32 +8,32 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Users.Models
 {
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class MicrosoftgraphdirectoryObject : Microsoftgraphentity
+    public partial class MicrosoftGraphDirectoryObject : MicrosoftGraphEntity
     {
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphdirectoryObject
+        /// Initializes a new instance of the MicrosoftGraphDirectoryObject
         /// class.
         /// </summary>
-        public MicrosoftgraphdirectoryObject()
+        public MicrosoftGraphDirectoryObject()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphdirectoryObject
+        /// Initializes a new instance of the MicrosoftGraphDirectoryObject
         /// class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
         /// <param name="id">Read-only.</param>
-        public MicrosoftgraphdirectoryObject(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?))
+        public MicrosoftGraphDirectoryObject(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?))
             : base(additionalProperties, id)
         {
             DeletedDateTime = deletedDateTime;

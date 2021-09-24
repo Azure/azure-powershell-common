@@ -8,7 +8,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications.Models
 {
     using Microsoft.Rest;
     using Microsoft.Rest.Serialization;
@@ -20,19 +20,19 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
     /// <summary>
     /// passwordCredential
     /// </summary>
-    public partial class MicrosoftgraphpasswordCredential
+    public partial class MicrosoftGraphPasswordCredential
     {
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphpasswordCredential
+        /// Initializes a new instance of the MicrosoftGraphPasswordCredential
         /// class.
         /// </summary>
-        public MicrosoftgraphpasswordCredential()
+        public MicrosoftGraphPasswordCredential()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphpasswordCredential
+        /// Initializes a new instance of the MicrosoftGraphPasswordCredential
         /// class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
@@ -57,7 +57,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// information using ISO 8601 format and is always in UTC time. For
         /// example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z.
         /// Optional.</param>
-        public MicrosoftgraphpasswordCredential(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), byte[] customKeyIdentifier = default(byte[]), string displayName = default(string), System.DateTime? endDateTime = default(System.DateTime?), string hint = default(string), System.Guid? keyId = default(System.Guid?), string secretText = default(string), System.DateTime? startDateTime = default(System.DateTime?))
+        public MicrosoftGraphPasswordCredential(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), byte[] customKeyIdentifier = default(byte[]), string displayName = default(string), System.DateTime? endDateTime = default(System.DateTime?), string hint = default(string), System.Guid? keyId = default(System.Guid?), string secretText = default(string), System.DateTime? startDateTime = default(System.DateTime?))
         {
             AdditionalProperties = additionalProperties;
             CustomKeyIdentifier = customKeyIdentifier;

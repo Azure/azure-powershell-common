@@ -8,7 +8,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
+namespace Microsoft.Azure.Commands.Common.MSGraph.Users
 {
     using Models;
     using System.Collections;
@@ -114,7 +114,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
             /// <param name='body'>
             /// New entity
             /// </param>
-            public static Microsoftgraphuser CreateUser(this IUsersOperations operations, Microsoftgraphuser body)
+            public static MicrosoftGraphUser CreateUser(this IUsersOperations operations, MicrosoftGraphUser body)
             {
                 return operations.CreateUserAsync(body).GetAwaiter().GetResult();
             }
@@ -131,7 +131,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<Microsoftgraphuser> CreateUserAsync(this IUsersOperations operations, Microsoftgraphuser body, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<MicrosoftGraphUser> CreateUserAsync(this IUsersOperations operations, MicrosoftGraphUser body, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.CreateUserWithHttpMessagesAsync(body, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -204,7 +204,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
             /// <param name='expand'>
             /// Expand related entities
             /// </param>
-            public static Microsoftgraphuser GetUser(this IUsersOperations operations, string userId, string consistencyLevel = default(string), IList<string> select = default(IList<string>), IList<string> expand = default(IList<string>))
+            public static MicrosoftGraphUser GetUser(this IUsersOperations operations, string userId, string consistencyLevel = default(string), IList<string> select = default(IList<string>), IList<string> expand = default(IList<string>))
             {
                 return operations.GetUserAsync(userId, consistencyLevel, select, expand).GetAwaiter().GetResult();
             }
@@ -234,7 +234,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<Microsoftgraphuser> GetUserAsync(this IUsersOperations operations, string userId, string consistencyLevel = default(string), IList<string> select = default(IList<string>), IList<string> expand = default(IList<string>), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<MicrosoftGraphUser> GetUserAsync(this IUsersOperations operations, string userId, string consistencyLevel = default(string), IList<string> select = default(IList<string>), IList<string> expand = default(IList<string>), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.GetUserWithHttpMessagesAsync(userId, consistencyLevel, select, expand, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -257,7 +257,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
             /// <param name='body'>
             /// New property values
             /// </param>
-            public static void UpdateUser(this IUsersOperations operations, string userId, Microsoftgraphuser body)
+            public static void UpdateUser(this IUsersOperations operations, string userId, MicrosoftGraphUser body)
             {
                 operations.UpdateUserAsync(userId, body).GetAwaiter().GetResult();
             }
@@ -280,7 +280,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task UpdateUserAsync(this IUsersOperations operations, string userId, Microsoftgraphuser body, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task UpdateUserAsync(this IUsersOperations operations, string userId, MicrosoftGraphUser body, CancellationToken cancellationToken = default(CancellationToken))
             {
                 (await operations.UpdateUserWithHttpMessagesAsync(userId, body, null, cancellationToken).ConfigureAwait(false)).Dispose();
             }

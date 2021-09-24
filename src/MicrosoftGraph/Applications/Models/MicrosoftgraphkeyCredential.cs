@@ -8,7 +8,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications.Models
 {
     using Microsoft.Rest;
     using Microsoft.Rest.Serialization;
@@ -20,19 +20,19 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
     /// <summary>
     /// keyCredential
     /// </summary>
-    public partial class MicrosoftgraphkeyCredential
+    public partial class MicrosoftGraphKeyCredential
     {
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphkeyCredential
+        /// Initializes a new instance of the MicrosoftGraphKeyCredential
         /// class.
         /// </summary>
-        public MicrosoftgraphkeyCredential()
+        public MicrosoftGraphKeyCredential()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphkeyCredential
+        /// Initializes a new instance of the MicrosoftGraphKeyCredential
         /// class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
@@ -57,7 +57,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// 'Symmetric'.</param>
         /// <param name="usage">A string that describes the purpose for which
         /// the key can be used; for example, 'Verify'.</param>
-        public MicrosoftgraphkeyCredential(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), byte[] customKeyIdentifier = default(byte[]), string displayName = default(string), System.DateTime? endDateTime = default(System.DateTime?), string key = default(string), System.Guid? keyId = default(System.Guid?), System.DateTime? startDateTime = default(System.DateTime?), string type = default(string), string usage = default(string))
+        public MicrosoftGraphKeyCredential(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), byte[] customKeyIdentifier = default(byte[]), string displayName = default(string), System.DateTime? endDateTime = default(System.DateTime?), string key = default(string), System.Guid? keyId = default(System.Guid?), System.DateTime? startDateTime = default(System.DateTime?), string type = default(string), string usage = default(string))
         {
             AdditionalProperties = additionalProperties;
             CustomKeyIdentifier = customKeyIdentifier;

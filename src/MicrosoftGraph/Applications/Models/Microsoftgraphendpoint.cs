@@ -8,25 +8,25 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications.Models
 {
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class Microsoftgraphendpoint : MicrosoftgraphdirectoryObject
+    public partial class MicrosoftGraphEndpoint : MicrosoftGraphDirectoryObject
     {
         /// <summary>
-        /// Initializes a new instance of the Microsoftgraphendpoint class.
+        /// Initializes a new instance of the MicrosoftGraphEndpoint class.
         /// </summary>
-        public Microsoftgraphendpoint()
+        public MicrosoftGraphEndpoint()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the Microsoftgraphendpoint class.
+        /// Initializes a new instance of the MicrosoftGraphEndpoint class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
@@ -43,7 +43,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// etc.). Not nullable. Read-only.</param>
         /// <param name="uri">URL of the published resource. Not nullable.
         /// Read-only.</param>
-        public Microsoftgraphendpoint(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?), string capability = default(string), string providerId = default(string), string providerName = default(string), string providerResourceId = default(string), string uri = default(string))
+        public MicrosoftGraphEndpoint(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?), string capability = default(string), string providerId = default(string), string providerName = default(string), string providerResourceId = default(string), string uri = default(string))
             : base(additionalProperties, id, deletedDateTime)
         {
             Capability = capability;

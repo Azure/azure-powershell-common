@@ -8,7 +8,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications
 {
     using Microsoft.Rest;
     using Models;
@@ -18,12 +18,12 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications
     using System.Threading.Tasks;
 
     /// <summary>
-    /// ServicePrincipals operations.
+    /// ServicePrincipalsOperations operations.
     /// </summary>
     public partial interface IServicePrincipalsOperations
     {
         /// <summary>
-        /// Get entities from ServicePrincipalsOperations
+        /// Get entities from servicePrincipals
         /// </summary>
         /// <param name='consistencyLevel'>
         /// Indicates the requested consistency level. Documentation URL:
@@ -59,7 +59,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        /// <exception cref="OdataerrorException">
+        /// <exception cref="OdataErrorException">
         /// Thrown when the operation returned an invalid status code
         /// </exception>
         /// <exception cref="Microsoft.Rest.SerializationException">
@@ -67,7 +67,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications
         /// </exception>
         Task<HttpOperationResponse<ListServicePrincipalOKResponse>> ListServicePrincipalWithHttpMessagesAsync(string consistencyLevel = default(string), int? top = default(int?), int? skip = default(int?), string search = default(string), string filter = default(string), bool? count = default(bool?), IList<string> orderby = default(IList<string>), IList<string> select = default(IList<string>), IList<string> expand = default(IList<string>), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <summary>
-        /// Add new entity to ServicePrincipalsOperations
+        /// Add new entity to servicePrincipals
         /// </summary>
         /// <param name='body'>
         /// New entity
@@ -78,7 +78,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        /// <exception cref="OdataerrorException">
+        /// <exception cref="OdataErrorException">
         /// Thrown when the operation returned an invalid status code
         /// </exception>
         /// <exception cref="Microsoft.Rest.SerializationException">
@@ -87,6 +87,94 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<HttpOperationResponse<MicrosoftgraphservicePrincipal>> CreateServicePrincipalWithHttpMessagesAsync(MicrosoftgraphservicePrincipal body, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<MicrosoftGraphServicePrincipal>> CreateServicePrincipalWithHttpMessagesAsync(MicrosoftGraphServicePrincipal body, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        /// <summary>
+        /// Delete entity from servicePrincipals
+        /// </summary>
+        /// <remarks>
+        /// Represents an Azure Active Directory object. The directoryObject
+        /// type is the base type for many other directory entity types.
+        /// </remarks>
+        /// <param name='servicePrincipalId'>
+        /// key: id of servicePrincipal
+        /// </param>
+        /// <param name='ifMatch'>
+        /// ETag
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        /// <exception cref="OdataErrorException">
+        /// Thrown when the operation returned an invalid status code
+        /// </exception>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown when a required parameter is null
+        /// </exception>
+        Task<HttpOperationResponse> DeleteServicePrincipalWithHttpMessagesAsync(string servicePrincipalId, string ifMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        /// <summary>
+        /// Get entity from servicePrincipals by key
+        /// </summary>
+        /// <remarks>
+        /// Represents an Azure Active Directory object. The directoryObject
+        /// type is the base type for many other directory entity types.
+        /// </remarks>
+        /// <param name='servicePrincipalId'>
+        /// key: id of servicePrincipal
+        /// </param>
+        /// <param name='consistencyLevel'>
+        /// Indicates the requested consistency level. Documentation URL:
+        /// https://developer.microsoft.com/en-us/office/blogs/microsoft-graph-advanced-queries-for-directory-objects-are-now-generally-available/
+        /// </param>
+        /// <param name='select'>
+        /// Select properties to be returned
+        /// </param>
+        /// <param name='expand'>
+        /// Expand related entities
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        /// <exception cref="OdataErrorException">
+        /// Thrown when the operation returned an invalid status code
+        /// </exception>
+        /// <exception cref="Microsoft.Rest.SerializationException">
+        /// Thrown when unable to deserialize the response
+        /// </exception>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown when a required parameter is null
+        /// </exception>
+        Task<HttpOperationResponse<MicrosoftGraphServicePrincipal>> GetServicePrincipalWithHttpMessagesAsync(string servicePrincipalId, string consistencyLevel = default(string), IList<string> select = default(IList<string>), IList<string> expand = default(IList<string>), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        /// <summary>
+        /// Update entity in servicePrincipals
+        /// </summary>
+        /// <remarks>
+        /// Represents an Azure Active Directory object. The directoryObject
+        /// type is the base type for many other directory entity types.
+        /// </remarks>
+        /// <param name='servicePrincipalId'>
+        /// key: id of servicePrincipal
+        /// </param>
+        /// <param name='body'>
+        /// New property values
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        /// <exception cref="OdataErrorException">
+        /// Thrown when the operation returned an invalid status code
+        /// </exception>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown when a required parameter is null
+        /// </exception>
+        Task<HttpOperationResponse> UpdateServicePrincipalWithHttpMessagesAsync(string servicePrincipalId, MicrosoftGraphServicePrincipal body, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
     }
 }

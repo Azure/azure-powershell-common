@@ -8,7 +8,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications.Models
 {
     using Newtonsoft.Json;
     using System.Collections;
@@ -18,18 +18,18 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
     /// <summary>
     /// appRole
     /// </summary>
-    public partial class MicrosoftgraphappRole
+    public partial class MicrosoftGraphAppRole
     {
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphappRole class.
+        /// Initializes a new instance of the MicrosoftGraphAppRole class.
         /// </summary>
-        public MicrosoftgraphappRole()
+        public MicrosoftGraphAppRole()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphappRole class.
+        /// Initializes a new instance of the MicrosoftGraphAppRole class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
@@ -63,7 +63,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// ;  =  ? @ [ ] ^ + _  {  } ~, as well as characters in the ranges
         /// 0-9, A-Z and a-z. Any other character, including the space
         /// character, are not allowed. May not begin with ..</param>
-        public MicrosoftgraphappRole(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), IList<string> allowedMemberTypes = default(IList<string>), string description = default(string), string displayName = default(string), System.Guid? id = default(System.Guid?), bool? isEnabled = default(bool?), string origin = default(string), string value = default(string))
+        public MicrosoftGraphAppRole(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), IList<string> allowedMemberTypes = default(IList<string>), string description = default(string), string displayName = default(string), System.Guid? id = default(System.Guid?), bool? isEnabled = default(bool?), string origin = default(string), string value = default(string))
         {
             AdditionalProperties = additionalProperties;
             AllowedMemberTypes = allowedMemberTypes;

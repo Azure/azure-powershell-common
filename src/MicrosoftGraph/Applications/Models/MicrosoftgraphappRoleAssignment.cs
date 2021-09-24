@@ -8,26 +8,26 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications.Models
 {
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class MicrosoftgraphappRoleAssignment : MicrosoftgraphdirectoryObject
+    public partial class MicrosoftGraphAppRoleAssignment : MicrosoftGraphDirectoryObject
     {
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphappRoleAssignment
+        /// Initializes a new instance of the MicrosoftGraphAppRoleAssignment
         /// class.
         /// </summary>
-        public MicrosoftgraphappRoleAssignment()
+        public MicrosoftGraphAppRoleAssignment()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphappRoleAssignment
+        /// Initializes a new instance of the MicrosoftGraphAppRoleAssignment
         /// class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
@@ -61,7 +61,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// <param name="resourceId">The unique identifier (id) for the
         /// resource service principal for which the assignment is made.
         /// Required on create. Supports $filter (eq only).</param>
-        public MicrosoftgraphappRoleAssignment(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?), System.Guid? appRoleId = default(System.Guid?), System.DateTime? createdDateTime = default(System.DateTime?), string principalDisplayName = default(string), System.Guid? principalId = default(System.Guid?), string principalType = default(string), string resourceDisplayName = default(string), System.Guid? resourceId = default(System.Guid?))
+        public MicrosoftGraphAppRoleAssignment(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?), System.Guid? appRoleId = default(System.Guid?), System.DateTime? createdDateTime = default(System.DateTime?), string principalDisplayName = default(string), System.Guid? principalId = default(System.Guid?), string principalType = default(string), string resourceDisplayName = default(string), System.Guid? resourceId = default(System.Guid?))
             : base(additionalProperties, id, deletedDateTime)
         {
             AppRoleId = appRoleId;

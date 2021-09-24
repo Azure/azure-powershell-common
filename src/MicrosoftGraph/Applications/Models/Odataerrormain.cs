@@ -8,7 +8,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications.Models
 {
     using Microsoft.Rest;
     using Newtonsoft.Json;
@@ -16,24 +16,24 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class Odataerrormain
+    public partial class OdataErrorMain
     {
         /// <summary>
-        /// Initializes a new instance of the Odataerrormain class.
+        /// Initializes a new instance of the OdataErrorMain class.
         /// </summary>
-        public Odataerrormain()
+        public OdataErrorMain()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the Odataerrormain class.
+        /// Initializes a new instance of the OdataErrorMain class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
         /// <param name="innererror">The structure of this object is
         /// service-specific</param>
-        public Odataerrormain(string code, string message, IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), IList<Odataerrordetail> details = default(IList<Odataerrordetail>), IDictionary<string, object> innererror = default(IDictionary<string, object>), string target = default(string))
+        public OdataErrorMain(string code, string message, IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), IList<OdataErrorDetail> details = default(IList<OdataErrorDetail>), IDictionary<string, object> innererror = default(IDictionary<string, object>), string target = default(string))
         {
             AdditionalProperties = additionalProperties;
             Code = code;
@@ -64,7 +64,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "details")]
-        public IList<Odataerrordetail> Details { get; set; }
+        public IList<OdataErrorDetail> Details { get; set; }
 
         /// <summary>
         /// Gets or sets the structure of this object is service-specific

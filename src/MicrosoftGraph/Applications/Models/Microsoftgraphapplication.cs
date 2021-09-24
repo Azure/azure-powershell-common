@@ -8,25 +8,25 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications.Models
 {
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class Microsoftgraphapplication : MicrosoftgraphdirectoryObject
+    public partial class MicrosoftGraphApplication : MicrosoftGraphDirectoryObject
     {
         /// <summary>
-        /// Initializes a new instance of the Microsoftgraphapplication class.
+        /// Initializes a new instance of the MicrosoftGraphApplication class.
         /// </summary>
-        public Microsoftgraphapplication()
+        public MicrosoftGraphApplication()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the Microsoftgraphapplication class.
+        /// Initializes a new instance of the MicrosoftGraphApplication class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
@@ -34,12 +34,6 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// <param name="tags">Custom strings that can be used to categorize
         /// and identify the application. Not nullable.Supports $filter (eq,
         /// NOT, ge, le, startsWith).</param>
-        /// <param name="addIns">Defines custom behavior that a consuming
-        /// service can use to call an app in specific contexts. For example,
-        /// applications that can render file streams may set the addIns
-        /// property for its 'FileHandler' functionality. This will let
-        /// services like Office 365 call the application in the context of a
-        /// document the user is working on.</param>
         /// <param name="appId">The unique identifier for the application that
         /// is assigned by Azure AD. Not nullable. Read-only.</param>
         /// <param name="appRoles">The collection of roles assigned to the
@@ -77,13 +71,10 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// application. Read-only. Nullable. Supports $expand.</param>
         /// <param name="passwordCredentials">The collection of password
         /// credentials associated with the application. Not nullable.</param>
-        public Microsoftgraphapplication(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?), MicrosoftgraphinformationalUrl info = default(MicrosoftgraphinformationalUrl), IList<string> tags = default(IList<string>), IList<MicrosoftgraphaddIn> addIns = default(IList<MicrosoftgraphaddIn>), MicrosoftgraphapiApplication api = default(MicrosoftgraphapiApplication), string appId = default(string), IList<MicrosoftgraphappRole> appRoles = default(IList<MicrosoftgraphappRole>), string applicationTemplateId = default(string), System.DateTime? createdDateTime = default(System.DateTime?), string description = default(string), string displayName = default(string), IList<MicrosoftgraphextensionProperty> extensionProperties = default(IList<MicrosoftgraphextensionProperty>), IList<string> identifierUris = default(IList<string>), bool? isDeviceOnlyAuthSupported = default(bool?), IList<MicrosoftgraphkeyCredential> keyCredentials = default(IList<MicrosoftgraphkeyCredential>), bool? oauth2RequirePostResponse = default(bool?), MicrosoftgraphoptionalClaims optionalClaims = default(MicrosoftgraphoptionalClaims), IList<MicrosoftgraphdirectoryObject> owners = default(IList<MicrosoftgraphdirectoryObject>), IList<MicrosoftgraphpasswordCredential> passwordCredentials = default(IList<MicrosoftgraphpasswordCredential>))
+        public MicrosoftGraphApplication(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?), IList<string> tags = default(IList<string>), string appId = default(string), IList<MicrosoftGraphAppRole> appRoles = default(IList<MicrosoftGraphAppRole>), string applicationTemplateId = default(string), System.DateTime? createdDateTime = default(System.DateTime?), string description = default(string), string displayName = default(string), IList<MicrosoftGraphExtensionProperty> extensionProperties = default(IList<MicrosoftGraphExtensionProperty>), IList<string> identifierUris = default(IList<string>), bool? isDeviceOnlyAuthSupported = default(bool?), IList<MicrosoftGraphKeyCredential> keyCredentials = default(IList<MicrosoftGraphKeyCredential>), bool? oauth2RequirePostResponse = default(bool?), IList<MicrosoftGraphDirectoryObject> owners = default(IList<MicrosoftGraphDirectoryObject>), IList<MicrosoftGraphPasswordCredential> passwordCredentials = default(IList<MicrosoftGraphPasswordCredential>))
             : base(additionalProperties, id, deletedDateTime)
         {
-            Info = info;
             Tags = tags;
-            AddIns = addIns;
-            Api = api;
             AppId = appId;
             AppRoles = appRoles;
             ApplicationTemplateId = applicationTemplateId;
@@ -95,7 +86,6 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
             IsDeviceOnlyAuthSupported = isDeviceOnlyAuthSupported;
             KeyCredentials = keyCredentials;
             Oauth2RequirePostResponse = oauth2RequirePostResponse;
-            OptionalClaims = optionalClaims;
             Owners = owners;
             PasswordCredentials = passwordCredentials;
             CustomInit();
@@ -107,33 +97,12 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         partial void CustomInit();
 
         /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "info")]
-        public MicrosoftgraphinformationalUrl Info { get; set; }
-
-        /// <summary>
         /// Gets or sets custom strings that can be used to categorize and
         /// identify the application. Not nullable.Supports $filter (eq, NOT,
         /// ge, le, startsWith).
         /// </summary>
         [JsonProperty(PropertyName = "tags")]
         public IList<string> Tags { get; set; }
-
-        /// <summary>
-        /// Gets or sets defines custom behavior that a consuming service can
-        /// use to call an app in specific contexts. For example, applications
-        /// that can render file streams may set the addIns property for its
-        /// 'FileHandler' functionality. This will let services like Office 365
-        /// call the application in the context of a document the user is
-        /// working on.
-        /// </summary>
-        [JsonProperty(PropertyName = "addIns")]
-        public IList<MicrosoftgraphaddIn> AddIns { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "api")]
-        public MicrosoftgraphapiApplication Api { get; set; }
 
         /// <summary>
         /// Gets or sets the unique identifier for the application that is
@@ -149,7 +118,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// Not nullable.
         /// </summary>
         [JsonProperty(PropertyName = "appRoles")]
-        public IList<MicrosoftgraphappRole> AppRoles { get; set; }
+        public IList<MicrosoftGraphAppRole> AppRoles { get; set; }
 
         /// <summary>
         /// Gets or sets unique identifier of the applicationTemplate.
@@ -186,7 +155,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// Gets or sets read-only. Nullable.
         /// </summary>
         [JsonProperty(PropertyName = "extensionProperties")]
-        public IList<MicrosoftgraphextensionProperty> ExtensionProperties { get; set; }
+        public IList<MicrosoftGraphExtensionProperty> ExtensionProperties { get; set; }
 
         /// <summary>
         /// Gets or sets the URIs that identify the application within its
@@ -211,7 +180,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// application. Not nullable. Supports $filter (eq, NOT, ge, le).
         /// </summary>
         [JsonProperty(PropertyName = "keyCredentials")]
-        public IList<MicrosoftgraphkeyCredential> KeyCredentials { get; set; }
+        public IList<MicrosoftGraphKeyCredential> KeyCredentials { get; set; }
 
         /// <summary>
         /// </summary>
@@ -219,36 +188,18 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         public bool? Oauth2RequirePostResponse { get; set; }
 
         /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "optionalClaims")]
-        public MicrosoftgraphoptionalClaims OptionalClaims { get; set; }
-
-        /// <summary>
         /// Gets or sets directory objects that are owners of the application.
         /// Read-only. Nullable. Supports $expand.
         /// </summary>
         [JsonProperty(PropertyName = "owners")]
-        public IList<MicrosoftgraphdirectoryObject> Owners { get; set; }
+        public IList<MicrosoftGraphDirectoryObject> Owners { get; set; }
 
         /// <summary>
         /// Gets or sets the collection of password credentials associated with
         /// the application. Not nullable.
         /// </summary>
         [JsonProperty(PropertyName = "passwordCredentials")]
-        public IList<MicrosoftgraphpasswordCredential> PasswordCredentials { get; set; }
+        public IList<MicrosoftGraphPasswordCredential> PasswordCredentials { get; set; }
 
-        /// <summary>
-        /// Validate the object.
-        /// </summary>
-        /// <exception cref="Rest.ValidationException">
-        /// Thrown if validation fails
-        /// </exception>
-        public virtual void Validate()
-        {
-            if (Api != null)
-            {
-                Api.Validate();
-            }
-        }
     }
 }

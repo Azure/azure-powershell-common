@@ -8,25 +8,25 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Users.Models
 {
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class Microsoftgraphuser : MicrosoftgraphdirectoryObject
+    public partial class MicrosoftGraphUser : MicrosoftGraphDirectoryObject
     {
         /// <summary>
-        /// Initializes a new instance of the Microsoftgraphuser class.
+        /// Initializes a new instance of the MicrosoftGraphUser class.
         /// </summary>
-        public Microsoftgraphuser()
+        public MicrosoftGraphUser()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the Microsoftgraphuser class.
+        /// Initializes a new instance of the MicrosoftGraphUser class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
@@ -40,7 +40,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users.Models
         /// <param name="userType">A string value that can be used to classify
         /// user types in your directory, such as Member and Guest. Supports
         /// $filter (eq, ne, NOT, in,).</param>
-        public Microsoftgraphuser(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?), bool? accountEnabled = default(bool?), string employeeId = default(string), string userType = default(string))
+        public MicrosoftGraphUser(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?), bool? accountEnabled = default(bool?), string employeeId = default(string), string userType = default(string))
             : base(additionalProperties, id, deletedDateTime)
         {
             AccountEnabled = accountEnabled;
@@ -78,9 +78,5 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users.Models
         [JsonProperty(PropertyName = "userType")]
         public string UserType { get; set; }
 
-        public bool Validate()
-        {
-            return true;
-        }
     }
 }

@@ -8,9 +8,9 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
+namespace Microsoft.Azure.Commands.Common.MSGraph.Users
 {
-    using Microsoft.Azure.Commands.MicrosoftGraph;
+    using Microsoft.Azure.Commands.Common.MSGraph;
     using Microsoft.Rest;
     using Models;
     using Newtonsoft.Json;
@@ -24,7 +24,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Users operations.
+    /// UsersOperations operations.
     /// </summary>
     public partial class UsersOperations : IServiceOperations<MicrosoftGraphClient>, IUsersOperations
     {
@@ -47,7 +47,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
         }
 
         /// <summary>
-        /// Gets a reference to the Users
+        /// Gets a reference to the MicrosoftGraphClient
         /// </summary>
         public MicrosoftGraphClient Client { get; private set; }
 
@@ -88,7 +88,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        /// <exception cref="OdataerrorException">
+        /// <exception cref="OdataErrorException">
         /// Thrown when the operation returned an invalid status code
         /// </exception>
         /// <exception cref="SerializationException">
@@ -227,14 +227,15 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
                 }
             }
 
-            // Serialize Request
-            string _requestContent = null;
             // Set Credentials
             if (Client.Credentials != null)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 await Client.Credentials.ProcessHttpRequestAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
             }
+
+            // Serialize Request
+            string _requestContent = null;
             // Send Request
             if (_shouldTrace)
             {
@@ -251,11 +252,11 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
             string _responseContent = null;
             if ((int)_statusCode != 200)
             {
-                var ex = new OdataerrorException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
+                var ex = new OdataErrorException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
                 try
                 {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    Odataerror _errorBody =  Rest.Serialization.SafeJsonConvert.DeserializeObject<Odataerror>(_responseContent, Client.DeserializationSettings);
+                    OdataError _errorBody =  Rest.Serialization.SafeJsonConvert.DeserializeObject<OdataError>(_responseContent, Client.DeserializationSettings);
                     if (_errorBody != null)
                     {
                         ex.Body = _errorBody;
@@ -319,7 +320,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        /// <exception cref="OdataerrorException">
+        /// <exception cref="OdataErrorException">
         /// Thrown when the operation returned an invalid status code
         /// </exception>
         /// <exception cref="SerializationException">
@@ -334,15 +335,11 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<HttpOperationResponse<Microsoftgraphuser>> CreateUserWithHttpMessagesAsync(Microsoftgraphuser body, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationResponse<MicrosoftGraphUser>> CreateUserWithHttpMessagesAsync(MicrosoftGraphUser body, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (body == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "body");
-            }
-            if (body != null)
-            {
-                body.Validate();
             }
             // Tracing
             bool _shouldTrace = ServiceClientTracing.IsEnabled;
@@ -390,6 +387,13 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
                 }
             }
 
+            // Set Credentials
+            if (Client.Credentials != null)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                await Client.Credentials.ProcessHttpRequestAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
+            }
+
             // Serialize Request
             string _requestContent = null;
             if(body != null)
@@ -397,12 +401,6 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
                 _requestContent = Rest.Serialization.SafeJsonConvert.SerializeObject(body, Client.SerializationSettings);
                 _httpRequest.Content = new StringContent(_requestContent, System.Text.Encoding.UTF8);
                 _httpRequest.Content.Headers.ContentType =System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json; charset=utf-8");
-            }
-            // Set Credentials
-            if (Client.Credentials != null)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                await Client.Credentials.ProcessHttpRequestAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
             }
             // Send Request
             if (_shouldTrace)
@@ -420,11 +418,11 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
             string _responseContent = null;
             if ((int)_statusCode != 201)
             {
-                var ex = new OdataerrorException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
+                var ex = new OdataErrorException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
                 try
                 {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    Odataerror _errorBody =  Rest.Serialization.SafeJsonConvert.DeserializeObject<Odataerror>(_responseContent, Client.DeserializationSettings);
+                    OdataError _errorBody =  Rest.Serialization.SafeJsonConvert.DeserializeObject<OdataError>(_responseContent, Client.DeserializationSettings);
                     if (_errorBody != null)
                     {
                         ex.Body = _errorBody;
@@ -448,7 +446,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
                 throw ex;
             }
             // Create Result
-            var _result = new HttpOperationResponse<Microsoftgraphuser>();
+            var _result = new HttpOperationResponse<MicrosoftGraphUser>();
             _result.Request = _httpRequest;
             _result.Response = _httpResponse;
             // Deserialize Response
@@ -457,7 +455,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
                 _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 try
                 {
-                    _result.Body = Rest.Serialization.SafeJsonConvert.DeserializeObject<Microsoftgraphuser>(_responseContent, Client.DeserializationSettings);
+                    _result.Body = Rest.Serialization.SafeJsonConvert.DeserializeObject<MicrosoftGraphUser>(_responseContent, Client.DeserializationSettings);
                 }
                 catch (JsonException ex)
                 {
@@ -494,7 +492,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        /// <exception cref="OdataerrorException">
+        /// <exception cref="OdataErrorException">
         /// Thrown when the operation returned an invalid status code
         /// </exception>
         /// <exception cref="ValidationException">
@@ -534,6 +532,18 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
             _httpRequest.Method = new HttpMethod("DELETE");
             _httpRequest.RequestUri = new System.Uri(_url);
             // Set Headers
+            if (Client.GenerateClientRequestId != null && Client.GenerateClientRequestId.Value)
+            {
+                _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", System.Guid.NewGuid().ToString());
+            }
+            if (Client.AcceptLanguage != null)
+            {
+                if (_httpRequest.Headers.Contains("accept-language"))
+                {
+                    _httpRequest.Headers.Remove("accept-language");
+                }
+                _httpRequest.Headers.TryAddWithoutValidation("accept-language", Client.AcceptLanguage);
+            }
             if (ifMatch != null)
             {
                 if (_httpRequest.Headers.Contains("If-Match"))
@@ -556,6 +566,13 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
                 }
             }
 
+            // Set Credentials
+            if (Client.Credentials != null)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                await Client.Credentials.ProcessHttpRequestAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
+            }
+
             // Serialize Request
             string _requestContent = null;
             // Send Request
@@ -574,11 +591,11 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
             string _responseContent = null;
             if ((int)_statusCode != 204)
             {
-                var ex = new OdataerrorException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
+                var ex = new OdataErrorException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
                 try
                 {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    Odataerror _errorBody =  Rest.Serialization.SafeJsonConvert.DeserializeObject<Odataerror>(_responseContent, Client.DeserializationSettings);
+                    OdataError _errorBody =  Rest.Serialization.SafeJsonConvert.DeserializeObject<OdataError>(_responseContent, Client.DeserializationSettings);
                     if (_errorBody != null)
                     {
                         ex.Body = _errorBody;
@@ -637,7 +654,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        /// <exception cref="OdataerrorException">
+        /// <exception cref="OdataErrorException">
         /// Thrown when the operation returned an invalid status code
         /// </exception>
         /// <exception cref="SerializationException">
@@ -652,7 +669,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<HttpOperationResponse<Microsoftgraphuser>> GetUserWithHttpMessagesAsync(string userId, string consistencyLevel = default(string), IList<string> select = default(IList<string>), IList<string> expand = default(IList<string>), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationResponse<MicrosoftGraphUser>> GetUserWithHttpMessagesAsync(string userId, string consistencyLevel = default(string), IList<string> select = default(IList<string>), IList<string> expand = default(IList<string>), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (userId == null)
             {
@@ -709,6 +726,18 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
             _httpRequest.Method = new HttpMethod("GET");
             _httpRequest.RequestUri = new System.Uri(_url);
             // Set Headers
+            if (Client.GenerateClientRequestId != null && Client.GenerateClientRequestId.Value)
+            {
+                _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", System.Guid.NewGuid().ToString());
+            }
+            if (Client.AcceptLanguage != null)
+            {
+                if (_httpRequest.Headers.Contains("accept-language"))
+                {
+                    _httpRequest.Headers.Remove("accept-language");
+                }
+                _httpRequest.Headers.TryAddWithoutValidation("accept-language", Client.AcceptLanguage);
+            }
             if (consistencyLevel != null)
             {
                 if (_httpRequest.Headers.Contains("ConsistencyLevel"))
@@ -731,6 +760,13 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
                 }
             }
 
+            // Set Credentials
+            if (Client.Credentials != null)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                await Client.Credentials.ProcessHttpRequestAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
+            }
+
             // Serialize Request
             string _requestContent = null;
             // Send Request
@@ -749,11 +785,11 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
             string _responseContent = null;
             if ((int)_statusCode != 200)
             {
-                var ex = new OdataerrorException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
+                var ex = new OdataErrorException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
                 try
                 {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    Odataerror _errorBody =  Rest.Serialization.SafeJsonConvert.DeserializeObject<Odataerror>(_responseContent, Client.DeserializationSettings);
+                    OdataError _errorBody =  Rest.Serialization.SafeJsonConvert.DeserializeObject<OdataError>(_responseContent, Client.DeserializationSettings);
                     if (_errorBody != null)
                     {
                         ex.Body = _errorBody;
@@ -777,7 +813,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
                 throw ex;
             }
             // Create Result
-            var _result = new HttpOperationResponse<Microsoftgraphuser>();
+            var _result = new HttpOperationResponse<MicrosoftGraphUser>();
             _result.Request = _httpRequest;
             _result.Response = _httpResponse;
             // Deserialize Response
@@ -786,7 +822,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
                 _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 try
                 {
-                    _result.Body = Rest.Serialization.SafeJsonConvert.DeserializeObject<Microsoftgraphuser>(_responseContent, Client.DeserializationSettings);
+                    _result.Body = Rest.Serialization.SafeJsonConvert.DeserializeObject<MicrosoftGraphUser>(_responseContent, Client.DeserializationSettings);
                 }
                 catch (JsonException ex)
                 {
@@ -823,7 +859,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        /// <exception cref="OdataerrorException">
+        /// <exception cref="OdataErrorException">
         /// Thrown when the operation returned an invalid status code
         /// </exception>
         /// <exception cref="ValidationException">
@@ -835,7 +871,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<HttpOperationResponse> UpdateUserWithHttpMessagesAsync(string userId, Microsoftgraphuser body, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationResponse> UpdateUserWithHttpMessagesAsync(string userId, MicrosoftGraphUser body, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (userId == null)
             {
@@ -867,6 +903,18 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
             _httpRequest.Method = new HttpMethod("PATCH");
             _httpRequest.RequestUri = new System.Uri(_url);
             // Set Headers
+            if (Client.GenerateClientRequestId != null && Client.GenerateClientRequestId.Value)
+            {
+                _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", System.Guid.NewGuid().ToString());
+            }
+            if (Client.AcceptLanguage != null)
+            {
+                if (_httpRequest.Headers.Contains("accept-language"))
+                {
+                    _httpRequest.Headers.Remove("accept-language");
+                }
+                _httpRequest.Headers.TryAddWithoutValidation("accept-language", Client.AcceptLanguage);
+            }
 
 
             if (customHeaders != null)
@@ -879,6 +927,13 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
                     }
                     _httpRequest.Headers.TryAddWithoutValidation(_header.Key, _header.Value);
                 }
+            }
+
+            // Set Credentials
+            if (Client.Credentials != null)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                await Client.Credentials.ProcessHttpRequestAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
             }
 
             // Serialize Request
@@ -905,11 +960,11 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
             string _responseContent = null;
             if ((int)_statusCode != 204)
             {
-                var ex = new OdataerrorException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
+                var ex = new OdataErrorException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
                 try
                 {
                     _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    Odataerror _errorBody =  Rest.Serialization.SafeJsonConvert.DeserializeObject<Odataerror>(_responseContent, Client.DeserializationSettings);
+                    OdataError _errorBody =  Rest.Serialization.SafeJsonConvert.DeserializeObject<OdataError>(_responseContent, Client.DeserializationSettings);
                     if (_errorBody != null)
                     {
                         ex.Body = _errorBody;

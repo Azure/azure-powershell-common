@@ -8,7 +8,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications.Models
 {
     using Newtonsoft.Json;
     using System.Collections;
@@ -18,19 +18,19 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
     /// <summary>
     /// permissionScope
     /// </summary>
-    public partial class MicrosoftgraphpermissionScope
+    public partial class MicrosoftGraphPermissionScope
     {
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphpermissionScope
+        /// Initializes a new instance of the MicrosoftGraphPermissionScope
         /// class.
         /// </summary>
-        public MicrosoftgraphpermissionScope()
+        public MicrosoftGraphPermissionScope()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphpermissionScope
+        /// Initializes a new instance of the MicrosoftGraphPermissionScope
         /// class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
@@ -70,7 +70,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// ;  =  ? @ [ ] ^ + _  {  } ~, as well as characters in the ranges
         /// 0-9, A-Z and a-z. Any other character, including the space
         /// character, are not allowed. May not begin with ..</param>
-        public MicrosoftgraphpermissionScope(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string adminConsentDescription = default(string), string adminConsentDisplayName = default(string), System.Guid? id = default(System.Guid?), bool? isEnabled = default(bool?), string origin = default(string), string type = default(string), string userConsentDescription = default(string), string userConsentDisplayName = default(string), string value = default(string))
+        public MicrosoftGraphPermissionScope(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string adminConsentDescription = default(string), string adminConsentDisplayName = default(string), System.Guid? id = default(System.Guid?), bool? isEnabled = default(bool?), string origin = default(string), string type = default(string), string userConsentDescription = default(string), string userConsentDisplayName = default(string), string value = default(string))
         {
             AdditionalProperties = additionalProperties;
             AdminConsentDescription = adminConsentDescription;

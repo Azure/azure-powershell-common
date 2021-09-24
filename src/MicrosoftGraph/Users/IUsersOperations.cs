@@ -8,7 +8,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
+namespace Microsoft.Azure.Commands.Common.MSGraph.Users
 {
     using Microsoft.Rest;
     using Models;
@@ -18,7 +18,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Users operations.
+    /// UsersOperations operations.
     /// </summary>
     public partial interface IUsersOperations
     {
@@ -59,7 +59,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        /// <exception cref="OdataerrorException">
+        /// <exception cref="OdataErrorException">
         /// Thrown when the operation returned an invalid status code
         /// </exception>
         /// <exception cref="Microsoft.Rest.SerializationException">
@@ -78,7 +78,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        /// <exception cref="OdataerrorException">
+        /// <exception cref="OdataErrorException">
         /// Thrown when the operation returned an invalid status code
         /// </exception>
         /// <exception cref="Microsoft.Rest.SerializationException">
@@ -87,7 +87,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<HttpOperationResponse<Microsoftgraphuser>> CreateUserWithHttpMessagesAsync(Microsoftgraphuser body, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<MicrosoftGraphUser>> CreateUserWithHttpMessagesAsync(MicrosoftGraphUser body, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <summary>
         /// Delete entity from users
         /// </summary>
@@ -106,7 +106,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        /// <exception cref="OdataerrorException">
+        /// <exception cref="OdataErrorException">
         /// Thrown when the operation returned an invalid status code
         /// </exception>
         /// <exception cref="Microsoft.Rest.ValidationException">
@@ -138,7 +138,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        /// <exception cref="OdataerrorException">
+        /// <exception cref="OdataErrorException">
         /// Thrown when the operation returned an invalid status code
         /// </exception>
         /// <exception cref="Microsoft.Rest.SerializationException">
@@ -147,7 +147,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<HttpOperationResponse<Microsoftgraphuser>> GetUserWithHttpMessagesAsync(string userId, string consistencyLevel = default(string), IList<string> select = default(IList<string>), IList<string> expand = default(IList<string>), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<MicrosoftGraphUser>> GetUserWithHttpMessagesAsync(string userId, string consistencyLevel = default(string), IList<string> select = default(IList<string>), IList<string> expand = default(IList<string>), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <summary>
         /// Update entity in users
         /// </summary>
@@ -166,12 +166,12 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        /// <exception cref="OdataerrorException">
+        /// <exception cref="OdataErrorException">
         /// Thrown when the operation returned an invalid status code
         /// </exception>
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<HttpOperationResponse> UpdateUserWithHttpMessagesAsync(string userId, Microsoftgraphuser body, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse> UpdateUserWithHttpMessagesAsync(string userId, MicrosoftGraphUser body, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
     }
 }

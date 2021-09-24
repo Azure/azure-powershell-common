@@ -8,7 +8,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Users.Models
 {
     using Newtonsoft.Json;
     using System.Collections;
@@ -18,18 +18,18 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users.Models
     /// <summary>
     /// identity
     /// </summary>
-    public partial class Microsoftgraphidentity
+    public partial class MicrosoftGraphIdentity
     {
         /// <summary>
-        /// Initializes a new instance of the Microsoftgraphidentity class.
+        /// Initializes a new instance of the MicrosoftGraphIdentity class.
         /// </summary>
-        public Microsoftgraphidentity()
+        public MicrosoftGraphIdentity()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the Microsoftgraphidentity class.
+        /// Initializes a new instance of the MicrosoftGraphIdentity class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
@@ -39,7 +39,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users.Models
         /// a future response, but the items associated with the user won't
         /// show up as having changed when using delta.</param>
         /// <param name="id">Unique identifier for the identity.</param>
-        public Microsoftgraphidentity(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string displayName = default(string), string id = default(string))
+        public MicrosoftGraphIdentity(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string displayName = default(string), string id = default(string))
         {
             AdditionalProperties = additionalProperties;
             DisplayName = displayName;

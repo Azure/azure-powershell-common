@@ -4,10 +4,10 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.Commands.MicrosoftGraph
+namespace Microsoft.Azure.Commands.Common.MSGraph
 {
-    using Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications;
-    using Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users;
+    using Microsoft.Azure.Commands.Common.MSGraph.Applications;
+    using Microsoft.Azure.Commands.Common.MSGraph.Users;
     using Microsoft.Rest;
     using Microsoft.Rest.Azure;
     using Newtonsoft.Json;

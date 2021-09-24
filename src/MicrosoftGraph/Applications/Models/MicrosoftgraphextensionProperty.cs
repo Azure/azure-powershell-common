@@ -8,26 +8,26 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications.Models
 {
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class MicrosoftgraphextensionProperty : MicrosoftgraphdirectoryObject
+    public partial class MicrosoftGraphExtensionProperty : MicrosoftGraphDirectoryObject
     {
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphextensionProperty
+        /// Initializes a new instance of the MicrosoftGraphExtensionProperty
         /// class.
         /// </summary>
-        public MicrosoftgraphextensionProperty()
+        public MicrosoftGraphExtensionProperty()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphextensionProperty
+        /// Initializes a new instance of the MicrosoftGraphExtensionProperty
         /// class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
@@ -48,7 +48,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// nullable.</param>
         /// <param name="targetObjects">Following values are supported. Not
         /// nullable. UserGroupOrganizationDeviceApplication</param>
-        public MicrosoftgraphextensionProperty(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?), string appDisplayName = default(string), string dataType = default(string), bool? isSyncedFromOnPremises = default(bool?), string name = default(string), IList<string> targetObjects = default(IList<string>))
+        public MicrosoftGraphExtensionProperty(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?), string appDisplayName = default(string), string dataType = default(string), bool? isSyncedFromOnPremises = default(bool?), string name = default(string), IList<string> targetObjects = default(IList<string>))
             : base(additionalProperties, id, deletedDateTime)
         {
             AppDisplayName = appDisplayName;

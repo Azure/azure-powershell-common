@@ -8,7 +8,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications.Models
 {
     using Newtonsoft.Json;
     using System.Collections;
@@ -16,29 +16,30 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
     using System.Linq;
 
     /// <summary>
-    /// addIn
+    /// Collection of appRoleAssignment
     /// </summary>
-    public partial class MicrosoftgraphaddIn
+    public partial class ListAppRoleAssignmentsOKResponse
     {
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphaddIn class.
+        /// Initializes a new instance of the ListAppRoleAssignmentsOKResponse
+        /// class.
         /// </summary>
-        public MicrosoftgraphaddIn()
+        public ListAppRoleAssignmentsOKResponse()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphaddIn class.
+        /// Initializes a new instance of the ListAppRoleAssignmentsOKResponse
+        /// class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
-        public MicrosoftgraphaddIn(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), System.Guid? id = default(System.Guid?), IList<MicrosoftgraphkeyValue> properties = default(IList<MicrosoftgraphkeyValue>), string type = default(string))
+        public ListAppRoleAssignmentsOKResponse(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string odatanextLink = default(string), IList<MicrosoftGraphAppRoleAssignment> value = default(IList<MicrosoftGraphAppRoleAssignment>))
         {
             AdditionalProperties = additionalProperties;
-            Id = id;
-            Properties = properties;
-            Type = type;
+            OdatanextLink = odatanextLink;
+            Value = value;
             CustomInit();
         }
 
@@ -56,18 +57,13 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "id")]
-        public System.Guid? Id { get; set; }
+        [JsonProperty(PropertyName = "@odata.nextLink")]
+        public string OdatanextLink { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "properties")]
-        public IList<MicrosoftgraphkeyValue> Properties { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "type")]
-        public string Type { get; set; }
+        [JsonProperty(PropertyName = "value")]
+        public IList<MicrosoftGraphAppRoleAssignment> Value { get; set; }
 
     }
 }

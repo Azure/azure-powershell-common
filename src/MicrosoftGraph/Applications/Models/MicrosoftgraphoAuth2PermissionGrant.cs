@@ -8,27 +8,27 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications.Models
 {
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class MicrosoftgraphoAuth2PermissionGrant : Microsoftgraphentity
+    public partial class MicrosoftGraphOAuth2PermissionGrant : MicrosoftGraphEntity
     {
         /// <summary>
         /// Initializes a new instance of the
-        /// MicrosoftgraphoAuth2PermissionGrant class.
+        /// MicrosoftGraphOAuth2PermissionGrant class.
         /// </summary>
-        public MicrosoftgraphoAuth2PermissionGrant()
+        public MicrosoftGraphOAuth2PermissionGrant()
         {
             CustomInit();
         }
 
         /// <summary>
         /// Initializes a new instance of the
-        /// MicrosoftgraphoAuth2PermissionGrant class.
+        /// MicrosoftGraphOAuth2PermissionGrant class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
@@ -60,7 +60,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// of one of the delegated permissions defined by the API, listed in
         /// the publishedPermissionScopes property of the resource service
         /// principal.</param>
-        public MicrosoftgraphoAuth2PermissionGrant(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), string clientId = default(string), string consentType = default(string), string principalId = default(string), string resourceId = default(string), string scope = default(string))
+        public MicrosoftGraphOAuth2PermissionGrant(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), string clientId = default(string), string consentType = default(string), string principalId = default(string), string resourceId = default(string), string scope = default(string))
             : base(additionalProperties, id)
         {
             ClientId = clientId;

@@ -8,7 +8,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications.Models
 {
     using Newtonsoft.Json;
     using System.Collections;
@@ -18,24 +18,24 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
     /// <summary>
     /// applicationServicePrincipal
     /// </summary>
-    public partial class MicrosoftgraphapplicationServicePrincipal
+    public partial class MicrosoftGraphApplicationServicePrincipal
     {
         /// <summary>
         /// Initializes a new instance of the
-        /// MicrosoftgraphapplicationServicePrincipal class.
+        /// MicrosoftGraphApplicationServicePrincipal class.
         /// </summary>
-        public MicrosoftgraphapplicationServicePrincipal()
+        public MicrosoftGraphApplicationServicePrincipal()
         {
             CustomInit();
         }
 
         /// <summary>
         /// Initializes a new instance of the
-        /// MicrosoftgraphapplicationServicePrincipal class.
+        /// MicrosoftGraphApplicationServicePrincipal class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
-        public MicrosoftgraphapplicationServicePrincipal(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), Microsoftgraphapplication application = default(Microsoftgraphapplication), MicrosoftgraphservicePrincipal servicePrincipal = default(MicrosoftgraphservicePrincipal))
+        public MicrosoftGraphApplicationServicePrincipal(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), MicrosoftGraphApplication application = default(MicrosoftGraphApplication), MicrosoftGraphServicePrincipal servicePrincipal = default(MicrosoftGraphServicePrincipal))
         {
             AdditionalProperties = additionalProperties;
             Application = application;
@@ -58,25 +58,12 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "application")]
-        public Microsoftgraphapplication Application { get; set; }
+        public MicrosoftGraphApplication Application { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "servicePrincipal")]
-        public MicrosoftgraphservicePrincipal ServicePrincipal { get; set; }
+        public MicrosoftGraphServicePrincipal ServicePrincipal { get; set; }
 
-        /// <summary>
-        /// Validate the object.
-        /// </summary>
-        /// <exception cref="Rest.ValidationException">
-        /// Thrown if validation fails
-        /// </exception>
-        public virtual void Validate()
-        {
-            if (Application != null)
-            {
-                Application.Validate();
-            }
-        }
     }
 }

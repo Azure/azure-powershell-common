@@ -8,7 +8,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications
 {
     using Models;
     using System.Collections;
@@ -114,7 +114,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications
             /// <param name='body'>
             /// New entity
             /// </param>
-            public static Microsoftgraphapplication CreateApplication(this IApplicationsOperations operations, Microsoftgraphapplication body)
+            public static MicrosoftGraphApplication CreateApplication(this IApplicationsOperations operations, MicrosoftGraphApplication body)
             {
                 return operations.CreateApplicationAsync(body).GetAwaiter().GetResult();
             }
@@ -131,12 +131,164 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<Microsoftgraphapplication> CreateApplicationAsync(this IApplicationsOperations operations, Microsoftgraphapplication body, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<MicrosoftGraphApplication> CreateApplicationAsync(this IApplicationsOperations operations, MicrosoftGraphApplication body, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.CreateApplicationWithHttpMessagesAsync(body, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Body;
                 }
+            }
+
+            /// <summary>
+            /// Delete entity from applications
+            /// </summary>
+            /// <remarks>
+            /// Represents an Azure Active Directory object. The directoryObject type is
+            /// the base type for many other directory entity types.
+            /// </remarks>
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='applicationId'>
+            /// key: id of application
+            /// </param>
+            /// <param name='ifMatch'>
+            /// ETag
+            /// </param>
+            public static void DeleteApplication(this IApplicationsOperations operations, string applicationId, string ifMatch = default(string))
+            {
+                operations.DeleteApplicationAsync(applicationId, ifMatch).GetAwaiter().GetResult();
+            }
+
+            /// <summary>
+            /// Delete entity from applications
+            /// </summary>
+            /// <remarks>
+            /// Represents an Azure Active Directory object. The directoryObject type is
+            /// the base type for many other directory entity types.
+            /// </remarks>
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='applicationId'>
+            /// key: id of application
+            /// </param>
+            /// <param name='ifMatch'>
+            /// ETag
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task DeleteApplicationAsync(this IApplicationsOperations operations, string applicationId, string ifMatch = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                (await operations.DeleteApplicationWithHttpMessagesAsync(applicationId, ifMatch, null, cancellationToken).ConfigureAwait(false)).Dispose();
+            }
+
+            /// <summary>
+            /// Get entity from applications by key
+            /// </summary>
+            /// <remarks>
+            /// Represents an Azure Active Directory object. The directoryObject type is
+            /// the base type for many other directory entity types.
+            /// </remarks>
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='applicationId'>
+            /// key: id of application
+            /// </param>
+            /// <param name='consistencyLevel'>
+            /// Indicates the requested consistency level. Documentation URL:
+            /// https://developer.microsoft.com/en-us/office/blogs/microsoft-graph-advanced-queries-for-directory-objects-are-now-generally-available/
+            /// </param>
+            /// <param name='select'>
+            /// Select properties to be returned
+            /// </param>
+            /// <param name='expand'>
+            /// Expand related entities
+            /// </param>
+            public static MicrosoftGraphApplication GetApplication(this IApplicationsOperations operations, string applicationId, string consistencyLevel = default(string), IList<string> select = default(IList<string>), IList<string> expand = default(IList<string>))
+            {
+                return operations.GetApplicationAsync(applicationId, consistencyLevel, select, expand).GetAwaiter().GetResult();
+            }
+
+            /// <summary>
+            /// Get entity from applications by key
+            /// </summary>
+            /// <remarks>
+            /// Represents an Azure Active Directory object. The directoryObject type is
+            /// the base type for many other directory entity types.
+            /// </remarks>
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='applicationId'>
+            /// key: id of application
+            /// </param>
+            /// <param name='consistencyLevel'>
+            /// Indicates the requested consistency level. Documentation URL:
+            /// https://developer.microsoft.com/en-us/office/blogs/microsoft-graph-advanced-queries-for-directory-objects-are-now-generally-available/
+            /// </param>
+            /// <param name='select'>
+            /// Select properties to be returned
+            /// </param>
+            /// <param name='expand'>
+            /// Expand related entities
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<MicrosoftGraphApplication> GetApplicationAsync(this IApplicationsOperations operations, string applicationId, string consistencyLevel = default(string), IList<string> select = default(IList<string>), IList<string> expand = default(IList<string>), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.GetApplicationWithHttpMessagesAsync(applicationId, consistencyLevel, select, expand, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <summary>
+            /// Update entity in applications
+            /// </summary>
+            /// <remarks>
+            /// Represents an Azure Active Directory object. The directoryObject type is
+            /// the base type for many other directory entity types.
+            /// </remarks>
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='applicationId'>
+            /// key: id of application
+            /// </param>
+            /// <param name='body'>
+            /// New property values
+            /// </param>
+            public static void UpdateApplication(this IApplicationsOperations operations, string applicationId, MicrosoftGraphApplication body)
+            {
+                operations.UpdateApplicationAsync(applicationId, body).GetAwaiter().GetResult();
+            }
+
+            /// <summary>
+            /// Update entity in applications
+            /// </summary>
+            /// <remarks>
+            /// Represents an Azure Active Directory object. The directoryObject type is
+            /// the base type for many other directory entity types.
+            /// </remarks>
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='applicationId'>
+            /// key: id of application
+            /// </param>
+            /// <param name='body'>
+            /// New property values
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task UpdateApplicationAsync(this IApplicationsOperations operations, string applicationId, MicrosoftGraphApplication body, CancellationToken cancellationToken = default(CancellationToken))
+            {
+                (await operations.UpdateApplicationWithHttpMessagesAsync(applicationId, body, null, cancellationToken).ConfigureAwait(false)).Dispose();
             }
 
     }

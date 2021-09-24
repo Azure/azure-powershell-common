@@ -8,7 +8,7 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Users.Models
 {
     using Microsoft.Rest;
     using Newtonsoft.Json;
@@ -16,22 +16,22 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Users.Models
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class Odataerrordetail
+    public partial class OdataErrorDetail
     {
         /// <summary>
-        /// Initializes a new instance of the Odataerrordetail class.
+        /// Initializes a new instance of the OdataErrorDetail class.
         /// </summary>
-        public Odataerrordetail()
+        public OdataErrorDetail()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the Odataerrordetail class.
+        /// Initializes a new instance of the OdataErrorDetail class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
-        public Odataerrordetail(string code, string message, IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string target = default(string))
+        public OdataErrorDetail(string code, string message, IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string target = default(string))
         {
             AdditionalProperties = additionalProperties;
             Code = code;

@@ -8,26 +8,26 @@
 // regenerated.
 // </auto-generated>
 
-namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
+namespace Microsoft.Azure.Commands.Common.MSGraph.Applications.Models
 {
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class MicrosoftgraphservicePrincipal : MicrosoftgraphdirectoryObject
+    public partial class MicrosoftGraphServicePrincipal : MicrosoftGraphDirectoryObject
     {
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphservicePrincipal
+        /// Initializes a new instance of the MicrosoftGraphServicePrincipal
         /// class.
         /// </summary>
-        public MicrosoftgraphservicePrincipal()
+        public MicrosoftGraphServicePrincipal()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the MicrosoftgraphservicePrincipal
+        /// Initializes a new instance of the MicrosoftGraphServicePrincipal
         /// class.
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
@@ -39,12 +39,6 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// <param name="accountEnabled">true if the service principal account
         /// is enabled; otherwise, false. Supports $filter (eq, ne, NOT,
         /// in).</param>
-        /// <param name="addIns">Defines custom behavior that a consuming
-        /// service can use to call an app in specific contexts. For example,
-        /// applications that can render file streams may set the addIns
-        /// property for its 'FileHandler' functionality. This will let
-        /// services like Microsoft 365 call the application in the context of
-        /// a document the user is working on.</param>
         /// <param name="alternativeNames">Used to retrieve service principals
         /// by subscription, identify resource group and full resource ids for
         /// managed identities. Supports $filter (eq, NOT, ge, le,
@@ -79,9 +73,6 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// Read-only. Supports $filter (eq, ne, NOT, startsWith).</param>
         /// <param name="createdObjects">Directory objects created by this
         /// service principal. Read-only. Nullable.</param>
-        /// <param name="delegatedPermissionClassifications">The permission
-        /// classifications for delegated permissions exposed by the app that
-        /// this service principal represents. Supports $expand.</param>
         /// <param name="description">Free text field to provide an internal
         /// end-user facing description of the service principal. End-user
         /// portals such MyApps will display the application description in
@@ -187,17 +178,11 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// specified by this property. The application code that receives the
         /// encrypted token must use the matching private key to decrypt the
         /// token before it can be used for the signed-in user.</param>
-        /// <param name="tokenIssuancePolicies">The tokenIssuancePolicies
-        /// assigned to this service principal. Supports $expand.</param>
-        /// <param name="tokenLifetimePolicies">The tokenLifetimePolicies
-        /// assigned to this service principal. Supports $expand.</param>
-        public MicrosoftgraphservicePrincipal(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?), MicrosoftgraphinformationalUrl info = default(MicrosoftgraphinformationalUrl), IList<string> tags = default(IList<string>), bool? accountEnabled = default(bool?), IList<MicrosoftgraphaddIn> addIns = default(IList<MicrosoftgraphaddIn>), IList<string> alternativeNames = default(IList<string>), string appDescription = default(string), string appDisplayName = default(string), string appId = default(string), System.Guid? appOwnerOrganizationId = default(System.Guid?), IList<MicrosoftgraphappRoleAssignment> appRoleAssignedTo = default(IList<MicrosoftgraphappRoleAssignment>), bool? appRoleAssignmentRequired = default(bool?), IList<MicrosoftgraphappRoleAssignment> appRoleAssignments = default(IList<MicrosoftgraphappRoleAssignment>), IList<MicrosoftgraphappRole> appRoles = default(IList<MicrosoftgraphappRole>), string applicationTemplateId = default(string), IList<MicrosoftgraphdirectoryObject> createdObjects = default(IList<MicrosoftgraphdirectoryObject>), IList<MicrosoftgraphdelegatedPermissionClassification> delegatedPermissionClassifications = default(IList<MicrosoftgraphdelegatedPermissionClassification>), string description = default(string), string disabledByMicrosoftStatus = default(string), string displayName = default(string), IList<Microsoftgraphendpoint> endpoints = default(IList<Microsoftgraphendpoint>), string homepage = default(string), IList<MicrosoftgraphkeyCredential> keyCredentials = default(IList<MicrosoftgraphkeyCredential>), string loginUrl = default(string), string logoutUrl = default(string), IList<MicrosoftgraphdirectoryObject> memberOf = default(IList<MicrosoftgraphdirectoryObject>), string notes = default(string), IList<string> notificationEmailAddresses = default(IList<string>), IList<MicrosoftgraphoAuth2PermissionGrant> oauth2PermissionGrants = default(IList<MicrosoftgraphoAuth2PermissionGrant>), IList<MicrosoftgraphpermissionScope> oauth2PermissionScopes = default(IList<MicrosoftgraphpermissionScope>), IList<MicrosoftgraphdirectoryObject> ownedObjects = default(IList<MicrosoftgraphdirectoryObject>), IList<MicrosoftgraphdirectoryObject> owners = default(IList<MicrosoftgraphdirectoryObject>), IList<MicrosoftgraphpasswordCredential> passwordCredentials = default(IList<MicrosoftgraphpasswordCredential>), string preferredSingleSignOnMode = default(string), string preferredTokenSigningKeyThumbprint = default(string), IList<string> replyUrls = default(IList<string>), MicrosoftgraphsamlSingleSignOnSettings samlSingleSignOnSettings = default(MicrosoftgraphsamlSingleSignOnSettings), IList<string> servicePrincipalNames = default(IList<string>), string servicePrincipalType = default(string), string signInAudience = default(string), System.Guid? tokenEncryptionKeyId = default(System.Guid?), IList<MicrosoftgraphtokenIssuancePolicy> tokenIssuancePolicies = default(IList<MicrosoftgraphtokenIssuancePolicy>), IList<MicrosoftgraphtokenLifetimePolicy> tokenLifetimePolicies = default(IList<MicrosoftgraphtokenLifetimePolicy>), IList<MicrosoftgraphdirectoryObject> transitiveMemberOf = default(IList<MicrosoftgraphdirectoryObject>))
+        public MicrosoftGraphServicePrincipal(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?), IList<string> tags = default(IList<string>), bool? accountEnabled = default(bool?), IList<string> alternativeNames = default(IList<string>), string appDescription = default(string), string appDisplayName = default(string), string appId = default(string), System.Guid? appOwnerOrganizationId = default(System.Guid?), IList<MicrosoftGraphAppRoleAssignment> appRoleAssignedTo = default(IList<MicrosoftGraphAppRoleAssignment>), bool? appRoleAssignmentRequired = default(bool?), IList<MicrosoftGraphAppRoleAssignment> appRoleAssignments = default(IList<MicrosoftGraphAppRoleAssignment>), IList<MicrosoftGraphAppRole> appRoles = default(IList<MicrosoftGraphAppRole>), string applicationTemplateId = default(string), IList<MicrosoftGraphDirectoryObject> createdObjects = default(IList<MicrosoftGraphDirectoryObject>), string description = default(string), string disabledByMicrosoftStatus = default(string), string displayName = default(string), IList<MicrosoftGraphEndpoint> endpoints = default(IList<MicrosoftGraphEndpoint>), string homepage = default(string), IList<MicrosoftGraphKeyCredential> keyCredentials = default(IList<MicrosoftGraphKeyCredential>), string loginUrl = default(string), string logoutUrl = default(string), IList<MicrosoftGraphDirectoryObject> memberOf = default(IList<MicrosoftGraphDirectoryObject>), string notes = default(string), IList<string> notificationEmailAddresses = default(IList<string>), IList<MicrosoftGraphOAuth2PermissionGrant> oauth2PermissionGrants = default(IList<MicrosoftGraphOAuth2PermissionGrant>), IList<MicrosoftGraphPermissionScope> oauth2PermissionScopes = default(IList<MicrosoftGraphPermissionScope>), IList<MicrosoftGraphDirectoryObject> ownedObjects = default(IList<MicrosoftGraphDirectoryObject>), IList<MicrosoftGraphDirectoryObject> owners = default(IList<MicrosoftGraphDirectoryObject>), IList<MicrosoftGraphPasswordCredential> passwordCredentials = default(IList<MicrosoftGraphPasswordCredential>), string preferredSingleSignOnMode = default(string), string preferredTokenSigningKeyThumbprint = default(string), IList<string> replyUrls = default(IList<string>), IList<string> servicePrincipalNames = default(IList<string>), string servicePrincipalType = default(string), string signInAudience = default(string), System.Guid? tokenEncryptionKeyId = default(System.Guid?), IList<MicrosoftGraphDirectoryObject> transitiveMemberOf = default(IList<MicrosoftGraphDirectoryObject>))
             : base(additionalProperties, id, deletedDateTime)
         {
-            Info = info;
             Tags = tags;
             AccountEnabled = accountEnabled;
-            AddIns = addIns;
             AlternativeNames = alternativeNames;
             AppDescription = appDescription;
             AppDisplayName = appDisplayName;
@@ -209,7 +194,6 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
             AppRoles = appRoles;
             ApplicationTemplateId = applicationTemplateId;
             CreatedObjects = createdObjects;
-            DelegatedPermissionClassifications = delegatedPermissionClassifications;
             Description = description;
             DisabledByMicrosoftStatus = disabledByMicrosoftStatus;
             DisplayName = displayName;
@@ -229,13 +213,10 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
             PreferredSingleSignOnMode = preferredSingleSignOnMode;
             PreferredTokenSigningKeyThumbprint = preferredTokenSigningKeyThumbprint;
             ReplyUrls = replyUrls;
-            SamlSingleSignOnSettings = samlSingleSignOnSettings;
             ServicePrincipalNames = servicePrincipalNames;
             ServicePrincipalType = servicePrincipalType;
             SignInAudience = signInAudience;
             TokenEncryptionKeyId = tokenEncryptionKeyId;
-            TokenIssuancePolicies = tokenIssuancePolicies;
-            TokenLifetimePolicies = tokenLifetimePolicies;
             TransitiveMemberOf = transitiveMemberOf;
             CustomInit();
         }
@@ -244,11 +225,6 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "info")]
-        public MicrosoftgraphinformationalUrl Info { get; set; }
 
         /// <summary>
         /// Gets or sets custom strings that can be used to categorize and
@@ -264,17 +240,6 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// </summary>
         [JsonProperty(PropertyName = "accountEnabled")]
         public bool? AccountEnabled { get; set; }
-
-        /// <summary>
-        /// Gets or sets defines custom behavior that a consuming service can
-        /// use to call an app in specific contexts. For example, applications
-        /// that can render file streams may set the addIns property for its
-        /// 'FileHandler' functionality. This will let services like Microsoft
-        /// 365 call the application in the context of a document the user is
-        /// working on.
-        /// </summary>
-        [JsonProperty(PropertyName = "addIns")]
-        public IList<MicrosoftgraphaddIn> AddIns { get; set; }
 
         /// <summary>
         /// Gets or sets used to retrieve service principals by subscription,
@@ -317,7 +282,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// to users, groups, and other service principals.Supports $expand.
         /// </summary>
         [JsonProperty(PropertyName = "appRoleAssignedTo")]
-        public IList<MicrosoftgraphappRoleAssignment> AppRoleAssignedTo { get; set; }
+        public IList<MicrosoftGraphAppRoleAssignment> AppRoleAssignedTo { get; set; }
 
         /// <summary>
         /// Gets or sets specifies whether users or other service principals
@@ -334,7 +299,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// granted to this service principal. Supports $expand.
         /// </summary>
         [JsonProperty(PropertyName = "appRoleAssignments")]
-        public IList<MicrosoftgraphappRoleAssignment> AppRoleAssignments { get; set; }
+        public IList<MicrosoftGraphAppRoleAssignment> AppRoleAssignments { get; set; }
 
         /// <summary>
         /// Gets or sets the roles exposed by the application which this
@@ -342,7 +307,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// property definition on the application entity. Not nullable.
         /// </summary>
         [JsonProperty(PropertyName = "appRoles")]
-        public IList<MicrosoftgraphappRole> AppRoles { get; set; }
+        public IList<MicrosoftGraphAppRole> AppRoles { get; set; }
 
         /// <summary>
         /// Gets or sets unique identifier of the applicationTemplate that the
@@ -357,15 +322,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// Read-only. Nullable.
         /// </summary>
         [JsonProperty(PropertyName = "createdObjects")]
-        public IList<MicrosoftgraphdirectoryObject> CreatedObjects { get; set; }
-
-        /// <summary>
-        /// Gets or sets the permission classifications for delegated
-        /// permissions exposed by the app that this service principal
-        /// represents. Supports $expand.
-        /// </summary>
-        [JsonProperty(PropertyName = "delegatedPermissionClassifications")]
-        public IList<MicrosoftgraphdelegatedPermissionClassification> DelegatedPermissionClassifications { get; set; }
+        public IList<MicrosoftGraphDirectoryObject> CreatedObjects { get; set; }
 
         /// <summary>
         /// Gets or sets free text field to provide an internal end-user facing
@@ -403,7 +360,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// experiences.
         /// </summary>
         [JsonProperty(PropertyName = "endpoints")]
-        public IList<Microsoftgraphendpoint> Endpoints { get; set; }
+        public IList<MicrosoftGraphEndpoint> Endpoints { get; set; }
 
         /// <summary>
         /// Gets or sets home page or landing page of the application.
@@ -417,7 +374,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// le).
         /// </summary>
         [JsonProperty(PropertyName = "keyCredentials")]
-        public IList<MicrosoftgraphkeyCredential> KeyCredentials { get; set; }
+        public IList<MicrosoftGraphKeyCredential> KeyCredentials { get; set; }
 
         /// <summary>
         /// Gets or sets specifies the URL where the service provider redirects
@@ -444,7 +401,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// Methods: GET Read-only. Nullable. Supports $expand.
         /// </summary>
         [JsonProperty(PropertyName = "memberOf")]
-        public IList<MicrosoftgraphdirectoryObject> MemberOf { get; set; }
+        public IList<MicrosoftGraphDirectoryObject> MemberOf { get; set; }
 
         /// <summary>
         /// Gets or sets free text field to capture information about the
@@ -469,7 +426,7 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// Read-only. Nullable.
         /// </summary>
         [JsonProperty(PropertyName = "oauth2PermissionGrants")]
-        public IList<MicrosoftgraphoAuth2PermissionGrant> Oauth2PermissionGrants { get; set; }
+        public IList<MicrosoftGraphOAuth2PermissionGrant> Oauth2PermissionGrants { get; set; }
 
         /// <summary>
         /// Gets or sets the delegated permissions exposed by the application.
@@ -477,14 +434,14 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// application entity's api property. Not nullable.
         /// </summary>
         [JsonProperty(PropertyName = "oauth2PermissionScopes")]
-        public IList<MicrosoftgraphpermissionScope> Oauth2PermissionScopes { get; set; }
+        public IList<MicrosoftGraphPermissionScope> Oauth2PermissionScopes { get; set; }
 
         /// <summary>
         /// Gets or sets directory objects that are owned by this service
         /// principal. Read-only. Nullable. Supports $expand.
         /// </summary>
         [JsonProperty(PropertyName = "ownedObjects")]
-        public IList<MicrosoftgraphdirectoryObject> OwnedObjects { get; set; }
+        public IList<MicrosoftGraphDirectoryObject> OwnedObjects { get; set; }
 
         /// <summary>
         /// Gets or sets directory objects that are owners of this
@@ -493,14 +450,14 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// Nullable. Supports $expand.
         /// </summary>
         [JsonProperty(PropertyName = "owners")]
-        public IList<MicrosoftgraphdirectoryObject> Owners { get; set; }
+        public IList<MicrosoftGraphDirectoryObject> Owners { get; set; }
 
         /// <summary>
         /// Gets or sets the collection of password credentials associated with
         /// the service principal. Not nullable.
         /// </summary>
         [JsonProperty(PropertyName = "passwordCredentials")]
-        public IList<MicrosoftgraphpasswordCredential> PasswordCredentials { get; set; }
+        public IList<MicrosoftGraphPasswordCredential> PasswordCredentials { get; set; }
 
         /// <summary>
         /// Gets or sets specifies the single sign-on mode configured for this
@@ -526,11 +483,6 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         /// </summary>
         [JsonProperty(PropertyName = "replyUrls")]
         public IList<string> ReplyUrls { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "samlSingleSignOnSettings")]
-        public MicrosoftgraphsamlSingleSignOnSettings SamlSingleSignOnSettings { get; set; }
 
         /// <summary>
         /// Gets or sets contains the list of identifiersUris, copied over from
@@ -583,23 +535,9 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.MicrosoftGraph.Applications.Models
         public System.Guid? TokenEncryptionKeyId { get; set; }
 
         /// <summary>
-        /// Gets or sets the tokenIssuancePolicies assigned to this service
-        /// principal. Supports $expand.
-        /// </summary>
-        [JsonProperty(PropertyName = "tokenIssuancePolicies")]
-        public IList<MicrosoftgraphtokenIssuancePolicy> TokenIssuancePolicies { get; set; }
-
-        /// <summary>
-        /// Gets or sets the tokenLifetimePolicies assigned to this service
-        /// principal. Supports $expand.
-        /// </summary>
-        [JsonProperty(PropertyName = "tokenLifetimePolicies")]
-        public IList<MicrosoftgraphtokenLifetimePolicy> TokenLifetimePolicies { get; set; }
-
-        /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "transitiveMemberOf")]
-        public IList<MicrosoftgraphdirectoryObject> TransitiveMemberOf { get; set; }
+        public IList<MicrosoftGraphDirectoryObject> TransitiveMemberOf { get; set; }
 
     }
 }
