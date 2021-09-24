@@ -101,8 +101,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 DataLakeEndpointResourceId = AzureEnvironmentConstants.AzureDataLakeServiceEndpointResourceId,
                 BatchEndpointResourceId = AzureEnvironmentConstants.BatchEndpointResourceId,
                 ContainerRegistryEndpointSuffix = AzureEnvironmentConstants.AzureContainerRegistryEndpointSuffix,
-                MicrosoftGraphUrl = AzureEnvironmentConstants.AzureMicrosoftGraphUrl,
-                MicrosoftGraphEndpointResourceId = AzureEnvironmentConstants.AzureMicrosoftGraphEndpointResourceId,
                 AdTenant = "Common"
             };
 
@@ -129,8 +127,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 GraphEndpointResourceId = AzureEnvironmentConstants.ChinaGraphEndpoint,
                 BatchEndpointResourceId = AzureEnvironmentConstants.ChinaBatchEndpointResourceId,
                 ContainerRegistryEndpointSuffix = AzureEnvironmentConstants.ChinaContainerRegistryEndpointSuffix,
-                MicrosoftGraphUrl = AzureEnvironmentConstants.ChinaMicrosoftGraphUrl,
-                MicrosoftGraphEndpointResourceId = AzureEnvironmentConstants.ChinaMicrosoftGraphEndpointResourceId,
                 AdTenant = "Common"
             };
 
@@ -157,8 +153,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 GraphEndpointResourceId = AzureEnvironmentConstants.USGovernmentGraphEndpoint,
                 BatchEndpointResourceId = AzureEnvironmentConstants.USGovernmentBatchEndpointResourceId,
                 ContainerRegistryEndpointSuffix = AzureEnvironmentConstants.USGovernmentContainerRegistryEndpointSuffix,
-                MicrosoftGraphUrl = AzureEnvironmentConstants.USGovernmentMicrosoftGraphUrl,
-                MicrosoftGraphEndpointResourceId = AzureEnvironmentConstants.USGovernmentMicrosoftGraphEndpointResourceId,
                 AdTenant = "Common"
             };
 
@@ -184,8 +178,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 DataLakeEndpointResourceId = null,
                 GraphEndpointResourceId = AzureEnvironmentConstants.GermanGraphEndpoint,
                 BatchEndpointResourceId = AzureEnvironmentConstants.GermanBatchEndpointResourceId,
-                MicrosoftGraphUrl = AzureEnvironmentConstants.GermanMicrosoftGraphUrl,
-                MicrosoftGraphEndpointResourceId = AzureEnvironmentConstants.GermanMicrosoftGraphEndpointResourceId,
                 AdTenant = "Common"
             };
 
@@ -676,9 +668,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 AzureDataLakeStoreFileSystemEndpointSuffix = "AzureDataLakeStoreFileSystemEndpointSuffix",
                 DataLakeEndpointResourceId = "DataLakeEndpointResourceId",
                 ContainerRegistryEndpointSuffix = "ContainerRegistryEndpointSuffix",
-                BatchEndpointResourceId = "BatchEndpointResourceId",
-                MicrosoftGraphUrl = "MicrosoftGraphUrl",
-                MicrosoftGraphEndpointResourceId = "MicrosoftGraphEndpointResourceId";
+                BatchEndpointResourceId = "BatchEndpointResourceId";
         }
 
         public static class ExtendedEndpoint
@@ -692,7 +682,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 AzureAttestationServiceEndpointSuffix = "AzureAttestationServiceEndpointSuffix",
                 AzureAttestationServiceEndpointResourceId = "AzureAttestationServiceEndpointResourceId",
                 AzureSynapseAnalyticsEndpointSuffix = "AzureSynapseAnalyticsEndpointSuffix",
-                AzureSynapseAnalyticsEndpointResourceId = "AzureSynapseAnalyticsEndpointResourceId";
+                AzureSynapseAnalyticsEndpointResourceId = "AzureSynapseAnalyticsEndpointResourceId",
+                MicrosoftGraphUrl = "MicrosoftGraphUrl",
+                MicrosoftGraphEndpointResourceId = "MicrosoftGraphEndpointResourceId";
         }
     }
 }

@@ -369,8 +369,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 case AzureEnvironment.Endpoint.ContainerRegistryEndpointSuffix:
                     resource = AzureEnvironment.Endpoint.ContainerRegistryEndpointSuffix;
                     break;
-                case AzureEnvironment.Endpoint.MicrosoftGraphUrl:
-                    resource = AzureEnvironment.Endpoint.MicrosoftGraphEndpointResourceId;
+                case AzureEnvironment.ExtendedEndpoint.MicrosoftGraphUrl:
+                    resource = AzureEnvironment.ExtendedEndpoint.MicrosoftGraphEndpointResourceId;
                     break;
                 default:
                     resource = AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId;
@@ -558,11 +558,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 {
                     environment.ContainerRegistryEndpointSuffix = other.ContainerRegistryEndpointSuffix;
                 }
-                if (other.IsEndpointSet(AzureEnvironment.Endpoint.MicrosoftGraphUrl))
+                if (other.IsEndpointSet(AzureEnvironment.ExtendedEndpoint.MicrosoftGraphUrl))
                 {
                     environment.MicrosoftGraphUrl = other.MicrosoftGraphUrl;
                 }
-                if (other.IsEndpointSet(AzureEnvironment.Endpoint.MicrosoftGraphEndpointResourceId))
+                if (other.IsEndpointSet(AzureEnvironment.ExtendedEndpoint.MicrosoftGraphEndpointResourceId))
                 {
                     environment.MicrosoftGraphEndpointResourceId = other.MicrosoftGraphEndpointResourceId;
                 }
@@ -661,11 +661,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 {
                     environment.ContainerRegistryEndpointSuffix = other.ContainerRegistryEndpointSuffix;
                 }
-                if (other.IsEndpointSet(AzureEnvironment.Endpoint.MicrosoftGraphUrl))
+                if (other.IsEndpointSet(AzureEnvironment.ExtendedEndpoint.MicrosoftGraphUrl))
                 {
                     environment.MicrosoftGraphUrl = other.MicrosoftGraphUrl;
                 }
-                if (other.IsEndpointSet(AzureEnvironment.Endpoint.MicrosoftGraphEndpointResourceId))
+                if (other.IsEndpointSet(AzureEnvironment.ExtendedEndpoint.MicrosoftGraphEndpointResourceId))
                 {
                     environment.MicrosoftGraphEndpointResourceId = other.MicrosoftGraphEndpointResourceId;
                 }
