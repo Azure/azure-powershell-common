@@ -136,15 +136,5 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// The domain name suffix for Azure Container Registry
         /// </summary>
         string ContainerRegistryEndpointSuffix { get; set; }
-
-        /// <summary>
-        /// The MSGraph endpoint
-        /// </summary>
-        string MicrosoftGraphUrl { get; set; }
-
-        /// <summary>
-        /// The MSGraph Resource Url endpoint
-        /// </summary>
-        string MicrosoftGraphEndpointResourceId { get; set; }
     }
 }

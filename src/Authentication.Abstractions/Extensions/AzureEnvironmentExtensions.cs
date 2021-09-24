@@ -68,12 +68,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 case AzureEnvironment.Endpoint.BatchEndpointResourceId:
                     endpoint = new Uri(environment.BatchEndpointResourceId);
                     break;
-                case AzureEnvironment.Endpoint.MicrosoftGraphUrl:
-                    endpoint = new Uri(environment.MicrosoftGraphUrl);
-                    break;
-                case AzureEnvironment.Endpoint.MicrosoftGraphEndpointResourceId:
-                    endpoint = new Uri(environment.MicrosoftGraphEndpointResourceId);
-                    break;
                 default:
                     result = environment.IsPropertySet(endpointName);
                     if (result)
@@ -159,12 +153,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                         break;
                     case AzureEnvironment.Endpoint.ContainerRegistryEndpointSuffix:
                         propertyValue = environment.ContainerRegistryEndpointSuffix;
-                        break;
-                    case AzureEnvironment.Endpoint.MicrosoftGraphUrl:
-                        propertyValue = environment.MicrosoftGraphUrl;
-                        break;
-                    case AzureEnvironment.Endpoint.MicrosoftGraphEndpointResourceId:
-                        propertyValue = environment.MicrosoftGraphEndpointResourceId;
                         break;
                     default:
                         // get property from the extended properties of the environment
@@ -313,11 +301,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     case AzureEnvironment.ExtendedEndpoint.ManagedHsmServiceEndpointResourceId:
                         environment.SetProperty(AzureEnvironment.ExtendedEndpoint.ManagedHsmServiceEndpointResourceId, propertyValue);
                         break;
-                    case AzureEnvironment.Endpoint.MicrosoftGraphUrl:
-                        environment.MicrosoftGraphUrl = propertyValue;
+                    case AzureEnvironment.ExtendedEndpoint.MicrosoftGraphUrl:
+                        environment.SetProperty(AzureEnvironment.ExtendedEndpoint.MicrosoftGraphUrl, propertyValue);
                         break;
-                    case AzureEnvironment.Endpoint.MicrosoftGraphEndpointResourceId:
-                        environment.MicrosoftGraphEndpointResourceId = propertyValue;
+                    case AzureEnvironment.ExtendedEndpoint.MicrosoftGraphEndpointResourceId:
+                        environment.SetProperty(AzureEnvironment.ExtendedEndpoint.MicrosoftGraphEndpointResourceId, propertyValue);
                         break;
                 }
             }
@@ -369,8 +357,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 case AzureEnvironment.Endpoint.ContainerRegistryEndpointSuffix:
                     resource = AzureEnvironment.Endpoint.ContainerRegistryEndpointSuffix;
                     break;
-                case AzureEnvironment.Endpoint.MicrosoftGraphUrl:
-                    resource = AzureEnvironment.Endpoint.MicrosoftGraphEndpointResourceId;
+                case AzureEnvironment.ExtendedEndpoint.MicrosoftGraphUrl:
+                    resource = AzureEnvironment.ExtendedEndpoint.MicrosoftGraphEndpointResourceId;
                     break;
                 default:
                     resource = AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId;
@@ -558,14 +546,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 {
                     environment.ContainerRegistryEndpointSuffix = other.ContainerRegistryEndpointSuffix;
                 }
-                if (other.IsEndpointSet(AzureEnvironment.Endpoint.MicrosoftGraphUrl))
-                {
-                    environment.MicrosoftGraphUrl = other.MicrosoftGraphUrl;
-                }
-                if (other.IsEndpointSet(AzureEnvironment.Endpoint.MicrosoftGraphEndpointResourceId))
-                {
-                    environment.MicrosoftGraphEndpointResourceId = other.MicrosoftGraphEndpointResourceId;
-                }
 
                 environment.VersionProfiles.Clear();
                 foreach (var profile in other.VersionProfiles)
@@ -660,14 +640,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 if (other.IsEndpointSet(AzureEnvironment.Endpoint.ContainerRegistryEndpointSuffix))
                 {
                     environment.ContainerRegistryEndpointSuffix = other.ContainerRegistryEndpointSuffix;
-                }
-                if (other.IsEndpointSet(AzureEnvironment.Endpoint.MicrosoftGraphUrl))
-                {
-                    environment.MicrosoftGraphUrl = other.MicrosoftGraphUrl;
-                }
-                if (other.IsEndpointSet(AzureEnvironment.Endpoint.MicrosoftGraphEndpointResourceId))
-                {
-                    environment.MicrosoftGraphEndpointResourceId = other.MicrosoftGraphEndpointResourceId;
                 }
 
                 foreach (var profile in other.VersionProfiles)
