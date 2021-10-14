@@ -34,18 +34,64 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Users.Models
         /// <param name="accountEnabled">true if the account is enabled;
         /// otherwise, false. This property is required when a user is created.
         /// Supports $filter (eq, ne, NOT, and in).</param>
+        /// <param name="displayName">The name displayed in the address book
+        /// for the user. This value is usually the combination of the user's
+        /// first name, middle initial, and last name. This property is
+        /// required when a user is created and it cannot be cleared during
+        /// updates. Maximum length is 256 characters. Supports $filter (eq,
+        /// ne, NOT , ge, le, in, startsWith), $orderBy, and $search.</param>
         /// <param name="employeeId">The employee identifier assigned to the
         /// user by the organization. Supports $filter (eq, ne, NOT , ge, le,
         /// in, startsWith).</param>
+        /// <param name="givenName">The given name (first name) of the user.
+        /// Maximum length is 64 characters. Supports $filter (eq, ne, NOT ,
+        /// ge, le, in, startsWith).</param>
+        /// <param name="mail">The SMTP address for the user, for example,
+        /// admin@contoso.com. Changes to this property will also update the
+        /// user's proxyAddresses collection to include the value as an SMTP
+        /// address. While this property can contain accent characters, using
+        /// them can cause access issues with other Microsoft applications for
+        /// the user. Supports $filter (eq, ne, NOT, ge, le, in, startsWith,
+        /// endsWith).</param>
+        /// <param name="mailNickname">The mail alias for the user. This
+        /// property must be specified when a user is created. Maximum length
+        /// is 64 characters. Supports $filter (eq, ne, NOT, ge, le, in,
+        /// startsWith).</param>
+        /// <param name="surname">The user's surname (family name or last
+        /// name). Maximum length is 64 characters. Supports $filter (eq, ne,
+        /// NOT, ge, le, in, startsWith).</param>
         /// <param name="userType">A string value that can be used to classify
         /// user types in your directory, such as Member and Guest. Supports
         /// $filter (eq, ne, NOT, in,).</param>
-        public MicrosoftGraphUser(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?), bool? accountEnabled = default(bool?), string employeeId = default(string), string userType = default(string))
+        /// <param name="usageLocation">A two letter country code (ISO standard
+        /// 3166). Required for users that will be assigned licenses due to
+        /// legal requirement to check for availability of services in
+        /// countries.  Examples include: US, JP, and GB. Not nullable.
+        /// Supports $filter (eq, ne, NOT, ge, le, in, startsWith).</param>
+        /// <param name="userPrincipalName">The user principal name (UPN) of
+        /// the user. The UPN is an Internet-style login name for the user
+        /// based on the Internet standard RFC 822. By convention, this should
+        /// map to the user's email name. The general format is alias@domain,
+        /// where domain must be present in the tenant's collection of verified
+        /// domains. This property is required when a user is created. The
+        /// verified domains for the tenant can be accessed from the
+        /// verifiedDomains property of organization.NOTE: While this property
+        /// can contain accent characters, they can cause access issues to
+        /// first-party applications for the user. Supports $filter (eq, ne,
+        /// NOT, ge, le, in, startsWith, endsWith) and $orderBy.</param>
+        public MicrosoftGraphUser(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?), bool? accountEnabled = default(bool?), string displayName = default(string), string employeeId = default(string), string givenName = default(string), string mail = default(string), string mailNickname = default(string), string surname = default(string), string userType = default(string), string usageLocation = default(string), string userPrincipalName = default(string))
             : base(additionalProperties, id, deletedDateTime)
         {
             AccountEnabled = accountEnabled;
+            DisplayName = displayName;
             EmployeeId = employeeId;
+            GivenName = givenName;
+            Mail = mail;
+            MailNickname = mailNickname;
+            Surname = surname;
             UserType = userType;
+            UsageLocation = usageLocation;
+            UserPrincipalName = userPrincipalName;
             CustomInit();
         }
 
@@ -63,6 +109,17 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Users.Models
         public bool? AccountEnabled { get; set; }
 
         /// <summary>
+        /// Gets or sets the name displayed in the address book for the user.
+        /// This value is usually the combination of the user's first name,
+        /// middle initial, and last name. This property is required when a
+        /// user is created and it cannot be cleared during updates. Maximum
+        /// length is 256 characters. Supports $filter (eq, ne, NOT , ge, le,
+        /// in, startsWith), $orderBy, and $search.
+        /// </summary>
+        [JsonProperty(PropertyName = "displayName")]
+        public string DisplayName { get; set; }
+
+        /// <summary>
         /// Gets or sets the employee identifier assigned to the user by the
         /// organization. Supports $filter (eq, ne, NOT , ge, le, in,
         /// startsWith).
@@ -71,12 +128,74 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Users.Models
         public string EmployeeId { get; set; }
 
         /// <summary>
+        /// Gets or sets the given name (first name) of the user. Maximum
+        /// length is 64 characters. Supports $filter (eq, ne, NOT , ge, le,
+        /// in, startsWith).
+        /// </summary>
+        [JsonProperty(PropertyName = "givenName")]
+        public string GivenName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SMTP address for the user, for example,
+        /// admin@contoso.com. Changes to this property will also update the
+        /// user's proxyAddresses collection to include the value as an SMTP
+        /// address. While this property can contain accent characters, using
+        /// them can cause access issues with other Microsoft applications for
+        /// the user. Supports $filter (eq, ne, NOT, ge, le, in, startsWith,
+        /// endsWith).
+        /// </summary>
+        [JsonProperty(PropertyName = "mail")]
+        public string Mail { get; set; }
+
+        /// <summary>
+        /// Gets or sets the mail alias for the user. This property must be
+        /// specified when a user is created. Maximum length is 64 characters.
+        /// Supports $filter (eq, ne, NOT, ge, le, in, startsWith).
+        /// </summary>
+        [JsonProperty(PropertyName = "mailNickname")]
+        public string MailNickname { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user's surname (family name or last name). Maximum
+        /// length is 64 characters. Supports $filter (eq, ne, NOT, ge, le, in,
+        /// startsWith).
+        /// </summary>
+        [JsonProperty(PropertyName = "surname")]
+        public string Surname { get; set; }
+
+        /// <summary>
         /// Gets or sets a string value that can be used to classify user types
         /// in your directory, such as Member and Guest. Supports $filter (eq,
         /// ne, NOT, in,).
         /// </summary>
         [JsonProperty(PropertyName = "userType")]
         public string UserType { get; set; }
+
+        /// <summary>
+        /// Gets or sets a two letter country code (ISO standard 3166).
+        /// Required for users that will be assigned licenses due to legal
+        /// requirement to check for availability of services in countries.
+        /// Examples include: US, JP, and GB. Not nullable. Supports $filter
+        /// (eq, ne, NOT, ge, le, in, startsWith).
+        /// </summary>
+        [JsonProperty(PropertyName = "usageLocation")]
+        public string UsageLocation { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user principal name (UPN) of the user. The UPN is
+        /// an Internet-style login name for the user based on the Internet
+        /// standard RFC 822. By convention, this should map to the user's
+        /// email name. The general format is alias@domain, where domain must
+        /// be present in the tenant's collection of verified domains. This
+        /// property is required when a user is created. The verified domains
+        /// for the tenant can be accessed from the verifiedDomains property of
+        /// organization.NOTE: While this property can contain accent
+        /// characters, they can cause access issues to first-party
+        /// applications for the user. Supports $filter (eq, ne, NOT, ge, le,
+        /// in, startsWith, endsWith) and $orderBy.
+        /// </summary>
+        [JsonProperty(PropertyName = "userPrincipalName")]
+        public string UserPrincipalName { get; set; }
 
     }
 }

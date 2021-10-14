@@ -8,6 +8,8 @@ namespace Microsoft.Azure.Commands.Common.MSGraph
 {
     using Microsoft.Azure.Commands.Common.MSGraph.Applications;
     using Microsoft.Azure.Commands.Common.MSGraph.Users;
+    using Microsoft.Azure.Commands.Common.MSGraph.Groups;
+    using Microsoft.Azure.Commands.Common.MSGraph.DirectoryObjects;
     using Microsoft.Rest;
     using Microsoft.Rest.Azure;
     using Microsoft.Rest.Serialization;
@@ -84,6 +86,15 @@ namespace Microsoft.Azure.Commands.Common.MSGraph
         /// Gets the IServicePrincipalsOperations.
         /// </summary>
         public virtual IServicePrincipalsOperations ServicePrincipals { get; private set; }
+
+        /// <summary>
+        /// Gets the IGroupsOperations.
+        /// </summary>
+        public virtual IGroupsOperations Groups { get; private set; }
+        /// <summary>
+        /// Gets the IDirectoryObjectsOperations.
+        /// </summary>
+        public virtual IDirectoryObjectsOperations DirectoryObjects { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the MicrosoftGraphClient class.
@@ -289,6 +300,8 @@ namespace Microsoft.Azure.Commands.Common.MSGraph
             Users = new UsersOperations(this);
             Applications = new ApplicationsOperations(this);
             ServicePrincipals = new ServicePrincipalsOperations(this);
+            Groups = new GroupsOperations(this);
+            DirectoryObjects = new DirectoryObjectsOperations(this);
             ApiVersion = "v1.0";
             BaseUri = new System.Uri("https://graph.microsoft.com");
             AcceptLanguage = "en-US";

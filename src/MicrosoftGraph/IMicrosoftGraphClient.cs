@@ -8,6 +8,8 @@ namespace Microsoft.Azure.Commands.Common.MSGraph
 {
     using Microsoft.Azure.Commands.Common.MSGraph.Applications;
     using Microsoft.Azure.Commands.Common.MSGraph.Users;
+    using Microsoft.Azure.Commands.Common.MSGraph.Groups;
+    using Microsoft.Azure.Commands.Common.MSGraph.DirectoryObjects;
     using Microsoft.Rest;
     using Microsoft.Rest.Azure;
     using Newtonsoft.Json;
@@ -74,6 +76,15 @@ namespace Microsoft.Azure.Commands.Common.MSGraph
         /// Gets the IServicePrincipalsOperations.
         /// </summary>
         IServicePrincipalsOperations ServicePrincipals { get; }
+
+        /// <summary>
+        /// Gets the IGroupsOperations.
+        /// </summary>
+        IGroupsOperations Groups { get; }
+        /// <summary>
+        /// Gets the IDirectoryObjectsOperations.
+        /// </summary>
+        IDirectoryObjectsOperations DirectoryObjects { get; }
 
     }
 }

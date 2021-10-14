@@ -4,7 +4,7 @@
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Framework Condition="'$(Framework)' == ''">All</Framework>
     <FileVersion Condition="'$(FileVersion)' == ''">1.0.0.0</FileVersion>
-    <PackageVersion Condition="'$(PackageVersion)' == ''">1.0.0</PackageVersion>
+    <PackageVersion Condition="'$(PackageVersion)' == ''">1.3.50</PackageVersion>
     <CommandArguments>/p:Configuration=$(Configuration) /p:FileVersion=$(FileVersion) /p:PackageVersion=$(PackageVersion) /t:$(Framework) /NoLogo</CommandArguments>
   </PropertyGroup>
 
