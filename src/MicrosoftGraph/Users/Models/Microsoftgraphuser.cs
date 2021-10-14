@@ -68,6 +68,13 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Users.Models
         /// legal requirement to check for availability of services in
         /// countries.  Examples include: US, JP, and GB. Not nullable.
         /// Supports $filter (eq, ne, NOT, ge, le, in, startsWith).</param>
+        /// <param name="onPremisesImmutableId">This property is used to
+        /// associate an on-premises Active Directory user account to their
+        /// Azure AD user object. This property must be specified when creating
+        /// a new user account in the Graph if you are using a federated domain
+        /// for the user's userPrincipalName (UPN) property. Note: The $ and _
+        /// characters cannot be used when specifying this property. Supports
+        /// $filter (eq, ne, NOT, ge, le, in).</param>
         /// <param name="userPrincipalName">The user principal name (UPN) of
         /// the user. The UPN is an Internet-style login name for the user
         /// based on the Internet standard RFC 822. By convention, this should
@@ -79,7 +86,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Users.Models
         /// can contain accent characters, they can cause access issues to
         /// first-party applications for the user. Supports $filter (eq, ne,
         /// NOT, ge, le, in, startsWith, endsWith) and $orderBy.</param>
-        public MicrosoftGraphUser(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?), bool? accountEnabled = default(bool?), string displayName = default(string), string employeeId = default(string), string givenName = default(string), string mail = default(string), string mailNickname = default(string), string surname = default(string), string userType = default(string), string usageLocation = default(string), string userPrincipalName = default(string))
+        public MicrosoftGraphUser(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?), bool? accountEnabled = default(bool?), string displayName = default(string), string employeeId = default(string), string givenName = default(string), string mail = default(string), string mailNickname = default(string), string surname = default(string), string userType = default(string), string usageLocation = default(string), string onPremisesImmutableId = default(string), string userPrincipalName = default(string))
             : base(additionalProperties, id, deletedDateTime)
         {
             AccountEnabled = accountEnabled;
@@ -91,6 +98,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Users.Models
             Surname = surname;
             UserType = userType;
             UsageLocation = usageLocation;
+            OnPremisesImmutableId = onPremisesImmutableId;
             UserPrincipalName = userPrincipalName;
             CustomInit();
         }
@@ -180,6 +188,18 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Users.Models
         /// </summary>
         [JsonProperty(PropertyName = "usageLocation")]
         public string UsageLocation { get; set; }
+
+        /// <summary>
+        /// Gets or sets this property is used to associate an on-premises
+        /// Active Directory user account to their Azure AD user object. This
+        /// property must be specified when creating a new user account in the
+        /// Graph if you are using a federated domain for the user's
+        /// userPrincipalName (UPN) property. Note: The $ and _ characters
+        /// cannot be used when specifying this property. Supports $filter (eq,
+        /// ne, NOT, ge, le, in).
+        /// </summary>
+        [JsonProperty(PropertyName = "onPremisesImmutableId")]
+        public string OnPremisesImmutableId { get; set; }
 
         /// <summary>
         /// Gets or sets the user principal name (UPN) of the user. The UPN is

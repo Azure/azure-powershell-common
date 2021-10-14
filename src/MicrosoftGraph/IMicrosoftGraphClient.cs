@@ -7,9 +7,9 @@
 namespace Microsoft.Azure.Commands.Common.MSGraph
 {
     using Microsoft.Azure.Commands.Common.MSGraph.Applications;
-    using Microsoft.Azure.Commands.Common.MSGraph.Users;
-    using Microsoft.Azure.Commands.Common.MSGraph.Groups;
     using Microsoft.Azure.Commands.Common.MSGraph.DirectoryObjects;
+    using Microsoft.Azure.Commands.Common.MSGraph.Groups;
+    using Microsoft.Azure.Commands.Common.MSGraph.Users;
     using Microsoft.Rest;
     using Microsoft.Rest.Azure;
     using Newtonsoft.Json;

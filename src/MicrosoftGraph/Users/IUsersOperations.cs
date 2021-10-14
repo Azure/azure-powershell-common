@@ -173,5 +173,24 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Users
         /// Thrown when a required parameter is null
         /// </exception>
         Task<HttpOperationResponse> UpdateUserWithHttpMessagesAsync(string userId, MicrosoftGraphUser body, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        /// <summary>
+        /// Get profile of current user.
+        /// </summary>
+        /// <remarks>
+        /// Represents an Azure Active Directory user object.
+        /// </remarks>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        /// <exception cref="OdataErrorException">
+        /// Thrown when the operation returned an invalid status code
+        /// </exception>
+        /// <exception cref="Microsoft.Rest.SerializationException">
+        /// Thrown when unable to deserialize the response
+        /// </exception>
+        Task<HttpOperationResponse<MicrosoftGraphUser>> GetMyProfileWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
     }
 }

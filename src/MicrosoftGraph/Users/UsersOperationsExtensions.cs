@@ -285,5 +285,39 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Users
                 (await operations.UpdateUserWithHttpMessagesAsync(userId, body, null, cancellationToken).ConfigureAwait(false)).Dispose();
             }
 
+            /// <summary>
+            /// Get profile of current user.
+            /// </summary>
+            /// <remarks>
+            /// Represents an Azure Active Directory user object.
+            /// </remarks>
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            public static MicrosoftGraphUser GetMyProfile(this IUsersOperations operations)
+            {
+                return operations.GetMyProfileAsync().GetAwaiter().GetResult();
+            }
+
+            /// <summary>
+            /// Get profile of current user.
+            /// </summary>
+            /// <remarks>
+            /// Represents an Azure Active Directory user object.
+            /// </remarks>
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<MicrosoftGraphUser> GetMyProfileAsync(this IUsersOperations operations, CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.GetMyProfileWithHttpMessagesAsync(null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
     }
 }

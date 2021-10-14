@@ -10,6 +10,7 @@
 
 namespace Microsoft.Azure.Commands.Common.MSGraph.DirectoryObjects
 {
+    using Microsoft.Azure.Commands.Common.MSGraph;
     using Microsoft.Rest;
     using Models;
     using Newtonsoft.Json;
@@ -339,10 +340,6 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.DirectoryObjects
             if (body == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "body");
-            }
-            if (body != null)
-            {
-                body.Validate();
             }
             // Tracing
             bool _shouldTrace = ServiceClientTracing.IsEnabled;

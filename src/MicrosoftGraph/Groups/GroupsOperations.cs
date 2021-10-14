@@ -10,6 +10,7 @@
 
 namespace Microsoft.Azure.Commands.Common.MSGraph.Groups
 {
+    using Microsoft.Azure.Commands.Common.MSGraph;
     using Microsoft.Rest;
     using Models;
     using Newtonsoft.Json;
