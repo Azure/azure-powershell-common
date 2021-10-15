@@ -33,9 +33,10 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.DirectoryObjects.Models
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
         /// <param name="id">Read-only.</param>
-        public MicrosoftGraphDirectoryObject(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?))
+        public MicrosoftGraphDirectoryObject(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), string odatatype = default(string), System.DateTime? deletedDateTime = default(System.DateTime?))
             : base(additionalProperties, id)
         {
+            Odatatype = odatatype;
             DeletedDateTime = deletedDateTime;
             CustomInit();
         }
@@ -44,6 +45,11 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.DirectoryObjects.Models
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "@odata.type")]
+        public string Odatatype { get; set; }
 
         /// <summary>
         /// </summary>

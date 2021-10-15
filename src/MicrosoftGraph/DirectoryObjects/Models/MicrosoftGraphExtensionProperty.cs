@@ -48,8 +48,8 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.DirectoryObjects.Models
         /// nullable.</param>
         /// <param name="targetObjects">Following values are supported. Not
         /// nullable. UserGroupOrganizationDeviceApplication</param>
-        public MicrosoftGraphExtensionProperty(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), System.DateTime? deletedDateTime = default(System.DateTime?), string appDisplayName = default(string), string dataType = default(string), bool? isSyncedFromOnPremises = default(bool?), string name = default(string), IList<string> targetObjects = default(IList<string>))
-            : base(additionalProperties, id, deletedDateTime)
+        public MicrosoftGraphExtensionProperty(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), string odatatype = default(string), System.DateTime? deletedDateTime = default(System.DateTime?), string appDisplayName = default(string), string dataType = default(string), bool? isSyncedFromOnPremises = default(bool?), string name = default(string), IList<string> targetObjects = default(IList<string>))
+            : base(additionalProperties, id, odatatype, deletedDateTime)
         {
             AppDisplayName = appDisplayName;
             DataType = dataType;
