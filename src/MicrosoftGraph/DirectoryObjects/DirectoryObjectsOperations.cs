@@ -501,7 +501,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.DirectoryObjects
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<HttpOperationResponse<IList<MicrosoftGraphDirectoryObject>>> GetByIdsWithHttpMessagesAsync(Body body, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationResponse<GetByIdsOKResponse>> GetByIdsWithHttpMessagesAsync(Body body, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (body == null)
             {
@@ -612,7 +612,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.DirectoryObjects
                 throw ex;
             }
             // Create Result
-            var _result = new HttpOperationResponse<IList<MicrosoftGraphDirectoryObject>>();
+            var _result = new HttpOperationResponse<GetByIdsOKResponse>();
             _result.Request = _httpRequest;
             _result.Response = _httpResponse;
             // Deserialize Response
@@ -621,7 +621,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.DirectoryObjects
                 _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 try
                 {
-                    _result.Body = Rest.Serialization.SafeJsonConvert.DeserializeObject<IList<MicrosoftGraphDirectoryObject>>(_responseContent, Client.DeserializationSettings);
+                    _result.Body = Rest.Serialization.SafeJsonConvert.DeserializeObject<GetByIdsOKResponse>(_responseContent, Client.DeserializationSettings);
                 }
                 catch (JsonException ex)
                 {

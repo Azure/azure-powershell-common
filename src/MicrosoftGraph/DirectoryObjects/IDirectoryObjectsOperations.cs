@@ -109,7 +109,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.DirectoryObjects
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<HttpOperationResponse<IList<MicrosoftGraphDirectoryObject>>> GetByIdsWithHttpMessagesAsync(Body body, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<GetByIdsOKResponse>> GetByIdsWithHttpMessagesAsync(Body body, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <summary>
         /// Delete entity from directoryObjects
         /// </summary>

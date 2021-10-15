@@ -148,7 +148,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.DirectoryObjects
             /// <param name='body'>
             /// Action parameters
             /// </param>
-            public static IList<MicrosoftGraphDirectoryObject> GetByIds(this IDirectoryObjectsOperations operations, Body body)
+            public static GetByIdsOKResponse GetByIds(this IDirectoryObjectsOperations operations, Body body)
             {
                 return operations.GetByIdsAsync(body).GetAwaiter().GetResult();
             }
@@ -165,7 +165,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.DirectoryObjects
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<IList<MicrosoftGraphDirectoryObject>> GetByIdsAsync(this IDirectoryObjectsOperations operations, Body body, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<GetByIdsOKResponse> GetByIdsAsync(this IDirectoryObjectsOperations operations, Body body, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.GetByIdsWithHttpMessagesAsync(body, null, cancellationToken).ConfigureAwait(false))
                 {
