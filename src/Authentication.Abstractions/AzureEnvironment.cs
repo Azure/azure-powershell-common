@@ -484,16 +484,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public string ResourceManagerUrl { get; set; }
 
         /// <summary>
-        /// The MSGraph endpoint
-        /// </summary>
-        public string MicrosoftGraphUrl { get; set; }
-
-        /// <summary>
-        /// The token audience need for tokens that target MSGraph endpoints
-        /// </summary>
-        public string MicrosoftGraphEndpointResourceId { get; set; }
-
-        /// <summary>
         /// The location fo the AUX portal
         /// </summary>
         public string ManagementPortalUrl { get; set; }
@@ -638,9 +628,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                    && string.Equals(this.AzureDataLakeAnalyticsCatalogAndJobEndpointSuffix, other.AzureDataLakeAnalyticsCatalogAndJobEndpointSuffix, StringComparison.OrdinalIgnoreCase)
                    && string.Equals(this.AzureDataLakeStoreFileSystemEndpointSuffix, other.AzureDataLakeStoreFileSystemEndpointSuffix, StringComparison.OrdinalIgnoreCase)
                    && string.Equals(this.AdTenant?.TrimEnd('/'), other.AdTenant?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase)
-                   && string.Equals(this.ContainerRegistryEndpointSuffix?.TrimEnd('/'), other.ContainerRegistryEndpointSuffix?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase)
-                   && string.Equals(this.MicrosoftGraphUrl?.TrimEnd('/'), other.MicrosoftGraphUrl?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase)
-                   && string.Equals(this.MicrosoftGraphEndpointResourceId?.TrimEnd('/'), other.MicrosoftGraphEndpointResourceId?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
+                   && string.Equals(this.ContainerRegistryEndpointSuffix?.TrimEnd('/'), other.ContainerRegistryEndpointSuffix?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
         }
 
 
