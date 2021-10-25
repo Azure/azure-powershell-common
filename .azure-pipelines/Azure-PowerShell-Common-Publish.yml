@@ -92,6 +92,7 @@ steps:
   inputs:
     command: push
     packagesToPush: 'artifacts/Package/Release/Microsoft.Azure.PowerShell.*.nupkg'
+    allowPackageConflicts: true
     publishVstsFeed: public/azure-powershell
 
 - powershell: |
