@@ -93,6 +93,7 @@ steps:
     command: push
     packagesToPush: 'artifacts/Package/Release/Microsoft.Azure.PowerShell.*.*nupkg' # .nupkg and .snupkg
     publishVstsFeed: public/azure-powershell
+    includeSymbols: true
 
 - powershell: |
    dotnet msbuild build\publish.proj /p:Configuration=Release /p:ReleaseVersion=$env:VERSION /p:CommitId=$env:Build_SourceVersion /p:GitHubAccessToken=$(Github-azuresdkci-personalaccesstoken)  /NoLogo
