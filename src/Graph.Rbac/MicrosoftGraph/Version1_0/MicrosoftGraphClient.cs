@@ -24,6 +24,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
     using System.Linq;
     using System.Net;
     using System.Net.Http;
+    using System.Web;
 
     /// <summary>
     /// The MSGraph Client.
@@ -343,6 +344,10 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
             DeserializationSettings.Converters.Add(new CloudErrorJsonConverter());
         }
 
+        private string FormatFilterString<T>(ODataQuery<T> odataQuery)
+        {
+            return FormatFilterString(odataQuery);
+        }
 
         public IEnumerable<MicrosoftGraphServicePrincipal> FilterServicePrincipals(MicrosoftObjectFilterOptions options)
         {
@@ -366,8 +371,8 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
             {
                 try
                 {
-                    var odataQuery = new Rest.Azure.OData.ODataQuery<MicrosoftGraphServicePrincipal>(s => s.ServicePrincipalNames.Contains(options.SPN));
-                    servicePrincipal = ServicePrincipals.ListServicePrincipal(odataQuery.ToString()).Value.FirstOrDefault();
+                    var odataQuery = new ODataQuery<MicrosoftGraphServicePrincipal>(s => s.ServicePrincipalNames.Contains(options.SPN));
+                    servicePrincipal = ServicePrincipals.ListServicePrincipal(FormatFilterString(odataQuery)).Value.FirstOrDefault();
                 }
                 catch {  /* The user does not exist, ignore the exception. */ }
 
@@ -378,23 +383,27 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
             }
             else
             {
-                Rest.Azure.OData.ODataQuery<MicrosoftGraphServicePrincipal> odataQuery = null;
+                ODataQuery<MicrosoftGraphServicePrincipal> odataQuery = null;
                 if (!string.IsNullOrEmpty(options.SearchString) && options.SearchString.EndsWith("*"))
                 {
                     options.SearchString = options.SearchString.TrimEnd('*');
-                    odataQuery = new Rest.Azure.OData.ODataQuery<MicrosoftGraphServicePrincipal>(s => s.DisplayName.StartsWith(options.SearchString));
+                    odataQuery = new ODataQuery<MicrosoftGraphServicePrincipal>(s => s.DisplayName.StartsWith(options.SearchString));
                 }
                 else
                 {
-                    odataQuery = new Rest.Azure.OData.ODataQuery<MicrosoftGraphServicePrincipal>(s => s.DisplayName == options.SearchString);
+                    odataQuery = new ODataQuery<MicrosoftGraphServicePrincipal>(s => s.DisplayName == options.SearchString);
                 }
 
-                return ServicePrincipals.ListServicePrincipal(odataQuery.ToString()).Value;
+                return ServicePrincipals.ListServicePrincipal(FormatFilterString(odataQuery)).Value;
             }
 
             return servicePrincipals;
         }
 
+        public IEnumerable<MicrosoftGraphServicePrincipal> FilterServicePrincipals(ODataQuery<MicrosoftGraphServicePrincipal> odataQuery)
+        {
+            return ServicePrincipals.ListServicePrincipal(FormatFilterString(odataQuery)).Value;
+        }
 
         public IEnumerable<MicrosoftGraphUser> FilterUsers(MicrosoftObjectFilterOptions options)
         {
@@ -418,7 +427,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
                 try
                 {
                     string upnOrMail = options.UPN ?? options.Mail;
-                    var odataQuery = new Rest.Azure.OData.ODataQuery<MicrosoftGraphUser>();
+                    var odataQuery = new ODataQuery<MicrosoftGraphUser>();
                     if (!string.IsNullOrEmpty(options.UPN))
                     {
                         odataQuery.SetFilter(u => u.UserPrincipalName == upnOrMail);
@@ -427,7 +436,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
                     {
                         odataQuery.SetFilter(u => u.Mail == upnOrMail);
                     }
-                    result = Users.ListUser(filter: odataQuery.ToString()).Value;
+                    result = Users.ListUser(filter: FormatFilterString(odataQuery)).Value;
                 }
                 catch {  /* The user does not exist, ignore the exception. */ }
 
@@ -449,12 +458,16 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
                     odataQuery = new ODataQuery<MicrosoftGraphUser>(u => u.DisplayName == options.SearchString);
                 }
 
-                return Users.ListUser(odataQuery.ToString()).Value;
+                return Users.ListUser(FormatFilterString(odataQuery)).Value;
             }
 
             return new List<MicrosoftGraphUser>();
         }
 
+        public IEnumerable<MicrosoftGraphUser> FilterUsers(ODataQuery<MicrosoftGraphUser> odataQuery)
+        {
+            return Users.ListUser(FormatFilterString(odataQuery)).Value;
+        }
 
         public IEnumerable<MicrosoftGraphGroup> FilterGroups(MicrosoftObjectFilterOptions options)
         {
@@ -473,29 +486,33 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
             }
             else
             {
-                Rest.Azure.OData.ODataQuery<MicrosoftGraphGroup> odataQuery = null;
+                ODataQuery<MicrosoftGraphGroup> odataQuery = null;
                 if (options.Mail != null)
                 {
-                    odataQuery = new Rest.Azure.OData.ODataQuery<MicrosoftGraphGroup>(g => g.Mail == options.Mail);
+                    odataQuery = new ODataQuery<MicrosoftGraphGroup>(g => g.Mail == options.Mail);
                 }
                 else
                 {
                     if (!string.IsNullOrEmpty(options.SearchString) && options.SearchString.EndsWith("*"))
                     {
                         options.SearchString = options.SearchString.TrimEnd('*');
-                        odataQuery = new Rest.Azure.OData.ODataQuery<MicrosoftGraphGroup>(g => g.DisplayName.StartsWith(options.SearchString));
+                        odataQuery = new ODataQuery<MicrosoftGraphGroup>(g => g.DisplayName.StartsWith(options.SearchString));
                     }
                     else
                     {
-                        odataQuery = new Rest.Azure.OData.ODataQuery<MicrosoftGraphGroup>(g => g.DisplayName == options.SearchString);
+                        odataQuery = new ODataQuery<MicrosoftGraphGroup>(g => g.DisplayName == options.SearchString);
                     }
                 }
 
-                return Groups.ListGroup(odataQuery.ToString()).Value;
+                return Groups.ListGroup(FormatFilterString(odataQuery)).Value;
             }
 
             return new List<MicrosoftGraphGroup>();
         }
 
+        public IEnumerable<MicrosoftGraphGroup> FilterGroups(ODataQuery<MicrosoftGraphGroup> odataQuery)
+        {
+            return Groups.ListGroup(FormatFilterString(odataQuery)).Value;
+        }
     }
 }
