@@ -110,16 +110,18 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
+        private string _moduleName;
+        private string _moduleVersion;
         /// <summary>
         /// Gets the PowerShell module name used for user agent header.
         /// By default uses "Azure PowerShell"
         /// </summary>
-        protected virtual string ModuleName { get { return "AzurePowershell"; } }
+        protected virtual string ModuleName { get { return _moduleName; } set { this._moduleName = value; } }
 
         /// <summary>
         /// Gets PowerShell module version used for user agent header.
         /// </summary>
-        protected string ModuleVersion { get { return AzurePowerShell.AssemblyVersion; } }
+        protected string ModuleVersion { get { return _moduleVersion; } set { this._moduleVersion = value; } }
 
         /// <summary>
         /// The context for management cmdlet requests - includes account, tenant, subscription,
@@ -302,8 +304,9 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         protected virtual void SetupHttpClientPipeline()
         {
-            AzureSession.Instance.ClientFactory.AddUserAgent(ModuleName, string.Format("v{0}", AzVersion));
+            AzureSession.Instance.ClientFactory.AddUserAgent("AzurePowershell", string.Format("v{0}", AzVersion));
             AzureSession.Instance.ClientFactory.AddUserAgent(PSVERSION, string.Format("v{0}", PowerShellVersion));
+            AzureSession.Instance.ClientFactory.AddUserAgent(this.ModuleName, this.ModuleVersion);
 
             AzureSession.Instance.ClientFactory.AddHandler(
                 new CmdletInfoHandler(this.CommandRuntime.ToString(),
@@ -335,6 +338,21 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                         _metricHelper.AddDefaultTelemetryClient();
                     }
                 }
+            }
+
+            // Fetch module name and version which will be used by telemetry and useragent
+            if (this.MyInvocation != null && this.MyInvocation.MyCommand != null)
+            {
+                this.ModuleName = this.MyInvocation.MyCommand.ModuleName;
+                if (this.MyInvocation.MyCommand.Version != null)
+                {
+                    this.ModuleVersion = this.MyInvocation.MyCommand.Version.ToString();
+                }
+            }
+            else
+            {
+                this.ModuleName = this.GetType().Assembly.GetName().Name;
+                this.ModuleVersion = this.GetType().Assembly.GetName().Version.ToString();
             }
 
             InitializeQosEvent();
@@ -627,21 +645,16 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             _qosEvent.PSVersion = PowerShellVersion;
             _qosEvent.HostVersion = PSHostVersion;
             _qosEvent.PSHostName = PSHostName;
+            _qosEvent.ModuleName = this.ModuleName;
+            _qosEvent.ModuleVersion = this.ModuleVersion;
 
             if (this.MyInvocation != null && this.MyInvocation.MyCommand != null)
             {
                 _qosEvent.CommandName = this.MyInvocation.MyCommand.Name;
-                _qosEvent.ModuleName = this.MyInvocation.MyCommand.ModuleName;
-                if (this.MyInvocation.MyCommand.Version != null)
-                {
-                    _qosEvent.ModuleVersion = this.MyInvocation.MyCommand.Version.ToString();
-                }
             }
             else
             {
                 _qosEvent.CommandName = this.GetType().Name;
-                _qosEvent.ModuleName = this.GetType().Assembly.GetName().Name;
-                _qosEvent.ModuleVersion = this.GetType().Assembly.GetName().Version.ToString();
             }
 
             if (this.MyInvocation != null && !string.IsNullOrWhiteSpace(this.MyInvocation.InvocationName))
