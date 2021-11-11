@@ -110,18 +110,15 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
-        private string _moduleName;
-        private string _moduleVersion;
         /// <summary>
-        /// Gets the PowerShell module name used for user agent header.
-        /// By default uses "Azure PowerShell"
+        /// Gets the PowerShell module name used for user agent header and telemetry.
         /// </summary>
-        protected virtual string ModuleName { get { return _moduleName; } set { this._moduleName = value; } }
+        protected virtual string ModuleName { get; set; }
 
         /// <summary>
-        /// Gets PowerShell module version used for user agent header.
+        /// Gets PowerShell module version used for user agent header and telemetry.
         /// </summary>
-        protected string ModuleVersion { get { return _moduleVersion; } set { this._moduleVersion = value; } }
+        protected string ModuleVersion { get; set; }
 
         /// <summary>
         /// The context for management cmdlet requests - includes account, tenant, subscription,
@@ -306,7 +303,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         {
             AzureSession.Instance.ClientFactory.AddUserAgent("AzurePowershell", string.Format("v{0}", AzVersion));
             AzureSession.Instance.ClientFactory.AddUserAgent(PSVERSION, string.Format("v{0}", PowerShellVersion));
-            AzureSession.Instance.ClientFactory.AddUserAgent(this.ModuleName, this.ModuleVersion);
+            AzureSession.Instance.ClientFactory.AddUserAgent(ModuleName, this.ModuleVersion);
 
             AzureSession.Instance.ClientFactory.AddHandler(
                 new CmdletInfoHandler(this.CommandRuntime.ToString(),
