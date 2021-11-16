@@ -409,17 +409,15 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
         {
             if (!string.IsNullOrEmpty(options.Id))
             {
-                MicrosoftGraphUser user = null;
                 try
                 {
-                    user = Users.GetUser(options.Id);
+                    MicrosoftGraphUser user = Users.GetUser(options.Id);
+                    if (user != null)
+                    {
+                        return new List<MicrosoftGraphUser> { user };
+                    }
                 }
-                catch {  /* The user does not exist, ignore the exception. */ }
-
-                if (user != null)
-                {
-                    return new List<MicrosoftGraphUser> { user };
-                }
+                catch {  /* The group does not exist, ignore the exception */ }
             }
             else if (!string.IsNullOrEmpty(options.UPN) || !string.IsNullOrEmpty(options.Mail))
             {
