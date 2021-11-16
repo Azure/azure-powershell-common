@@ -7,12 +7,18 @@
 namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
 {
     using Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Applications;
+    using Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Applications.Models;
     using Microsoft.Azure.Commands.Common.MSGraph.Version1_0.DirectoryObjects;
     using Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Groups;
+    using Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Groups.Models;
     using Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Users;
+    using Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Users.Models;
     using Microsoft.Rest;
     using Microsoft.Rest.Azure;
+    using Microsoft.Rest.Azure.OData;
     using Newtonsoft.Json;
+    using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// The MSGraph Client.
@@ -86,5 +92,16 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
         /// </summary>
         IDirectoryObjectsOperations DirectoryObjects { get; }
 
+        IEnumerable<MicrosoftGraphServicePrincipal> FilterServicePrincipals(MicrosoftObjectFilterOptions options);
+
+        IEnumerable<MicrosoftGraphServicePrincipal> FilterServicePrincipals(ODataQuery<MicrosoftGraphServicePrincipal> odataQuery);
+
+        IEnumerable<MicrosoftGraphUser> FilterUsers(MicrosoftObjectFilterOptions options);
+
+        IEnumerable<MicrosoftGraphUser> FilterUsers(ODataQuery<MicrosoftGraphUser> odataQuery);
+
+        IEnumerable<MicrosoftGraphGroup> FilterGroups(MicrosoftObjectFilterOptions options);
+
+        IEnumerable<MicrosoftGraphGroup> FilterGroups(ODataQuery<MicrosoftGraphGroup> odataQuery);
     }
 }
