@@ -346,7 +346,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
 
         private string FormatFilterString<T>(ODataQuery<T> odataQuery)
         {
-            return FormatFilterString(odataQuery);
+            return HttpUtility.UrlDecode(odataQuery.Filter);
         }
 
         public IEnumerable<MicrosoftGraphServicePrincipal> FilterServicePrincipals(MicrosoftObjectFilterOptions options)
