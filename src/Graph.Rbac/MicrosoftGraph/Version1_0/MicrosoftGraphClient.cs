@@ -372,7 +372,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
                 try
                 {
                     var odataQuery = new ODataQuery<MicrosoftGraphServicePrincipal>(s => s.ServicePrincipalNames.Contains(options.SPN));
-                    servicePrincipal = ServicePrincipals.ListServicePrincipal(FormatFilterString(odataQuery)).Value.FirstOrDefault();
+                    servicePrincipal = ServicePrincipals.ListServicePrincipal(filter: FormatFilterString(odataQuery)).Value.FirstOrDefault();
                 }
                 catch {  /* The user does not exist, ignore the exception. */ }
 
@@ -394,7 +394,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
                     odataQuery = new ODataQuery<MicrosoftGraphServicePrincipal>(s => s.DisplayName == options.SearchString);
                 }
 
-                return ServicePrincipals.ListServicePrincipal(FormatFilterString(odataQuery)).Value;
+                return ServicePrincipals.ListServicePrincipal(filter: FormatFilterString(odataQuery)).Value;
             }
 
             return servicePrincipals;
@@ -402,7 +402,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
 
         public IEnumerable<MicrosoftGraphServicePrincipal> FilterServicePrincipals(ODataQuery<MicrosoftGraphServicePrincipal> odataQuery)
         {
-            return ServicePrincipals.ListServicePrincipal(FormatFilterString(odataQuery)).Value;
+            return ServicePrincipals.ListServicePrincipal(filter: FormatFilterString(odataQuery)).Value;
         }
 
         public IEnumerable<MicrosoftGraphUser> FilterUsers(MicrosoftObjectFilterOptions options)
@@ -458,7 +458,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
                     odataQuery = new ODataQuery<MicrosoftGraphUser>(u => u.DisplayName == options.SearchString);
                 }
 
-                return Users.ListUser(FormatFilterString(odataQuery)).Value;
+                return Users.ListUser(filter: FormatFilterString(odataQuery)).Value;
             }
 
             return new List<MicrosoftGraphUser>();
@@ -466,7 +466,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
 
         public IEnumerable<MicrosoftGraphUser> FilterUsers(ODataQuery<MicrosoftGraphUser> odataQuery)
         {
-            return Users.ListUser(FormatFilterString(odataQuery)).Value;
+            return Users.ListUser(filter: FormatFilterString(odataQuery)).Value;
         }
 
         public IEnumerable<MicrosoftGraphGroup> FilterGroups(MicrosoftObjectFilterOptions options)
@@ -504,7 +504,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
                     }
                 }
 
-                return Groups.ListGroup(FormatFilterString(odataQuery)).Value;
+                return Groups.ListGroup(filter: FormatFilterString(odataQuery)).Value;
             }
 
             return new List<MicrosoftGraphGroup>();
@@ -512,7 +512,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
 
         public IEnumerable<MicrosoftGraphGroup> FilterGroups(ODataQuery<MicrosoftGraphGroup> odataQuery)
         {
-            return Groups.ListGroup(FormatFilterString(odataQuery)).Value;
+            return Groups.ListGroup(filter: FormatFilterString(odataQuery)).Value;
         }
     }
 }
