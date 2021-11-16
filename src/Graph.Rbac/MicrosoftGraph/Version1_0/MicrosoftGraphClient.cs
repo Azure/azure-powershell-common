@@ -337,6 +337,5 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
             DeserializationSettings.Converters.Add(new TransformationJsonConverter());
             DeserializationSettings.Converters.Add(new CloudErrorJsonConverter());
         }
-
     }
 }

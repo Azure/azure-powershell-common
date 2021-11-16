@@ -85,5 +85,6 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
         /// Gets the IDirectoryObjectsOperations.
         /// </summary>
         IDirectoryObjectsOperations DirectoryObjects { get; }
+
     }
 }
