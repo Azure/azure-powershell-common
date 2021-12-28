@@ -86,7 +86,56 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             set
             {
                 _profile = value;
+                var accountMap = CreateAccountMap(AzureRmProfileProvider.Instance.Profile.Accounts);
+                foreach (var currentAccount in _profile.Accounts)
+                {
+                    if (accountMap.ContainsKey(currentAccount.Id))
+                    {
+                        var accList = accountMap[currentAccount.Id];
+                        foreach (var acc in accList)
+                        {
+                            if (Array.Equals(currentAccount.GetTenants().Intersect(acc.GetTenants()), acc.GetTenants()))
+                            {
+                                MergeProperty(currentAccount, acc, AzureAccount.Property.ServicePrincipalSecret);
+                                MergeProperty(currentAccount, acc, AzureAccount.Property.CertificatePassword);
+                            }
+                            break;
+                        }
+                    }
+                }
             }
+        }
+
+        private static Dictionary<string, IList<IAzureAccount>> CreateAccountMap(IEnumerable<IAzureAccount> accounts)
+        {
+            var accountMap = new Dictionary<string, IList<IAzureAccount>>();
+            foreach (var acc in accounts)
+            {
+                if (null != acc.GetProperty(AzureAccount.Property.ServicePrincipalSecret)
+                    || null != acc.GetProperty(AzureAccount.Property.CertificatePassword))
+                {
+                    if (!accountMap.ContainsKey(acc.Id))
+                    {
+                        accountMap[acc.Id] = new List<IAzureAccount>();
+                    }
+                    accountMap[acc.Id].Add(acc);
+                }
+            }
+            return accountMap;
+        }
+
+        private static bool MergeProperty(IExtensibleModel dest, IExtensibleModel src, string propertyName)
+        {
+            if (string.IsNullOrEmpty(dest.GetProperty(propertyName)))
+            {
+                var propertyValue = src.GetProperty(propertyName);
+                if (!string.IsNullOrEmpty(propertyValue))
+                {
+                    dest.SetProperty(propertyName, propertyValue);
+                    return true;
+                }
+            }
+            return false;
         }
 
         private IAzureContextContainer GetDefaultProfile()
