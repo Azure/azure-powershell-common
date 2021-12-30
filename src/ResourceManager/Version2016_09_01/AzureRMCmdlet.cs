@@ -86,20 +86,26 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             set
             {
                 _profile = value;
-                var accountMap = CreateAccountMap(AzureRmProfileProvider.Instance.Profile.Accounts);
-                foreach (var currentAccount in _profile.Accounts)
+                /* If the profile is from customer setting, the ServicePrincipalSecret and CertificatePassword
+                 * which is required to get access token is always removed.
+                 * Try to recover ServicePrincipalSecret and CertificatePassword from the buildin profile.
+                 */
+                if (null != _profile && null != AzureRmProfileProvider.Instance.Profile.Accounts)
                 {
-                    if (accountMap.ContainsKey(currentAccount.Id))
+                    var accountMap = CreateAccountMap(AzureRmProfileProvider.Instance.Profile.Accounts);
+                    foreach (var currentAccount in _profile.Accounts.Where(p => null != p?.Id))
                     {
-                        var accList = accountMap[currentAccount.Id];
-                        foreach (var acc in accList)
+                        if (accountMap.TryGetValue(currentAccount.Id, out IList<IAzureAccount> accList))
                         {
-                            if (Array.Equals(currentAccount.GetTenants().Intersect(acc.GetTenants()), acc.GetTenants()))
+                            foreach (var acc in accList)
                             {
-                                MergeProperty(currentAccount, acc, AzureAccount.Property.ServicePrincipalSecret);
-                                MergeProperty(currentAccount, acc, AzureAccount.Property.CertificatePassword);
+                                if (currentAccount.GetTenants().All(tId => acc.GetTenants().Contains(tId)))
+                                {
+                                    MergeProperty(currentAccount, acc, AzureAccount.Property.ServicePrincipalSecret);
+                                    MergeProperty(currentAccount, acc, AzureAccount.Property.CertificatePassword);
+                                    break;
+                                }
                             }
-                            break;
                         }
                     }
                 }
@@ -109,17 +115,14 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         private static Dictionary<string, IList<IAzureAccount>> CreateAccountMap(IEnumerable<IAzureAccount> accounts)
         {
             var accountMap = new Dictionary<string, IList<IAzureAccount>>();
-            foreach (var acc in accounts)
+            foreach (var acc in accounts.Where(acc => null != acc?.Id && (null != acc.GetProperty(AzureAccount.Property.ServicePrincipalSecret)
+                    || null != acc.GetProperty(AzureAccount.Property.CertificatePassword))))
             {
-                if (null != acc.GetProperty(AzureAccount.Property.ServicePrincipalSecret)
-                    || null != acc.GetProperty(AzureAccount.Property.CertificatePassword))
+                if (!accountMap.ContainsKey(acc.Id))
                 {
-                    if (!accountMap.ContainsKey(acc.Id))
-                    {
-                        accountMap[acc.Id] = new List<IAzureAccount>();
-                    }
-                    accountMap[acc.Id].Add(acc);
+                    accountMap[acc.Id] = new List<IAzureAccount>();
                 }
+                accountMap[acc.Id].Add(acc);
             }
             return accountMap;
         }
