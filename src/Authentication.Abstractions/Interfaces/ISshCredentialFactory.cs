@@ -28,7 +28,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// </summary>
         /// <param name="context">The context to use for authentication</param>
         /// <param name="rsaKeyInfo">The RSAParameters import from RSA public key or created in memory</param>
-        /// <returns>Service client credentials</returns>
+        /// <returns>Credentials for SSH.</returns>
         SshCredential GetSshCredential(IAzureContext context, RSAParameters rsaKeyInfo);
     }
 }
