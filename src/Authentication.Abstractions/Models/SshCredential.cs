@@ -14,18 +14,18 @@
 
 using System;
 
-namespace Microsoft.Azure.Commands.Common.Authentication
+namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models
 {
-    public interface ISshCredential
+    public class SshCredential
     {
         /// <summary>
         /// SSH credential content
         /// </summary>
-        string Credential { get; }
+        public string Credential { get; set; }
 
         /// <summary>
         /// The expire time of credential.
         /// </summary>
-        DateTimeOffset ExpiresOn { get; }
+        public DateTimeOffset ExpiresOn { get; set; }
     }
 }

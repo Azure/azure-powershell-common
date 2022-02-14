@@ -14,6 +14,8 @@
 
 using System.Security.Cryptography;
 
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models;
+
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
     /// <summary>
@@ -27,6 +29,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <param name="context">The context to use for authentication</param>
         /// <param name="rsaKeyInfo">The RSAParameters import from RSA public key or created in memory</param>
         /// <returns>Service client credentials</returns>
-        ISshCredential GetSshCredential(IAzureContext context, RSAParameters rsaKeyInfo);
+        SshCredential GetSshCredential(IAzureContext context, RSAParameters rsaKeyInfo);
     }
 }
