@@ -12,6 +12,7 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 using Microsoft.Azure.Commands.Common.Authentication.Models;
 using Microsoft.Rest;
@@ -20,6 +21,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Azure.Core.Pipeline;
+using Azure.ResourceManager;
 
 namespace Microsoft.Azure.Commands.Common.Authentication
 {
@@ -29,11 +32,34 @@ namespace Microsoft.Azure.Commands.Common.Authentication
     public interface IClientFactory: IHyakClientFactory
     {
         /// <summary>
+        /// Create a client using given context and named endpoint
+        /// </summary>
+        /// <param name="context">The azure context to target</param>
+        /// <param name="endpoint">The named endpoint the client should target</param>
+        /// <returns>A client properly authenticated in the given context, properly configured for use with Azure PowerShell, 
+        /// targeting the given named endpoint in the targeted environment</returns>
+        ArmClient CreateArmClient(IAzureContext context, string endpoint);
+
+        /// <summary>
+        /// Create a client using given context and named endpoint
+        /// </summary>
+        /// <param name="context">The azure context to target</param>
+        /// <param name="endpoint">The named endpoint the client should target</param>
+        /// <param name="option">The customized Arm client option</param>
+        /// <returns>A client properly authenticated in the given context, properly configured for use with Azure PowerShell, 
+        /// targeting the given named endpoint in the targeted environment</returns>
+        ArmClient CreateCustomArmClient(IAzureContext context, string endpoint, ArmClientOptions option);
+
+        void AddPolicy(HttpPipelinePolicy policy);
+
+        void RemovePolicy(Type policy);
+
+        /// <summary>
         /// Create a properly configured AutoRest client using the given target Azure context and named endpoint
         /// </summary>
         /// <typeparam name="TClient">The client type to create</typeparam>
         /// <param name="context">The azure context to target</param>
-        /// <param name="endpoint">The named endpoint the client shoulld target</param>
+        /// <param name="endpoint">The named endpoint the client should target</param>
         /// <returns>A client properly authenticated in the given context, properly configured for use with Azure PowerShell, 
         /// targeting the given named endpoint in the targeted environment</returns>
         TClient CreateArmClient<TClient>(IAzureContext context, string endpoint) where TClient : ServiceClient<TClient>;

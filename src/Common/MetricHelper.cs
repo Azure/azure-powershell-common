@@ -309,6 +309,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 eventProperties["exception-type"] = qos.Exception.GetType().ToString();
                 string cloudErrorCode = null;
+                // what's the type track2 exception
                 if (qos.Exception is CloudException cloudException)
                 {
                     eventProperties["exception-httpcode"] = cloudException.Response?.StatusCode.ToString();
@@ -320,6 +321,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 while (innerException != null)
                 {
                     innerExceptions.Add(innerException);
+                    // what's the type track2 exception
                     if (innerException is CloudException innerCloudException)
                     {
                         eventProperties["exception-httpcode"] = innerCloudException.Response?.StatusCode.ToString();

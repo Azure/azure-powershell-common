@@ -304,9 +304,12 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             AzureSession.Instance.ClientFactory.AddUserAgent("AzurePowershell", string.Format("v{0}", AzVersion));
             AzureSession.Instance.ClientFactory.AddUserAgent(PSVERSION, string.Format("v{0}", PowerShellVersion));
             AzureSession.Instance.ClientFactory.AddUserAgent(ModuleName, this.ModuleVersion);
-
+            
             AzureSession.Instance.ClientFactory.AddHandler(
-                new CmdletInfoHandler(this.CommandRuntime.ToString(),
+                new CmdletInfoHandler(this.CommandRuntime.ToString(), this.ParameterSetName, this._clientRequestId));
+
+            AzureSession.Instance.ClientFactory.AddPolicy(
+                new CmdletInfoPolicy(this.CommandRuntime.ToString(),
                     this.ParameterSetName, this._clientRequestId));
 
         }
@@ -315,6 +318,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         {
             AzureSession.Instance.ClientFactory.RemoveUserAgent(ModuleName);
             AzureSession.Instance.ClientFactory.RemoveHandler(typeof(CmdletInfoHandler));
+            AzureSession.Instance.ClientFactory.RemovePolicy(typeof(CmdletInfoPolicy));
         }
         /// <summary>
         /// Cmdlet begin process. Write to logs, setup Http Tracing and initialize profile
