@@ -12,6 +12,8 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using Azure.Core;
+
 using Microsoft.Rest;
 using System;
 using System.Security;
@@ -87,6 +89,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <param name="function">Delegate for renewing token</param>
         /// <returns>Service client credentials</returns>
         ServiceClientCredentials GetServiceClientCredentials(string accessToken, Func<string> renew = null);
+
+        TokenCredential GetTokenCredential(IAzureContext context);
+
+        TokenCredential GetTokenCredential(IAzureContext context, string targetEndpoint);
+
+        TokenCredential GetTokenCredential(string accessToken, Func<string> renew = null);
 
         /// <summary>
         /// Remove any stored credentials for the given user
