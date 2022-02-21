@@ -307,6 +307,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     case AzureEnvironment.ExtendedEndpoint.MicrosoftGraphEndpointResourceId:
                         environment.SetProperty(AzureEnvironment.ExtendedEndpoint.MicrosoftGraphEndpointResourceId, propertyValue);
                         break;
+                    case AzureEnvironment.ExtendedEndpoint.AzurePurviewEndpointSuffix:
+                        environment.SetProperty(AzureEnvironment.ExtendedEndpoint.AzurePurviewEndpointSuffix, propertyValue);
+                        break;
+                    case AzureEnvironment.ExtendedEndpoint.AzurePurviewEndpointResourceId:
+                        environment.SetProperty(AzureEnvironment.ExtendedEndpoint.AzurePurviewEndpointResourceId, propertyValue);
+                        break;
                 }
             }
         }
@@ -359,6 +365,10 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     break;
                 case AzureEnvironment.ExtendedEndpoint.MicrosoftGraphUrl:
                     resource = AzureEnvironment.ExtendedEndpoint.MicrosoftGraphEndpointResourceId;
+                    break;
+                case AzureEnvironment.ExtendedEndpoint.AzurePurviewEndpointSuffix:
+                case AzureEnvironment.ExtendedEndpoint.AzurePurviewEndpointResourceId:
+                    resource = AzureEnvironment.ExtendedEndpoint.AzurePurviewEndpointResourceId;
                     break;
                 default:
                     resource = AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId;
