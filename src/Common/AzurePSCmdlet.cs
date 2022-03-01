@@ -378,13 +378,22 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                     _qosEvent.SurveyPrompted = true;
                 }
             }
-            LogQosEvent();
+            if (MetricHelper.TelemetryId == "")
+            {
+                // Send telemetry when cmdlet is directly called by user
+                LogQosEvent();
+            }
+            else {
+                // When cmdlet is called with another cmdlet, we will not add a new telemetry, but add the cmdlet name to InternalCalledCmdlets
+                MetricHelper.InternalCalledCmdlets += (MetricHelper.InternalCalledCmdlets == "" ? "" : ",") + this.MyInvocation?.MyCommand?.Name;
+            }
             LogCmdletEndInvocationInfo();
             TearDownDebuggingTraces();
             TearDownHttpClientPipeline();
             _previousEndTime = DateTimeOffset.Now;
             base.EndProcessing();
         }
+
 
         protected string CurrentPath()
         {
@@ -619,7 +628,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             _qosEvent = new AzurePSQoSEvent()
             {
                 ClientRequestId = this._clientRequestId,
-                SessionId = _sessionId,
+                // Use SessionId from MetricHelper so that generated cmdlet and handcrafted cmdlet could share the same Id
+                SessionId = MetricHelper.SessionId,
                 IsSuccess = true,
                 ParameterSetName = this.ParameterSetName,
                 PreviousEndTime = _previousEndTime
