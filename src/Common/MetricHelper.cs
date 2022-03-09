@@ -271,10 +271,6 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
         private void PopulatePropertiesFromQos(AzurePSQoSEvent qos, IDictionary<string, string> eventProperties, bool populateException = false)
         {
-#if DEBUG
-            string telemetryFilePath = System.IO.Path.GetTempPath() + "azure-powershell-telemetry.txt";
-            System.IO.File.AppendAllText(telemetryFilePath, qos.ToString() + "\n");
-#endif
             if (qos == null)
             {
                 return;
@@ -605,7 +601,12 @@ public class AzurePSQoSEvent
 
     public override string ToString()
     {
+#if DEBUG
         string ret = $"AzureQoSEvent: Module: {ModuleName}:{ModuleVersion}; Session:{SessionId}; CommandName: {CommandName}; PSVersion: {PSVersion}; InternalCalledCmdlets: {Microsoft.WindowsAzure.Commands.Common.MetricHelper.InternalCalledCmdlets}";
+#else
+        string ret = $"AzureQoSEvent: Module: {ModuleName}:{ModuleVersion}; CommandName: {CommandName}; PSVersion: {PSVersion}";
+#endif 
+        
         ret += $"; IsSuccess: {IsSuccess}; Duration: {Duration}";
 
         if (Exception != null)
