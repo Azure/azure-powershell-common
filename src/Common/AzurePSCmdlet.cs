@@ -378,14 +378,14 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                     _qosEvent.SurveyPrompted = true;
                 }
             }
-            if (MetricHelper.TelemetryId == "")
+            if (MetricHelper.IsCalledByUser())
             {
                 // Send telemetry when cmdlet is directly called by user
                 LogQosEvent();
             }
             else {
-                // When cmdlet is called with another cmdlet, we will not add a new telemetry, but add the cmdlet name to InternalCalledCmdlets
-                MetricHelper.InternalCalledCmdlets += (MetricHelper.InternalCalledCmdlets == "" ? "" : ",") + this.MyInvocation?.MyCommand?.Name;
+                // When cmdlet is called within another cmdlet, we will not add a new telemetry, but add the cmdlet name to InternalCalledCmdlets
+                MetricHelper.AppendInternalCalledCmdlet(this.MyInvocation?.MyCommand?.Name);
             }
             LogCmdletEndInvocationInfo();
             TearDownDebuggingTraces();

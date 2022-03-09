@@ -42,6 +42,9 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
         public static string SessionId { get; } = System.Guid.NewGuid().ToString();
 
+        /// <summary>
+        /// Set _telemetryId and _internalCalledCmdlets as thread local since we need an instance of them per thread.
+        /// </summary>
         [ThreadStatic]
         private static string _telemetryId = "";
         [ThreadStatic]
@@ -50,6 +53,10 @@ namespace Microsoft.WindowsAzure.Commands.Common
         public static string TelemetryId { get=> _telemetryId; set { _telemetryId = value; } }
 
         public static string InternalCalledCmdlets { get => _internalCalledCmdlets; set { _internalCalledCmdlets = value; } }
+
+        public static bool IsCalledByUser() { return _telemetryId == "" ? true : false; }
+
+        public static void AppendInternalCalledCmdlet(string cmldetName) { _internalCalledCmdlets += (_internalCalledCmdlets == "" ? "" : ",") + cmldetName; }
 
         /// <summary>
         /// Clear telemetry context.
