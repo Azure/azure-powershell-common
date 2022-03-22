@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <IncludeHyak>true</IncludeHyak>
+    <IsCmdletProject>false</IsCmdletProject>
   </PropertyGroup>
   <Import Project="$(ProjectDir)..\Dependencies.targets" />
 
@@ -54,7 +55,6 @@
 
   <ItemGroup>
     <None Include="..\..\LICENSE.txt" Link="LICENSE.txt" Pack="true" PackagePath="" />
-    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>
