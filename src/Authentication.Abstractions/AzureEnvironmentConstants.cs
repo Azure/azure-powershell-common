@@ -236,5 +236,15 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string ChinaMicrosoftGraphEndpointResourceId = "https://microsoftgraph.chinacloudapi.cn/";
         public const string USGovernmentMicrosoftGraphEndpointResourceId = "https://graph.microsoft.us/";
         public const string GermanMicrosoftGraphEndpointResourceId = "https://graph.microsoft.de/";
+
+        /// <summary>
+        /// The domain name suffix for Azure Purview Services
+        /// </summary>
+        public const string AzurePurviewEndpointSuffix = "purview.azure.net";
+
+        /// <summary>
+        /// The token audience for authorizing Purview Service requests
+        /// </summary>
+        public const string AzurePurviewEndpointResourceId = "https://purview.azure.net";
     }
 }
