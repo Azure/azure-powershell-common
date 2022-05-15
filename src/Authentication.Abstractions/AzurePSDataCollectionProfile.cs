@@ -25,15 +25,19 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 
         private bool? _enableAzureDataCollection = null;
 
+        /// <summary>
+        /// Creates a data collection profile who relies on config API to determine whether it is enabled.
+        /// </summary>
         public AzurePSDataCollectionProfile()
         {
         }
 
-        [Obsolete("Data collection setting is supposed to be from Config API, " +
-            "it should not be passed in the constructor. " +
-            "Use AzurePSDataCollectionProfile() instead.")]
+        /// <summary>
+        /// Creates a data collection profile with a predefined state of whether it is enabled.
+        /// </summary>
         public AzurePSDataCollectionProfile(bool enable)
         {
+            _enableAzureDataCollection = enable;
         }
 
         public bool? EnableAzureDataCollection {
