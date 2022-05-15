@@ -20,7 +20,7 @@ namespace Microsoft.Azure.PowerShell.Common.Config
     public enum ConfigScope
     {
         /// <summary>
-        /// Config will be persitent on the disk, available for all the PowerShell sessions initiated by the current user.
+        /// Config will be persistent on the disk, available for all the PowerShell sessions initiated by the current user.
         /// </summary>
         CurrentUser,
 
@@ -33,6 +33,12 @@ namespace Microsoft.Azure.PowerShell.Common.Config
         /// Config is never set.
         /// </summary>
         /// <remarks>This option is not available when updating or clearing a config.</remarks>
-        Default
+        Default,
+
+        /// <summary>
+        /// Config is set by environment variables.
+        /// </summary>
+        /// <remarks>This option is not available when updating or clearing a config.</remarks>
+        Environment
     }
 }
