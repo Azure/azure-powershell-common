@@ -13,7 +13,9 @@
 // ----------------------------------------------------------------------------------
 
 using Microsoft.Azure.Commands.Common;
+using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using Microsoft.Azure.PowerShell.Common.Config;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -415,14 +417,14 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         public static void EnableDataCollection(this AzurePSCmdlet cmdlt)
         {
-            PropertyInfo dynField = (typeof(AzurePSCmdlet)).GetProperty("_dataCollectionProfile", BindingFlags.NonPublic | BindingFlags.Instance);
-            dynField.SetValue(cmdlt, new AzurePSDataCollectionProfile(true));
+            AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager);
+            configManager.UpdateConfig(ConfigKeysForCommon.EnableDataCollection, true, ConfigScope.CurrentUser);
         }
 
         public static void DisableDataCollection(this AzurePSCmdlet cmdlt)
         {
-            PropertyInfo dynField = (typeof(AzurePSCmdlet)).GetProperty("_dataCollectionProfile", BindingFlags.NonPublic | BindingFlags.Instance);
-            dynField.SetValue(cmdlt, new AzurePSDataCollectionProfile(false));
+            AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager);
+            configManager.UpdateConfig(ConfigKeysForCommon.EnableDataCollection, false, ConfigScope.CurrentUser);
         }
 
         #endregion

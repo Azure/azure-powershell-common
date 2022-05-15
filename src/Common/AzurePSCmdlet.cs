@@ -65,7 +65,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                     }
                     else if (_cachedProfile == null)
                     {
-                        _cachedProfile = new AzurePSDataCollectionProfile(true);
+                        _cachedProfile = new AzurePSDataCollectionProfile();
                         WriteWarning(DataCollectionWarning);
                     }
 

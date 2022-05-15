@@ -12,7 +12,7 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Newtonsoft.Json;
+using Microsoft.Azure.PowerShell.Common.Config;
 using System;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
@@ -23,16 +23,36 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             OldDefaultFileName = "AzureDataCollectionProfile.json",
             DefaultFileName = "AzurePSDataCollectionProfile.json";
 
+        private bool? _enableAzureDataCollection = null;
+
         public AzurePSDataCollectionProfile()
         {
         }
 
+        [Obsolete("Data collection setting is supposed to be from Config API, " +
+            "it should not be passed in the constructor. " +
+            "Use AzurePSDataCollectionProfile() instead.")]
         public AzurePSDataCollectionProfile(bool enable)
         {
-            EnableAzureDataCollection = enable;
         }
 
-        [JsonProperty(PropertyName = "enableAzureDataCollection")]
-        public bool? EnableAzureDataCollection { get; set; }
+        public bool? EnableAzureDataCollection {
+            get
+            {
+                if (_enableAzureDataCollection.HasValue)
+                {
+                    return _enableAzureDataCollection.Value;
+                }
+                if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager))
+                {
+                    _enableAzureDataCollection = configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableDataCollection);
+                }
+                return _enableAzureDataCollection;
+            }
+            set
+            {
+                throw new NotSupportedException("Setting data collection directly is not supported. Use Config API instead.");
+            }
+        }
     }
 }
