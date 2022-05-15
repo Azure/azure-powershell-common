@@ -34,13 +34,13 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         /// <param name="writeOutput"></param>
         public static void ProcessCustomAttributesAtRuntime(Type type, InvocationInfo invocationInfo, Action<string> writeOutput)
         {
-            bool supressWarningOrError = false;
+            bool suppressWarningOrError = false;
 
             try
             {
                 if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager))
                 {
-                    supressWarningOrError = !configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisplayBreakingChangeWarnings, invocationInfo);
+                    suppressWarningOrError = !configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisplayBreakingChangeWarning, invocationInfo);
                 }
             }
             catch (Exception)
@@ -48,7 +48,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
                 //no action
             }
 
-            if (supressWarningOrError)
+            if (suppressWarningOrError)
             {
                 //Do not process the attributes at runtime... The env variable to override the warning messages is set
                 return;
