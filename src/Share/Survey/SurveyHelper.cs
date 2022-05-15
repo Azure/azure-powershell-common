@@ -12,10 +12,13 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using Microsoft.Azure.Commands.Common.Authentication;
+using Microsoft.Azure.PowerShell.Common.Config;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -53,8 +56,18 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 
         private bool _ignoreSchedule;
 
-        private bool IsDisabledFromEnv => "Disabled".Equals(Environment.GetEnvironmentVariable(_azurePSInterceptSurvey), StringComparison.OrdinalIgnoreCase)
-                                        || "False".Equals(Environment.GetEnvironmentVariable(_azurePSInterceptSurvey), StringComparison.OrdinalIgnoreCase);
+        private bool IsDisabled
+        {
+            get
+            {
+                if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager))
+                {
+                    return !configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableInterceptSurvey);
+                }
+                Debug.Fail("Config manager should have been registered when Az.Accounts is imported.");
+                return true;
+            }
+        }
 
         public string CurrentDate { get; }
 
@@ -81,7 +94,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 
         public bool ShouldPropmtSurvey(string moduleName, Version moduleVersion)
         {
-            if (_ignoreSchedule || IsDisabledFromEnv)
+            if (_ignoreSchedule || IsDisabled)
             {
                 return false;
             }

@@ -14,6 +14,8 @@
 
 #undef DEBUG
 
+using Microsoft.Azure.Commands.Common.Authentication;
+using Microsoft.Azure.PowerShell.Common.Config;
 using Microsoft.WindowsAzure.Commands.Common.Properties;
 using System;
 using System.Collections.Generic;
@@ -21,7 +23,6 @@ using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 {
@@ -82,13 +83,9 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         {
             bool supressWarningOrError = false;
 
-            try
+            if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager))
             {
-                supressWarningOrError = bool.Parse(System.Environment.GetEnvironmentVariable(SUPPRESS_ERROR_OR_WARNING_MESSAGE_ENV_VARIABLE_NAME));
-            }
-            catch (Exception)
-            {
-                //no action
+                supressWarningOrError = !configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisplayBreakingChangeWarnings, invocationInfo);
             }
 
             if (supressWarningOrError)

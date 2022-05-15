@@ -12,6 +12,8 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using Microsoft.Azure.Commands.Common.Authentication;
+using Microsoft.Azure.PowerShell.Common.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +38,10 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 
             try
             {
-                supressWarningOrError = bool.Parse(System.Environment.GetEnvironmentVariable(SUPPRESS_ERROR_OR_WARNING_MESSAGE_ENV_VARIABLE_NAME));
+                if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager))
+                {
+                    supressWarningOrError = !configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisplayBreakingChangeWarnings, invocationInfo);
+                }
             }
             catch (Exception)
             {

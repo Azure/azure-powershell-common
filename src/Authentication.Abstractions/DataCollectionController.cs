@@ -12,9 +12,8 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Newtonsoft.Json;
+using Microsoft.Azure.PowerShell.Common.Config;
 using System;
-using System.IO;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
@@ -25,60 +24,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 
         static AzurePSDataCollectionProfile Initialize(IAzureSession session)
         {
-            AzurePSDataCollectionProfile result = new AzurePSDataCollectionProfile(true);
-            try
-            {
-                var environmentValue = Environment.GetEnvironmentVariable(AzurePSDataCollectionProfile.EnvironmentVariableName);
-                bool enabled = true;
-                if (!string.IsNullOrWhiteSpace(environmentValue) && bool.TryParse(environmentValue, out enabled))
-                {
-                    result.EnableAzureDataCollection = enabled;
-                }
-                else
-                {
-                    var store = session.DataStore;
-                    string dataPath = Path.Combine(session.ProfileDirectory, AzurePSDataCollectionProfile.DefaultFileName);
-                    if (store.FileExists(dataPath))
-                    {
-                        string contents = store.ReadFileAsText(dataPath);
-                        var localResult = JsonConvert.DeserializeObject<AzurePSDataCollectionProfile>(contents);
-                        if (localResult != null && localResult.EnableAzureDataCollection.HasValue)
-                        {
-                            result = localResult;
-                        }
-                    }
-                    else
-                    {
-                        WritePSDataCollectionProfile(session, new AzurePSDataCollectionProfile(true));
-                    }
-                }
-            }
-            catch
-            {
-                // do not throw for i/o or serialization errors
-            }
-
-            return result;
+            return new AzurePSDataCollectionProfile();
         }
 
+        [Obsolete("Use config API to update data collection settings.")]
         public static void WritePSDataCollectionProfile(IAzureSession session, AzurePSDataCollectionProfile profile)
         {
-            try
-            {
-                var store = session.DataStore;
-                string dataPath = Path.Combine(session.ProfileDirectory, AzurePSDataCollectionProfile.DefaultFileName);
-                if (!store.DirectoryExists(session.ProfileDirectory))
-                {
-                    store.CreateDirectory(session.ProfileDirectory);
-                }
-
-                string contents = JsonConvert.SerializeObject(profile);
-                store.WriteFile(dataPath, contents);
-            }
-            catch
-            {
-                // do not throw for i/o or serialization errors
-            }
         }
 
         public static DataCollectionController Create(IAzureSession session)
@@ -93,33 +44,17 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 
         class MemoryDataCollectionController : DataCollectionController
         {
-            object _lock;
-            bool? _enabled;
-
             public MemoryDataCollectionController()
             {
-                _lock = new object();
-                _enabled = null;
             }
 
             public MemoryDataCollectionController(AzurePSDataCollectionProfile enabled)
             {
-                _lock = new object();
-                _enabled = enabled?.EnableAzureDataCollection;
             }
 
             public override AzurePSDataCollectionProfile GetProfile(Action warningWriter)
             {
-                lock (_lock)
-                {
-                    if (!_enabled.HasValue)
-                    {
-                        _enabled = true;
-                        warningWriter();
-                    }
-
-                    return new AzurePSDataCollectionProfile(_enabled.Value);
-                }
+                return new AzurePSDataCollectionProfile();
             }
         }
     }
