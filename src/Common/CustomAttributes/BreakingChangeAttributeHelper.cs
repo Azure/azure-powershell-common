@@ -14,8 +14,6 @@
 
 #undef DEBUG
 
-using Microsoft.Azure.Commands.Common.Authentication;
-using Microsoft.Azure.PowerShell.Common.Config;
 using Microsoft.WindowsAzure.Commands.Common.Properties;
 using System;
 using System.Collections.Generic;
@@ -81,19 +79,6 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
          * */
         public static void ProcessCustomAttributesAtRuntime(Type type, InvocationInfo invocationInfo, Action<string> writeOutput)
         {
-            bool suppressWarningOrError = false;
-
-            if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager))
-            {
-                suppressWarningOrError = !configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisplayBreakingChangeWarning, invocationInfo);
-            }
-
-            if (suppressWarningOrError)
-            {
-                //Do not process the attributes at runtime... The env variable to override the warning messages is set
-                return;
-            }
-
             List<GenericBreakingChangeAttribute> attributes = new List<GenericBreakingChangeAttribute>(GetAllBreakingChangeAttributesInType(type, invocationInfo));
             StringBuilder sb = new StringBuilder();
             Action<string> appendBreakingChangeInfo = (string s) => sb.Append(s);

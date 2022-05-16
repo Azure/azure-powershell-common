@@ -12,8 +12,6 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.Azure.Commands.Common.Authentication;
-using Microsoft.Azure.PowerShell.Common.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,26 +32,6 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         /// <param name="writeOutput"></param>
         public static void ProcessCustomAttributesAtRuntime(Type type, InvocationInfo invocationInfo, Action<string> writeOutput)
         {
-            bool suppressWarningOrError = false;
-
-            try
-            {
-                if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager))
-                {
-                    suppressWarningOrError = !configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisplayBreakingChangeWarning, invocationInfo);
-                }
-            }
-            catch (Exception)
-            {
-                //no action
-            }
-
-            if (suppressWarningOrError)
-            {
-                //Do not process the attributes at runtime... The env variable to override the warning messages is set
-                return;
-            }
-
             List<CmdletPreviewAttribute> attributes = new List<CmdletPreviewAttribute>(GetAllAttributesInType(type, invocationInfo));
 
             if (attributes != null && attributes.Count > 0)
