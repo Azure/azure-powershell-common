@@ -50,13 +50,13 @@ namespace Microsoft.WindowsAzure.Commands.Common
         [ThreadStatic]
         private static string _internalCalledCmdlets = "";
 
-        public static string TelemetryId { get=> _telemetryId; set { _telemetryId = value; } }
+        public static string TelemetryId { get => _telemetryId ?? ""; set { _telemetryId = value; } }
 
-        public static string InternalCalledCmdlets { get => _internalCalledCmdlets; set { _internalCalledCmdlets = value; } }
+        public static string InternalCalledCmdlets { get => _internalCalledCmdlets ?? ""; set { _internalCalledCmdlets = value; } }
 
-        public static bool IsCalledByUser() { return _telemetryId == "" ? true : false; }
+        public static bool IsCalledByUser() { return string.IsNullOrEmpty(_telemetryId) ? true : false; }
 
-        public static void AppendInternalCalledCmdlet(string cmldetName) { _internalCalledCmdlets += (_internalCalledCmdlets == "" ? "" : ",") + cmldetName; }
+        public static void AppendInternalCalledCmdlet(string cmldetName) { _internalCalledCmdlets += (string.IsNullOrEmpty(_internalCalledCmdlets) ? "" : ",") + cmldetName; }
 
         /// <summary>
         /// Clear telemetry context.
