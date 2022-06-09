@@ -46,9 +46,9 @@ namespace Microsoft.WindowsAzure.Commands.Common
         /// Set _telemetryId and _internalCalledCmdlets as thread local since we need an instance of them per thread.
         /// </summary>
         [ThreadStatic]
-        private static string _telemetryId = "";
+        private static string _telemetryId;
         [ThreadStatic]
-        private static string _internalCalledCmdlets = "";
+        private static string _internalCalledCmdlets;
 
         public static string TelemetryId { get => _telemetryId ?? ""; set { _telemetryId = value; } }
 
