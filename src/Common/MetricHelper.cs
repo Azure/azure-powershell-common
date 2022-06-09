@@ -54,7 +54,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
         public static string InternalCalledCmdlets { get => _internalCalledCmdlets ?? ""; set { _internalCalledCmdlets = value; } }
 
-        public static bool IsCalledByUser() { return string.IsNullOrEmpty(_telemetryId) ? true : false; }
+        public static bool IsCalledByUser() { return string.IsNullOrEmpty(_telemetryId); }
 
         public static void AppendInternalCalledCmdlet(string cmldetName) { _internalCalledCmdlets += (string.IsNullOrEmpty(_internalCalledCmdlets) ? "" : ",") + cmldetName; }
 
