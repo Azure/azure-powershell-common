@@ -34,6 +34,7 @@ namespace Microsoft.Azure.Management.Internal.Network.Version2017_03_01.Models
         /// </summary>
         /// <param name="networkSecurityGroup">The ID of network security group
         /// that is applied.</param>
+        /// <param name="association"></param>
         /// <param name="effectiveSecurityRules">A collection of effective
         /// security rules.</param>
         /// <param name="tagMap">Tag map.</param>
