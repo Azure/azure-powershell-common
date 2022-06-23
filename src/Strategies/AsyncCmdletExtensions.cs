@@ -40,7 +40,6 @@ namespace Microsoft.Azure.Commands.Common.Strategies
         /// <param name="subscriptionId">Subbscription Id.</param>
         /// <param name="parameters">Cmdlet parameters.</param>
         /// <param name="asyncCmdlet">Asynchronous cmdlet interface.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns></returns>
         public static async Task<TModel> RunAsync<TModel>(
             this IClient client,
