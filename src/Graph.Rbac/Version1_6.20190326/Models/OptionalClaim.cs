@@ -32,6 +32,7 @@ namespace Microsoft.Azure.Graph.RBAC.Version1_6_20190326.Models
         /// <param name="name">Claim name.</param>
         /// <param name="source">Claim source.</param>
         /// <param name="essential">Is this a required claim.</param>
+        /// <param name="additionalProperties">Unmatched properties from the message are deserialized this collection</param>
         public OptionalClaim(string name = default(string), string source = default(string), bool? essential = default(bool?), object additionalProperties = default(object))
         {
             Name = name;

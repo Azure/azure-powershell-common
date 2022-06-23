@@ -33,6 +33,8 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.DirectoryObjects.Mo
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
         /// <param name="id">Read-only.</param>
+        /// <param name="odatatype"></param>
+        /// <param name="deletedDateTime"></param>
         /// <param name="appDisplayName">Display name of the application object
         /// on which this extension property is defined. Read-only.</param>
         /// <param name="dataType">Specifies the data type of the value the

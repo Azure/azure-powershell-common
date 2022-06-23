@@ -29,10 +29,14 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Groups.Models
         /// <summary>
         /// Initializes a new instance of the OdataErrorMain class.
         /// </summary>
+        /// <param name="code"></param>
+        /// <param name="message"></param>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
+        /// <param name="details"></param>
         /// <param name="innererror">The structure of this object is
         /// service-specific</param>
+        /// <param name="target"></param>
         public OdataErrorMain(string code, string message, IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), IList<OdataErrorDetail> details = default(IList<OdataErrorDetail>), IDictionary<string, object> innererror = default(IDictionary<string, object>), string target = default(string))
         {
             AdditionalProperties = additionalProperties;
