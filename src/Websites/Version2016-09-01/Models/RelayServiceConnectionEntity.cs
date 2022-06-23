@@ -38,6 +38,13 @@ namespace Microsoft.Azure.Management.WebSites.Version2016_09_01.Models
         /// <param name="name">Resource Name.</param>
         /// <param name="kind">Kind of resource.</param>
         /// <param name="type">Resource type.</param>
+        /// <param name="entityName"></param>
+        /// <param name="entityConnectionString"></param>
+        /// <param name="resourceType">Resource type.</param>
+        /// <param name="resourceConnectionString"></param>
+        /// <param name="hostname"></param>
+        /// <param name="port"></param>
+        /// <param name="biztalkUri"></param>
         public RelayServiceConnectionEntity(string id = default(string), string name = default(string), string kind = default(string), string type = default(string), string entityName = default(string), string entityConnectionString = default(string), string resourceType = default(string), string resourceConnectionString = default(string), string hostname = default(string), int? port = default(int?), string biztalkUri = default(string))
             : base(id, name, kind, type)
         {

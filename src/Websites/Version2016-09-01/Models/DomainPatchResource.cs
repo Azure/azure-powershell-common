@@ -81,6 +81,7 @@ namespace Microsoft.Azure.Management.WebSites.Version2016_09_01.Models
         /// <param name="targetDnsType">Target DNS type (would be used for
         /// migration). Possible values include: 'AzureDns',
         /// 'DefaultDomainRegistrarDns'</param>
+        /// <param name="authCode"></param>
         public DomainPatchResource(Contact contactAdmin, Contact contactBilling, Contact contactRegistrant, Contact contactTech, DomainPurchaseConsent consent, string id = default(string), string name = default(string), string kind = default(string), string type = default(string), DomainStatus? registrationStatus = default(DomainStatus?), ProvisioningState? provisioningState = default(ProvisioningState?), IList<string> nameServers = default(IList<string>), bool? privacy = default(bool?), System.DateTime? createdTime = default(System.DateTime?), System.DateTime? expirationTime = default(System.DateTime?), System.DateTime? lastRenewedTime = default(System.DateTime?), bool? autoRenew = default(bool?), bool? readyForDnsRecordManagement = default(bool?), IList<HostName> managedHostNames = default(IList<HostName>), IList<string> domainNotRenewableReasons = default(IList<string>), DnsType? dnsType = default(DnsType?), string dnsZoneId = default(string), DnsType? targetDnsType = default(DnsType?), string authCode = default(string))
             : base(id, name, kind, type)
         {
