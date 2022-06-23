@@ -36,6 +36,7 @@ namespace Microsoft.Azure.Management.Internal.Resources.Models
         /// muct be one of the supported Azure locations.</param>
         /// <param name="id">The ID of the resource group.</param>
         /// <param name="name">The name of the resource group.</param>
+        /// <param name="properties"></param>
         /// <param name="managedBy">The ID of the resource that manages this
         /// resource group.</param>
         /// <param name="tags">The tags attached to the resource group.</param>
