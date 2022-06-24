@@ -43,6 +43,7 @@ namespace Microsoft.Azure.Commands.Common.Compute.Version_2018_04.Models
         /// <param name="type">Resource type</param>
         /// <param name="tags">Resource tags</param>
         /// <param name="managedBy">Unused. Always Null.</param>
+        /// <param name="sku"></param>
         /// <param name="timeCreated">The time when the disk was
         /// created.</param>
         /// <param name="osType">The Operating System type. Possible values

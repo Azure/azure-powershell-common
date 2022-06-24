@@ -31,7 +31,6 @@ namespace Microsoft.Azure.PowerShell.Common.Config
         /// Gets the unique key of this config.
         /// </summary>
         /// <remarks>It is also used as the name of the PowerShell parameter which maps to this config, so the key must follow the design guideline and conventions. See <see href="https://github.com/Azure/azure-powershell/blob/main/documentation/development-docs/design-guidelines/parameter-best-practices.md#parameter-best-practices">Parameter Best Practices</see>.</remarks>
-        /// <seealso cref=""/>
         public abstract string Key { get; }
 
         /// <summary>
