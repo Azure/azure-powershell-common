@@ -22,16 +22,16 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         /// <summary>
         /// Prompt for credentials if necessary
         /// </summary>
-        public const string Auto = "Auto",
+        public const string Auto = "Auto";
 
         /// <summary>
         /// Always prompt for credentials
         /// </summary>
-        Always = "Always",
+        public const string Always = "Always";
 
         /// <summary>
         /// Fail if credential prompt is required
         /// </summary>
-        Never = "Never";
+        public const string Never = "Never";
     }
 }

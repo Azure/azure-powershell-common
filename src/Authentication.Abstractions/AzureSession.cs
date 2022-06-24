@@ -143,7 +143,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         /// <summary>
         /// Initialize the AzureSession, avoid contention at startup
         /// </summary>
-        /// <param name="instance">The instance of AzureSession to use</param>
+        /// <param name="instanceCreator">The instance of AzureSession to use</param>
         /// <param name="overwrite">If true, always overwrite the current instance.  Otherwise do not initialize</param>
         public static void Initialize(Func<IAzureSession> instanceCreator, bool overwrite)
         {
@@ -176,7 +176,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         /// <summary>
         /// Initialize the current instance, if it it not already inbitialized
         /// </summary>
-        /// <param name="instance"></param>
+        /// <param name="instanceCreator"></param>
         public static void Initialize(Func<IAzureSession> instanceCreator)
         {
             Initialize(instanceCreator, false);
