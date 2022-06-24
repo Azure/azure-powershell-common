@@ -32,6 +32,7 @@ namespace Microsoft.Azure.Management.Internal.Network.Version2017_10_01.Models
         /// class.
         /// </summary>
         /// <param name="id">ID of the network interface.</param>
+        /// <param name="securityRuleAssociations"></param>
         public SecurityGroupNetworkInterface(string id = default(string), SecurityRuleAssociations securityRuleAssociations = default(SecurityRuleAssociations))
         {
             Id = id;
