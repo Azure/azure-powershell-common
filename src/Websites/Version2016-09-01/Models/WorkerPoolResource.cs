@@ -48,6 +48,7 @@ namespace Microsoft.Azure.Management.WebSites.Version2016_09_01.Models
         /// pool.</param>
         /// <param name="instanceNames">Names of all instances in the worker
         /// pool (read only).</param>
+        /// <param name="sku"></param>
         public WorkerPoolResource(string id = default(string), string name = default(string), string kind = default(string), string type = default(string), int? workerSizeId = default(int?), ComputeModeOptions? computeMode = default(ComputeModeOptions?), string workerSize = default(string), int? workerCount = default(int?), IList<string> instanceNames = default(IList<string>), SkuDescription sku = default(SkuDescription))
             : base(id, name, kind, type)
         {

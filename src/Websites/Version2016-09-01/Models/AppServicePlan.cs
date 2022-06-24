@@ -75,6 +75,7 @@ namespace Microsoft.Azure.Management.WebSites.Version2016_09_01.Models
         /// <param name="provisioningState">Provisioning state of the App
         /// Service Environment. Possible values include: 'Succeeded',
         /// 'Failed', 'Canceled', 'InProgress', 'Deleting'</param>
+        /// <param name="sku"></param>
         public AppServicePlan(string location, string appServicePlanName, string id = default(string), string name = default(string), string kind = default(string), string type = default(string), IDictionary<string, string> tags = default(IDictionary<string, string>), string workerTierName = default(string), StatusOptions? status = default(StatusOptions?), string subscription = default(string), string adminSiteName = default(string), HostingEnvironmentProfile hostingEnvironmentProfile = default(HostingEnvironmentProfile), int? maximumNumberOfWorkers = default(int?), string geoRegion = default(string), bool? perSiteScaling = default(bool?), int? numberOfSites = default(int?), bool? isSpot = default(bool?), System.DateTime? spotExpirationTime = default(System.DateTime?), string resourceGroup = default(string), bool? reserved = default(bool?), int? targetWorkerCount = default(int?), int? targetWorkerSizeId = default(int?), ProvisioningState? provisioningState = default(ProvisioningState?), SkuDescription sku = default(SkuDescription))
             : base(location, id, name, kind, type, tags)
         {
