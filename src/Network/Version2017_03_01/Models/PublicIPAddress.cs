@@ -44,8 +44,10 @@ namespace Microsoft.Azure.Management.Internal.Network.Version2017_03_01.Models
         /// <param name="publicIPAddressVersion">The public IP address version.
         /// Possible values are: 'IPv4' and 'IPv6'. Possible values include:
         /// 'IPv4', 'IPv6'</param>
+        /// <param name="ipConfiguration"></param>
         /// <param name="dnsSettings">The FQDN of the DNS record associated
         /// with the public IP address.</param>
+        /// <param name="ipAddress"></param>
         /// <param name="idleTimeoutInMinutes">The idle timeout of the public
         /// IP address.</param>
         /// <param name="resourceGuid">The resource GUID property of the public

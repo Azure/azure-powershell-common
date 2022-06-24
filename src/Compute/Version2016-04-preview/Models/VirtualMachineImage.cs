@@ -42,6 +42,9 @@ namespace Microsoft.Azure.Commands.Common.Compute.Version2016_04_preview.Models
         /// virtual machine. For more information about using tags, see [Using
         /// tags to organize your Azure
         /// resources](https://docs.microsoft.com/azure/azure-resource-manager/resource-group-using-tags.md).</param>
+        /// <param name="plan"></param>
+        /// <param name="osDiskImage"></param>
+        /// <param name="dataDiskImages"></param>
         public VirtualMachineImage(string name, string location, string id = default(string), IDictionary<string, string> tags = default(IDictionary<string, string>), PurchasePlan plan = default(PurchasePlan), OSDiskImage osDiskImage = default(OSDiskImage), IList<DataDiskImage> dataDiskImages = default(IList<DataDiskImage>))
             : base(name, location, id, tags)
         {

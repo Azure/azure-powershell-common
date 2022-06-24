@@ -79,32 +79,32 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             /// <summary>
             /// Comma separated registered resource providers, i.e.: websites,compute,hdinsight
             /// </summary>
-            public const string RegisteredResourceProviders = "RegisteredResourceProviders",
+            public const string RegisteredResourceProviders = "RegisteredResourceProviders";
 
             /// <summary>
             /// Tenants to be compatible with previous version
             /// Equivalent to retrieved by tenant
             /// </summary>
-            Tenants = "Tenants",
+            public const string Tenants = "Tenants";
             /// <summary>
             /// Home tenant
             /// </summary>
-            HomeTenant = "HomeTenant",
+            public const string HomeTenant = "HomeTenant";
             /// <summary>
             /// Associated tenants
             /// </summary>
-            ManagedByTenants = "ManagedByTenants",
+            public const string ManagedByTenants = "ManagedByTenants";
 
             /// <summary>
             /// If this property existed on the subscription indicates that it's default one.
             /// </summary>
-            Default = "Default",
-            StorageAccount = "StorageAccount",
-            Environment = "Environment",
-            Account = "Account",
-            SubscriptionPolices = "SubscriptionPolices",
-            AuthorizationSource = "AuthorizationSource",
-            Tags = "Tags";
+            public const string Default = "Default";
+            public const string StorageAccount = "StorageAccount";
+            public const string Environment = "Environment";
+            public const string Account = "Account";
+            public const string SubscriptionPolices = "SubscriptionPolices";
+            public const string AuthorizationSource = "AuthorizationSource";
+            public const string Tags = "Tags";
         }
     }
 }

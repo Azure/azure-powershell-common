@@ -31,6 +31,8 @@ namespace Microsoft.Azure.Management.Internal.Network.Version2017_10_01.Models
         /// <summary>
         /// Initializes a new instance of the SecurityRuleAssociations class.
         /// </summary>
+        /// <param name="networkInterfaceAssociation"></param>
+        /// <param name="subnetAssociation"></param>
         /// <param name="defaultSecurityRules">Collection of default security
         /// rules of the network security group.</param>
         /// <param name="effectiveSecurityRules">Collection of effective

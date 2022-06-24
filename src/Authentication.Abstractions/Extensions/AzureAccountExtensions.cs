@@ -189,7 +189,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// Copy account properties from the given account
         /// </summary>
         /// <param name="account">The account to copy to (target)</param>
-        /// <param name="other">The account to copy from (source)</param>
+        /// <param name="source">The account to copy from (source)</param>
         public static void CopyFrom(this IAzureAccount account, IAzureAccount source)
         {
             if (account != null && source != null)
@@ -210,7 +210,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// Update non-null non-identity account properties from the given account
         /// </summary>
         /// <param name="account">The account to copy to (target)</param>
-        /// <param name="other">The account to copy from (source)</param>
+        /// <param name="source">The account to copy from (source)</param>
         public static void Update(this IAzureAccount account, IAzureAccount source)
         {
             if (account != null && source != null)
