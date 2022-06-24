@@ -93,7 +93,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         /// then the attribbute is applicable
         /// If the invocationInfo is null we return true
         /// </summary>
-        /// <param name="invocation"></param>
+        /// <param name="invocationInfo"></param>
         /// <returns>bool</returns>
         public override bool IsApplicableToInvocation(InvocationInfo invocationInfo)
         {
