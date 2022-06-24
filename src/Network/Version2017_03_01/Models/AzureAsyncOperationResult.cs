@@ -38,6 +38,7 @@ namespace Microsoft.Azure.Management.Internal.Network.Version2017_03_01.Models
         /// <param name="status">Status of the Azure async operation. Possible
         /// values are: 'InProgress', 'Succeeded', and 'Failed'. Possible
         /// values include: 'InProgress', 'Succeeded', 'Failed'</param>
+        /// <param name="error"></param>
         public AzureAsyncOperationResult(string status = default(string), Error error = default(Error))
         {
             Status = status;

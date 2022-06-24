@@ -35,6 +35,7 @@ namespace Microsoft.Azure.Commands.Common.Compute.Version_2018_04.Models
         /// Initializes a new instance of the DiskUpdate class.
         /// </summary>
         /// <param name="tags">Resource tags</param>
+        /// <param name="sku"></param>
         /// <param name="osType">the Operating System type. Possible values
         /// include: 'Windows', 'Linux'</param>
         /// <param name="diskSizeGB">If creationData.createOption is Empty,

@@ -32,6 +32,7 @@ namespace Microsoft.Azure.Commands.Common.Compute.Version_2018_04.Models
         /// Initializes a new instance of the ResourceUpdate class.
         /// </summary>
         /// <param name="tags">Resource tags</param>
+        /// <param name="sku"></param>
         public ResourceUpdate(IDictionary<string, string> tags = default(IDictionary<string, string>), DiskSku sku = default(DiskSku))
         {
             Tags = tags;

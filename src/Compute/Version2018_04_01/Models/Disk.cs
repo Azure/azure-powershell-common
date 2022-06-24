@@ -44,6 +44,7 @@ namespace Microsoft.Azure.Commands.Common.Compute.Version_2018_04.Models
         /// <param name="tags">Resource tags</param>
         /// <param name="managedBy">A relative URI containing the ID of the VM
         /// that has the disk attached.</param>
+        /// <param name="sku"></param>
         /// <param name="zones">The Logical zone list for Disk.</param>
         /// <param name="timeCreated">The time when the disk was
         /// created.</param>
