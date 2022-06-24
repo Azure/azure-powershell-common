@@ -25,7 +25,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
     /// </summary>
     public class DiskDataStore : IDataStore
     {
-        // <summary>
+        /// <summary>
         /// Write the given contents to the specified file
         /// </summary>
         /// <param name="path">The file path</param>
@@ -39,7 +39,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// Write the given contents to the specified file, using the specified encoding
         /// </summary>
         /// <param name="path">The file path</param>
-        /// <param name="content">The file contents</param>
+        /// <param name="contents">The file contents</param>
         /// <param name="encoding">The encoding to use</param>
         public void WriteFile(string path, string contents, Encoding encoding)
         {
@@ -212,7 +212,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// Add the given certificate to the CurrentUser 'My ' store
         /// </summary>
-        /// <param name="cert">The certificate to add</param>
+        /// <param name="certificate">The certificate to add</param>
         public void AddCertificate(X509Certificate2 certificate)
         {
             if (certificate == null)
