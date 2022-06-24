@@ -137,7 +137,6 @@ namespace Microsoft.Azure.Commands.Common.Exceptions
         /// <param name="message">The error message that explains the reason for the exception.</param>
         /// <param name="errorKind">ErrorKind that causes this exception.</param>
         /// <param name="hresult">An integer identifying the error that has occurred.</param>
-        /// <param name="innerException">The exception that is the cause of the current exception. Default value is null.</param>
         /// <param name="desensitizedMessage">The error message which doesn't contain PII.</param>
         /// <param name="lineNumber">The number of line when exception happens.</param>
         /// <param name="filePath">The file path when exception happens.</param>

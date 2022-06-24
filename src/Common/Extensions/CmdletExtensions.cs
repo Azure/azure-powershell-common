@@ -207,7 +207,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// <summary>
         /// Return the value of a paramater, or null if not set
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="cmdlet">the executing cmdlet</param>
         /// <param name="parameterName">The name of the parameter to return</param>
         /// <returns>true if the parameter was provided by the user, otherwise false</returns>
