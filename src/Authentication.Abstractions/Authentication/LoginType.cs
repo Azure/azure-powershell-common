@@ -22,11 +22,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         /// <summary>
         /// User is logging in with orgid (work or school) credentials
         /// </summary>
-        public const string OrgId = "OrgId",
+        public const string OrgId = "OrgId";
 
         /// <summary>
         /// User is logging in with liveid (personal) credentials
         /// </summary>
-        LiveId = "LiveId";
+        public const string LiveId = "LiveId";
     }
 }
