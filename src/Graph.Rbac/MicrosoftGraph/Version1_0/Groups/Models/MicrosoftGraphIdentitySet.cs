@@ -33,6 +33,9 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Groups.Models
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
+        /// <param name="application"></param>
+        /// <param name="device"></param>
+        /// <param name="user"></param>
         public MicrosoftGraphIdentitySet(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), MicrosoftGraphIdentity application = default(MicrosoftGraphIdentity), MicrosoftGraphIdentity device = default(MicrosoftGraphIdentity), MicrosoftGraphIdentity user = default(MicrosoftGraphIdentity))
         {
             AdditionalProperties = additionalProperties;

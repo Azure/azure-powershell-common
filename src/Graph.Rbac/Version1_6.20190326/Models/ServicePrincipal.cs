@@ -42,6 +42,7 @@ namespace Microsoft.Azure.Graph.RBAC.Version1_6_20190326.Models
         /// <param name="appDisplayName">The display name exposed by the
         /// associated application.</param>
         /// <param name="appId">The application ID.</param>
+        /// <param name="appOwnerTenantId"></param>
         /// <param name="appRoleAssignmentRequired">Specifies whether an
         /// AppRoleAssignment to a user or group is required before Azure AD
         /// will issue a user or access token to the application.</param>

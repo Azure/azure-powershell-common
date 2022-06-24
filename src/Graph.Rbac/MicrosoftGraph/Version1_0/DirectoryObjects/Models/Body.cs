@@ -30,6 +30,8 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.DirectoryObjects.Mo
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
+        /// <param name="ids"></param>
+        /// <param name="types"></param>
         public Body(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), IList<string> ids = default(IList<string>), IList<string> types = default(IList<string>))
         {
             AdditionalProperties = additionalProperties;

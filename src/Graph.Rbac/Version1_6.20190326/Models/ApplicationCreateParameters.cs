@@ -85,6 +85,7 @@ namespace Microsoft.Azure.Graph.RBAC.Version1_6_20190326.Models
         /// only GET requests will be allowed.</param>
         /// <param name="orgRestrictions">A list of tenants allowed to access
         /// application.</param>
+        /// <param name="optionalClaims"></param>
         /// <param name="passwordCredentials">A collection of
         /// PasswordCredential objects</param>
         /// <param name="preAuthorizedApplications">list of pre-authorized

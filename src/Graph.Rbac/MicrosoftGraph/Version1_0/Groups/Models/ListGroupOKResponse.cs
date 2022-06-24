@@ -33,6 +33,8 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Groups.Models
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
+        /// <param name="odatanextLink"></param>
+        /// <param name="value"></param>
         public ListGroupOKResponse(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string odatanextLink = default(string), IList<MicrosoftGraphGroup> value = default(IList<MicrosoftGraphGroup>))
         {
             AdditionalProperties = additionalProperties;

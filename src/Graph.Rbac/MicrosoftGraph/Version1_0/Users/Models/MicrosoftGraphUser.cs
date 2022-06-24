@@ -31,6 +31,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Users.Models
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
         /// <param name="id">Read-only.</param>
+        /// <param name="deletedDateTime"></param>
         /// <param name="accountEnabled">true if the account is enabled;
         /// otherwise, false. This property is required when a user is created.
         /// Supports $filter (eq, ne, NOT, and in).</param>

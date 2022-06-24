@@ -49,6 +49,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Applications.Models
         /// this property must be set to true (which is the default). To delete
         /// a permission, this property must first be set to false.  At that
         /// point, in a subsequent call, the permission may be removed.</param>
+        /// <param name="origin"></param>
         /// <param name="type">Specifies whether this delegated permission
         /// should be considered safe for non-admin users to consent to on
         /// behalf of themselves, or whether an administrator should be
