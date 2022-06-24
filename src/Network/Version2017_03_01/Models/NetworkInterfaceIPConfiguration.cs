@@ -42,6 +42,7 @@ namespace Microsoft.Azure.Management.Internal.Network.Version2017_03_01.Models
         /// LoadBalancerBackendAddressPool resource.</param>
         /// <param name="loadBalancerInboundNatRules">A list of references of
         /// LoadBalancerInboundNatRules.</param>
+        /// <param name="privateIPAddress"></param>
         /// <param name="privateIPAllocationMethod">Defines how a private IP
         /// address is assigned. Possible values are: 'Static' and 'Dynamic'.
         /// Possible values include: 'Static', 'Dynamic'</param>
@@ -50,8 +51,13 @@ namespace Microsoft.Azure.Management.Internal.Network.Version2017_03_01.Models
         /// ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.
         /// Possible values are: 'IPv4' and 'IPv6'. Possible values include:
         /// 'IPv4', 'IPv6'</param>
+        /// <param name="subnet"></param>
         /// <param name="primary">Gets whether this is a primary customer
         /// address on the network interface.</param>
+        /// <param name="publicIPAddress"></param>
+        /// <param name="provisioningState">The provisioning state of the
+        /// packet capture session. Possible values include: 'Succeeded',
+        /// 'Updating', 'Deleting', 'Failed'</param>
         /// <param name="name">The name of the resource that is unique within a
         /// resource group. This name can be used to access the
         /// resource.</param>

@@ -29,9 +29,9 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
      AttributeTargets.Property,
      AllowMultiple = true)]
 
-    /**
+    /*
      * This class acts as the base
-     **/ 
+     */ 
     public class GenericBreakingChangeAttribute : System.Attribute
     {
         private string _message;

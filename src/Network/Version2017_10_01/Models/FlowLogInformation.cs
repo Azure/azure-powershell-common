@@ -37,6 +37,7 @@ namespace Microsoft.Azure.Management.Internal.Network.Version2017_10_01.Models
         /// <param name="storageId">ID of the storage account which is used to
         /// store the flow log.</param>
         /// <param name="enabled">Flag to enable/disable flow logging.</param>
+        /// <param name="retentionPolicy"></param>
         public FlowLogInformation(string targetResourceId, string storageId, bool enabled, RetentionPolicyParameters retentionPolicy = default(RetentionPolicyParameters))
         {
             TargetResourceId = targetResourceId;

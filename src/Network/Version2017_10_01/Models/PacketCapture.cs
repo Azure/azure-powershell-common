@@ -36,12 +36,14 @@ namespace Microsoft.Azure.Management.Internal.Network.Version2017_10_01.Models
         /// </summary>
         /// <param name="target">The ID of the targeted resource, only VM is
         /// currently supported.</param>
+        /// <param name="storageLocation"></param>
         /// <param name="bytesToCapturePerPacket">Number of bytes captured per
         /// packet, the remaining bytes are truncated.</param>
         /// <param name="totalBytesPerSession">Maximum size of the capture
         /// output.</param>
         /// <param name="timeLimitInSeconds">Maximum duration of the capture
         /// session in seconds.</param>
+        /// <param name="filters"></param>
         public PacketCapture(string target, PacketCaptureStorageLocation storageLocation, int? bytesToCapturePerPacket = default(int?), int? totalBytesPerSession = default(int?), int? timeLimitInSeconds = default(int?), IList<PacketCaptureFilter> filters = default(IList<PacketCaptureFilter>))
         {
             Target = target;
