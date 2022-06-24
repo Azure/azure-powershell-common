@@ -32,6 +32,7 @@ namespace Microsoft.Azure.Management.Internal.ResourceManager.Version2018_05_01.
         /// Initializes a new instance of the ResourceGroupPatchable class.
         /// </summary>
         /// <param name="name">The name of the resource group.</param>
+        /// <param name="properties"></param>
         /// <param name="managedBy">The ID of the resource that manages this
         /// resource group.</param>
         /// <param name="tags">The tags attached to the resource group.</param>

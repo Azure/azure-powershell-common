@@ -100,7 +100,6 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
         /// This class will provide a list of resource groups that are available to the user (with default resource group first if it exists). This will then be available to the user to tab through.
         /// Example: [Parameter(ParameterSetName = ListByNameInTenantParameterSet, ValueFromPipelineByPropertyName = true, Mandatory = false), ResourceGroupCompleter()]
         /// </summary>
-        /// <param name="resourceTypes"></param>
         public ResourceGroupCompleterAttribute() : base(CreateScriptBlock())
         {
         }
