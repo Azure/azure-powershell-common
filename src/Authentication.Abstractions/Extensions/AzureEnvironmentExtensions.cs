@@ -167,8 +167,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// Get the url in this environment for the given named endpoint
         /// </summary>
-        /// <param name="environment"></param>
-        /// <param name="endpoint"></param>
+        /// <param name="environment">The environemnt to use</param>
+        /// <param name="endpoint">The endpoint to get from the environemnt.</param>
         /// <returns>The Uri of the given endpoint, or null if it is not set in the given environment</returns>
         public static Uri GetEndpointAsUri(this IAzureEnvironment environment, string endpoint)
         {
@@ -434,6 +434,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// Gets the management portal URI with a particular realm suffix if supplied
         /// </summary>
+        /// <param name="environment">The environment to check</param>
         /// <param name="realm">Realm for user's account</param>
         /// <returns>Url to management portal.</returns>
         public static string GetManagementPortalUrlWithRealm(this IAzureEnvironment environment, string realm = null)
@@ -454,6 +455,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// Get the publish settings file download url with a realm suffix if needed.
         /// </summary>
         /// <param name="realm">Realm for user's account</param>
+        /// <param name="environment">The environment to check</param>
         /// <returns>Url to publish settings file</returns>
         public static string GetPublishSettingsFileUrlWithRealm(this IAzureEnvironment environment, string realm = null)
         {

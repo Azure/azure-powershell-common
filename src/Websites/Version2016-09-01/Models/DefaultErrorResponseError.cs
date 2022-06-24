@@ -37,6 +37,7 @@ namespace Microsoft.Azure.Management.WebSites.Version2016_09_01.Models
         /// information.</param>
         /// <param name="target">Detailed error description and debugging
         /// information.</param>
+        /// <param name="details"></param>
         /// <param name="innererror">More information to debug error.</param>
         public DefaultErrorResponseError(string code = default(string), string message = default(string), string target = default(string), IList<DefaultErrorResponseErrorDetailsItem> details = default(IList<DefaultErrorResponseErrorDetailsItem>), string innererror = default(string))
         {

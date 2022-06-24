@@ -77,6 +77,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <param name="account">The azure account object</param>
         /// <param name="environment">The azure environment object</param>
         /// <param name="tenant">The azure tenant object</param>
+        /// <param name="tokens">The account access token</param>
         public AzureContext(IAzureSubscription subscription, IAzureAccount account, IAzureEnvironment environment, IAzureTenant tenant, byte[] tokens)
         {
             Subscription = subscription;
