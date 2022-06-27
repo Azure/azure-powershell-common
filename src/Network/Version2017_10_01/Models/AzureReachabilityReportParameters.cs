@@ -34,6 +34,7 @@ namespace Microsoft.Azure.Management.Internal.Network.Version2017_10_01.Models
         /// Initializes a new instance of the AzureReachabilityReportParameters
         /// class.
         /// </summary>
+        /// <param name="providerLocation"></param>
         /// <param name="startTime">The start time for the Azure reachability
         /// report.</param>
         /// <param name="endTime">The end time for the Azure reachability

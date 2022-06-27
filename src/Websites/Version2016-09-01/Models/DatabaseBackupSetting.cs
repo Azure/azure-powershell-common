@@ -33,6 +33,7 @@ namespace Microsoft.Azure.Management.WebSites.Version2016_09_01.Models
         /// <param name="databaseType">Database type (e.g. SqlAzure / MySql).
         /// Possible values include: 'SqlAzure', 'MySql', 'LocalMySql',
         /// 'PostgreSql'</param>
+        /// <param name="name"></param>
         /// <param name="connectionStringName">Contains a connection string
         /// name that is linked to the SiteConfig.ConnectionStrings.
         /// This is used during restore with overwrite connection strings

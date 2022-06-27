@@ -36,14 +36,17 @@ namespace Microsoft.Azure.Management.Internal.Network.Version2017_10_01.Models
         /// </summary>
         /// <param name="target">The ID of the targeted resource, only VM is
         /// currently supported.</param>
+        /// <param name="storageLocation"></param>
         /// <param name="name">Name of the packet capture session.</param>
         /// <param name="id">ID of the packet capture operation.</param>
+        /// <param name="etag"></param>
         /// <param name="bytesToCapturePerPacket">Number of bytes captured per
         /// packet, the remaining bytes are truncated.</param>
         /// <param name="totalBytesPerSession">Maximum size of the capture
         /// output.</param>
         /// <param name="timeLimitInSeconds">Maximum duration of the capture
         /// session in seconds.</param>
+        /// <param name="filters"></param>
         /// <param name="provisioningState">The provisioning state of the
         /// packet capture session. Possible values include: 'Succeeded',
         /// 'Updating', 'Deleting', 'Failed'</param>

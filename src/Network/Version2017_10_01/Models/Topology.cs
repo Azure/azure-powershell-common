@@ -36,6 +36,7 @@ namespace Microsoft.Azure.Management.Internal.Network.Version2017_10_01.Models
         /// initially created for the resource group.</param>
         /// <param name="lastModified">The datetime when the topology was last
         /// modified.</param>
+        /// <param name="resources"></param>
         public Topology(string id = default(string), System.DateTime? createdDateTime = default(System.DateTime?), System.DateTime? lastModified = default(System.DateTime?), IList<TopologyResource> resources = default(IList<TopologyResource>))
         {
             Id = id;

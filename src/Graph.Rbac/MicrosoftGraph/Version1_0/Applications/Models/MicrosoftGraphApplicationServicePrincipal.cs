@@ -35,6 +35,8 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Applications.Models
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
+        /// <param name="application"></param>
+        /// <param name="servicePrincipal"></param>
         public MicrosoftGraphApplicationServicePrincipal(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), MicrosoftGraphApplication application = default(MicrosoftGraphApplication), MicrosoftGraphServicePrincipal servicePrincipal = default(MicrosoftGraphServicePrincipal))
         {
             AdditionalProperties = additionalProperties;

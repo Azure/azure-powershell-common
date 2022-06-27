@@ -33,6 +33,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Applications.Models
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
         /// <param name="id">Read-only.</param>
+        /// <param name="deletedDateTime"></param>
         /// <param name="appRoleId">The identifier (id) for the app role which
         /// is assigned to the principal. This app role must be exposed in the
         /// appRoles property on the resource application's service principal

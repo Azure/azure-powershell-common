@@ -35,6 +35,8 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Applications.Models
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
+        /// <param name="odatanextLink"></param>
+        /// <param name="value"></param>
         public ListServicePrincipalOKResponse(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string odatanextLink = default(string), IList<MicrosoftGraphServicePrincipal> value = default(IList<MicrosoftGraphServicePrincipal>))
         {
             AdditionalProperties = additionalProperties;
