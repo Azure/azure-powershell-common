@@ -90,7 +90,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 
             if (Modules.Count == 0)
             {
-                ReadFromStream();
+                if (!ReadFromStream()) { return false; }
             }
 
             if (ShouldFlush(moduleName, majorVersion, ShouldModuleAdd, ModuleAdd))
