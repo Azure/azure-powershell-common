@@ -88,7 +88,10 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 
             int majorVersion = moduleVersion.Major;
 
-            if (Modules.Count == 0)
+if (Modules.Count == 0 && !ReadFromStream())
+{
+  return false
+}
             {
                 if (!ReadFromStream()) { return false; }
             }
