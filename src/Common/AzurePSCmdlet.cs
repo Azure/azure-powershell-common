@@ -273,11 +273,11 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         protected virtual void SetupDebuggingTraces()
         {
-            _httpTracingInterceptor = _httpTracingInterceptor ?? new
-                RecordingTracingInterceptor(DebugMessages, _matchers);
+            _httpTracingInterceptor = _httpTracingInterceptor ?? new RecordingTracingInterceptor(DebugMessages, _matchers);
             _adalListener = _adalListener ?? new DebugStreamTraceListener(DebugMessages);
             RecordingTracingInterceptor.AddToContext(_httpTracingInterceptor);
             DebugStreamTraceListener.AddAdalTracing(_adalListener);
+            AzureSession.Instance.ClientFactory.AddPolicy(new HttpTracingPolicy(DebugMessages));
 
             if (AzureSession.Instance.TryGetComponent(nameof(IAzureEventListenerFactory), out IAzureEventListenerFactory factory))
             {
@@ -295,9 +295,9 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             DebugStreamTraceListener.RemoveAdalTracing(_adalListener);
             _azureEventListener?.Dispose();
             _azureEventListener = null;
+            AzureSession.Instance.ClientFactory.RemovePolicy(typeof(HttpTracingPolicy));
             FlushDebugMessages();
         }
-
 
         protected virtual void SetupHttpClientPipeline()
         {
@@ -311,7 +311,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             AzureSession.Instance.ClientFactory.AddPolicy(
                 new CmdletInfoPolicy(this.CommandRuntime.ToString(),
                     this.ParameterSetName, this._clientRequestId));
-
         }
 
         protected virtual void TearDownHttpClientPipeline()
