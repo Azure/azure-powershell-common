@@ -12,6 +12,8 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using Azure;
+using Azure.Core;
 using Hyak.Common;
 using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
@@ -609,6 +611,53 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
 
             return contents;
+        }
+
+        public static string GetLog(Request request)
+        {
+            if (request == null)
+            {
+                return string.Empty;
+            }
+
+            string body = string.Empty;
+
+            if (request.Content != null)
+            {
+                var output = new MemoryStream();
+                request.Content.WriteTo(output, default);
+                output.Seek(0, SeekOrigin.Begin);
+                body = TryFormatJson(new StreamReader(output).ReadToEnd());
+            }
+
+            return GetHttpRequestLog(
+                request.Method.ToString(),
+                request.Uri.ToString(),
+                request.Headers.Where(h => !AuthorizationHeaderNames.Contains(h.Name)).ToDictionary(h => h.Name, h => new[] { h.Value }.AsEnumerable()),
+                body);
+        }
+
+        public static string GetLog(Response response)
+        {
+            if (response == null)
+            {
+                return string.Empty;
+            }
+
+            string body = string.Empty;
+
+            if (response.ContentStream is MemoryStream stream)
+            {
+                var output = new MemoryStream();
+                stream.WriteTo(output);
+                output.Seek(0, SeekOrigin.Begin);
+                body = TryFormatJson(new StreamReader(output).ReadToEnd());
+            }
+
+            return GetHttpResponseLog(
+                response.Status.ToString(),
+                response.Headers.Where(h => !AuthorizationHeaderNames.Contains(h.Name)).ToDictionary(h => h.Name, h => new[] { h.Value }.AsEnumerable()),
+                body);
         }
     }
 }
