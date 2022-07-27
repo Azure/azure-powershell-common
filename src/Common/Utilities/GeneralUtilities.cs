@@ -625,7 +625,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             if (request.Content != null)
             {
                 var output = new MemoryStream();
-                request.Content.WriteTo(output, default);
+                request.Content.WriteTo(output, System.Threading.CancellationToken.None);
                 output.Seek(0, SeekOrigin.Begin);
                 body = TryFormatJson(new StreamReader(output).ReadToEnd());
             }
