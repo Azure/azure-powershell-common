@@ -547,7 +547,6 @@ namespace Microsoft.Azure.Commands.Common
         /// <summary>
         /// Throw if the job was terminated by failure or cancellation
         /// </summary>
-        /// <param name="runtimeAction"></param>
         protected void ThrowIfJobFailedOrCancelled()
         {
             lock (_lockObject)
@@ -803,6 +802,7 @@ namespace Microsoft.Azure.Commands.Common
         /// Queue actions that must occur on the cmdlet thread, and block the current thread until they are completed
         /// </summary>
         /// <param name="shouldMethod">The action to invoke</param>
+        /// <param name="methodType"></param>
         /// <param name="exceptionThrownOnCmdletThread">Any exception that results</param>
         /// <returns>The result of executing the action on the cmdlet thread</returns>
         private bool InvokeShouldMethodAndWaitForResults(Func<Cmdlet, bool> shouldMethod, ShouldMethodType methodType, out Exception exceptionThrownOnCmdletThread)

@@ -42,7 +42,8 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
         /// Pass in a list of ResourceTypes and this class will provide a list of locations that are common to all ResourceTypes given. This will then be available to the user to tab through.
         /// Example: ResourceNameCompleter(new string[] { "Microsoft.Batch/operations", "ResourceGroupName" })]
         /// </summary>
-        /// <param name="resourceTypes"></param>
+        /// <param name="resourceType"></param>
+        /// <param name="parentResourceParameterNames"></param>
         public ResourceNameCompleterAttribute(string resourceType, params string[] parentResourceParameterNames) : base(CreateScriptBlock(resourceType, parentResourceParameterNames))
         {
         }
@@ -78,7 +79,8 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
         /// <summary>
         /// Create ScriptBlock that registers the correct location for tab completetion of the -Location parameter
         /// </summary>
-        /// <param name="resourceTypes"></param>
+        /// <param name="resourceType"></param>
+        /// <param name="parentResourceNames"></param>
         /// <returns></returns>
         public static ScriptBlock CreateScriptBlock(string resourceType, string[] parentResourceNames)
         {

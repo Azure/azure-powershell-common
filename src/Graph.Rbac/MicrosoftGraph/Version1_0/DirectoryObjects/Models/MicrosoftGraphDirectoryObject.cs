@@ -33,6 +33,8 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.DirectoryObjects.Mo
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
         /// <param name="id">Read-only.</param>
+        /// <param name="odatatype"></param>
+        /// <param name="deletedDateTime"></param>
         public MicrosoftGraphDirectoryObject(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string id = default(string), string odatatype = default(string), System.DateTime? deletedDateTime = default(System.DateTime?))
             : base(additionalProperties, id)
         {

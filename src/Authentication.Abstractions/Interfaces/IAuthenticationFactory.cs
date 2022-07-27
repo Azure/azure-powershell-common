@@ -85,8 +85,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// Get service client credentials with initial token and delegate for renewing
         /// </summary>
-        /// <param name="token">Initial token for credential</param>
-        /// <param name="function">Delegate for renewing token</param>
+        /// <param name="accessToken">Initial token for credential</param>
+        /// <param name="renew"></param>
         /// <returns>Service client credentials</returns>
         ServiceClientCredentials GetServiceClientCredentials(string accessToken, Func<string> renew = null);
 

@@ -34,6 +34,7 @@ namespace Microsoft.Azure.Management.Internal.Network.Version2017_10_01.Models
         /// </summary>
         /// <param name="aggregationLevel">The aggregation level of Azure
         /// reachability report. Can be Country, State or City.</param>
+        /// <param name="providerLocation"></param>
         /// <param name="reachabilityReport">List of Azure reachability report
         /// items.</param>
         public AzureReachabilityReport(string aggregationLevel, AzureReachabilityReportLocation providerLocation, IList<AzureReachabilityReportItem> reachabilityReport)

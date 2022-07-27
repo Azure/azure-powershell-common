@@ -31,7 +31,6 @@ namespace Microsoft.Azure.PowerShell.Common.Config
         /// Gets the unique key of this config.
         /// </summary>
         /// <remarks>It is also used as the name of the PowerShell parameter which maps to this config, so the key must follow the design guideline and conventions. See <see href="https://github.com/Azure/azure-powershell/blob/main/documentation/development-docs/design-guidelines/parameter-best-practices.md#parameter-best-practices">Parameter Best Practices</see>.</remarks>
-        /// <seealso cref=""/>
         public abstract string Key { get; }
 
         /// <summary>
@@ -43,7 +42,35 @@ namespace Microsoft.Azure.PowerShell.Common.Config
         /// <summary>
         /// Gets the name of the environment variable that can control this config.
         /// </summary>
-        public virtual string EnvironmentVariableName { get; } = null;
+        /// <remarks>
+        /// For most cases, where the config is connected to only 1 environment variable,
+        /// and the value can be parsed without extra logic, use this property,
+        /// else override <see cref="ParseFromEnvironmentVariables(IReadOnlyDictionary{string, string})"/>.
+        /// </remarks>
+        protected virtual string EnvironmentVariableName { get; } = null;
+
+        /// <summary>
+        /// Customizes how to parse config value from environment variables.
+        /// </summary>
+        /// <param name="environmentVariables">All the environment variables.</param>
+        /// <returns>The parsed config value, in string. Returns null if the environment variable of this config is not set.</returns>
+        /// <remarks>
+        /// Note: use <see cref="EnvironmentVariableName"/> if there's no need for customized parsing logic. <br />
+        /// The return type is string because it will be further parsed into other types (int, bool...) by the config provider.
+        /// Make sure the return value matches <see cref="ValueType"/>.
+        /// For example if <see cref="ValueType"/> is bool, the return value cannot be like "Disabled".
+        /// </remarks>
+        public virtual string ParseFromEnvironmentVariables(IReadOnlyDictionary<string, string> environmentVariables)
+        {
+            if (string.IsNullOrEmpty(EnvironmentVariableName))
+            {
+                return null;
+            }
+            else
+            {
+                return environmentVariables.TryGetValue(EnvironmentVariableName, out string value) ? value : null;
+            }
+        }
 
         /// <summary>
         /// Gets how the config can be applied to.

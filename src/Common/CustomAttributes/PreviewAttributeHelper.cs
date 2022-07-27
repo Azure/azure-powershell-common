@@ -32,23 +32,6 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         /// <param name="writeOutput"></param>
         public static void ProcessCustomAttributesAtRuntime(Type type, InvocationInfo invocationInfo, Action<string> writeOutput)
         {
-            bool supressWarningOrError = false;
-
-            try
-            {
-                supressWarningOrError = bool.Parse(System.Environment.GetEnvironmentVariable(SUPPRESS_ERROR_OR_WARNING_MESSAGE_ENV_VARIABLE_NAME));
-            }
-            catch (Exception)
-            {
-                //no action
-            }
-
-            if (supressWarningOrError)
-            {
-                //Do not process the attributes at runtime... The env variable to override the warning messages is set
-                return;
-            }
-
             List<CmdletPreviewAttribute> attributes = new List<CmdletPreviewAttribute>(GetAllAttributesInType(type, invocationInfo));
 
             if (attributes != null && attributes.Count > 0)

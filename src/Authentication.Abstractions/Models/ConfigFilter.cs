@@ -42,5 +42,11 @@ namespace Microsoft.Azure.PowerShell.Common.Config
         /// - Name of a cmdlet: the config applies to a certain cmdlet of Azure PowerShell. For example, "Get-AzKeyVault".
         /// </remarks>
         public string AppliesTo { get; set; } = null;
+
+        /// <summary>
+        /// Scope of the configs to filter. By default all scopes are included.
+        /// </summary>
+        /// <value></value>
+        public ConfigScope? Scope { get; set; } = null;
     }
 }

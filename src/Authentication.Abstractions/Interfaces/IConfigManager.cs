@@ -12,7 +12,6 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 
 namespace Microsoft.Azure.PowerShell.Common.Config
@@ -41,7 +40,7 @@ namespace Microsoft.Azure.PowerShell.Common.Config
         /// <typeparam name="T">Type of the value.</typeparam>
         /// <param name="key">Key of the config.</param>
         /// <param name="invocation">PowerShell cmdlet invocation info. If not null, the config that matches the module or cmdlet name will be returned.</param>
-        /// <remarks>For the list of available keys, see <see cref="ConfigKeys"/>, for those used in service projects, or see <see cref="ConfigKeysForCommon"/> for those used in common projects.
+        /// <remarks>For the list of available keys, see <see cref="GetConfigValue{T}"/>, for those used in service projects, or see <see cref="ConfigKeysForCommon"/> for those used in common projects.
         /// The `invocation` parameter is typed `object` because we don't want Authentication.Abstractions project to take dependency on PowerShell SDK.
         /// However at runtime it needs to be of type `InvocationInfo`.</remarks>
         /// <returns>Value of the config, or the default value if never set.</returns>

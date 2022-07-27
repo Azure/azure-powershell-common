@@ -15,30 +15,17 @@
 namespace Microsoft.Azure.PowerShell.Common.Config
 {
     /// <summary>
-    /// Scope for the config.
+    /// This class stores keys of pre-defined configs.
     /// </summary>
-    public enum ConfigScope
+    /// <remarks>
+    /// All keys should be defined in ConfigKeys class in Azure/azure-powershell repo.
+    /// If the key is used in common code, duplicate it here.
+    /// Keys defined here should NEVER be removed or changed to prevent breaking change.
+    /// </remarks>
+    public static class ConfigKeysForCommon
     {
-        /// <summary>
-        /// Config will be persistent on the disk, available for all the PowerShell sessions initiated by the current user.
-        /// </summary>
-        CurrentUser,
-
-        /// <summary>
-        /// Config is effective in current PowerShell process.
-        /// </summary>
-        Process,
-
-        /// <summary>
-        /// Config is never set.
-        /// </summary>
-        /// <remarks>This option is not available when updating or clearing a config.</remarks>
-        Default,
-
-        /// <summary>
-        /// Config is set by environment variables.
-        /// </summary>
-        /// <remarks>This option is not available when updating or clearing a config.</remarks>
-        Environment
+        public const string EnableInterceptSurvey = "EnableInterceptSurvey";
+        public const string DisplayBreakingChangeWarning = "DisplayBreakingChangeWarning";
+        public const string EnableDataCollection = "EnableDataCollection";
     }
 }
