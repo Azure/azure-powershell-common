@@ -35,6 +35,8 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
         private const int _delayForSecondPrompt = 2;
         private const int _delayForThirdPrompt = 5;
 
+        public String InstallationId { get; set; }
+
         private static SurveyHelper _instance;
 
         private int _flushCount;
@@ -42,6 +44,11 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
         private static string SurveyScheduleInfoFile = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             ".Azure", "AzureRmSurvey.json");
+
+        private static string AzProfileInfoFile = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            ".Azure", "AzureProfile.json");
+
 
         private const string _azurePSInterceptSurvey = "Azure_PS_Intercept_Survey";
 
@@ -55,7 +62,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 
         private bool IsDisabledFromEnv => "Disabled".Equals(Environment.GetEnvironmentVariable(_azurePSInterceptSurvey), StringComparison.OrdinalIgnoreCase)
                                         || "False".Equals(Environment.GetEnvironmentVariable(_azurePSInterceptSurvey), StringComparison.OrdinalIgnoreCase);
-
+                                        
         public string CurrentDate { get; }
 
         public DateTime Today { get; }
@@ -81,6 +88,10 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 
         public bool ShouldPropmtSurvey(string moduleName, Version moduleVersion)
         {
+            if (string.IsNullOrEmpty(InstallationId)) 
+            {
+                InitialSurveyHelper();
+            }
             if (_ignoreSchedule || IsDisabledFromEnv)
             {
                 return false;
@@ -121,6 +132,33 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
             }
             return false;
         }
+
+        private void InitialSurveyHelper(){
+            StreamReader sr = null;
+            if (File.Exists(SurveyScheduleInfoFile))
+            {
+                sr = new StreamReader(new FileStream(SurveyScheduleInfoFile, FileMode.Open, FileAccess.Read, FileShare.None));                    
+                ScheduleInfo scheduleInfo = JsonConvert.DeserializeObject<ScheduleInfo>(sr.ReadToEnd());
+                if (!string.IsNullOrEmpty(scheduleInfo?.InstallationId)) {
+                    InstallationId = scheduleInfo.InstallationId;
+                }
+                return;
+            }
+            if (File.Exists(AzProfileInfoFile))
+            {
+                sr = new StreamReader(new FileStream(AzProfileInfoFile, FileMode.Open, FileAccess.Read, FileShare.None));                    
+                AzProfileInfo azInfo = JsonConvert.DeserializeObject<AzProfileInfo>(sr.ReadToEnd());
+                if (!string.IsNullOrEmpty(azInfo?.installationId)) {
+                    InstallationId = azInfo.installationId;
+                }
+            }
+            if (string.IsNullOrEmpty(InstallationId)) 
+            {
+                InstallationId = System.Guid.NewGuid().ToString();
+            }
+            WriteToStream(JsonConvert.SerializeObject(GetScheduleInfo()));
+        }
+
 
         private bool ShouldFlush(string moduleName, int majorVersion, Condition condition, UpdateModule updateModule = null)
         {
@@ -246,7 +284,11 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 
         private ScheduleInfo GetScheduleInfo()
         { 
-            return new ScheduleInfo() { LastPromptDate = LastPromptDate.ToString("yyyy-MM-dd"), Modules = Modules.Values.ToList() };
+            return new ScheduleInfo() { 
+                LastPromptDate = LastPromptDate.ToString("yyyy-MM-dd"), 
+                Modules = Modules.Values.ToList(), 
+                InstallationId = InstallationId
+                };
         }
 
         private bool ReadFromStream()

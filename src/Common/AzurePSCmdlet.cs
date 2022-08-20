@@ -386,6 +386,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 if (_qosEvent != null)
                 {
                     _qosEvent.SurveyPrompted = true;
+                    _qosEvent.InstallationId = SurveyHelper.GetInstance().InstallationId;     
                 }
             }
             if (MetricHelper.IsCalledByUser())
@@ -454,13 +455,13 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 survey = new HostInformationMessage()
                 {
                     Message = "Survey",
-                    NoNewLine = true,
-                };
+                NoNewLine = true,
+            };
                 link = new HostInformationMessage()
-                {
+            {
                     Message = "Open-AzSurveyLink",
-                    NoNewLine = true,
-                };
+                NoNewLine = true,
+            };
             }
             HostInformationMessage action = new HostInformationMessage()
             {

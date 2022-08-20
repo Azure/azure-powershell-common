@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------
 //
 // Copyright Microsoft Corporation
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,15 +17,9 @@ using System.Collections.Generic;
 
 namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 {
-    internal class ScheduleInfo
+    internal class AzProfileInfo
     {
-        [JsonProperty(PropertyName = "lastPromptDate")]
-        internal string LastPromptDate { get; set; }
-
         [JsonProperty(PropertyName = "installationId")]
-        internal string InstallationId { get; set; }
-
-        [JsonProperty(PropertyName = "modules")]
-        internal IList<ModuleInfo> Modules { get; set; }
+        internal string installationId { get; set; }
     }
 }

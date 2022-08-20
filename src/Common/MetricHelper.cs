@@ -306,6 +306,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             eventProperties.Add("end-time", qos.EndTime.ToUniversalTime().ToString("o"));
             eventProperties.Add("duration", qos.Duration.ToString("c"));
             eventProperties.Add("InternalCalledCmdlets", MetricHelper.InternalCalledCmdlets);
+            eventProperties.Add("InstallationId", qos.InstallationId);
             if (!string.IsNullOrWhiteSpace(SharedVariable.PredictorCorrelationId))
             {
                 eventProperties.Add("predictor-correlation-id", SharedVariable.PredictorCorrelationId);
@@ -580,6 +581,8 @@ public class AzurePSQoSEvent
     public string ParameterSetName { get; set; }
     public string InvocationName { get; set; }
     public Dictionary<string, string> CustomProperties { get; private set; }
+
+    public String InstallationId {get; set;}
 
     public AzurePSQoSEvent()
     {
