@@ -41,14 +41,13 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 
         private int _flushCount;
 
+        private static string AzureRmContextSettings = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            ".Azure", "AzureRmContextSettings.json");
+
         private static string SurveyScheduleInfoFile = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             ".Azure", "AzureRmSurvey.json");
-
-        private static string AzProfileInfoFile = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-            ".Azure", "AzureProfile.json");
-
 
         private const string _azurePSInterceptSurvey = "Azure_PS_Intercept_Survey";
 
@@ -135,22 +134,14 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 
         private void InitialSurveyHelper(){
             StreamReader sr = null;
-            if (File.Exists(SurveyScheduleInfoFile))
+            if (File.Exists(AzureRmContextSettings))
             {
-                sr = new StreamReader(new FileStream(SurveyScheduleInfoFile, FileMode.Open, FileAccess.Read, FileShare.None));                    
-                ScheduleInfo scheduleInfo = JsonConvert.DeserializeObject<ScheduleInfo>(sr.ReadToEnd());
-                if (!string.IsNullOrEmpty(scheduleInfo?.InstallationId)) {
-                    InstallationId = scheduleInfo.InstallationId;
+                sr = new StreamReader(new FileStream(AzureRmContextSettings, FileMode.Open, FileAccess.Read, FileShare.None));                    
+                ContextAutosaveSettings settings = JsonConvert.DeserializeObject<ContextAutosaveSettings>(sr.ReadToEnd());
+                if (settings != null && settings.Settings.ContainsKey("InstallationId")) {
+                    InstallationId = settings?.Settings["InstallationId"];
                 }
                 return;
-            }
-            if (File.Exists(AzProfileInfoFile))
-            {
-                sr = new StreamReader(new FileStream(AzProfileInfoFile, FileMode.Open, FileAccess.Read, FileShare.None));                    
-                AzProfileInfo azInfo = JsonConvert.DeserializeObject<AzProfileInfo>(sr.ReadToEnd());
-                if (!string.IsNullOrEmpty(azInfo?.installationId)) {
-                    InstallationId = azInfo.installationId;
-                }
             }
             if (string.IsNullOrEmpty(InstallationId)) 
             {
