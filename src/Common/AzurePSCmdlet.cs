@@ -440,7 +440,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             {
                 link = new HostInformationMessage()
                 {
-                    Message = "\u001b[1m\u001b[4;97;48;2;0;120;212mOpen-AzSurveyLink\u001b[0m",
+                    Message = "\u001b[1m\u001b[97;48;2;0;120;212m'Open-AzSurveyLink'\u001b[0m",
                     NoNewLine = true,
                 };
             }
@@ -460,7 +460,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             };
             HostInformationMessage website = new HostInformationMessage()
             {
-                Message = "\u001b[4;97;48;2;0;120;212mhttps://go.microsoft.com/fwlink/?linkid=2203309\u001b[0m",
+                Message = "\u001b[97;48;2;0;120;212mhttps://go.microsoft.com/fwlink/?linkid=2203309\u001b[0m",
                 NoNewLine = true,
             };
             HostInformationMessage dot = new HostInformationMessage()
