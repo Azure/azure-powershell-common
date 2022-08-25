@@ -380,7 +380,9 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// </summary>
         protected override void EndProcessing()
         {
-            if (this.MyInvocation?.MyCommand?.Version != null && SurveyHelper.GetInstance().ShouldPropmtSurvey(this.MyInvocation.MyCommand.ModuleName, this.MyInvocation.MyCommand.Version))
+            AzureSession.Instance.ExtendedProperties.TryGetValue("InstallationId", out String InstallationId);
+            if (SurveyHelper.GetInstance().ShouldPropmtAzSurvey(InstallationId) && (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
+                    && !configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableInterceptSurvey).Equals(false)))
             {
                 WriteSurvey();
                 if (_qosEvent != null)
@@ -425,37 +427,25 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         {
             HostInformationMessage newLine = new HostInformationMessage()
             {
-                Message = "\n"
+                Message = "\u001b[48;2;0;120;212m\n \u001b[K\u001b[0m"
             };
             HostInformationMessage howWas = new HostInformationMessage()
             {
-                Message = ": How was your experience using Azure PowerShell?\nRun ",
-                NoNewLine = true
+                Message = "\u001b[97;48;2;0;120;212m[Survey] Help us improve Azure PowerShell by sharing your experience. This survey should take about 3 minutes. Run \u001b[0m",
+                NoNewLine = true,
+
             };
-            HostInformationMessage survey;
             HostInformationMessage link;
             try
             {
-                survey = new HostInformationMessage()
-                {
-                    Message = "Survey",
-                    NoNewLine = true,
-                    ForegroundColor = (ConsoleColor)Host.PrivateData.Properties.Match("ProgressForegroundColor").SingleOrDefault().Value
-                };
                 link = new HostInformationMessage()
                 {
-                    Message = "Open-AzSurveyLink",
+                    Message = "\u001b[1m\u001b[4;97;48;2;0;120;212mOpen-AzSurveyLink\u001b[0m",
                     NoNewLine = true,
-                    ForegroundColor = (ConsoleColor)Host.PrivateData.Properties.Match("ProgressbackgroundColor").SingleOrDefault().Value
                 };
             }
             catch
             {
-                survey = new HostInformationMessage()
-                {
-                    Message = "Survey",
-                    NoNewLine = true,
-                };
                 link = new HostInformationMessage()
                 {
                     Message = "Open-AzSurveyLink",
@@ -464,13 +454,29 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
             HostInformationMessage action = new HostInformationMessage()
             {
-                Message = " to fill out a short Survey"
+                Message = "\u001b[97;48;2;0;120;212m to open in browser. Learn more at \u001b[0m",
+                NoNewLine = true,
+
+            };
+            HostInformationMessage website = new HostInformationMessage()
+            {
+                Message = "\u001b[4;97;48;2;0;120;212mhttps://go.microsoft.com/fwlink/?linkid=2203309\u001b[0m",
+                NoNewLine = true,
+            };
+            HostInformationMessage dot = new HostInformationMessage()
+            {
+                Message = "\u001b[97;48;2;0;120;212m.\u001b[K\u001b[0m",
+                NoNewLine = true,
             };
             WriteInformation(newLine, new string[] { "PSHOST" });
-            WriteInformation(survey, new string[] { "PSHOST" });
             WriteInformation(howWas, new string[] { "PSHOST" });
             WriteInformation(link, new string[] { "PSHOST" });
             WriteInformation(action, new string[] { "PSHOST" });
+            WriteInformation(website, new string[] { "PSHOST" });
+            WriteInformation(dot, new string[] { "PSHOST" });
+            WriteInformation(newLine, new string[] { "PSHOST" });
+
+
         }
         protected new void WriteError(ErrorRecord errorRecord)
         {
@@ -668,6 +674,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             _qosEvent.PSHostName = PSHostName;
             _qosEvent.ModuleName = this.ModuleName;
             _qosEvent.ModuleVersion = this.ModuleVersion;
+            AzureSession.Instance.ExtendedProperties.TryGetValue("InstallationId", out String InstallationId);
+            _qosEvent.InstallationId = InstallationId;
 
             if (this.MyInvocation != null && this.MyInvocation.MyCommand != null)
             {
