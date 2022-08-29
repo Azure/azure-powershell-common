@@ -53,6 +53,10 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         protected IList<Regex> _matchers { get;  private set; }  = new List<Regex>();
         private static readonly Regex _defaultMatcher = new Regex("(\\s*\"access_token\"\\s*:\\s*)\"[^\"]+\"");
 
+        private static string ansiCodePrefix = "\u001b[97;48;2;0;120;212m";
+
+        private static string ansiCodeSuffix = "\u001b[K\u001b[0m";
+
         protected AzurePSDataCollectionProfile _dataCollectionProfile
         {
             get
@@ -427,45 +431,32 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         {
             HostInformationMessage newLine = new HostInformationMessage()
             {
-                Message = "\u001b[48;2;0;120;212m\n \u001b[K\u001b[0m"
+                Message = ansiCodePrefix + "\n" + ansiCodeSuffix
             };
             HostInformationMessage howWas = new HostInformationMessage()
             {
-                Message = "\u001b[97;48;2;0;120;212m[Survey] Help us improve Azure PowerShell by sharing your experience. This survey should take about 3 minutes. Run \u001b[0m",
+                Message = ansiCodePrefix + "[Survey] Help us improve Azure PowerShell by sharing your experience. This survey should take about 3 minutes. Run "+ ansiCodeSuffix,
                 NoNewLine = true,
-
             };
-            HostInformationMessage link;
-            try
+            HostInformationMessage link = new HostInformationMessage()
             {
-                link = new HostInformationMessage()
-                {
-                    Message = "\u001b[1m\u001b[97;48;2;0;120;212m'Open-AzSurveyLink'\u001b[0m",
-                    NoNewLine = true,
-                };
-            }
-            catch
-            {
-                link = new HostInformationMessage()
-                {
-                    Message = "Open-AzSurveyLink",
-                    NoNewLine = true,
-                };
-            }
+                Message = ansiCodePrefix + "'Open-AzSurveyLink'"+ ansiCodeSuffix,
+                NoNewLine = true,
+            };
             HostInformationMessage action = new HostInformationMessage()
             {
-                Message = "\u001b[97;48;2;0;120;212m to open in browser. Learn more at \u001b[0m",
+                Message = ansiCodePrefix + " to open in browser. Learn more at "+ ansiCodeSuffix,
                 NoNewLine = true,
 
             };
             HostInformationMessage website = new HostInformationMessage()
             {
-                Message = "\u001b[97;48;2;0;120;212mhttps://go.microsoft.com/fwlink/?linkid=2203309\u001b[0m",
+                Message = ansiCodePrefix + "https://go.microsoft.com/fwlink/?linkid=2203309"+ ansiCodeSuffix,
                 NoNewLine = true,
             };
             HostInformationMessage dot = new HostInformationMessage()
             {
-                Message = "\u001b[97;48;2;0;120;212m.\u001b[K\u001b[0m",
+                Message = ansiCodePrefix + "."+ ansiCodeSuffix,
                 NoNewLine = true,
             };
             WriteInformation(newLine, new string[] { "PSHOST" });

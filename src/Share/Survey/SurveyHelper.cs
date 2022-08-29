@@ -63,7 +63,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
         private ConcurrentDictionary<string, ModuleInfo> Modules { get; }
 
         private bool _ignoreSchedule;
-
+                                        
         private bool IsDisabledFromEnv => "False".Equals(Environment.GetEnvironmentVariable(_azurePSInterceptSurvey), StringComparison.OrdinalIgnoreCase)
                                             || "False".Equals(Environment.GetEnvironmentVariable(_azureSurveyMessage), StringComparison.OrdinalIgnoreCase);
                                         
@@ -125,7 +125,8 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
             return false;
         }
 
-        private void InitialSurveyHelper(){
+        private void InitialSurveyHelper()
+        {
             StreamReader sr = null;
             if (File.Exists(SurveyScheduleInfoFile))
             {
