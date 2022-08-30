@@ -22,7 +22,14 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
         [JsonProperty(PropertyName = "lastPromptDate")]
         internal string LastPromptDate { get; set; }
 
-        [JsonProperty(PropertyName = "modules")]
-        internal IList<ModuleInfo> Modules { get; set; }
+        [JsonProperty(PropertyName = "lastActiveDay")]
+        internal string LastActiveDay { get; set; }
+
+        [JsonProperty(PropertyName = "expectedDate")]
+        internal string ExpectedDate { get; set; }
+
+        [JsonProperty(PropertyName = "activeDays")]
+        internal int ActiveDays { get; set; }
+
     }
 }

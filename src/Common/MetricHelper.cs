@@ -17,6 +17,7 @@ using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Commands.Common;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.PowerShell.Common.Share;
 using Microsoft.Rest.Azure;
 using Microsoft.WindowsAzure.Commands.Common.Utilities;
@@ -57,6 +58,8 @@ namespace Microsoft.WindowsAzure.Commands.Common
         public static bool IsCalledByUser() { return string.IsNullOrEmpty(_telemetryId); }
 
         public static void AppendInternalCalledCmdlet(string cmldetName) { _internalCalledCmdlets += (string.IsNullOrEmpty(_internalCalledCmdlets) ? "" : ",") + cmldetName; }
+
+        public static string InstallationId { get => AzureSession.Instance.ExtendedProperties.TryGetValue("InstallationId", out String InstallationId)?InstallationId:""; }
 
         /// <summary>
         /// Clear telemetry context.
@@ -306,6 +309,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             eventProperties.Add("end-time", qos.EndTime.ToUniversalTime().ToString("o"));
             eventProperties.Add("duration", qos.Duration.ToString("c"));
             eventProperties.Add("InternalCalledCmdlets", MetricHelper.InternalCalledCmdlets);
+            eventProperties.Add("InstallationId", MetricHelper.InstallationId);
             if (!string.IsNullOrWhiteSpace(SharedVariable.PredictorCorrelationId))
             {
                 eventProperties.Add("predictor-correlation-id", SharedVariable.PredictorCorrelationId);
