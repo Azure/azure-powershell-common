@@ -53,9 +53,11 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         protected IList<Regex> _matchers { get;  private set; }  = new List<Regex>();
         private static readonly Regex _defaultMatcher = new Regex("(\\s*\"access_token\"\\s*:\\s*)\"[^\"]+\"");
 
-        private static string ansiCodePrefix = "\u001b[97;48;2;0;120;212m";
+        private static string ansiCodePrefix = "\u001b[97;48;2;0;120;212m"; 
+        // Using Ansi Code to control font color(97(Bold White)) and background color(0;120;212(RGB))
 
         private static string ansiCodeSuffix = "\u001b[K\u001b[0m";
+        // using '[k' for erase in line. '[0m' to ending ansi code  
 
         protected AzurePSDataCollectionProfile _dataCollectionProfile
         {
@@ -384,7 +386,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// </summary>
         protected override void EndProcessing()
         {
-            AzureSession.Instance.ExtendedProperties.TryGetValue("InstallationId", out String InstallationId);
             if (SurveyHelper.GetInstance().ShouldPromptAzSurvey() && (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
                     && !configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableInterceptSurvey).Equals(false)))
             {

@@ -59,7 +59,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
         public static void AppendInternalCalledCmdlet(string cmldetName) { _internalCalledCmdlets += (string.IsNullOrEmpty(_internalCalledCmdlets) ? "" : ",") + cmldetName; }
 
-        public static string InstallationId { get => AzureSession.Instance.ExtendedProperties.TryGetValue("InstallationId", out String InstallationId)?InstallationId:""; }
+        public static string InstallationId { get => AzureSession.Instance.ExtendedProperties.TryGetValue("InstallationId", out String InstallationId)?InstallationId:String.Empty; }
 
         /// <summary>
         /// Clear telemetry context.
