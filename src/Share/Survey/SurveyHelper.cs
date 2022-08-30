@@ -94,7 +94,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
             }
             return _instance;
         }
-        public bool ShouldPropmtAzSurvey(String installationId){
+        public bool ShouldPromptAzSurvey(String installationId){
             InitialSurveyHelper();
             if (_ignoreSchedule)
             {
@@ -113,9 +113,10 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
                 LastActiveDay = Today;
                 ActiveDays ++;
                 if (ActiveDays >= _activeDaysLimit){
-                    long st = System.Int64.Parse(installationId.Substring(25), System.Globalization.NumberStyles.HexNumber);
-                    int RandomGapDay = (int) (st % 180 + 1);
+                    Guid insGuid = new Guid(installationId);
+                    int RandomGapDay = insGuid.ToByteArray()[15] & 127;
                     ExpectedDate = Today.AddDays(RandomGapDay);
+                    LastPromptDate = Today;
                 }
                 WriteToStream(JsonConvert.SerializeObject(GetScheduleInfo()));
             }

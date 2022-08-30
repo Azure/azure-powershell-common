@@ -385,7 +385,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         protected override void EndProcessing()
         {
             AzureSession.Instance.ExtendedProperties.TryGetValue("InstallationId", out String InstallationId);
-            if (SurveyHelper.GetInstance().ShouldPropmtAzSurvey(InstallationId) && (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
+            if (SurveyHelper.GetInstance().ShouldPromptAzSurvey(InstallationId) && (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
                     && !configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableInterceptSurvey).Equals(false)))
             {
                 WriteSurvey();
