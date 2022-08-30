@@ -111,8 +111,6 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 
         public void updateSurveyHelper(string installationId){
             InitialSurveyHelper();
-            Console.WriteLine("Today=");
-            string inputDate = Console.ReadLine();
             if (ExpectedDate == DateTime.MinValue && Today > Convert.ToDateTime(LastActiveDay)) 
             {
                 LastActiveDay = Today;
