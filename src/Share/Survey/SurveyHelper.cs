@@ -72,7 +72,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
             {
                 return false;
             }
-            if (ExpectedDate != DateTime.MinValue && Today > Convert.ToDateTime(ExpectedDate))
+            if (ExpectedDate != DateTime.MinValue && Today >= ExpectedDate)
             {
                 ExpectedDate = Today.AddDays(_promptLockDay);
                 LastPromptDate = Today;
@@ -84,12 +84,16 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 
         public void updateSurveyHelper(string installationId){
             InitialSurveyHelper();
-            if (ExpectedDate == DateTime.MinValue && Today > Convert.ToDateTime(LastActiveDay)) 
+            if (ExpectedDate == DateTime.MinValue && Today > LastActiveDay) 
             {
                 LastActiveDay = Today;
                 ActiveDays ++;
                 if (ActiveDays >= _activeDaysLimit){
-                    Guid insGuid = new Guid(installationId);
+                    Guid insGuid;
+                    if(!Guid.TryParse(installationId, out insGuid))
+                    {
+                        insGuid = Guid.NewGuid();
+                    }
                     int RandomGapDay = insGuid.ToByteArray()[15] & 127;
                     ExpectedDate = Today.AddDays(RandomGapDay);
                     LastPromptDate = Today;
@@ -104,7 +108,6 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
             {
                 using (StreamReader sr = new StreamReader(new FileStream(SurveyScheduleInfoFile, FileMode.Open, FileAccess.Read, FileShare.None))) {
                     ScheduleInfo scheduleInfo = JsonConvert.DeserializeObject<ScheduleInfo>(sr.ReadToEnd());
-                    LastActiveDay = Convert.ToDateTime(scheduleInfo.LastActiveDay);
                     DateTime date = DateTime.MinValue;
                     DateTime.TryParse(scheduleInfo.LastActiveDay, out date);
                     LastActiveDay = date;
