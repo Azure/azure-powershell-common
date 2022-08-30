@@ -20,17 +20,8 @@ using System.Threading;
 
 namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 {
-    using Condition = Func<SurveyHelper, string, int, bool>;
-    using UpdateModule = Action<SurveyHelper, string, int>;
-
     public class SurveyHelper
     {
-        private const int _countExpiredDays = 30;
-        private const int _lockExpiredDays = 30;
-        private const int _surveyTriggerCount = 3;
-        private const int _flushFrequecy = 5;
-        private const int _delayForSecondPrompt = 2;
-        private const int _delayForThirdPrompt = 5;
         private const int _activeDaysLimit = 3;
         private const int _promptLockDay = 180;
 
@@ -41,12 +32,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
         private static string SurveyScheduleInfoFile = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             ".Azure", "AzureRmSurvey.json");
-
-        private const string _azureSurveyMessage = "AzSurveyMessage";
-        private const string _azurePSInterceptSurvey = "Azure_PS_Intercept_Survey";
         
-
-        private const string _predictor = "Az.Predictor";
 
         private DateTime LastPromptDate { get; set; }
 
@@ -56,20 +42,8 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 
         private int ActiveDays { get; set; }
 
-        private int StartUsingDay { get; set; }    
-
-
-
-        private ConcurrentDictionary<string, ModuleInfo> Modules { get; }
-
         private bool _ignoreSchedule;                                    
                                         
-        private int AZActiveDays { get; set; }
-
-        private String StartUsingDate { get; set; } 
-
-        private DateTime ExpectedPromptDate { get; set; } 
-
         public string CurrentDate { get; }
 
         public DateTime Today { get; }
@@ -82,7 +56,6 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
             _ignoreSchedule = false;
             LastPromptDate = DateTime.MinValue;
             ExpectedDate = DateTime.MinValue;
-            Modules = new ConcurrentDictionary<string, ModuleInfo>();
             Interlocked.Exchange(ref _flushCount, 0);
         }
 
@@ -101,7 +74,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
             }
             if (ExpectedDate != DateTime.MinValue && Today > Convert.ToDateTime(ExpectedDate))
             {
-                ExpectedDate = Today.AddDays(180);
+                ExpectedDate = Today.AddDays(_promptLockDay);
                 LastPromptDate = Today;
                 WriteToStream(JsonConvert.SerializeObject(GetScheduleInfo()));
                 return true;
@@ -127,17 +100,21 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 
         private void InitialSurveyHelper()
         {
-            StreamReader sr = null;
             if (File.Exists(SurveyScheduleInfoFile))
             {
-                sr = new StreamReader(new FileStream(SurveyScheduleInfoFile, FileMode.Open, FileAccess.Read, FileShare.None));                    
-                ScheduleInfo scheduleInfo = JsonConvert.DeserializeObject<ScheduleInfo>(sr.ReadToEnd());
-                sr.Close();
-                LastActiveDay = Convert.ToDateTime(scheduleInfo.LastActiveDay);
-                ActiveDays = scheduleInfo.ActiveDays;
-                ExpectedDate = Convert.ToDateTime(scheduleInfo.ExpectedDate);
-                LastPromptDate = Convert.ToDateTime(scheduleInfo.LastPromptDate);
-                return;
+                using (StreamReader sr = new StreamReader(new FileStream(SurveyScheduleInfoFile, FileMode.Open, FileAccess.Read, FileShare.None))) {
+                    ScheduleInfo scheduleInfo = JsonConvert.DeserializeObject<ScheduleInfo>(sr.ReadToEnd());
+                    LastActiveDay = Convert.ToDateTime(scheduleInfo.LastActiveDay);
+                    DateTime date = DateTime.MinValue;
+                    DateTime.TryParse(scheduleInfo.LastActiveDay, out date);
+                    LastActiveDay = date;
+                    ActiveDays = scheduleInfo.ActiveDays;
+                    DateTime.TryParse(scheduleInfo.ExpectedDate, out date);
+                    ExpectedDate = date;
+                    DateTime.TryParse(scheduleInfo.LastPromptDate, out date);
+                    LastPromptDate = date;
+                    return;
+                }
             }
             LastActiveDay = Today;
             LastPromptDate = Today;
@@ -146,7 +123,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
             WriteToStream(JsonConvert.SerializeObject(GetScheduleInfo()));
         }
 
-        private ScheduleInfo GetScheduleInfo()
+        public ScheduleInfo GetScheduleInfo()
         { 
             return new ScheduleInfo() 
             { 
