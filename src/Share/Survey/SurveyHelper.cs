@@ -94,8 +94,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
             }
             return _instance;
         }
-        public bool ShouldPromptAzSurvey(String installationId){
-            InitialSurveyHelper();
+        public bool ShouldPromptAzSurvey(){
             if (_ignoreSchedule)
             {
                 return false;
@@ -107,7 +106,11 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
                 WriteToStream(JsonConvert.SerializeObject(GetScheduleInfo()));
                 return true;
             }
+            return false;
+        }
 
+        public void updateSurveyHelper(string installationId){
+            InitialSurveyHelper();
             if (ExpectedDate == DateTime.MinValue && Today > Convert.ToDateTime(LastActiveDay)) 
             {
                 LastActiveDay = Today;
@@ -120,7 +123,6 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
                 }
                 WriteToStream(JsonConvert.SerializeObject(GetScheduleInfo()));
             }
-            return false;
         }
 
         private void InitialSurveyHelper()
