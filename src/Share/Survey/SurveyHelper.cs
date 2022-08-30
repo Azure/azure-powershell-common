@@ -94,7 +94,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
             }
             return _instance;
         }
-        public bool ShouldPromptAzSurvey(String installationId){
+        public bool ShouldPromptAzSurvey(){
             if (_ignoreSchedule)
             {
                 return false;
