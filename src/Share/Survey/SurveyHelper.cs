@@ -62,10 +62,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 
         private ConcurrentDictionary<string, ModuleInfo> Modules { get; }
 
-        private bool _ignoreSchedule;
-                                        
-        private bool IsDisabledFromEnv => "False".Equals(Environment.GetEnvironmentVariable(_azurePSInterceptSurvey), StringComparison.OrdinalIgnoreCase)
-                                            || "False".Equals(Environment.GetEnvironmentVariable(_azureSurveyMessage), StringComparison.OrdinalIgnoreCase);
+        private bool _ignoreSchedule;                                    
                                         
         private int AZActiveDays { get; set; }
 
@@ -99,7 +96,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
         }
         public bool ShouldPropmtAzSurvey(String installationId){
             InitialSurveyHelper();
-            if (_ignoreSchedule || IsDisabledFromEnv)
+            if (_ignoreSchedule)
             {
                 return false;
             }
@@ -148,12 +145,13 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 
         private ScheduleInfo GetScheduleInfo()
         { 
-            return new ScheduleInfo() { 
+            return new ScheduleInfo() 
+            { 
                 LastPromptDate = LastPromptDate.ToString("yyyy-MM-dd"), 
                 ActiveDays = ActiveDays, 
                 LastActiveDay = LastActiveDay.ToString("yyyy-MM-dd"),  
                 ExpectedDate = ExpectedDate.ToString("yyyy-MM-dd")
-                };
+            };
         }
 
         private bool WriteToStream(string info)

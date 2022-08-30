@@ -665,9 +665,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             _qosEvent.PSHostName = PSHostName;
             _qosEvent.ModuleName = this.ModuleName;
             _qosEvent.ModuleVersion = this.ModuleVersion;
-            AzureSession.Instance.ExtendedProperties.TryGetValue("InstallationId", out String InstallationId);
-            _qosEvent.InstallationId = InstallationId;
-
             if (this.MyInvocation != null && this.MyInvocation.MyCommand != null)
             {
                 _qosEvent.CommandName = this.MyInvocation.MyCommand.Name;
