@@ -97,6 +97,8 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
                     int RandomGapDay = insGuid.ToByteArray()[15] & 127;
                     ExpectedDate = Today.AddDays(RandomGapDay);
                     LastPromptDate = Today;
+                    LastActiveDay = DateTime.MinValue;
+                    ActiveDays = -1;
                 }
                 WriteToStream(JsonConvert.SerializeObject(GetScheduleInfo()));
             }
