@@ -439,7 +439,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             HostInformationMessage howWas = new HostInformationMessage()
             {
                 Message = ansiCodePrefix + "[Survey] Help us improve Azure PowerShell by sharing your experience. This survey should take about 3 minutes. Run "+ ansiCodeSuffix,
-                NoNewLine = true,
+                NoNewLine = true
             };
             HostInformationMessage link = new HostInformationMessage()
             {
