@@ -27,8 +27,6 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 
         private static SurveyHelper _instance;
 
-        private int _flushCount;
-
         private static string SurveyScheduleInfoFile = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             ".Azure", "AzureRmSurvey.json");
@@ -56,7 +54,6 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
             _ignoreSchedule = false;
             LastPromptDate = DateTime.MinValue;
             ExpectedDate = DateTime.MinValue;
-            Interlocked.Exchange(ref _flushCount, 0);
         }
 
         public static SurveyHelper GetInstance()
