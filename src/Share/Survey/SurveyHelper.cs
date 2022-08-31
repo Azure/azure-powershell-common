@@ -15,50 +15,39 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
+using System.Globalization;
+
 
 namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 {
-    using Condition = Func<SurveyHelper, string, int, bool>;
-    using UpdateModule = Action<SurveyHelper, string, int>;
-
     public class SurveyHelper
     {
-        private const int _countExpiredDays = 30;
-        private const int _lockExpiredDays = 30;
-        private const int _surveyTriggerCount = 3;
-        private const int _flushFrequecy = 5;
-        private const int _delayForSecondPrompt = 2;
-        private const int _delayForThirdPrompt = 5;
+        private const int _activeDaysLimit = 3;
+        private const int _promptLockDay = 180;
 
         private static SurveyHelper _instance;
-
-        private int _flushCount;
 
         private static string SurveyScheduleInfoFile = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             ".Azure", "AzureRmSurvey.json");
-
-        private const string _azurePSInterceptSurvey = "Azure_PS_Intercept_Survey";
-
-        private const string _predictor = "Az.Predictor";
+        
 
         private DateTime LastPromptDate { get; set; }
 
-        private ConcurrentDictionary<string, ModuleInfo> Modules { get; }
+        private DateTime LastActiveDay { get; set; }
 
-        private bool _ignoreSchedule;
+        private DateTime ExpectedDate { get; set; }
 
-        private bool IsDisabledFromEnv => "Disabled".Equals(Environment.GetEnvironmentVariable(_azurePSInterceptSurvey), StringComparison.OrdinalIgnoreCase)
-                                        || "False".Equals(Environment.GetEnvironmentVariable(_azurePSInterceptSurvey), StringComparison.OrdinalIgnoreCase);
+        private int ActiveDays { get; set; }
 
+        private bool _ignoreSchedule;                                    
+                                        
         public string CurrentDate { get; }
 
         public DateTime Today { get; }
+
 
         private SurveyHelper()
         {
@@ -66,8 +55,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
             Today = Convert.ToDateTime(CurrentDate);
             _ignoreSchedule = false;
             LastPromptDate = DateTime.MinValue;
-            Modules = new ConcurrentDictionary<string, ModuleInfo>();
-            Interlocked.Exchange(ref _flushCount, 0);
+            ExpectedDate = DateTime.MinValue;
         }
 
         public static SurveyHelper GetInstance()
@@ -78,213 +66,76 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
             }
             return _instance;
         }
-
-        public bool ShouldPropmtSurvey(string moduleName, Version moduleVersion)
-        {
-            if (_ignoreSchedule || IsDisabledFromEnv)
+        public bool ShouldPromptAzSurvey(){
+            if (_ignoreSchedule)
             {
                 return false;
             }
-
-            int majorVersion = moduleVersion.Major;
-
-            if (Modules.Count == 0 && !ReadFromStream())
+            if (ExpectedDate != DateTime.MinValue && Today >= ExpectedDate)
             {
-                return false;
-            }
-
-            if (ShouldFlush(moduleName, majorVersion, ShouldModuleAdd, ModuleAdd))
-            {
-                FlushWithWaitAsync();
-                return false;
-            }
-
-            //LastPromptDate.CompareTo(DateTime.MinValue) > 0 means survey is locked, otherwise lock free
-            if (LastPromptDate > DateTime.MinValue && Today > LastPromptDate.AddDays(_lockExpiredDays))
-            {
-                LastPromptDate = DateTime.MinValue;
-            }
-
-            if (ShouldFlush(moduleName, majorVersion, ShouldAzPredictorPrompt, AzPredictorPrompt) 
-                || ShouldFlush(moduleName, majorVersion, ShouldModulePrompt, ModulePrompt))
-            {
-                FlushAsync();
-                return true;
-            }
-
-            if ((ShouldFlush(moduleName, majorVersion, ShouldModuleBumpVersion, ModuleBumpVersion)
-                || ShouldFlush(moduleName, majorVersion, ShouldModuleCount, ModuleCount)
-                || ShouldFlush(moduleName, majorVersion, ShouldModuleCountExpire, ModuleCountExpire)
-                || ShouldFlush(moduleName, majorVersion, ShouldModulePromptExpire, ModulePromptExpire)))
-            {
-                FlushWithWaitAsync();
-            }
-            return false;
-        }
-
-        private bool ShouldFlush(string moduleName, int majorVersion, Condition condition, UpdateModule updateModule = null)
-        {
-            if (condition.Invoke(this, moduleName, majorVersion) && ReadFromStream() && condition.Invoke(this, moduleName, majorVersion))
-            {
-                updateModule?.Invoke(this, moduleName, majorVersion);
+                ExpectedDate = Today.AddDays(_promptLockDay);
+                LastPromptDate = Today;
+                WriteToStream(JsonConvert.SerializeObject(GetScheduleInfo()));
                 return true;
             }
             return false;
         }
 
-        private bool ShouldModuleAdd(SurveyHelper helper, string moduleName, int majorVersion) => !helper.Modules.ContainsKey(moduleName);
-
-        private void ModuleAdd(SurveyHelper helper, string moduleName, int majorVersion)
-        {
-            helper.Modules[moduleName] = new ModuleInfo()
+        public void updateSurveyHelper(string installationId){
+            InitialSurveyHelper();
+            if (ExpectedDate == DateTime.MinValue && Today > LastActiveDay) 
             {
-                Name = moduleName,
-                MajorVersion = majorVersion,
-                ActiveDays = 1,
-                FirstActiveDate = CurrentDate,
-                LastActiveDate = CurrentDate,
-                Enabled = true
-            };
-        }
-
-        private bool ShouldModuleBumpVersion(SurveyHelper helper, string moduleName, int majorVersion) 
-            => majorVersion > helper.Modules[moduleName].MajorVersion;
-
-        private void ModuleBumpVersion(SurveyHelper helper, string moduleName, int majorVersion)
-        {
-            helper.Modules[moduleName].MajorVersion = majorVersion;
-            helper.Modules[moduleName].FirstActiveDate = CurrentDate;
-            helper.Modules[moduleName].LastActiveDate = CurrentDate;
-            helper.Modules[moduleName].ActiveDays = 1;
-        }
-
-        private bool ShouldModuleCount(SurveyHelper helper, string moduleName, int majorVersion) 
-            => helper.Modules[moduleName].MajorVersion == majorVersion 
-            && helper.Modules[moduleName].ActiveDays < _surveyTriggerCount 
-            && helper.Today > Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate)
-            && helper.Today <= Convert.ToDateTime(helper.Modules[moduleName].FirstActiveDate).AddDays(_countExpiredDays);
-
-        private void ModuleCount(SurveyHelper helper, string moduleName, int majorVersion)
-        {
-            helper.Modules[moduleName].ActiveDays += 1;
-            helper.Modules[moduleName].LastActiveDate = CurrentDate;
-        }
-
-        private bool ShouldModuleCountExpire(SurveyHelper helper, string moduleName, int majorVersion)
-            => helper.Modules[moduleName].MajorVersion == majorVersion
-            && helper.Modules[moduleName].ActiveDays < _surveyTriggerCount
-            && helper.Today > Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate)
-            && helper.Today > Convert.ToDateTime(helper.Modules[moduleName].FirstActiveDate).AddDays(_countExpiredDays);
-
-        private void ModuleCountExpire(SurveyHelper helper, string moduleName, int majorVersion)
-        {
-            helper.Modules[moduleName].FirstActiveDate = CurrentDate;
-            helper.Modules[moduleName].LastActiveDate = CurrentDate;
-            helper.Modules[moduleName].ActiveDays = 1;
-        }
-
-        private bool ShouldModulePrompt(SurveyHelper helper, string moduleName, int majorVersion)
-            => helper.Modules[moduleName].MajorVersion == majorVersion
-            && ((helper.Modules[moduleName].ActiveDays == _surveyTriggerCount && helper.LastPromptDate == DateTime.MinValue)
-                 || helper.Modules[moduleName].ActiveDays == _surveyTriggerCount + 1 && helper.LastPromptDate == Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate) && helper.Today == helper.LastPromptDate.AddDays(_delayForSecondPrompt)
-                 || helper.Modules[moduleName].ActiveDays == _surveyTriggerCount + 2 && helper.LastPromptDate == Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate) && helper.Today == helper.LastPromptDate.AddDays(_delayForThirdPrompt));
-
-        private void ModulePrompt(SurveyHelper helper, string moduleName, int majorVersion)
-        {
-            helper.LastPromptDate = Today;
-            helper.Modules[moduleName].LastActiveDate = CurrentDate;
-            helper.Modules[moduleName].ActiveDays += 1;
-        }
-
-        private bool ShouldAzPredictorPrompt(SurveyHelper helper, string moduleName, int majorVersion)
-            => _predictor.Equals(moduleName, StringComparison.OrdinalIgnoreCase)
-            && helper.Modules[moduleName].MajorVersion == majorVersion
-            && ((helper.Modules[moduleName].ActiveDays == _surveyTriggerCount && helper.Today <= Convert.ToDateTime(helper.Modules[moduleName].FirstActiveDate).AddDays(_countExpiredDays))
-                 || helper.Modules[moduleName].ActiveDays == _surveyTriggerCount + 1 && helper.Today == Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate).AddDays(_delayForSecondPrompt)
-                 || helper.Modules[moduleName].ActiveDays == _surveyTriggerCount + 2 && helper.Today == Convert.ToDateTime(helper.Modules[moduleName].LastActiveDate).AddDays(_delayForThirdPrompt));
-
-        private void AzPredictorPrompt(SurveyHelper helper, string moduleName, int majorVersion)
-        {
-            helper.Modules[moduleName].LastActiveDate = CurrentDate;
-            helper.Modules[moduleName].ActiveDays += 1;
-        }
-
-        private bool ShouldModulePromptExpire(SurveyHelper helper, string moduleName, int majorVersion)
-            => helper.Modules[moduleName].MajorVersion == majorVersion
-            && (Modules[moduleName].ActiveDays == _surveyTriggerCount + 1 && helper.LastPromptDate == Convert.ToDateTime(Modules[moduleName].LastActiveDate) && helper.Today > helper.LastPromptDate.AddDays(_delayForSecondPrompt)
-                || Modules[moduleName].ActiveDays == _surveyTriggerCount + 2 && helper.LastPromptDate == Convert.ToDateTime(Modules[moduleName].LastActiveDate) && helper.Today > LastPromptDate.AddDays(_delayForThirdPrompt));
-
-        private void ModulePromptExpire(SurveyHelper helper, string moduleName, int majorVersion)
-        {
-            helper.Modules[moduleName].ActiveDays = 0;
-        }
-
-        private void MergeScheduleInfo(ScheduleInfo externalScheduleInfo)
-        {
-            DateTime externalLastPromptDate = Convert.ToDateTime(externalScheduleInfo?.LastPromptDate);
-            IDictionary<string, ModuleInfo> externalModules = new Dictionary<string, ModuleInfo>();
-            foreach(ModuleInfo info in externalScheduleInfo?.Modules)
-            {
-                externalModules[info.Name] = info;
-            }
-
-            HashSet<string> moduleNames = new HashSet<string>(Modules.Keys);
-            moduleNames.UnionWith(new HashSet<string>(externalModules.Keys));
-
-            foreach (string name in moduleNames)
-            {
-                if (externalModules.ContainsKey(name) && (!Modules.ContainsKey(name) || Convert.ToDateTime(Modules[name].LastActiveDate) < Convert.ToDateTime(externalModules[name].LastActiveDate)))
-                {
-                    if (externalLastPromptDate != DateTime.MinValue && Convert.ToDateTime(externalModules[name].LastActiveDate) == externalLastPromptDate)
+                LastActiveDay = Today;
+                ActiveDays ++;
+                if (ActiveDays >= _activeDaysLimit){
+                    Guid insGuid;
+                    if(!Guid.TryParse(installationId, out insGuid))
                     {
-                        LastPromptDate = externalLastPromptDate;
+                        insGuid = Guid.NewGuid();
                     }
-                    Modules[name] = new ModuleInfo(externalModules[name]);
+                    int RandomGapDay = insGuid.ToByteArray()[15] & 127;
+                    ExpectedDate = Today.AddDays(RandomGapDay);
+                    LastPromptDate = Today;
+                    LastActiveDay = DateTime.MinValue;
+                    ActiveDays = -1;
+                }
+                WriteToStream(JsonConvert.SerializeObject(GetScheduleInfo()));
+            }
+        }
+
+        private void InitialSurveyHelper()
+        {
+            if (File.Exists(SurveyScheduleInfoFile))
+            {
+                using (StreamReader sr = new StreamReader(new FileStream(SurveyScheduleInfoFile, FileMode.Open, FileAccess.Read, FileShare.None))) {
+                    ScheduleInfo scheduleInfo = JsonConvert.DeserializeObject<ScheduleInfo>(sr.ReadToEnd());
+                    DateTime date = DateTime.MinValue;
+                    DateTime.TryParse(scheduleInfo.LastActiveDay, out date);
+                    LastActiveDay = date;
+                    ActiveDays = scheduleInfo.ActiveDays;
+                    DateTime.TryParse(scheduleInfo.ExpectedDate, out date);
+                    ExpectedDate = date;
+                    DateTime.TryParse(scheduleInfo.LastPromptDate, out date);
+                    LastPromptDate = date;
+                    return;
                 }
             }
+            LastActiveDay = Today;
+            LastPromptDate = Today;
+            ExpectedDate = DateTime.MinValue;
+            ActiveDays = 1;
+            WriteToStream(JsonConvert.SerializeObject(GetScheduleInfo()));
         }
 
-        private ScheduleInfo GetScheduleInfo()
+        public ScheduleInfo GetScheduleInfo()
         { 
-            return new ScheduleInfo() { LastPromptDate = LastPromptDate.ToString("yyyy-MM-dd"), Modules = Modules.Values.ToList() };
-        }
-
-        private bool ReadFromStream()
-        {
-            StreamReader sr = null;
-            try
-            {
-                if (File.Exists(SurveyScheduleInfoFile))
-                {
-                    sr = new StreamReader(new FileStream(SurveyScheduleInfoFile, FileMode.Open, FileAccess.Read, FileShare.None));                    
-                    MergeScheduleInfo(JsonConvert.DeserializeObject<ScheduleInfo>(sr.ReadToEnd()));
-                }
-            }
-            catch (Exception e)
-            {
-                if (e is UnauthorizedAccessException)
-                {
-                    _ignoreSchedule = true;
-                }
-                //deserialize failed, means content of file is incorrect, make file empty
-                if (e is JsonException)
-                {
-                    if (sr != null)
-                    {
-                        sr.Dispose();
-                    }
-                    EmptyFileAsync();
-                }
-                return false;
-            }
-            finally
-            {
-                if (sr != null)
-                {
-                    sr.Dispose();
-                }
-            }
-            return true;
+            return new ScheduleInfo() 
+            { 
+                LastPromptDate = LastPromptDate.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo), 
+                ActiveDays = ActiveDays, 
+                LastActiveDay = LastActiveDay.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo),  
+                ExpectedDate = ExpectedDate.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo)
+            };
         }
 
         private bool WriteToStream(string info)
@@ -311,50 +162,6 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
                 }
             }
             return true;
-        }
-
-        private async void FlushAsync()
-        {
-            await Task.Run(() =>
-            {
-                WriteToStream(JsonConvert.SerializeObject(GetScheduleInfo()));
-            });
-        }
-
-        private async void EmptyFileAsync()
-        {
-            await Task.Run(() =>
-            {
-                WriteToStream(string.Empty);
-            });
-        }
-
-        private async void FlushWithWaitAsync()
-        {
-            await Task.Run(() =>
-            {
-                FlushWithWait();
-            });
-        }
-
-        private void FlushWithWait()
-        {
-            int beforeExchange = Interlocked.CompareExchange(ref _flushCount, 0, _flushFrequecy);
-            if (beforeExchange < _flushFrequecy)
-            {
-                Interlocked.Increment(ref _flushCount);
-            }
-            else if (beforeExchange > _flushFrequecy)
-            {
-                Interlocked.Exchange(ref _flushCount, 0);
-            }
-            else
-            {
-                if (!WriteToStream(JsonConvert.SerializeObject(GetScheduleInfo())))
-                {
-                    Interlocked.Exchange(ref _flushCount, beforeExchange);
-                }
-            }
         }
     }
 }
