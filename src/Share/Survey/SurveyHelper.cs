@@ -17,6 +17,8 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
+using System.Globalization;
+
 
 namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 {
@@ -129,10 +131,10 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
         { 
             return new ScheduleInfo() 
             { 
-                LastPromptDate = LastPromptDate.ToString("yyyy-MM-dd"), 
+                LastPromptDate = LastPromptDate.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo), 
                 ActiveDays = ActiveDays, 
-                LastActiveDay = LastActiveDay.ToString("yyyy-MM-dd"),  
-                ExpectedDate = ExpectedDate.ToString("yyyy-MM-dd")
+                LastActiveDay = LastActiveDay.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo),  
+                ExpectedDate = ExpectedDate.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo)
             };
         }
 
