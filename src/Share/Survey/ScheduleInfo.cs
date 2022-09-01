@@ -31,5 +31,8 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
         [JsonProperty(PropertyName = "activeDays")]
         public int ActiveDays { get; set; }
 
+        [JsonProperty(PropertyName = "modules")]
+        public List<ModuleInfo> Modules { get; set; }
+
     }
 }
