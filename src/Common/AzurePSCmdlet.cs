@@ -438,7 +438,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             };
             HostInformationMessage howWas = new HostInformationMessage()
             {
-                Message = ansiCodePrefix + "[Survey] Help us improve Azure PowerShell by sharing your experience. This survey should take about 3 minutes. Run "+ ansiCodeSuffix,
+                Message = ansiCodePrefix + "[Survey] Help us improve Azure PowerShell by sharing your experience. This survey should take about 5 minutes. Run "+ ansiCodeSuffix,
                 NoNewLine = true
             };
             HostInformationMessage link = new HostInformationMessage()
@@ -454,7 +454,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             };
             HostInformationMessage website = new HostInformationMessage()
             {
-                Message = ansiCodePrefix + "https://go.microsoft.com/fwlink/?linkid=2203309"+ ansiCodeSuffix,
+                Message = ansiCodePrefix + "https://go.microsoft.com/fwlink/?linkid=2202892"+ ansiCodeSuffix,
                 NoNewLine = true,
             };
             HostInformationMessage dot = new HostInformationMessage()
