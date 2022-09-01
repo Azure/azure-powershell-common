@@ -18,6 +18,8 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 using System.Globalization;
+using System.Collections.Generic;
+
 
 
 namespace Microsoft.Azure.PowerShell.Common.Share.Survey
@@ -134,7 +136,8 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
                 LastPromptDate = LastPromptDate.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo), 
                 ActiveDays = ActiveDays, 
                 LastActiveDay = LastActiveDay.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo),  
-                ExpectedDate = ExpectedDate.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo)
+                ExpectedDate = ExpectedDate.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo),
+                Modules = new List<ModuleInfo>()
             };
         }
 
