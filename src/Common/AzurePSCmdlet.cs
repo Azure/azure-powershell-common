@@ -53,6 +53,12 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         protected IList<Regex> _matchers { get;  private set; }  = new List<Regex>();
         private static readonly Regex _defaultMatcher = new Regex("(\\s*\"access_token\"\\s*:\\s*)\"[^\"]+\"");
 
+        // Using Ansi Code to control font color(97(Bold White)) and background color(0;120;212(RGB))
+        private static readonly string ansiCodePrefix = "\u001b[97;48;2;0;120;212m";
+
+        // using '[k' for erase in line. '[0m' to ending ansi code  
+        private static readonly string ansiCodeSuffix = "\u001b[K\u001b[0m";
+
         protected AzurePSDataCollectionProfile _dataCollectionProfile
         {
             get
@@ -380,7 +386,10 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// </summary>
         protected override void EndProcessing()
         {
-            if (this.MyInvocation?.MyCommand?.Version != null && SurveyHelper.GetInstance().ShouldPropmtSurvey(this.MyInvocation.MyCommand.ModuleName, this.MyInvocation.MyCommand.Version))
+            if (MetricHelper.IsCalledByUser() 
+                && SurveyHelper.GetInstance().ShouldPromptAzSurvey() 
+                && (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
+                && !configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableInterceptSurvey).Equals(false)))
             {
                 WriteSurvey();
                 if (_qosEvent != null)
@@ -425,52 +434,43 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         {
             HostInformationMessage newLine = new HostInformationMessage()
             {
-                Message = "\n"
+                Message = ansiCodePrefix + "\n" + ansiCodeSuffix
             };
             HostInformationMessage howWas = new HostInformationMessage()
             {
-                Message = ": How was your experience using Azure PowerShell?\nRun ",
+                Message = ansiCodePrefix + "[Survey] Help us improve Azure PowerShell by sharing your experience. This survey should take about 5 minutes. Run "+ ansiCodeSuffix,
                 NoNewLine = true
             };
-            HostInformationMessage survey;
-            HostInformationMessage link;
-            try
+            HostInformationMessage link = new HostInformationMessage()
             {
-                survey = new HostInformationMessage()
-                {
-                    Message = "Survey",
-                    NoNewLine = true,
-                    ForegroundColor = (ConsoleColor)Host.PrivateData.Properties.Match("ProgressForegroundColor").SingleOrDefault().Value
-                };
-                link = new HostInformationMessage()
-                {
-                    Message = "Open-AzSurveyLink",
-                    NoNewLine = true,
-                    ForegroundColor = (ConsoleColor)Host.PrivateData.Properties.Match("ProgressbackgroundColor").SingleOrDefault().Value
-                };
-            }
-            catch
-            {
-                survey = new HostInformationMessage()
-                {
-                    Message = "Survey",
-                    NoNewLine = true,
-                };
-                link = new HostInformationMessage()
-                {
-                    Message = "Open-AzSurveyLink",
-                    NoNewLine = true,
-                };
-            }
+                Message = ansiCodePrefix + "'Open-AzSurveyLink'"+ ansiCodeSuffix,
+                NoNewLine = true,
+            };
             HostInformationMessage action = new HostInformationMessage()
             {
-                Message = " to fill out a short Survey"
+                Message = ansiCodePrefix + " to open in browser. Learn more at "+ ansiCodeSuffix,
+                NoNewLine = true,
+
+            };
+            HostInformationMessage website = new HostInformationMessage()
+            {
+                Message = ansiCodePrefix + "https://go.microsoft.com/fwlink/?linkid=2202892"+ ansiCodeSuffix,
+                NoNewLine = true,
+            };
+            HostInformationMessage dot = new HostInformationMessage()
+            {
+                Message = ansiCodePrefix + "."+ ansiCodeSuffix,
+                NoNewLine = true,
             };
             WriteInformation(newLine, new string[] { "PSHOST" });
-            WriteInformation(survey, new string[] { "PSHOST" });
             WriteInformation(howWas, new string[] { "PSHOST" });
             WriteInformation(link, new string[] { "PSHOST" });
             WriteInformation(action, new string[] { "PSHOST" });
+            WriteInformation(website, new string[] { "PSHOST" });
+            WriteInformation(dot, new string[] { "PSHOST" });
+            WriteInformation(newLine, new string[] { "PSHOST" });
+
+
         }
         protected new void WriteError(ErrorRecord errorRecord)
         {
@@ -668,7 +668,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             _qosEvent.PSHostName = PSHostName;
             _qosEvent.ModuleName = this.ModuleName;
             _qosEvent.ModuleVersion = this.ModuleVersion;
-
             if (this.MyInvocation != null && this.MyInvocation.MyCommand != null)
             {
                 _qosEvent.CommandName = this.MyInvocation.MyCommand.Name;
