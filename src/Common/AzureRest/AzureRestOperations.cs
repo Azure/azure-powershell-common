@@ -91,7 +91,7 @@ namespace Microsoft.Azure.Internal.Common
                 {
                     // Ignore the exception
                 }
-                ex.Request = new HttpRequestMessageWrapper(_httpRequest, _httpRequest.Content.ToString());
+                ex.Request = new HttpRequestMessageWrapper(_httpRequest, _httpRequest.Content?.ToString());
                 ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
                 if (_httpResponse.Headers.Contains("x-ms-request-id"))
                 {
