@@ -7,7 +7,7 @@ trigger:
 - main
 
 pool:
-  name: Azure Pipelines
+  name: pool-windows-2019
 
 steps:
 - task: UseDotNet@2
