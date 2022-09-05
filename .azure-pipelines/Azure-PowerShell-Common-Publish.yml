@@ -7,7 +7,7 @@ trigger:
 - main
 
 pool:
-  name: pool-windows-2019
+  vmImage: 'windows-2019'
 
 variables:
 - group: GitHub Release Variables
