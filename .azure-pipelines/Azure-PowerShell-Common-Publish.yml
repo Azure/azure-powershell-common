@@ -90,9 +90,10 @@ steps:
   displayName: 'NuGet push'
   condition: and(succeeded(), ne(variables['publish'], 'false'))
   inputs:
-    command: push
-    packagesToPush: 'artifacts/Package/Release/Microsoft.Azure.PowerShell.*.nupkg;!artifacts/Package/Release/Microsoft.Azure.PowerShell.*.symbols.nupkg' # .nupkg and .snupkg
-    publishVstsFeed: public/azure-powershell
+    command: 'push'
+    packagesToPush: 'artifacts/Package/Release/Microsoft.Azure.PowerShell.*.nupkg;!artifacts/Package/Release/Microsoft.Azure.PowerShell.*.symbols.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: '9b6b54d1-85ce-4ff5-8faa-608b4a183fc6/ff6e6a45-91a1-4ed4-8410-0323526da4d8'
     includeSymbols: false
 
 - powershell: |
