@@ -31,13 +31,14 @@ using System.Linq;
 using System.Management.Automation.Host;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.WindowsAzure.Commands.Common
 {
     public class MetricHelper
     {
         protected INetworkHelper _networkHelper;
-        private const int FlushTimeoutInMilli = 5000;
         private const string DefaultPSVersion = "3.0.0.0";
         private const string EventName = "cmdletInvocation";
 
@@ -481,17 +482,27 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 return;
             }
 
-            try
+            FlushMetricAsync(TelemetryClients, CancellationToken.None);
+        }
+
+        private Task FlushMetricAsync(IEnumerable<TelemetryClient> TelemetryClients, CancellationToken cancellationToken)
+        {
+            foreach (TelemetryClient client in TelemetryClients)
             {
-                foreach (TelemetryClient client in TelemetryClients)
+                if(cancellationToken != CancellationToken.None && cancellationToken.IsCancellationRequested)
+                {
+                    return Task.FromCanceled(cancellationToken);
+                }
+                try
                 {
                     client.Flush();
                 }
+                catch
+                {
+                    // ignored
+                }
             }
-            catch
-            {
-                // ignored
-            }
+            return Task.CompletedTask;
         }
 
         /// <summary>
