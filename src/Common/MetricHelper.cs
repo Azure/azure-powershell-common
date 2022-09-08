@@ -482,27 +482,25 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 return;
             }
 
-            FlushMetricAsync(TelemetryClients, CancellationToken.None);
+            FlushMetricAsync(TelemetryClients);
         }
 
-        private Task FlushMetricAsync(IEnumerable<TelemetryClient> TelemetryClients, CancellationToken cancellationToken)
+        private async void FlushMetricAsync(IEnumerable<TelemetryClient> TelemetryClients)
         {
-            foreach (TelemetryClient client in TelemetryClients)
+            await Task.Run(() =>
             {
-                if(cancellationToken != CancellationToken.None && cancellationToken.IsCancellationRequested)
+                foreach (TelemetryClient client in TelemetryClients)
                 {
-                    return Task.FromCanceled(cancellationToken);
+                    try
+                    {
+                        client.Flush();
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
                 }
-                try
-                {
-                    client.Flush();
-                }
-                catch
-                {
-                    // ignored
-                }
-            }
-            return Task.CompletedTask;
+            });
         }
 
         /// <summary>
