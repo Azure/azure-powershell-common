@@ -16,8 +16,8 @@ using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Commands.Common;
-using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 using Microsoft.Azure.Commands.Common.Authentication;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 using Microsoft.Azure.PowerShell.Common.Share;
 using Microsoft.Rest.Azure;
 using Microsoft.WindowsAzure.Commands.Common.Utilities;
@@ -31,7 +31,6 @@ using System.Linq;
 using System.Management.Automation.Host;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Microsoft.WindowsAzure.Commands.Common
