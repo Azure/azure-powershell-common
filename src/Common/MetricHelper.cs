@@ -481,10 +481,10 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 return;
             }
 
-            FlushMetricAsync(TelemetryClients);
+            Task flushMetricTask = FlushMetricAsync(TelemetryClients);
         }
 
-        private async void FlushMetricAsync(IEnumerable<TelemetryClient> TelemetryClients)
+        private async Task FlushMetricAsync(IEnumerable<TelemetryClient> TelemetryClients)
         {
             await Task.Run(() =>
             {
