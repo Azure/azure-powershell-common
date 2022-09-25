@@ -28,30 +28,31 @@
     "gallery": "https://gallery.usgovcloudapi.net"
   },
   {
-    "portal": "https://portal.microsoftazure.de",
+    "portal": "https://portal.azure.cn",
     "authentication": {
-      "loginEndpoint": "https://login.microsoftonline.de",
+      "loginEndpoint": "https://login.chinacloudapi.cn",
       "audiences": [
-        "https://management.core.cloudapi.de",
-        "https://management.microsoftazure.de"
+        "https://management.core.chinacloudapi.cn",
+        "https://management.chinacloudapi.cn"
       ],
       "tenant": "common",
       "identityProvider": "AAD"
     },
-    "media": "https://rest.media.cloudapi.de",
-    "graphAudience": "https://graph.cloudapi.de",
-    "graph": "https://graph.cloudapi.de",
-    "name": "AzureGermanCloud",
+    "media": "https://rest.media.chinacloudapi.cn",
+    "graphAudience": "https://graph.chinacloudapi.cn",
+    "graph": "https://graph.chinacloudapi.cn",
+    "name": "AzureChinaCloud",
     "suffixes": {
-      "sqlServerHostname": "database.cloudapi.de",
-      "keyVaultDns": "vault.microsoftazure.de",
-      "storage": "core.cloudapi.de",
+      "acrLoginServer": "azurecr.cn",
+      "sqlServerHostname": "database.chinacloudapi.cn",
+      "keyVaultDns": "vault.azure.cn",
+      "storage": "core.chinacloudapi.cn",
       "azureFrontDoorEndpointSuffix": ""
     },
-    "batch": "https://batch.cloudapi.de",
-    "resourceManager": "https://management.microsoftazure.de",
+    "batch": "https://batch.chinacloudapi.cn",
+    "resourceManager": "https://management.chinacloudapi.cn",
     "vmImageAliasDoc": "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-compute/quickstart-templates/aliases.json",
-    "sqlManagement": "https://management.core.cloudapi.de:8443",
-    "gallery": "https://gallery.cloudapi.de"
+    "sqlManagement": "https://management.core.chinacloudapi.cn:8443",
+    "gallery": "https://gallery.chinacloudapi.cn"
   }
 ]
