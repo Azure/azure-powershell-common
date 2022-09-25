@@ -137,7 +137,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// Set the tenants associated with thsi susbcription
         /// </summary>
         /// <param name="subscription">The subscription to set</param>
-        /// <param name="tenants">The tenants associated with the subscription</param>
+        /// <param name="tenant">The tenants associated with the subscription</param>
         public static void SetTenant(this IAzureSubscription subscription, string tenant)
         {
             subscription.SetProperty(AzureSubscription.Property.Tenants, tenant);

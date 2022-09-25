@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 
 namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 {
-    internal class ModuleInfo
+    public class ModuleInfo
     {
         [JsonProperty(PropertyName = "name")]
         internal string Name { get; set; }

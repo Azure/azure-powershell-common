@@ -21,7 +21,6 @@ using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 {
@@ -74,29 +73,12 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
          * This function takes in a Type (expected to be a derevative of the AzurePSCmdlet)
          * And reads all the deprecation attributes attached to it
          * Prints a message on the cmdline For each of the attribute found
-         * 
-         * the boundParameterNames is a list of parameters bound to the cmdlet at runtime, 
+         *
+         * the boundParameterNames is a list of parameters bound to the cmdlet at runtime,
          * We only process the Parameter beaking change attributes attached only params listed in this list (if present)
          * */
         public static void ProcessCustomAttributesAtRuntime(Type type, InvocationInfo invocationInfo, Action<string> writeOutput)
         {
-            bool supressWarningOrError = false;
-
-            try
-            {
-                supressWarningOrError = bool.Parse(System.Environment.GetEnvironmentVariable(SUPPRESS_ERROR_OR_WARNING_MESSAGE_ENV_VARIABLE_NAME));
-            }
-            catch (Exception)
-            {
-                //no action
-            }
-
-            if (supressWarningOrError)
-            {
-                //Do not process the attributes at runtime... The env variable to override the warning messages is set
-                return;
-            }
-
             List<GenericBreakingChangeAttribute> attributes = new List<GenericBreakingChangeAttribute>(GetAllBreakingChangeAttributesInType(type, invocationInfo));
             StringBuilder sb = new StringBuilder();
             Action<string> appendBreakingChangeInfo = (string s) => sb.Append(s);
@@ -111,15 +93,15 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
                 }
 
                 appendBreakingChangeInfo(string.Format(Resources.BreakingChangesAttributesFooterMessage, BREAKING_CHANGE_ATTRIBUTE_INFORMATION_LINK));
-                
+
                 writeOutput(sb.ToString());
             }
         }
 
         /**
          * Takes in a type which is expected to be derived from AzurePScmdlet and gathers all the breaking change attributes on it
-         * Runs through the list of attributes and returns the deprecation messages for each of the attributes. 
-         * This function is sued from the static analysis tools to generate the breaking change guide 
+         * Runs through the list of attributes and returns the deprecation messages for each of the attributes.
+         * This function is sued from the static analysis tools to generate the breaking change guide
          **/
         public static List<string> GetBreakingChangeMessagesForType(Type type)
         {
@@ -138,8 +120,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         /**
          * This function takes in a Type (expected to be a derevative of the AzurePSCmdlet)
          * And returns all the deprecation attributes attached to it
-         * 
-         * the boundParameterNames is a list of parameters bound to the cmdlet at runtime, 
+         *
+         * the boundParameterNames is a list of parameters bound to the cmdlet at runtime,
          * We only process the Parameter beaking change attributes attached only params listed in this list (if present)
          **/
         public static IEnumerable<GenericBreakingChangeAttribute> GetAllBreakingChangeAttributesInType(Type type, InvocationInfo invocationInfo)

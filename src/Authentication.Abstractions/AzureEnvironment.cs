@@ -252,6 +252,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointSuffix, AzureEnvironmentConstants.AzureManagedHsmDnsSuffix);
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.MicrosoftGraphEndpointResourceId, AzureEnvironmentConstants.AzureMicrosoftGraphEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.MicrosoftGraphUrl, AzureEnvironmentConstants.AzureMicrosoftGraphUrl);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzurePurviewEndpointSuffix, AzureEnvironmentConstants.AzurePurviewEndpointSuffix);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzurePurviewEndpointResourceId, AzureEnvironmentConstants.AzurePurviewEndpointResourceId);
+
             }
 
             if (azureEnvironments.ContainsKey(EnvironmentName.AzureChinaCloud))
@@ -672,7 +675,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 AzureSynapseAnalyticsEndpointSuffix = "AzureSynapseAnalyticsEndpointSuffix",
                 AzureSynapseAnalyticsEndpointResourceId = "AzureSynapseAnalyticsEndpointResourceId",
                 MicrosoftGraphUrl = "MicrosoftGraphUrl",
-                MicrosoftGraphEndpointResourceId = "MicrosoftGraphEndpointResourceId";
+                MicrosoftGraphEndpointResourceId = "MicrosoftGraphEndpointResourceId",
+                AzurePurviewEndpointSuffix = "AzurePurviewEndpointSuffix",
+                AzurePurviewEndpointResourceId = "AzurePurviewEndpointResourceId";
         }
     }
 }

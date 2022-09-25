@@ -31,6 +31,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Groups.Models
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
         /// <param name="id">Read-only.</param>
+        /// <param name="deletedDateTime"></param>
         /// <param name="appRoleAssignments">Represents the app roles a group
         /// has been granted for an application. Supports $expand.</param>
         /// <param name="description">An optional description for the group.

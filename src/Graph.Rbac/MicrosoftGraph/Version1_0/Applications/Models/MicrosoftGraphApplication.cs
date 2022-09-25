@@ -31,6 +31,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Applications.Models
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
         /// <param name="id">Read-only.</param>
+        /// <param name="deletedDateTime"></param>
         /// <param name="tags">Custom strings that can be used to categorize
         /// and identify the application. Not nullable.Supports $filter (eq,
         /// NOT, ge, le, startsWith).</param>
@@ -67,6 +68,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Applications.Models
         /// <param name="keyCredentials">The collection of key credentials
         /// associated with the application. Not nullable. Supports $filter
         /// (eq, NOT, ge, le).</param>
+        /// <param name="oauth2RequirePostResponse"></param>
         /// <param name="owners">Directory objects that are owners of the
         /// application. Read-only. Nullable. Supports $expand.</param>
         /// <param name="passwordCredentials">The collection of password

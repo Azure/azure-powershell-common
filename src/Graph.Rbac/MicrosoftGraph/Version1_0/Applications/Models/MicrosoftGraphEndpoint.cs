@@ -31,6 +31,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Applications.Models
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
         /// <param name="id">Read-only.</param>
+        /// <param name="deletedDateTime"></param>
         /// <param name="capability">Describes the capability that is
         /// associated with this resource. (e.g. Messages, Conversations, etc.)
         /// Not nullable. Read-only.</param>

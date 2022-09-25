@@ -93,79 +93,79 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// </summary>
         public static class Property
         {
-            public const string Subscriptions = "Subscriptions",
+            public const string Subscriptions = "Subscriptions";
 
-        /// <summary>
-        /// Comma separated list of tenants on this account.
-        /// </summary>
-        Tenants = "Tenants",
+            /// <summary>
+            /// Comma separated list of tenants on this account.
+            /// </summary>
+            public const string Tenants = "Tenants";
 
-        /// <summary>
-        /// Access token.
-        /// </summary>
-        AccessToken = "AccessToken",
+            /// <summary>
+            /// Access token.
+            /// </summary>
+            public const string AccessToken = "AccessToken";
 
-        /// <summary>
-        /// Account object id + home tenant id.
-        /// </summary>
-        HomeAccountId = "HomeAccountId",
+            /// <summary>
+            /// Account object id + home tenant id.
+            /// </summary>
+            public const string HomeAccountId = "HomeAccountId";
 
-        /// <summary>
-        /// Indicate whether to use user name and password for authentication.
-        /// </summary>
-        UsePasswordAuth = "UsePasswordAuth",
+            /// <summary>
+            /// Indicate whether to use user name and password for authentication.
+            /// </summary>
+            public const string UsePasswordAuth = "UsePasswordAuth";
 
-        /// <summary>
-        /// Access token for AD Graph service.
-        /// </summary>
-        GraphAccessToken = "GraphAccessToken",
+            /// <summary>
+            /// Access token for AD Graph service.
+            /// </summary>
+            public const string GraphAccessToken = "GraphAccessToken";
 
-        /// <summary>
-        /// Access token for KeyVault service.
-        /// </summary>
-        KeyVaultAccessToken = "KeyVault",
+            /// <summary>
+            /// Access token for KeyVault service.
+            /// </summary>
+            public const string KeyVaultAccessToken = "KeyVault";
 
-        /// <summary>
-        /// Thumbprint for associated certificate
-        /// </summary>
-        CertificateThumbprint = "CertificateThumbprint",
+            /// <summary>
+            /// Thumbprint for associated certificate
+            /// </summary>
+            public const string CertificateThumbprint = "CertificateThumbprint";
 
-        /// <summary>
-        /// Login Uri for Managed Service Login
-        /// </summary>
-        MSILoginUri = "MSILoginUri",
+            /// <summary>
+            /// Login Uri for Managed Service Login
+            /// </summary>
+            public const string MSILoginUri = "MSILoginUri";
 
-        /// <summary>
-        /// Backup login Uri for MSI
-        /// </summary>
-        MSILoginUriBackup = "MSILoginBackup",
+            /// <summary>
+            /// Backup login Uri for MSI
+            /// </summary>
+            public const string MSILoginUriBackup = "MSILoginBackup";
 
-        /// <summary>
-        /// Secret that may be used with MSI login
-        /// </summary>
-        MSILoginSecret = "MSILoginSecret",
+            /// <summary>
+            /// Secret that may be used with MSI login
+            /// </summary>
+            public const string MSILoginSecret = "MSILoginSecret";
 
-        /// <summary>
-        /// Secret that may be used with service principal login
-        /// </summary>
-        ServicePrincipalSecret = "ServicePrincipalSecret",
+            /// <summary>
+            /// Secret that may be used with service principal login
+            /// </summary>
+            public const string ServicePrincipalSecret = "ServicePrincipalSecret";
 
 
-        /// <summary>
-        /// The path of certficate file in pem or pkcs#12 format
-        /// </summary>
-        CertificatePath = "CertificatePath",
+            /// <summary>
+            /// The path of certficate file in pem or pkcs#12 format
+            /// </summary>
+            public const string CertificatePath = "CertificatePath";
 
-        /// <summary>
-        /// The password required to access the pkcs#12 certificate file
-        /// </summary>
-        CertificatePassword = "CertificatePassword",
+            /// <summary>
+            /// The password required to access the pkcs#12 certificate file
+            /// </summary>
+            public const string CertificatePassword = "CertificatePassword";
 
 
         /// <summary>
         /// Specifies if the x5c claim (public key of the certificate) should be sent to the STS to achieve easy certificate rollover in Azure AD
         /// </summary>
-        SendCertificateChain = "SendCertificateChain";
+            public const string SendCertificateChain = "SendCertificateChain";
         }
     }
 }

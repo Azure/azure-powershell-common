@@ -33,6 +33,8 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.DirectoryObjects.Mo
         /// </summary>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
+        /// <param name="odatacontext"></param>
+        /// <param name="value"></param>
         public GetByIdsOKResponse(IDictionary<string, object> additionalProperties = default(IDictionary<string, object>), string odatacontext = default(string), IList<MicrosoftGraphDirectoryObject> value = default(IList<MicrosoftGraphDirectoryObject>))
         {
             AdditionalProperties = additionalProperties;

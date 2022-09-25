@@ -12,7 +12,7 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Newtonsoft.Json;
+using Microsoft.Azure.PowerShell.Common.Config;
 using System;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
@@ -23,16 +23,40 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             OldDefaultFileName = "AzureDataCollectionProfile.json",
             DefaultFileName = "AzurePSDataCollectionProfile.json";
 
+        private bool? _enableAzureDataCollection = null;
+
+        /// <summary>
+        /// Creates a data collection profile who relies on config API to determine whether it is enabled.
+        /// </summary>
         public AzurePSDataCollectionProfile()
         {
         }
 
+        /// <summary>
+        /// Creates a data collection profile with a predefined state of whether it is enabled.
+        /// </summary>
         public AzurePSDataCollectionProfile(bool enable)
         {
-            EnableAzureDataCollection = enable;
+            _enableAzureDataCollection = enable;
         }
 
-        [JsonProperty(PropertyName = "enableAzureDataCollection")]
-        public bool? EnableAzureDataCollection { get; set; }
+        public bool? EnableAzureDataCollection {
+            get
+            {
+                if (_enableAzureDataCollection.HasValue)
+                {
+                    return _enableAzureDataCollection.Value;
+                }
+                if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager))
+                {
+                    _enableAzureDataCollection = configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableDataCollection);
+                }
+                return _enableAzureDataCollection;
+            }
+            set
+            {
+                throw new NotSupportedException("Setting data collection directly is not supported. Use Config API instead.");
+            }
+        }
     }
 }

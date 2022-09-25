@@ -29,6 +29,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Users.Models
         /// <summary>
         /// Initializes a new instance of the OdataError class.
         /// </summary>
+        /// <param name="error"></param>
         /// <param name="additionalProperties">Unmatched properties from the
         /// message are deserialized this collection</param>
         public OdataError(OdataErrorMain error, IDictionary<string, object> additionalProperties = default(IDictionary<string, object>))

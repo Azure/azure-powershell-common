@@ -17,12 +17,22 @@ using System.Collections.Generic;
 
 namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 {
-    internal class ScheduleInfo
+    public class ScheduleInfo
     {
         [JsonProperty(PropertyName = "lastPromptDate")]
-        internal string LastPromptDate { get; set; }
+        public string LastPromptDate { get; set; }
+
+        [JsonProperty(PropertyName = "lastActiveDay")]
+        public string LastActiveDay { get; set; }
+
+        [JsonProperty(PropertyName = "expectedDate")]
+        public string ExpectedDate { get; set; }
+
+        [JsonProperty(PropertyName = "activeDays")]
+        public int ActiveDays { get; set; }
 
         [JsonProperty(PropertyName = "modules")]
-        internal IList<ModuleInfo> Modules { get; set; }
+        public List<ModuleInfo> Modules { get; set; }
+
     }
 }
