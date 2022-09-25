@@ -228,6 +228,6 @@ By default, cmdlets are executed in the subscription that is set in the current 
 Overriding subscriptions only take effect during the lifecycle of the current cmdlet. It does not change the subscription in the context, and does not affect subsequent cmdlets.</value>
   </data>
   <data name="CustomSubscriptionNotFound" xml:space="preserve">
-    <value>Could not found subscription '{0}' in context. Please run 'Connect-AzAccount' with correct user.</value>
+    <value>Could not find subscription '{0}' in context. Please run 'Connect-AzAccount' with correct user.</value>
   </data>
 </root>
