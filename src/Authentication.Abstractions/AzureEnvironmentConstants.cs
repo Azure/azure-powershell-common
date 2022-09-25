@@ -12,6 +12,8 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using System;
+
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
     /// <summary>
@@ -30,6 +32,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureServiceEndpoint = "https://management.core.windows.net/";
         public const string ChinaServiceEndpoint = "https://management.core.chinacloudapi.cn/";
         public const string USGovernmentServiceEndpoint = "https://management.core.usgovcloudapi.net/";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanServiceEndpoint = "https://management.core.cloudapi.de/";
 
         /// <summary>
@@ -38,6 +41,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureResourceManagerEndpoint = "https://management.azure.com/";
         public const string ChinaResourceManagerEndpoint = "https://management.chinacloudapi.cn/";
         public const string USGovernmentResourceManagerEndpoint = "https://management.usgovcloudapi.net/";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanResourceManagerEndpoint = "https://management.microsoftazure.de/";
 
         /// <summary>
@@ -46,6 +50,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string GalleryEndpoint = "https://gallery.azure.com/";
         public const string ChinaGalleryEndpoint = "https://gallery.chinacloudapi.cn/";
         public const string USGovernmentGalleryEndpoint = "https://gallery.usgovcloudapi.net/";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanGalleryEndpoint = "https://gallery.cloudapi.de/";
 
         /// <summary>
@@ -54,6 +59,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzurePublishSettingsFileUrl = "https://go.microsoft.com/fwlink/?LinkID=301775";
         public const string ChinaPublishSettingsFileUrl = "https://go.microsoft.com/fwlink/?LinkID=301776";
         public const string USGovernmentPublishSettingsFileUrl = "https://manage.windowsazure.us/publishsettings/index";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanPublishSettingsFileUrl = "https://manage.microsoftazure.de/publishsettings/index";
 
         /// <summary>
@@ -62,6 +68,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureManagementPortalUrl = "https://portal.azure.com/";
         public const string ChinaManagementPortalUrl = "https://portal.azure.cn/";
         public const string USGovernmentManagementPortalUrl = "https://portal.azure.us/";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanManagementPortalUrl = "https://portal.microsoftazure.de/";
 
         /// <summary>
@@ -70,6 +77,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureStorageEndpointSuffix = "core.windows.net";
         public const string ChinaStorageEndpointSuffix = "core.chinacloudapi.cn";
         public const string USGovernmentStorageEndpointSuffix = "core.usgovcloudapi.net";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanStorageEndpointSuffix = "core.cloudapi.de";
 
         /// <summary>
@@ -78,6 +86,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureSqlDatabaseDnsSuffix = ".database.windows.net";
         public const string ChinaSqlDatabaseDnsSuffix = ".database.chinacloudapi.cn";
         public const string USGovernmentSqlDatabaseDnsSuffix = ".database.usgovcloudapi.net";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanSqlDatabaseDnsSuffix = ".database.cloudapi.de";
 
         /// <summary>
@@ -86,6 +95,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureActiveDirectoryEndpoint = "https://login.microsoftonline.com/";
         public const string ChinaActiveDirectoryEndpoint = "https://login.chinacloudapi.cn/";
         public const string USGovernmentActiveDirectoryEndpoint = "https://login.microsoftonline.us/";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanActiveDirectoryEndpoint = "https://login.microsoftonline.de/";
 
         /// <summary>
@@ -94,6 +104,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureGraphEndpoint = "https://graph.windows.net/";
         public const string ChinaGraphEndpoint = "https://graph.chinacloudapi.cn/";
         public const string USGovernmentGraphEndpoint = "https://graph.windows.net/";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanGraphEndpoint = "https://graph.cloudapi.de/";
 
         /// <summary>
@@ -102,6 +113,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureTrafficManagerDnsSuffix = "trafficmanager.net";
         public const string ChinaTrafficManagerDnsSuffix = "trafficmanager.cn";
         public const string USGovernmentTrafficManagerDnsSuffix = "usgovtrafficmanager.net";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanTrafficManagerDnsSuffix = "azuretrafficmanager.de";
 
         /// <summary>
@@ -110,6 +122,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureKeyVaultDnsSuffix = "vault.azure.net";
         public const string ChinaKeyVaultDnsSuffix = "vault.azure.cn";
         public const string USGovernmentKeyVaultDnsSuffix = "vault.usgovcloudapi.net";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanKeyVaultDnsSuffix = "vault.microsoftazure.de";
 
         /// <summary>
@@ -118,6 +131,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureManagedHsmDnsSuffix = "managedhsm.azure.net";
         public const string ChinaManagedHsmDnsSuffix = "managedhsm.azure.cn";
         public const string USGovernmentManagedHsmDnsSuffix = "managedhsm.usgovcloudapi.net";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanManagedHsmDnsSuffix = "managedhsm.microsoftazure.de";
 
         /// <summary>
@@ -126,6 +140,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureKeyVaultServiceEndpointResourceId = "https://vault.azure.net";
         public const string ChinaKeyVaultServiceEndpointResourceId = "https://vault.azure.cn";
         public const string USGovernmentKeyVaultServiceEndpointResourceId = "https://vault.usgovcloudapi.net";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanAzureKeyVaultServiceEndpointResourceId = "https://vault.microsoftazure.de";
 
         /// <summary>
@@ -134,6 +149,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureManagedHsmServiceEndpointResourceId = "https://managedhsm.azure.net";
         public const string ChinaManagedHsmServiceEndpointResourceId = "https://managedhsm.azure.cn";
         public const string USGovernmeneManagedHsmServiceEndpointResourceId = "https://managedhsm.usgovcloudapi.net";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanAzureManagedHsmServiceEndpointResourceId = "https://managedhsm.microsoftazure.de";
 
         /// <summary>
@@ -167,6 +183,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string BatchEndpointResourceId = "https://batch.core.windows.net/";
         public const string ChinaBatchEndpointResourceId = "https://batch.chinacloudapi.cn/";
         public const string USGovernmentBatchEndpointResourceId = "https://batch.core.usgovcloudapi.net/";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanBatchEndpointResourceId = "https://batch.cloudapi.de/";
 
         /// <summary>
@@ -175,6 +192,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureAnalysisServicesEndpointSuffix = "asazure.windows.net";
         public const string ChinaAnalysisServicesEndpointSuffix = "asazure.chinacloudapi.cn";
         public const string USGovernmentAnalysisServicesEndpointSuffix = "asazure.usgovcloudapi.net";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanAnalysisServicesEndpointSuffix = "asazure.cloudapi.de";
 
         /// <summary>
@@ -188,6 +206,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureAnalysisServicesEndpointResourceId = "https://region.asazure.windows.net";
         public const string ChinaAnalysisServicesEndpointResourceId = "https://region.asazure.chinacloudapi.cn";
         public const string USGovernmentAnalysisServicesEndpointResourceId = "https://region.asazure.usgovcloudapi.net";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanAnalysisServicesEndpointResourceId = "https://region.asazure.cloudapi.de";
 
         /// <summary>
@@ -227,6 +246,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureMicrosoftGraphUrl = "https://graph.microsoft.com";
         public const string ChinaMicrosoftGraphUrl = "https://microsoftgraph.chinacloudapi.cn";
         public const string USGovernmentMicrosoftGraphUrl = "https://graph.microsoft.us";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanMicrosoftGraphUrl = "https://graph.microsoft.de";
 
         /// <summary>
@@ -235,6 +255,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureMicrosoftGraphEndpointResourceId = "https://graph.microsoft.com/";
         public const string ChinaMicrosoftGraphEndpointResourceId = "https://microsoftgraph.chinacloudapi.cn/";
         public const string USGovernmentMicrosoftGraphEndpointResourceId = "https://graph.microsoft.us/";
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanMicrosoftGraphEndpointResourceId = "https://graph.microsoft.de/";
 
         /// <summary>

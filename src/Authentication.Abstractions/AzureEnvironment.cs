@@ -156,31 +156,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 AdTenant = "Common"
             };
 
-            var azureGermany = new AzureEnvironment
-            {
-                Name = EnvironmentName.AzureGermanCloud,
-                Type = TypeBuiltIn,
-                PublishSettingsFileUrl = AzureEnvironmentConstants.GermanPublishSettingsFileUrl,
-                ServiceManagementUrl = AzureEnvironmentConstants.GermanServiceEndpoint,
-                ResourceManagerUrl = AzureEnvironmentConstants.GermanResourceManagerEndpoint,
-                ManagementPortalUrl = AzureEnvironmentConstants.GermanManagementPortalUrl,
-                ActiveDirectoryAuthority = AzureEnvironmentConstants.GermanActiveDirectoryEndpoint,
-                ActiveDirectoryServiceEndpointResourceId = AzureEnvironmentConstants.GermanServiceEndpoint,
-                StorageEndpointSuffix = AzureEnvironmentConstants.GermanStorageEndpointSuffix,
-                GalleryUrl = AzureEnvironmentConstants.GalleryEndpoint,
-                SqlDatabaseDnsSuffix = AzureEnvironmentConstants.GermanSqlDatabaseDnsSuffix,
-                GraphUrl = AzureEnvironmentConstants.GermanGraphEndpoint,
-                TrafficManagerDnsSuffix = AzureEnvironmentConstants.GermanTrafficManagerDnsSuffix,
-                AzureKeyVaultDnsSuffix = AzureEnvironmentConstants.GermanKeyVaultDnsSuffix,
-                AzureKeyVaultServiceEndpointResourceId = AzureEnvironmentConstants.GermanAzureKeyVaultServiceEndpointResourceId,
-                AzureDataLakeAnalyticsCatalogAndJobEndpointSuffix = null,
-                AzureDataLakeStoreFileSystemEndpointSuffix = null,
-                DataLakeEndpointResourceId = null,
-                GraphEndpointResourceId = AzureEnvironmentConstants.GermanGraphEndpoint,
-                BatchEndpointResourceId = AzureEnvironmentConstants.GermanBatchEndpointResourceId,
-                AdTenant = "Common"
-            };
-
             if (!armAzureEnvironments.ContainsKey(EnvironmentName.AzureCloud))
             {
                 armAzureEnvironments[EnvironmentName.AzureCloud] = azureCloud;
@@ -192,10 +167,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             if (!armAzureEnvironments.ContainsKey(EnvironmentName.AzureUSGovernment))
             {
                 armAzureEnvironments[EnvironmentName.AzureUSGovernment] = azureUSGovernment;
-            }
-            if (!armAzureEnvironments.ContainsKey(EnvironmentName.AzureGermanCloud))
-            {
-                armAzureEnvironments[EnvironmentName.AzureGermanCloud] = azureGermany;
             }
 
             SetExtendedProperties(armAzureEnvironments);
@@ -284,16 +255,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.MicrosoftGraphEndpointResourceId, AzureEnvironmentConstants.USGovernmentMicrosoftGraphEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.MicrosoftGraphUrl, AzureEnvironmentConstants.USGovernmentMicrosoftGraphUrl);
             }
-
-            if (azureEnvironments.ContainsKey(EnvironmentName.AzureGermanCloud))
-            {
-                azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointSuffix, AzureEnvironmentConstants.GermanAnalysisServicesEndpointSuffix);
-                azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.AnalysisServicesEndpointResourceId, AzureEnvironmentConstants.GermanAnalysisServicesEndpointResourceId);
-                azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointResourceId, AzureEnvironmentConstants.GermanAzureManagedHsmServiceEndpointResourceId);
-                azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointSuffix, AzureEnvironmentConstants.GermanManagedHsmDnsSuffix);
-                azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.MicrosoftGraphEndpointResourceId, AzureEnvironmentConstants.GermanMicrosoftGraphEndpointResourceId);
-                azureEnvironments[EnvironmentName.AzureGermanCloud].SetProperty(ExtendedEndpoint.MicrosoftGraphUrl, AzureEnvironmentConstants.GermanMicrosoftGraphUrl);
-            }
         }
 
         /// <summary>
@@ -368,8 +329,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     return AzureEnvironmentConstants.ChinaPublishSettingsFileUrl;
                 case EnvironmentName.AzureUSGovernment:
                     return AzureEnvironmentConstants.USGovernmentPublishSettingsFileUrl;
-                case EnvironmentName.AzureGermanCloud:
-                    return AzureEnvironmentConstants.GermanPublishSettingsFileUrl;
                 default:
                     return string.Empty;
             }
@@ -391,8 +350,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     return AzureEnvironmentConstants.ChinaKeyVaultServiceEndpointResourceId;
                 case EnvironmentName.AzureUSGovernment:
                     return AzureEnvironmentConstants.USGovernmentKeyVaultServiceEndpointResourceId;
-                case EnvironmentName.AzureGermanCloud:
-                    return AzureEnvironmentConstants.GermanAzureKeyVaultServiceEndpointResourceId;
                 default:
                     return string.Empty;
             }
@@ -414,8 +371,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     return AzureEnvironmentConstants.ChinaTrafficManagerDnsSuffix;
                 case EnvironmentName.AzureUSGovernment:
                     return AzureEnvironmentConstants.USGovernmentTrafficManagerDnsSuffix;
-                case EnvironmentName.AzureGermanCloud:
-                    return AzureEnvironmentConstants.GermanTrafficManagerDnsSuffix;
                 default:
                     return string.Empty;
             }
