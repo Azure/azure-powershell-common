@@ -313,6 +313,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     case AzureEnvironment.ExtendedEndpoint.AzurePurviewEndpointResourceId:
                         environment.SetProperty(AzureEnvironment.ExtendedEndpoint.AzurePurviewEndpointResourceId, propertyValue);
                         break;
+                    case AzureEnvironment.ExtendedEndpoint.AzureAppConfigurationEndpointSuffix:
+                        environment.SetProperty(AzureEnvironment.ExtendedEndpoint.AzureAppConfigurationEndpointSuffix, propertyValue);
+                        break;
+                    case AzureEnvironment.ExtendedEndpoint.AzureAppConfigurationEndpointResourceId:
+                        environment.SetProperty(AzureEnvironment.ExtendedEndpoint.AzureAppConfigurationEndpointResourceId, propertyValue);
+                        break;
                 }
             }
         }
@@ -369,6 +375,10 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 case AzureEnvironment.ExtendedEndpoint.AzurePurviewEndpointSuffix:
                 case AzureEnvironment.ExtendedEndpoint.AzurePurviewEndpointResourceId:
                     resource = AzureEnvironment.ExtendedEndpoint.AzurePurviewEndpointResourceId;
+                    break;
+                case AzureEnvironment.ExtendedEndpoint.AzureAppConfigurationEndpointSuffix:
+                case AzureEnvironment.ExtendedEndpoint.AzureAppConfigurationEndpointResourceId:
+                    resource = AzureEnvironment.ExtendedEndpoint.AzureAppConfigurationEndpointResourceId;
                     break;
                 default:
                     resource = AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId;
