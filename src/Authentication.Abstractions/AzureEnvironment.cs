@@ -254,7 +254,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.MicrosoftGraphUrl, AzureEnvironmentConstants.AzureMicrosoftGraphUrl);
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzurePurviewEndpointSuffix, AzureEnvironmentConstants.AzurePurviewEndpointSuffix);
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzurePurviewEndpointResourceId, AzureEnvironmentConstants.AzurePurviewEndpointResourceId);
-
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureAppConfigurationEndpointSuffix, AzureEnvironmentConstants.AzureAppConfigurationEndpointSuffix);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureAppConfigurationEndpointResourceId, AzureEnvironmentConstants.AzureAppConfigurationEndpointResourceId);
             }
 
             if (azureEnvironments.ContainsKey(EnvironmentName.AzureChinaCloud))
@@ -677,7 +678,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 MicrosoftGraphUrl = "MicrosoftGraphUrl",
                 MicrosoftGraphEndpointResourceId = "MicrosoftGraphEndpointResourceId",
                 AzurePurviewEndpointSuffix = "AzurePurviewEndpointSuffix",
-                AzurePurviewEndpointResourceId = "AzurePurviewEndpointResourceId";
+                AzurePurviewEndpointResourceId = "AzurePurviewEndpointResourceId",
+                AzureAppConfigurationEndpointSuffix = "AzureAppConfigurationEndpointSuffix",
+                AzureAppConfigurationEndpointResourceId = "AzureAppConfigurationEndpointResourceId";
         }
     }
 }
