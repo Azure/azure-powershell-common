@@ -267,5 +267,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// The token audience for authorizing Purview Service requests
         /// </summary>
         public const string AzurePurviewEndpointResourceId = "https://purview.azure.net";
+
+        /// <summary>
+        /// App Configuration
+        /// </summary>
+        public const string AzureAppConfigurationEndpointSuffix = "azconfig.io";
+        public const string AzureAppConfigurationEndpointResourceId = "https://azconfig.io";
     }
 }

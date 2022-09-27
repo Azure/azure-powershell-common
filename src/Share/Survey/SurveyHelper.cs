@@ -83,6 +83,11 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
             return false;
         }
 
+        [Obsolete("The method is deprecated, please use ShouldPromptAzSurvey() instead.")]
+        public bool ShouldPropmtSurvey(string moduleName, Version moduleVersion){
+            return ShouldPromptAzSurvey();
+        }
+
         public void updateSurveyHelper(string installationId){
             InitialSurveyHelper();
             if (ExpectedDate == DateTime.MinValue && Today > LastActiveDay) 
