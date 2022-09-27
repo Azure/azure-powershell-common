@@ -83,7 +83,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
             return false;
         }
 
-        [Obsolete("The method is deprecated, please use ShouldPromptAzSurvey() instead.", true)]
+        [Obsolete("The method is deprecated, please use ShouldPromptAzSurvey() instead.")]
         public bool ShouldPropmtSurvey(string moduleName, Version moduleVersion){
             return ShouldPromptAzSurvey();
         }
