@@ -59,10 +59,9 @@ namespace Authentication.Abstractions.Test
             var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
 
             // Check AzureCloud is added to public environment list even discovery endpoint doesn't return AzureCloud.
-            Assert.Equal(4, armEnvironments.Count);
+            Assert.Equal(3, armEnvironments.Count);
             Assert.Equal(AzureEnvironment.TypeBuiltIn, armEnvironments[EnvironmentName.AzureCloud].Type);
-            Assert.Equal(AzureEnvironment.TypeBuiltIn, armEnvironments[EnvironmentName.AzureChinaCloud].Type);
-            Assert.Equal(AzureEnvironment.TypeDiscovered, armEnvironments[EnvironmentName.AzureGermanCloud].Type);
+            Assert.Equal(AzureEnvironment.TypeDiscovered, armEnvironments[EnvironmentName.AzureChinaCloud].Type);
             Assert.Equal(AzureEnvironment.TypeDiscovered, armEnvironments[EnvironmentName.AzureUSGovernment].Type);
         }
 
@@ -72,10 +71,9 @@ namespace Authentication.Abstractions.Test
             Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData\ArmResponseOneEntry.json");
             var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
 
-            Assert.Equal(5, armEnvironments.Count);
+            Assert.Equal(4, armEnvironments.Count);
             Assert.Equal(AzureEnvironment.TypeBuiltIn, armEnvironments[EnvironmentName.AzureCloud].Type);
             Assert.Equal(AzureEnvironment.TypeBuiltIn, armEnvironments[EnvironmentName.AzureChinaCloud].Type);
-            Assert.Equal(AzureEnvironment.TypeBuiltIn, armEnvironments[EnvironmentName.AzureGermanCloud].Type);
             Assert.Equal(AzureEnvironment.TypeBuiltIn, armEnvironments[EnvironmentName.AzureUSGovernment].Type);
         }
 
@@ -86,7 +84,7 @@ namespace Authentication.Abstractions.Test
             var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
 
             // Check all built-in environments are loaded because discover is failed
-            Assert.Equal(4, armEnvironments.Count);
+            Assert.Equal(3, armEnvironments.Count);
             foreach (var env in armEnvironments.Values)
             {
                 Assert.Equal(AzureEnvironment.TypeBuiltIn, env.Type);
@@ -100,7 +98,7 @@ namespace Authentication.Abstractions.Test
             var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
 
             // Check all built-in environments are loaded because discover is disabled
-            Assert.Equal(4, armEnvironments.Count);
+            Assert.Equal(3, armEnvironments.Count);
             foreach (var env in armEnvironments.Values)
             {
                 Assert.Equal(AzureEnvironment.TypeBuiltIn, env.Type);
