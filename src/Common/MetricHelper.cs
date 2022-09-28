@@ -18,6 +18,8 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Commands.Common;
 using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces;
+using Microsoft.Azure.PowerShell.Common.Config;
 using Microsoft.Azure.PowerShell.Common.Share;
 using Microsoft.Rest.Azure;
 using Microsoft.WindowsAzure.Commands.Common.Utilities;
@@ -180,10 +182,19 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
         public void LogQoSEvent(AzurePSQoSEvent qos, bool isUsageMetricEnabled, bool isErrorMetricEnabled)
         {
-            if (qos == null || !IsMetricTermAccepted())
-            {
+            if (qos == null)
                 return;
+
+            if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
+                && configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableCmdletStats)
+                && qos.IsSuccess && !string.IsNullOrEmpty(qos.SourceScript)
+                && AzureSession.Instance.TryGetComponent<IPSCmdletAction>(nameof(IPSCmdletAction), out var cmdletAction))
+            {
+                cmdletAction.LogCmdletStats(qos.ModuleName, qos.CommandName, qos.ParameterSetName, qos.Parameters, qos.SourceScript, qos.ScriptLineNumber, qos.Duration, qos.IsSuccess);
             }
+
+            if (!IsMetricTermAccepted())
+                return;
 
             if (isUsageMetricEnabled)
             {
@@ -571,6 +582,8 @@ public class AzurePSQoSEvent
     public string ModuleName { get; set; }
     public string ModuleVersion { get; set; }
     //Version of PowerShell runspace ($Host.Runspace.Version)
+    public string SourceScript { get; set; }
+    public int ScriptLineNumber { get; set; }
     public string PSVersion { get; set; }
     //Host version of PowerShell ($Host.Version) which can be customized by PowerShell wrapper
     public string HostVersion { get; set; }

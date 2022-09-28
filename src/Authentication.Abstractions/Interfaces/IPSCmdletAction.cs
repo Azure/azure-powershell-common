@@ -12,21 +12,12 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-namespace Microsoft.Azure.PowerShell.Common.Config
+using System;
+
+namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces
 {
-    /// <summary>
-    /// This class stores keys of pre-defined configs.
-    /// </summary>
-    /// <remarks>
-    /// All keys should be defined in ConfigKeys class in Azure/azure-powershell repo.
-    /// If the key is used in common code, duplicate it here.
-    /// Keys defined here should NEVER be removed or changed to prevent breaking change.
-    /// </remarks>
-    public static class ConfigKeysForCommon
+    public interface IPSCmdletAction
     {
-        public const string EnableInterceptSurvey  = "DisplaySurveyMessage";
-        public const string DisplayBreakingChangeWarning = "DisplayBreakingChangeWarning";
-        public const string EnableDataCollection = "EnableDataCollection";
-        public const string EnableCmdletStats = "EnableCmdletStats";
+        void LogCmdletStats(string moduleName, string commandName, string parameterSetName, string parameters, string sourceScript, int scriptLineNumber, TimeSpan duration, bool isSuccess);
     }
 }
