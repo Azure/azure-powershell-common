@@ -180,10 +180,25 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
         public void LogQoSEvent(AzurePSQoSEvent qos, bool isUsageMetricEnabled, bool isErrorMetricEnabled)
         {
-            if (qos == null || !IsMetricTermAccepted())
-            {
+            if (qos == null)
                 return;
+
+#if DEBUG || LIVETEST
+            try
+            {
+                if (qos.IsSuccess && !string.IsNullOrEmpty(qos.SourceScript))
+                {
+                    CmdletStatsUtilities.LogCmdletStatistics(qos.ModuleName, qos.CommandName, qos.ParameterSetName, qos.Parameters, qos.SourceScript, qos.ScriptLineNumber);
+                }
             }
+            catch
+            {
+                // ignore
+            }
+#endif
+
+            if (!IsMetricTermAccepted())
+                return;
 
             if (isUsageMetricEnabled)
             {
@@ -563,6 +578,8 @@ public class AzurePSQoSEvent
     public string ModuleName { get; set; }
     public string ModuleVersion { get; set; }
     //Version of PowerShell runspace ($Host.Runspace.Version)
+    public string SourceScript { get; set; }
+    public int ScriptLineNumber { get; set; }
     public string PSVersion { get; set; }
     //Host version of PowerShell ($Host.Version) which can be customized by PowerShell wrapper
     public string HostVersion { get; set; }

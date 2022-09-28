@@ -668,6 +668,9 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             _qosEvent.PSHostName = PSHostName;
             _qosEvent.ModuleName = this.ModuleName;
             _qosEvent.ModuleVersion = this.ModuleVersion;
+            _qosEvent.SourceScript = MyInvocation.ScriptName;
+            _qosEvent.ScriptLineNumber = MyInvocation.ScriptLineNumber;
+
             if (this.MyInvocation != null && this.MyInvocation.MyCommand != null)
             {
                 _qosEvent.CommandName = this.MyInvocation.MyCommand.Name;
@@ -747,14 +750,10 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 return;
             }
 
+            _qosEvent.ParameterSetName = this.ParameterSetName;
             _qosEvent.FinishQosEvent();
 
             if (!IsUsageMetricEnabled && (!IsErrorMetricEnabled || _qosEvent.IsSuccess))
-            {
-                return;
-            }
-
-            if (!IsDataCollectionAllowed())
             {
                 return;
             }
