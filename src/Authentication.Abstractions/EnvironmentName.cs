@@ -12,6 +12,8 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using System;
+
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
     /// <summary>
@@ -37,6 +39,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// The Azure Sovereign Cloud for Germany
         /// </summary>
+        [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string AzureGermanCloud = "AzureGermanCloud";
     }
 }

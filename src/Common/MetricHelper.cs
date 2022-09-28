@@ -16,8 +16,8 @@ using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Commands.Common;
-using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 using Microsoft.Azure.Commands.Common.Authentication;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 using Microsoft.Azure.PowerShell.Common.Share;
 using Microsoft.Rest.Azure;
 using Microsoft.WindowsAzure.Commands.Common.Utilities;
@@ -31,13 +31,13 @@ using System.Linq;
 using System.Management.Automation.Host;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Microsoft.WindowsAzure.Commands.Common
 {
     public class MetricHelper
     {
         protected INetworkHelper _networkHelper;
-        private const int FlushTimeoutInMilli = 5000;
         private const string DefaultPSVersion = "3.0.0.0";
         private const string EventName = "cmdletInvocation";
 
@@ -496,17 +496,25 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 return;
             }
 
-            try
+            Task flushMetricTask = FlushMetricAsync(TelemetryClients);
+        }
+
+        private async Task FlushMetricAsync(IEnumerable<TelemetryClient> TelemetryClients)
+        {
+            await Task.Run(() =>
             {
                 foreach (TelemetryClient client in TelemetryClients)
                 {
-                    client.Flush();
+                    try
+                    {
+                        client.Flush();
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
                 }
-            }
-            catch
-            {
-                // ignored
-            }
+            });
         }
 
         /// <summary>

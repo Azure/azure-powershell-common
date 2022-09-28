@@ -764,7 +764,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             {
                 _metricHelper.LogQoSEvent(_qosEvent, IsUsageMetricEnabled, IsErrorMetricEnabled);
                 _metricHelper.FlushMetric();
-                WriteDebug("Finish sending metric.");
             }
             catch (Exception e)
             {
