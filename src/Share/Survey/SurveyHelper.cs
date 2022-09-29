@@ -19,6 +19,7 @@ using System.IO;
 using System.Threading;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 
 
@@ -112,10 +113,14 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 
         private void InitialSurveyHelper()
         {
-            if (File.Exists(SurveyScheduleInfoFile))
+            StreamReader sr = null;
+            ScheduleInfo scheduleInfo = null;
+            try 
             {
-                using (StreamReader sr = new StreamReader(new FileStream(SurveyScheduleInfoFile, FileMode.Open, FileAccess.Read, FileShare.None))) {
-                    ScheduleInfo scheduleInfo = JsonConvert.DeserializeObject<ScheduleInfo>(sr.ReadToEnd());
+                if (File.Exists(SurveyScheduleInfoFile))
+                {
+                    sr = new StreamReader(new FileStream(SurveyScheduleInfoFile, FileMode.Open, FileAccess.Read, FileShare.None));                    
+                    scheduleInfo = JsonConvert.DeserializeObject<ScheduleInfo>(sr.ReadToEnd());
                     DateTime date = DateTime.MinValue;
                     DateTime.TryParse(scheduleInfo.LastActiveDay, out date);
                     LastActiveDay = date;
@@ -127,6 +132,33 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
                     return;
                 }
             }
+            catch (Exception e)
+            {
+                if (e is UnauthorizedAccessException)
+                {
+                    _ignoreSchedule = true;
+                }
+                //deserialize failed, means content of file is incorrect, make file empty
+                if (e is JsonException)
+                {
+                    if (sr != null)
+                    {
+                        sr.Dispose();
+                    }
+                    Task.Run(() =>
+                    {
+                        WriteToStream(string.Empty);
+                    });
+                }
+            }
+            finally
+            {
+                if (sr != null)
+                {
+                    sr.Dispose();
+                }
+            }
+            
             LastActiveDay = Today;
             LastPromptDate = Today;
             ExpectedDate = DateTime.MinValue;
