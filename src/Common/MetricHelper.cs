@@ -188,14 +188,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 && configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableCmdletStats)
                 && qos.IsSuccess && !string.IsNullOrEmpty(qos.SourceScript))
             {
-                try
-                {
-                    CmdletStatsUtilities.LogCmdletStatistics(qos.ModuleName, qos.CommandName, qos.ParameterSetName, qos.Parameters, qos.SourceScript, qos.ScriptLineNumber);
-                }
-                catch
-                {
-                    // ignore
-                }
+                CmdletStatsUtilities.LogCmdletStatistics(qos.ModuleName, qos.CommandName, qos.ParameterSetName, qos.Parameters, qos.SourceScript, qos.ScriptLineNumber);
             }
 
             if (!IsMetricTermAccepted())
