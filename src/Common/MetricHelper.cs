@@ -18,6 +18,7 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Commands.Common;
 using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using Microsoft.Azure.PowerShell.Common.Config;
 using Microsoft.Azure.PowerShell.Common.Share;
 using Microsoft.Rest.Azure;
 using Microsoft.WindowsAzure.Commands.Common.Utilities;
@@ -183,19 +184,19 @@ namespace Microsoft.WindowsAzure.Commands.Common
             if (qos == null)
                 return;
 
-#if DEBUG || LIVETEST
-            try
+            if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
+                && configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableCmdletStats)
+                && qos.IsSuccess && !string.IsNullOrEmpty(qos.SourceScript))
             {
-                if (qos.IsSuccess && !string.IsNullOrEmpty(qos.SourceScript))
+                try
                 {
                     CmdletStatsUtilities.LogCmdletStatistics(qos.ModuleName, qos.CommandName, qos.ParameterSetName, qos.Parameters, qos.SourceScript, qos.ScriptLineNumber);
                 }
+                catch
+                {
+                    // ignore
+                }
             }
-            catch
-            {
-                // ignore
-            }
-#endif
 
             if (!IsMetricTermAccepted())
                 return;
