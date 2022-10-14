@@ -196,6 +196,9 @@ namespace Microsoft.WindowsAzure.Commands.Common
             if (!IsMetricTermAccepted())
                 return;
 
+            if (!IsMetricTermAccepted())
+                return;
+
             if (isUsageMetricEnabled)
             {
                 LogUsageEvent(qos);
