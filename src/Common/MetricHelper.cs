@@ -595,6 +595,7 @@ public class AzurePSQoSEvent
     public string ParameterSetName { get; set; }
     public string InvocationName { get; set; }
     public Dictionary<string, string> CustomProperties { get; private set; }
+    private static bool ShowTelemetry = string.Equals(bool.TrueString, Environment.GetEnvironmentVariable("AZUREPS_DEBUG_SHOW_TELEMETRY"), StringComparison.OrdinalIgnoreCase);
 
     public AzurePSQoSEvent()
     {
@@ -623,9 +624,8 @@ public class AzurePSQoSEvent
 
     public override string ToString()
     {
-        String telemetryInfo = Environment.GetEnvironmentVariable("AZUREPS_DEBUG_SHOW_TELEMETRY");
         StringBuilder sb = new StringBuilder("AzureQoSEvent: ");
-        if (string.Equals(Boolean.TrueString, telemetryInfo, StringComparison.OrdinalIgnoreCase)) 
+        if (ShowTelemetry) 
         {   
             foreach(PropertyDescriptor descriptor in TypeDescriptor.GetProperties((this)))
                 {
