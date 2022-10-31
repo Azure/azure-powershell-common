@@ -651,7 +651,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
             if (AzVersion == null)
             {
-                AzVersion = this.LoadAzVersion();
+                AzVersion = this.LoadModuleVersion("Az", true);
                 UserAgent = new ProductInfoHeaderValue("AzurePowershell", string.Format("Az{0}", AzVersion)).ToString();
                 string hostEnv = Environment.GetEnvironmentVariable("AZUREPS_HOST_ENVIRONMENT");
                 if (!String.IsNullOrWhiteSpace(hostEnv))
@@ -660,8 +660,13 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 PSHostName = this.Host?.Name;
                 PSHostVersion = this.Host?.Version?.ToString();
             }
+            if (AzAccountsVersion == null)
+            {
+                AzAccountsVersion = this.LoadModuleVersion("Az.Accounts", false);
+            }
 
             _qosEvent.AzVersion = AzVersion;
+            _qosEvent.AzAccountsVersion = AzAccountsVersion;
             _qosEvent.UserAgent = UserAgent;
             _qosEvent.PSVersion = PowerShellVersion;
             _qosEvent.HostVersion = PSHostVersion;
@@ -991,6 +996,9 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         //If there is no Az module, the version is "0.0.0"
         public static string AzVersion { set; get; }
 
+        public static string AzAccountsVersion { set; get; }
+
+
         //Initialized once AzVersion is loaded.
         //Format: AzurePowershell/Az0.0.0 %AZUREPS_HOST_ENVIROMENT%
         public static string UserAgent { set; get; }
@@ -998,12 +1006,12 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         public static string PSHostVersion { set; get; }
         public static string PSHostName { set; get; }
 
-        protected string LoadAzVersion()
+        protected string LoadModuleVersion(String Module, bool ListAvailable)
         {
             Version defaultVersion = new Version("0.0.0");
             if (this.Host == null)
             {
-                WriteDebug("Cannot fetch Az version due to no host in current environment");
+                WriteDebug($"Cannot fetch {Module} version due to no host in current environment");
                 return defaultVersion.ToString();
             }
 
@@ -1012,7 +1020,15 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
             try
             {
-                var outputs = this.ExecuteScript<PSObject>("Get-Module -Name Az -ListAvailable");
+                List<PSObject> outputs;
+                if (ListAvailable)
+                {
+                   outputs = this.ExecuteScript<PSObject>($"Get-Module -Name {Module} -ListAvailable");
+                }
+                else
+                {
+                   outputs = this.ExecuteScript<PSObject>($"Get-Module -Name {Module}");
+                }
                 foreach (PSObject obj in outputs)
                 {
                     string psVersion = obj.Properties["Version"].Value.ToString();
@@ -1032,7 +1048,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
             catch (Exception e)
             {
-                WriteDebug(string.Format("Cannot fetch Az version due to exception: {0}", e.Message));
+                WriteDebug(string.Format($"Cannot fetch {Module} version due to exception: {0}", e.Message));
                 return defaultVersion.ToString();
             }
 
@@ -1041,7 +1057,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             {
                 ret += "-" + latestSuffix;
             }
-            WriteDebug(string.Format("Sought all Az modules and got latest version {0}", ret));
+            WriteDebug(string.Format($"Got version {0} of {Module}", ret));
             return ret;
         }
 
