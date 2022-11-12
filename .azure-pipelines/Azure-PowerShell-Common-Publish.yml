@@ -28,7 +28,10 @@ steps:
     version: 2.1.302
 
 - powershell: '$(Agent.ToolsDirectory)/dotnet/dotnet msbuild build.proj /t:Build /p:Configuration=Release /p:FileVersion=$env:VERSION /NoLogo'
-  displayName: build
+  displayName: build common libs
+
+- powershell: '$(Agent.ToolsDirectory)/dotnet/dotnet msbuild tools/AutoMapper/AutoMapper.csproj /p:Configuration=Release'
+  displayName: build AutoMapper
 
 - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
   displayName: 'dll Signing'
@@ -78,8 +81,12 @@ steps:
        }
      ]
 
-- powershell: |
-   $(Agent.ToolsDirectory)/dotnet/dotnet msbuild build.proj  /t:Pack /p:Configuration=Release /p:PackageVersion=$env:VERSION /NoLogo
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      $(Agent.ToolsDirectory)/dotnet/dotnet msbuild build.proj  /t:Pack /p:Configuration=Release /p:PackageVersion=$env:VERSION /NoLogo      
+      $(Agent.ToolsDirectory)/dotnet/dotnet pack AutoMapper.csproj -c Release
   displayName: pack
 
 - task: NuGetAuthenticate@0
