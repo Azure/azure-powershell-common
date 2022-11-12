@@ -87,7 +87,7 @@ steps:
     targetType: 'inline'
     script: |
       $(Agent.ToolsDirectory)/dotnet/dotnet msbuild build.proj  /t:Pack /p:Configuration=Release /p:PackageVersion=$env:VERSION /NoLogo      
-      $(Agent.ToolsDirectory)/dotnet/dotnet pack tools/AutoMapper/AutoMapper.csproj -c Release
+      $(Agent.ToolsDirectory)/dotnet/dotnet pack tools/AutoMapper/AutoMapper.csproj -c Release --no-build
   displayName: pack
 
 - task: NuGetAuthenticate@0
