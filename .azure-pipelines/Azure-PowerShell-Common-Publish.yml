@@ -37,11 +37,11 @@ steps:
   displayName: 'dll Signing'
   inputs:
     ConnectedServiceName: 'ESRP Signing Service'
-    FolderPath: artifacts
+    FolderPath: .
     Pattern: |
-     Release\netstandard2.0\Microsoft.Azure.PowerShell*.dll
+     artifacts\Release\netstandard2.0\Microsoft.Azure.PowerShell*.dll
      tools\AutoMapper\bin\Release\netstandard2.0\Microsoft.Azure.PowerShell*.dll
-     !Release\netstandard2.0\Microsoft.Azure.PowerShell*.Test.dll
+     !artifacts\Release\netstandard2.0\Microsoft.Azure.PowerShell*.Test.dll
     UseMinimatch: true
     signConfigType: inlineSignParams
     inlineOperation: |
