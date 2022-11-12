@@ -121,3 +121,11 @@ steps:
     PathtoPublish: tools/AutoMapper/bin/Release
     ArtifactName: AutoMapper
   condition: succeededOrFailed()
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish All Artifact For Debug'
+  inputs:
+    PathtoPublish: .
+    ArtifactName: all
+  condition: and(succeededOrFailed(), eq(variables['System.debug'], 'true'))
+
