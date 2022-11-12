@@ -20,6 +20,8 @@ steps:
      throw "The value of Version $env:VERSION must be format of X.X.X"
    }
   displayName: 'Check Version'
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK'
 
 - powershell: '$(Agent.ToolsDirectory)/dotnet/dotnet msbuild build.proj /t:Build /p:Configuration=Release /p:FileVersion=$env:VERSION /NoLogo'
   displayName: build common libs
