@@ -19,7 +19,6 @@ steps:
    {
      throw "The value of Version $env:VERSION must be format of X.X.X"
    }
-   
   displayName: 'Check Version'
 
 - task: UseDotNet@2
@@ -30,7 +29,7 @@ steps:
 - powershell: '$(Agent.ToolsDirectory)/dotnet/dotnet msbuild build.proj /t:Build /p:Configuration=Release /p:FileVersion=$env:VERSION /NoLogo'
   displayName: build common libs
 
-- powershell: '$(Agent.ToolsDirectory)/dotnet/dotnet msbuild tools/AutoMapper/AutoMapper.csproj /p:Configuration=Release'
+- powershell: '$(Agent.ToolsDirectory)/dotnet/dotnet build tools/AutoMapper/AutoMapper.csproj -c Release'
   displayName: build AutoMapper
 
 - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
@@ -40,6 +39,7 @@ steps:
     FolderPath: artifacts
     Pattern: |
      Release\netstandard2.0\Microsoft.Azure.PowerShell*.dll
+     tools\AutoMapper\bin\Release\netstandard2.0\Microsoft.Azure.PowerShell*.dll
      !Release\netstandard2.0\Microsoft.Azure.PowerShell*.Test.dll
     UseMinimatch: true
     signConfigType: inlineSignParams
@@ -86,7 +86,7 @@ steps:
     targetType: 'inline'
     script: |
       $(Agent.ToolsDirectory)/dotnet/dotnet msbuild build.proj  /t:Pack /p:Configuration=Release /p:PackageVersion=$env:VERSION /NoLogo      
-      $(Agent.ToolsDirectory)/dotnet/dotnet pack AutoMapper.csproj -c Release
+      $(Agent.ToolsDirectory)/dotnet/dotnet pack tools/AutoMapper/AutoMapper.csproj -c Release
   displayName: pack
 
 - task: NuGetAuthenticate@0
@@ -98,7 +98,7 @@ steps:
   condition: and(succeeded(), ne(variables['publish'], 'false'))
   inputs:
     command: push
-    packagesToPush: 'artifacts/Package/Release/Microsoft.Azure.PowerShell.*.nupkg;!artifacts/Package/Release/Microsoft.Azure.PowerShell.*.symbols.nupkg' # .nupkg and .snupkg
+    packagesToPush: 'artifacts/Package/Release/Microsoft.Azure.PowerShell.*.nupkg;!artifacts/Package/Release/Microsoft.Azure.PowerShell.*.symbols.nupkg;' # .nupkg and .snupkg
     publishVstsFeed: public/azure-powershell
     includeSymbols: false
 
@@ -112,4 +112,11 @@ steps:
   inputs:
     PathtoPublish: artifacts/Package/Release/
     ArtifactName: artifacts
+  condition: succeededOrFailed()
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: tools/AutoMapper/bin/Release
+    ArtifactName: AutoMapper
   condition: succeededOrFailed()
