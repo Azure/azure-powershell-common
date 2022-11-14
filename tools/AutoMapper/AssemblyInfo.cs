@@ -10,4 +10,4 @@ using System.Security;
 [assembly: NeutralResourcesLanguage("en")]
 [assembly: Guid("b38fd93e-7dc6-43d3-9081-b2f907994b74")]
 [assembly: AssemblyVersion("1.0.0")]
-[assembly: AssemblyFileVersion("8.1.1")]
+[assembly: AssemblyFileVersion("6.2.2")]

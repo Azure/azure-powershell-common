@@ -13,7 +13,7 @@ namespace AutoMapper.Mappers
 
     public class MultidimensionalArrayMapper : IObjectMapper
     {
-        private static Array Map<TDestination, TSource, TSourceElement>(TSource source, ResolutionContext context)
+        private static Array Map<TDestination, TSource, TSourceElement>(TSource source, ResolutionContext context, ProfileMap profileMap)
             where TSource : IEnumerable
         {
             var destElementType = ElementTypeHelper.GetElementType(typeof(TDestination));
@@ -34,7 +34,7 @@ namespace AutoMapper.Mappers
             var filler = new MultidimensionalArrayFiller(destinationArray);
             foreach (var item in sourceList)
             {
-                filler.NewValue(context.Map(item, null, typeof(TSourceElement), destElementType, null));
+                filler.NewValue(context.Map(item, null, typeof(TSourceElement), destElementType));
             }
             return destinationArray;
         }
@@ -47,13 +47,14 @@ namespace AutoMapper.Mappers
             && context.SourceType.IsEnumerableType();
 
         public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap,
-            IMemberMap memberMap, Expression sourceExpression, Expression destExpression,
+            PropertyMap propertyMap, Expression sourceExpression, Expression destExpression,
             Expression contextExpression) =>
             Call(null,
                 MapMethodInfo.MakeGenericMethod(destExpression.Type, sourceExpression.Type,
                     ElementTypeHelper.GetElementType(sourceExpression.Type)),
                 sourceExpression,
-                contextExpression);
+                contextExpression,
+                Constant(profileMap));
 
         public class MultidimensionalArrayFiller
         {

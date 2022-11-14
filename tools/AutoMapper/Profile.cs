@@ -52,7 +52,6 @@ namespace AutoMapper
 
         public IMemberConfiguration DefaultMemberConfig => _memberConfigurations.First();
         public bool? ConstructorMappingEnabled { get; private set; }
-        [Obsolete("This has no effect and will be removed. Set CreateMissingTypeMaps on the global configuration.")]
         public bool? CreateMissingTypeMaps { get; set; }
         public bool? ValidateInlineMaps { get; set; }
 
@@ -75,8 +74,6 @@ namespace AutoMapper
         public bool? EnableNullPropagationForQueryMapping { get; set; }
         public Func<PropertyInfo, bool> ShouldMapProperty { get; set; }
         public Func<FieldInfo, bool> ShouldMapField { get; set; }
-        public Func<MethodInfo, bool> ShouldMapMethod { get; set; }
-        public Func<ConstructorInfo, bool> ShouldUseConstructor { get; set; }
 
         public INamingConvention SourceMemberNamingConvention { get; set; }
         public INamingConvention DestinationMemberNamingConvention { get; set; }

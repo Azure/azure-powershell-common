@@ -7,7 +7,7 @@
     <AssemblyName>Microsoft.Azure.PowerShell.AutoMapper</AssemblyName>
     <AssemblyOriginatorKeyFile>..\..\src\MSSharedLibKey.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
-    <Version>8.1.1</Version>
+    <Version>6.2.2</Version>
     <DelaySign>true</DelaySign>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <PackageId>Microsoft.Azure.PowerShell.AutoMapper</PackageId>
@@ -22,7 +22,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
   </ItemGroup>
   

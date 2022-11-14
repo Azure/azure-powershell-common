@@ -4,14 +4,14 @@ using System.Reflection;
 
 namespace AutoMapper.Configuration
 {
-    public class SourceMappingExpression : ISourceMemberConfigurationExpression, ISourceMemberConfiguration
+    public class SourceMappingExpression : ISourceMemberConfigurationExpression
     {
         private readonly MemberInfo _sourceMember;
         private readonly List<Action<SourceMemberConfig>> _sourceMemberActions = new List<Action<SourceMemberConfig>>();
 
         public SourceMappingExpression(MemberInfo sourceMember) => _sourceMember = sourceMember;
 
-        public void DoNotValidate() => _sourceMemberActions.Add(smc => smc.Ignore());
+        public void Ignore() => _sourceMemberActions.Add(smc => smc.Ignore());
 
         public void Configure(TypeMap typeMap)
         {

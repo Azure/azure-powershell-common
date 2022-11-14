@@ -13,23 +13,20 @@ namespace AutoMapper
         public TypePair RequestedTypes { get; }
         public TypePair RuntimeTypes { get; }
         public ITypeMapConfiguration InlineConfig { get; }
-        public IMemberMap MemberMap { get; }
 
-        public MapRequest(TypePair requestedTypes, TypePair runtimeTypes, IMemberMap memberMap = null) 
-            : this(requestedTypes, runtimeTypes, new MapperConfiguration.DefaultTypeMapConfig(requestedTypes), memberMap)
+        public MapRequest(TypePair requestedTypes, TypePair runtimeTypes) 
+            : this(requestedTypes, runtimeTypes, new MapperConfiguration.DefaultTypeMapConfig(requestedTypes))
         {
         }
 
-        public MapRequest(TypePair requestedTypes, TypePair runtimeTypes, ITypeMapConfiguration inlineConfig, IMemberMap memberMap = null)
+        public MapRequest(TypePair requestedTypes, TypePair runtimeTypes, ITypeMapConfiguration inlineConfig)
         {
             RequestedTypes = requestedTypes;
             RuntimeTypes = runtimeTypes;
             InlineConfig = inlineConfig;
-            MemberMap = memberMap;
         }
 
-        public bool Equals(MapRequest other) => 
-            RequestedTypes.Equals(other.RequestedTypes) && RuntimeTypes.Equals(other.RuntimeTypes) && Equals(MemberMap, other.MemberMap);
+        public bool Equals(MapRequest other) => RequestedTypes.Equals(other.RequestedTypes) && RuntimeTypes.Equals(other.RuntimeTypes);
 
         public override bool Equals(object obj)
         {
@@ -37,15 +34,7 @@ namespace AutoMapper
             return obj is MapRequest && Equals((MapRequest) obj);
         }
 
-        public override int GetHashCode()
-        {
-            var hashCode = HashCodeCombiner.Combine(RequestedTypes, RuntimeTypes);
-            if(MemberMap != null)
-            {
-                hashCode = HashCodeCombiner.Combine(hashCode, MemberMap.GetHashCode());
-            }
-            return hashCode;
-        }
+        public override int GetHashCode() => HashCodeCombiner.Combine(RequestedTypes, RuntimeTypes);
 
         public static bool operator ==(MapRequest left, MapRequest right) => left.Equals(right);
 
@@ -96,37 +85,18 @@ namespace AutoMapper
 
         public override int GetHashCode() => HashCodeCombiner.Combine(SourceType, DestinationType);
 
-        public bool IsGeneric => SourceType.IsGenericType || DestinationType.IsGenericType;
-
-        public bool IsGenericTypeDefinition => SourceType.IsGenericTypeDefinition || DestinationType.IsGenericTypeDefinition;
-
         public TypePair? GetOpenGenericTypePair()
         {
-            if(!IsGeneric)
-            {
+            var isGeneric = SourceType.IsGenericType() || DestinationType.IsGenericType();
+            if (!isGeneric)
                 return null;
-            }
+
             var sourceGenericDefinition = SourceType.IsGenericType() ? SourceType.GetGenericTypeDefinition() : SourceType;
-            var destinationGenericDefinition = DestinationType.IsGenericType() ? DestinationType.GetGenericTypeDefinition() : DestinationType;
+            var destGenericDefinition = DestinationType.IsGenericType() ? DestinationType.GetGenericTypeDefinition() : DestinationType;
 
-            return new TypePair(sourceGenericDefinition, destinationGenericDefinition);
-        }
+            var genericTypePair = new TypePair(sourceGenericDefinition, destGenericDefinition);
 
-        public TypePair CloseGenericTypes(TypePair closedTypes)
-        {
-            var sourceArguments = closedTypes.SourceType.GetGenericArguments();
-            var destinationArguments = closedTypes.DestinationType.GetGenericArguments();
-            if(sourceArguments.Length == 0)
-            {
-                sourceArguments = destinationArguments;
-            }
-            else if(destinationArguments.Length == 0)
-            {
-                destinationArguments = sourceArguments;
-            }
-            var closedSourceType = SourceType.IsGenericTypeDefinition() ? SourceType.MakeGenericType(sourceArguments) : SourceType;
-            var closedDestinationType = DestinationType.IsGenericTypeDefinition() ? DestinationType.MakeGenericType(destinationArguments) : DestinationType;
-            return new TypePair(closedSourceType, closedDestinationType);
+            return genericTypePair;
         }
 
         public IEnumerable<TypePair> GetRelatedTypePairs()

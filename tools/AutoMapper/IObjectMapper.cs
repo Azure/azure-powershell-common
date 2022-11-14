@@ -4,7 +4,6 @@ using AutoMapper.Internal;
 
 namespace AutoMapper
 {
-    using System;
     using static Expression;
     using static ExpressionFactory;
 
@@ -25,13 +24,12 @@ namespace AutoMapper
         /// </summary>
         /// <param name="configurationProvider"></param>
         /// <param name="profileMap"></param>
-        /// <param name="memberMap"></param>
+        /// <param name="propertyMap"></param>
         /// <param name="sourceExpression">Source parameter</param>
         /// <param name="destExpression">Destination parameter</param>
-        /// <param name="contextExpression">ResolutionContext parameter</param>
+        /// <param name="contextExpression">ResulotionContext parameter</param>
         /// <returns>Map expression</returns>
-        Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap,
-            IMemberMap memberMap, Expression sourceExpression, Expression destExpression, Expression contextExpression);
+        Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap, PropertyMap propertyMap, Expression sourceExpression, Expression destExpression, Expression contextExpression);
     }
 
     /// <summary>
@@ -55,22 +53,18 @@ namespace AutoMapper
         /// </summary>
         /// <param name="source">Source object</param>
         /// <param name="destination">Destination object</param>
-        /// <param name="sourceType">The compile time type of the source object</param>
-        /// <param name="destinationType">The compile time type of the destination object</param>
         /// <param name="context">Resolution context</param>
         /// <returns>Destination object</returns>
-        public abstract TDestination Map(TSource source, TDestination destination, Type sourceType, Type destinationType, ResolutionContext context);
+        public abstract TDestination Map(TSource source, TDestination destination, ResolutionContext context);
 
         public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap,
-            IMemberMap memberMap, Expression sourceExpression, Expression destExpression,
+            PropertyMap propertyMap, Expression sourceExpression, Expression destExpression,
             Expression contextExpression) =>
             Call(
                 Constant(this),
                 MapMethod,
                 ToType(sourceExpression, typeof(TSource)),
                 ToType(destExpression, typeof(TDestination)),
-                Constant(sourceExpression.Type),
-                Constant(destExpression.Type),
                 contextExpression);
     }
 }

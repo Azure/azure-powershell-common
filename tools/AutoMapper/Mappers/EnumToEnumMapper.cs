@@ -19,7 +19,7 @@ namespace AutoMapper.Mappers
                 return (TDestination)Enum.ToObject(destEnumType, source);
             }
 
-            if (!Enum.GetNames(destEnumType).Contains(source.ToString(), StringComparer.OrdinalIgnoreCase))
+            if (!Enum.GetNames(destEnumType).Contains(source.ToString()))
             {
                 var underlyingSourceType = Enum.GetUnderlyingType(sourceEnumType);
                 var underlyingSourceValue = System.Convert.ChangeType(source, underlyingSourceType);
@@ -40,7 +40,7 @@ namespace AutoMapper.Mappers
         }
 
         public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap,
-            IMemberMap memberMap, Expression sourceExpression, Expression destExpression,
+            PropertyMap propertyMap, Expression sourceExpression, Expression destExpression,
             Expression contextExpression) =>
             Call(null,
                 MapMethodInfo.MakeGenericMethod(sourceExpression.Type, destExpression.Type), 

@@ -22,9 +22,9 @@ namespace AutoMapper
             var publicWritableMembers = GetAllPublicWritableMembers(membersToMap);
             PublicReadAccessors = BuildPublicReadAccessors(publicReadableMembers);
             PublicWriteAccessors = BuildPublicAccessors(publicWritableMembers);
-            PublicNoArgMethods = BuildPublicNoArgMethods(config.ShouldMapMethod);
-            Constructors = GetAllConstructors(config.ShouldUseConstructor);
-            PublicNoArgExtensionMethods = BuildPublicNoArgExtensionMethods(config.SourceExtensionMethods.Where(config.ShouldMapMethod));
+            PublicNoArgMethods = BuildPublicNoArgMethods();
+            Constructors = type.GetDeclaredConstructors().Where(ci => !ci.IsStatic).ToArray();
+            PublicNoArgExtensionMethods = BuildPublicNoArgExtensionMethods(config.SourceExtensionMethods);
             AllMembers = PublicReadAccessors.Concat(PublicNoArgMethods).Concat(PublicNoArgExtensionMethods).ToList();
             DestinationMemberNames = AllMembers.Select(mi => new DestinationMemberName { Member = mi, Possibles = PossibleNames(mi.Name, config.Prefixes, config.Postfixes).ToArray() });
         }
@@ -59,9 +59,7 @@ namespace AutoMapper
                     .Select(postfix => name.Remove(name.Length - postfix.Length));
         }
 
-        private static Func<MemberInfo, bool> MembersToMap(
-            Func<PropertyInfo, bool> shouldMapProperty, 
-            Func<FieldInfo, bool> shouldMapField)
+        private static Func<MemberInfo, bool> MembersToMap(Func<PropertyInfo, bool> shouldMapProperty, Func<FieldInfo, bool> shouldMapField)
         {
             return m =>
             {
@@ -72,7 +70,7 @@ namespace AutoMapper
                     case FieldInfo field:
                         return !field.IsStatic && shouldMapField(field);
                     default:
-                        throw new ArgumentException("Should be a field or a property.");
+                        throw new ArgumentException("Should be a field or property.");
                 }
             };
         }
@@ -109,7 +107,6 @@ namespace AutoMapper
             {
                 genericInterfaces = genericInterfaces.Union(new[] { Type });
             }
-
             return explicitExtensionMethods.Union
             (
                 from genericInterface in genericInterfaces
@@ -182,11 +179,6 @@ namespace AutoMapper
 
         private IEnumerable<MemberInfo> GetAllPublicWritableMembers(Func<MemberInfo, bool> membersToMap)
             => GetAllPublicMembers(PropertyWritable, FieldWritable, membersToMap);
-        
-        private IEnumerable<ConstructorInfo> GetAllConstructors(Func<ConstructorInfo, bool> shouldUseConstructor)
-        {
-            return Type.GetDeclaredConstructors().Where(shouldUseConstructor).ToArray();
-        }
 
         private static bool PropertyReadable(PropertyInfo propertyInfo) => propertyInfo.CanRead;
 
@@ -228,10 +220,9 @@ namespace AutoMapper
                 );
         }
 
-        private MethodInfo[] BuildPublicNoArgMethods(Func<MethodInfo, bool> shouldMapMethod)
+        private MethodInfo[] BuildPublicNoArgMethods()
         {
             return Type.GetAllMethods()
-                .Where(shouldMapMethod)
                 .Where(mi => mi.IsPublic && !mi.IsStatic && mi.DeclaringType != typeof(object))
                 .Where(m => (m.ReturnType != typeof(void)) && (m.GetParameters().Length == 0))
                 .ToArray();

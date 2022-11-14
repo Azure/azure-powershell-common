@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using AutoMapper.Configuration;
 
 namespace AutoMapper.Internal
@@ -12,16 +11,6 @@ namespace AutoMapper.Internal
 
     public static class ExpressionFactory
     {
-        public static LambdaExpression MemberAccessLambda(Type type, string propertyOrField) =>
-            MemberAccessLambda(type.GetFieldOrProperty(propertyOrField));
-
-        public static LambdaExpression MemberAccessLambda(MemberInfo propertyOrField)
-        {
-            var source = Parameter(propertyOrField.DeclaringType, "source");
-            return Lambda(MakeMemberAccess(source, propertyOrField), source);
-        }
-
-
         public static MemberExpression MemberAccesses(string members, Expression obj) =>
             (MemberExpression) ReflectionHelper.GetMemberPath(obj.Type, members).MemberAccesses(obj);
 
@@ -132,22 +121,9 @@ namespace AutoMapper.Internal
                     target = member.Expression;
                     NullCheck();
                 }
-                else if(target is MethodCallExpression methodCall)
+                else if(target is MethodCallExpression method)
                 {
-                    var isStatic = methodCall.Method.IsStatic;
-                    if (isStatic)
-                    {
-                        var parameters = methodCall.Method.GetParameters();
-                        if (parameters.Length == 0 || !methodCall.Method.Has<ExtensionAttribute>())
-                        {
-                            return expression;
-                        }
-                        target = methodCall.Arguments[0];
-                    }
-                    else
-                    {
-                        target = methodCall.Object;
-                    }
+                    target = method.Method.IsStatic() ? method.Arguments.FirstOrDefault() : method.Object;
                     NullCheck();
                 }
                 else if(target?.NodeType == ExpressionType.Parameter)

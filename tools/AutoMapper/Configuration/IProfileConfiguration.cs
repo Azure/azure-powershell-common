@@ -29,7 +29,7 @@ namespace AutoMapper.Configuration
 
         /// <summary>
         /// Specify which properties should be mapped.
-        /// By default only public properties are mapped.
+        /// By default only public properties are mapped.e
         /// </summary>
         Func<PropertyInfo, bool> ShouldMapProperty { get; }
 
@@ -38,19 +38,6 @@ namespace AutoMapper.Configuration
         /// By default only public fields are mapped.
         /// </summary>
         Func<FieldInfo, bool> ShouldMapField { get; }
-
-        /// <summary>
-        /// Specify which methods, of those that are eligible (public, parameterless, and non-static or extension methods), should be mapped.
-        /// By default all eligible methods are mapped.
-        /// </summary>
-        Func<MethodInfo, bool> ShouldMapMethod { get; }
-
-
-        /// <summary>
-        /// Specify which constructors should be considered for the destination objects.
-        /// By default all constructors are considered.
-        /// </summary>
-        Func<ConstructorInfo, bool> ShouldUseConstructor { get; }
 
         string ProfileName { get; }
         IEnumerable<string> GlobalIgnores { get; }

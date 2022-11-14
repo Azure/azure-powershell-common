@@ -7,14 +7,6 @@ namespace AutoMapper.Configuration
 {
     internal static class PrimitiveExtensions
     {
-        public static void ForAll<T>(this IEnumerable<T> enumerable, Action<T> action)
-        {
-            foreach (var feature in enumerable)
-            {
-                action(feature);
-            }
-        }
-
         public static bool IsSetType(this Type type)
             => type.ImplementsGenericInterface(typeof(ISet<>));
 
@@ -51,9 +43,6 @@ namespace AutoMapper.Configuration
         public static bool IsDictionaryType(this Type type)
             => PrimitiveHelper.IsDictionaryType(type);
 
-        public static bool IsReadOnlyDictionaryType(this Type type)
-            => PrimitiveHelper.IsReadOnlyDictionaryType(type);
-
         public static bool ImplementsGenericInterface(this Type type, Type interfaceType)
             => PrimitiveHelper.ImplementsGenericInterface(type, interfaceType);
 
@@ -65,9 +54,6 @@ namespace AutoMapper.Configuration
 
         public static Type GetDictionaryType(this Type type)
             => PrimitiveHelper.GetDictionaryType(type);
-
-        public static Type GetReadOnlyDictionaryType(this Type type)
-            => PrimitiveHelper.GetReadOnlyDictionaryType(type);
 
         public static Type GetGenericInterface(this Type type, Type genericInterface)
             => PrimitiveHelper.GetGenericInterface(type, genericInterface);

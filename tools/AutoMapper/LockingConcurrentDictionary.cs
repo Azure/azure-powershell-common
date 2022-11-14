@@ -31,7 +31,7 @@ namespace AutoMapper
                 value = lazy.Value;
                 return true;
             }
-            value = default;
+            value = default(TValue);
             return false;
         }
 

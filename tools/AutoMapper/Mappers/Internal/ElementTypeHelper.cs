@@ -24,22 +24,16 @@ namespace AutoMapper.Mappers.Internal
                 return new[] {enumerableType.GetElementType()};
             }
 
-            var iDictionaryType = enumerableType.GetDictionaryType();
-            if (iDictionaryType != null && flags.HasFlag(ElementTypeFlags.BreakKeyValuePair))
+            var idictionaryType = enumerableType.GetDictionaryType();
+            if (idictionaryType != null && flags.HasFlag(ElementTypeFlags.BreakKeyValuePair))
             {
-                return iDictionaryType.GetTypeInfo().GenericTypeArguments;
+                return idictionaryType.GetTypeInfo().GenericTypeArguments;
             }
 
-            var iReadOnlyDictionaryType = enumerableType.GetReadOnlyDictionaryType();
-            if (iReadOnlyDictionaryType != null && flags.HasFlag(ElementTypeFlags.BreakKeyValuePair))
+            var ienumerableType = enumerableType.GetIEnumerableType();
+            if (ienumerableType != null)
             {
-                return iReadOnlyDictionaryType.GetTypeInfo().GenericTypeArguments;
-            }
-
-            var iEnumerableType = enumerableType.GetIEnumerableType();
-            if (iEnumerableType != null)
-            {
-                return iEnumerableType.GetTypeInfo().GenericTypeArguments;
+                return ienumerableType.GetTypeInfo().GenericTypeArguments;
             }
 
             if (typeof(IEnumerable).IsAssignableFrom(enumerableType))

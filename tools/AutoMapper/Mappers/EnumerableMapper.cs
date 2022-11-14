@@ -16,15 +16,14 @@ namespace AutoMapper.Mappers
                                                   context.DestinationType.IsListType())
                                                  && context.SourceType.IsEnumerableType();
 
-        public override Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap,
-            IMemberMap memberMap, Expression sourceExpression, Expression destExpression, Expression contextExpression)
+        public override Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap, PropertyMap propertyMap, Expression sourceExpression, Expression destExpression, Expression contextExpression)
         {
             if(destExpression.Type.IsInterface())
             {
                 var listType = typeof(IList<>).MakeGenericType(ElementTypeHelper.GetElementType(destExpression.Type));
                 destExpression = Convert(destExpression, listType);
             }
-            return MapCollectionExpression(configurationProvider, profileMap, memberMap, sourceExpression,
+            return MapCollectionExpression(configurationProvider, profileMap, propertyMap, sourceExpression,
                 destExpression, contextExpression, typeof(List<>), MapItemExpr);
         }
     }

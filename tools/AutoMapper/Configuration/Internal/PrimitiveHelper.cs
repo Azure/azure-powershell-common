@@ -49,9 +49,6 @@ namespace AutoMapper.Configuration.Internal
         public static bool IsDictionaryType(Type type) 
             => type.ImplementsGenericInterface(typeof(IDictionary<,>));
 
-        public static bool IsReadOnlyDictionaryType(Type type) 
-            => type.ImplementsGenericInterface(typeof(IReadOnlyDictionary<,>));
-
         public static bool ImplementsGenericInterface(Type type, Type interfaceType)
         {
             return type.IsGenericType(interfaceType)
@@ -66,9 +63,6 @@ namespace AutoMapper.Configuration.Internal
 
         public static Type GetDictionaryType(Type type)
             => type.GetGenericInterface(typeof(IDictionary<,>));
-
-        public static Type GetReadOnlyDictionaryType(Type type)
-            => type.GetGenericInterface(typeof(IReadOnlyDictionary<,>));
 
         public static Type GetGenericInterface(Type type, Type genericInterface)
         {

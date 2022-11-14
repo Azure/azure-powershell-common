@@ -8,6 +8,7 @@ namespace AutoMapper.Mappers
         {
             new NullableSourceMapper(),
             new NullableDestinationMapper(),
+            new ExpressionMapper(), 
             new FlagsEnumMapper(),
             new StringToEnumMapper(), 
             new EnumToStringMapper(),
@@ -15,11 +16,11 @@ namespace AutoMapper.Mappers
             new EnumToUnderlyingTypeMapper(),
             new UnderlyingTypeToEnumMapper(),
             new MultidimensionalArrayMapper(),
-            new ArrayCopyMapper(),
             new ArrayMapper(),
             new EnumerableToDictionaryMapper(),
+#if NETSTANDARD1_3 || NET45 || NET40
             new NameValueCollectionMapper(),
-            new ReadOnlyDictionaryMapper(),
+#endif
             new DictionaryMapper(),
             new ReadOnlyCollectionMapper(),
             new HashSetMapper(),
@@ -28,7 +29,9 @@ namespace AutoMapper.Mappers
             new AssignableMapper(),
             new ConvertMapper(),
             new StringMapper(),
+#if NETSTANDARD1_3 || NET45 || NET40
             new TypeConverterMapper(),
+#endif
             new ImplicitConversionOperatorMapper(),
             new ExplicitConversionOperatorMapper(),
             new FromStringDictionaryMapper(),

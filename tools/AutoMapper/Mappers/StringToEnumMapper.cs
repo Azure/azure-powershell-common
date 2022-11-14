@@ -17,7 +17,7 @@ namespace AutoMapper.Mappers
                                                  ElementTypeHelper.GetEnumerationType(context.DestinationType) != null;
 
         public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap,
-            IMemberMap memberMap, Expression sourceExpression, Expression destExpression,
+            PropertyMap propertyMap, Expression sourceExpression, Expression destExpression,
             Expression contextExpression)
         {
             var destinationType = destExpression.Type;

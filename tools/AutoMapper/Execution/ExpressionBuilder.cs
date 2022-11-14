@@ -17,14 +17,14 @@ namespace AutoMapper.Execution
             mapper => new ResolutionContext(mapper.DefaultContext.Options, mapper);
 
         private static readonly MethodInfo ContextMapMethod =
-            ExpressionFactory.Method<ResolutionContext, object>(a => a.Map<object, object>(null, null, null)).GetGenericMethodDefinition();            
+            ExpressionFactory.Method<ResolutionContext, object>(a => a.Map<object, object>(null, null)).GetGenericMethodDefinition();            
 
         public static Expression MapExpression(IConfigurationProvider configurationProvider,
             ProfileMap profileMap,
             TypePair typePair,
             Expression sourceParameter,
             Expression contextParameter,
-            IMemberMap propertyMap = null, Expression destinationParameter = null)
+            PropertyMap propertyMap = null, Expression destinationParameter = null)
         {
             if (destinationParameter == null)
                 destinationParameter = Default(typePair.DestinationType);
@@ -38,9 +38,9 @@ namespace AutoMapper.Execution
                     return typeMap.MapExpression != null
                         ? typeMap.MapExpression.ConvertReplaceParameters(sourceParameter, destinationParameter,
                             contextParameter)
-                        : ContextMap(typePair, sourceParameter, contextParameter, destinationParameter, propertyMap);
+                        : ContextMap(typePair, sourceParameter, contextParameter, destinationParameter);
                 }
-                return ContextMap(typePair, sourceParameter, contextParameter, destinationParameter, propertyMap);
+                return ContextMap(typePair, sourceParameter, contextParameter, destinationParameter);
             }
             var objectMapperExpression = ObjectMapperExpression(configurationProvider, profileMap, typePair,
                 sourceParameter, contextParameter, propertyMap, destinationParameter);
@@ -52,14 +52,14 @@ namespace AutoMapper.Execution
             Expression sourceParameter,
             Expression destinationParameter,
             Expression objectMapperExpression,
-            IMemberMap memberMap)
+            PropertyMap propertyMap = null)
         {
             var declaredDestinationType = destinationParameter.Type;
             var destinationType = objectMapperExpression.Type;
             var defaultDestination = DefaultDestination(destinationType, declaredDestinationType, profileMap);
-            var destination = memberMap == null
+            var destination = propertyMap == null
                 ? destinationParameter.IfNullElse(defaultDestination, destinationParameter)
-                : memberMap.UseDestinationValue ? destinationParameter : defaultDestination;
+                : (propertyMap.UseDestinationValue ? destinationParameter : defaultDestination);
             var ifSourceNull = destinationParameter.Type.IsCollectionType() ? ClearDestinationCollection() : destination;
             return sourceParameter.IfNullElse(ifSourceNull, objectMapperExpression);
             Expression ClearDestinationCollection()
@@ -92,7 +92,7 @@ namespace AutoMapper.Execution
 
         private static Expression ObjectMapperExpression(IConfigurationProvider configurationProvider,
             ProfileMap profileMap, TypePair typePair, Expression sourceParameter, Expression contextParameter,
-            IMemberMap propertyMap, Expression destinationParameter)
+            PropertyMap propertyMap, Expression destinationParameter)
         {
             var match = configurationProvider.FindMapper(typePair);
             if (match != null)
@@ -101,14 +101,14 @@ namespace AutoMapper.Execution
                     sourceParameter, destinationParameter, contextParameter);
                 return mapperExpression;
             }
-            return ContextMap(typePair, sourceParameter, contextParameter, destinationParameter, propertyMap);
+            return ContextMap(typePair, sourceParameter, contextParameter, destinationParameter);
         }
 
         public static Expression ContextMap(TypePair typePair, Expression sourceParameter, Expression contextParameter,
-            Expression destinationParameter, IMemberMap memberMap)
+            Expression destinationParameter)
         {
             var mapMethod = ContextMapMethod.MakeGenericMethod(typePair.SourceType, typePair.DestinationType);
-            return Call(contextParameter, mapMethod, sourceParameter, destinationParameter, Constant(memberMap, typeof(IMemberMap)));
+            return Call(contextParameter, mapMethod, sourceParameter, destinationParameter);
         }
 
         public static ConditionalExpression CheckContext(TypeMap typeMap, Expression context)

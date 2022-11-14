@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using AutoMapper.Configuration;
@@ -51,12 +50,11 @@ namespace AutoMapper.Execution
 
             if (type.IsInterface())
             {
-                return
-                    type.IsDictionaryType() ? CreateCollection(type, typeof(Dictionary<,>))
-                    : type.IsReadOnlyDictionaryType() ? CreateReadOnlyCollection(type, typeof(ReadOnlyDictionary<,>))
-                    : type.IsSetType() ? CreateCollection(type, typeof(HashSet<>))
-                    : type.IsEnumerableType() ? CreateCollection(type, typeof(List<>))
-                    : InvalidType(type, $"Cannot create an instance of interface type {type}.");
+                return type.ImplementsGenericInterface(typeof(IDictionary<,>))
+                    ? CreateCollection(type, typeof(Dictionary<,>))
+                    : (type.ImplementsGenericInterface(typeof(ICollection<>))
+                        ? CreateCollection(type, typeof(List<>))
+                        : InvalidType(type, $"Cannot create an instance of interface type {type}."));
             }
 
             if (type.IsAbstract())
@@ -88,17 +86,6 @@ namespace AutoMapper.Execution
             var listType = collectionType.MakeGenericType(GetElementTypes(type, ElementTypeFlags.BreakKeyValuePair));
             if (type.IsAssignableFrom(listType))
                 return ToType(New(listType), type);
-
-            return InvalidType(type, $"Cannot create an instance of interface type {type}.");
-        }
-
-        private static Expression CreateReadOnlyCollection(Type type, Type collectionType)
-        {
-            var listType = collectionType.MakeGenericType(GetElementTypes(type, ElementTypeFlags.BreakKeyValuePair));
-            var ctor = listType.GetConstructors()[0];
-            var innerType = ctor.GetParameters()[0].ParameterType;
-            if (type.IsAssignableFrom(listType))
-                return ToType(New(ctor, GenerateConstructorExpression(innerType)), type);
 
             return InvalidType(type, $"Cannot create an instance of interface type {type}.");
         }

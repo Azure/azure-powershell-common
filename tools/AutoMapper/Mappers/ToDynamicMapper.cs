@@ -50,7 +50,7 @@ namespace AutoMapper.Mappers
         public bool IsMatch(TypePair context) => context.DestinationType.IsDynamic() && !context.SourceType.IsDynamic();
 
         public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap,
-            IMemberMap memberMap, Expression sourceExpression, Expression destExpression,
+            PropertyMap propertyMap, Expression sourceExpression, Expression destExpression,
             Expression contextExpression) =>
             Call(null,
                 MapMethodInfo.MakeGenericMethod(sourceExpression.Type, destExpression.Type),

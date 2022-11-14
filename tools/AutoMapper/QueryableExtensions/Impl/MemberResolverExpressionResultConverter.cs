@@ -12,7 +12,7 @@ namespace AutoMapper.QueryableExtensions.Impl
             {
                 return new ExpressionResolutionResult(subQueryMarker, subQueryMarker.Type);
             }
-            return ExpressionResolutionResult(expressionResolutionResult, propertyMap.CustomMapExpression);
+            return ExpressionResolutionResult(expressionResolutionResult, propertyMap.CustomExpression);
         }
 
         private static ExpressionResolutionResult ExpressionResolutionResult(
@@ -28,7 +28,7 @@ namespace AutoMapper.QueryableExtensions.Impl
             ConstructorParameterMap propertyMap) => ExpressionResolutionResult(expressionResolutionResult, null);
 
         public bool CanGetExpressionResolutionResult(ExpressionResolutionResult expressionResolutionResult,
-            PropertyMap propertyMap) => propertyMap.CustomMapExpression != null;
+            PropertyMap propertyMap) => propertyMap.CustomExpression != null;
 
         public bool CanGetExpressionResolutionResult(ExpressionResolutionResult expressionResolutionResult,
             ConstructorParameterMap propertyMap) => false;

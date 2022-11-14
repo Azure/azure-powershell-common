@@ -1,15 +1,12 @@
-using AutoMapper.Configuration;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace AutoMapper.QueryableExtensions.Impl
 {
-    using static Expression;
-
     public class MappedTypeExpressionBinder : IExpressionBinder
     {
         public bool IsMatch(PropertyMap propertyMap, TypeMap propertyTypeMap, ExpressionResolutionResult result) => 
-            propertyTypeMap != null && propertyTypeMap.CustomMapExpression == null;
+            propertyTypeMap != null && propertyTypeMap.CustomProjection == null;
 
         public MemberAssignment Build(IConfigurationProvider configuration, PropertyMap propertyMap, TypeMap propertyTypeMap, ExpressionRequest request, ExpressionResolutionResult result, IDictionary<ExpressionRequest, int> typePairCount, LetPropertyMaps letPropertyMaps) 
             => BindMappedTypeExpression(configuration, propertyMap, request, result, typePairCount, letPropertyMaps);
@@ -21,14 +18,17 @@ namespace AutoMapper.QueryableExtensions.Impl
             {
                 return null;
             }
-            // Handles null source property so it will not create an object with possible non-nullable properties 
+            // Handles null source property so it will not create an object with possible non-nullable propeerties 
             // which would result in an exception.
-            if (propertyMap.TypeMap.Profile.AllowNullDestinationValues && !propertyMap.AllowNull && !(result.ResolutionExpression is ParameterExpression) && !result.ResolutionExpression.Type.IsCollectionType())
+            if (propertyMap.TypeMap.Profile.AllowNullDestinationValues && !propertyMap.AllowNull)
             {
-                transformedExpression = result.ResolutionExpression.IfNullElse(Constant(null, transformedExpression.Type), transformedExpression);
+                var expressionNull = Expression.Constant(null, propertyMap.DestinationPropertyType);
+                transformedExpression =
+                    Expression.Condition(Expression.NotEqual(result.ResolutionExpression, Expression.Constant(null)),
+                        transformedExpression, expressionNull);
             }
 
-            return Bind(propertyMap.DestinationMember, transformedExpression);
+            return Expression.Bind(propertyMap.DestinationProperty, transformedExpression);
         }
     }
 }

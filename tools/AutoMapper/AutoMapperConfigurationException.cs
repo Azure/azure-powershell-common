@@ -8,7 +8,7 @@ namespace AutoMapper
     {
         public TypeMapConfigErrors[] Errors { get; }
         public TypePair? Types { get; }
-        public IMemberMap MemberMap { get; set; }
+        public PropertyMap PropertyMap { get; set; }
 
         public class TypeMapConfigErrors
         {
@@ -46,9 +46,9 @@ namespace AutoMapper
                 {
                     var message =
                         string.Format(
-                            "The following member on {0} cannot be mapped: \n\t{2} \nAdd a custom mapping expression, ignore, add a custom resolver, or modify the destination type {1}.",
+                            "The following property on {0} cannot be mapped: \n\t{2} \nAdd a custom mapping expression, ignore, add a custom resolver, or modify the destination type {1}.",
                             Types?.DestinationType.FullName, Types?.DestinationType.FullName,
-                            MemberMap?.DestinationName);
+                            PropertyMap?.DestinationProperty.Name);
 
                     message += "\nContext:";
 
@@ -57,9 +57,9 @@ namespace AutoMapper
                     {
                         if (exToUse is AutoMapperConfigurationException configExc)
                         {
-                            message += configExc.MemberMap == null
+                            message += configExc.PropertyMap == null
                               ? $"\n\tMapping from type {configExc.Types?.SourceType.FullName} to {configExc.Types?.DestinationType.FullName}"
-                              : $"\n\tMapping to member {configExc.MemberMap.DestinationName} from {configExc.Types?.SourceType.FullName} to {configExc.Types?.DestinationType.FullName}";
+                              : $"\n\tMapping to property {configExc.PropertyMap.DestinationProperty.Name} from {configExc.Types?.SourceType.FullName} to {configExc.Types?.DestinationType.FullName}";
                         }
 
                         exToUse = exToUse.InnerException;
@@ -79,10 +79,6 @@ namespace AutoMapper
                                   error.TypeMap.DestinationType.FullName.Length + 5;
 
                         message.AppendLine(new string('=', len));
-                        if(error.TypeMap.IsConventionMap)
-                        {
-                            message.AppendLine("AutoMapper created this type map for you, but your types cannot be mapped using the current configuration.");
-                        }
                         message.AppendLine(error.TypeMap.SourceType.Name + " -> " + error.TypeMap.DestinationType.Name +
                                            " (" +
                                            error.TypeMap.ConfiguredMemberList + " member list)");

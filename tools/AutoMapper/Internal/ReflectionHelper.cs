@@ -28,11 +28,17 @@ namespace AutoMapper.Internal
             return parameter.DefaultValue;
         }
 
-        public static object MapMember(ResolutionContext context, MemberInfo member, object value, object destination = null)
+        public static object MapMember(ResolutionContext context, MemberInfo member, object value, object destination)
         {
             var memberType = GetMemberType(member);
-            var destValue = destination == null ? null : GetMemberValue(member, destination);
-            return context.Map(value, destValue, value?.GetType() ?? typeof(object), memberType, DefaultMemberMap.Instance);
+            var destValue = GetMemberValue(member, destination);
+            return context.Mapper.Map(value, destValue, value?.GetType() ?? memberType, memberType, context);
+        }
+
+        public static object MapMember(ResolutionContext context, MemberInfo member, object value)
+        {
+            var memberType = GetMemberType(member);
+            return context.Mapper.Map(value, null, value?.GetType() ?? memberType, memberType, context);
         }
 
         public static bool IsDynamic(object obj) => obj is IDynamicMetaObjectProvider;

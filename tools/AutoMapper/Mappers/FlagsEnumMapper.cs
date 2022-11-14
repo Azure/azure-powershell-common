@@ -26,12 +26,12 @@ namespace AutoMapper.Mappers
         }
 
         public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap,
-            IMemberMap memberMap, Expression sourceExpression, Expression destExpression,
+            PropertyMap propertyMap, Expression sourceExpression, Expression destExpression,
             Expression contextExpression) =>
                 ToType(
                     Call(EnumParseMethod,
                         Constant(destExpression.Type),
-                        Call(sourceExpression, sourceExpression.Type.GetDeclaredMethod("ToString", Type.EmptyTypes)),
+                        Call(sourceExpression, sourceExpression.Type.GetDeclaredMethod("ToString")),
                         Constant(true)
                     ),
                     destExpression.Type

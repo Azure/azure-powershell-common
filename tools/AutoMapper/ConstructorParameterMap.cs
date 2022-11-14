@@ -1,45 +1,30 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
 namespace AutoMapper
 {
-    public class ConstructorParameterMap : DefaultMemberMap
+    public class ConstructorParameterMap
     {
-        public ConstructorParameterMap(TypeMap typeMap, ParameterInfo parameter, IEnumerable<MemberInfo> sourceMembers,
-            bool canResolveValue)
+        public ConstructorParameterMap(ParameterInfo parameter, MemberInfo[] sourceMembers, bool canResolve)
         {
-            TypeMap = typeMap;
             Parameter = parameter;
-            SourceMembers = sourceMembers.ToList();
-            CanResolveValue = canResolveValue;
+            SourceMembers = sourceMembers;
+            CanResolve = canResolve;
         }
 
         public ParameterInfo Parameter { get; }
 
-        public override TypeMap TypeMap { get; }
+        public MemberInfo[] SourceMembers { get; }
 
-        public override Type SourceType =>
-            CustomMapExpression?.Type
-            ?? CustomMapFunction?.Type
-            ?? (Parameter.IsOptional 
-                ? Parameter.ParameterType 
-                : SourceMembers.Last().GetMemberType());
+        public bool CanResolve { get; set; }
 
-        public override Type DestinationType => Parameter.ParameterType;
+        public bool DefaultValue { get; set; }
 
-        public override IEnumerable<MemberInfo> SourceMembers { get; }
-        public override string DestinationName => Parameter.Member.DeclaringType + "." + Parameter.Member + ".parameter " + Parameter.Name;
+        public LambdaExpression CustomExpression { get; set; }
 
-        public bool HasDefaultValue => Parameter.IsOptional;
+        public LambdaExpression CustomValueResolver { get; set; }
 
-        public override LambdaExpression CustomMapExpression { get; set; }
-        public override LambdaExpression CustomMapFunction { get; set; }
-
-        public override bool CanResolveValue { get; set; }
-
-        public override bool Inline { get; set; }
+        public Type DestinationType => Parameter.ParameterType;
     }
 }

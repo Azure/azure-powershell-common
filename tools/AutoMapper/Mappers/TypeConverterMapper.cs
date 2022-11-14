@@ -7,6 +7,7 @@ using static System.Linq.Expressions.Expression;
 
 namespace AutoMapper.Mappers
 {
+#if NETSTANDARD1_3 || NET45 || NET40
     public class TypeConverterMapper : IObjectMapper
     {
         private static TDestination Map<TSource, TDestination>(TSource source)
@@ -24,7 +25,7 @@ namespace AutoMapper.Mappers
                 return (TDestination)typeConverter.ConvertFrom(source);
             }
 
-            return default;
+            return default(TDestination);
         }
 
         private static readonly MethodInfo MapMethodInfo = typeof(TypeConverterMapper).GetDeclaredMethod(nameof(Map));
@@ -38,7 +39,7 @@ namespace AutoMapper.Mappers
         }
 
         public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap,
-            IMemberMap memberMap, Expression sourceExpression, Expression destExpression,
+            PropertyMap propertyMap, Expression sourceExpression, Expression destExpression,
             Expression contextExpression) =>
             Call(null,
                 MapMethodInfo.MakeGenericMethod(sourceExpression.Type, destExpression.Type),
@@ -46,4 +47,5 @@ namespace AutoMapper.Mappers
 
         private static TypeConverter GetTypeConverter(Type type) => TypeDescriptor.GetConverter(type);
     }
+#endif
 }

@@ -21,7 +21,7 @@ namespace AutoMapper.Mappers
         }
 
         public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap,
-            IMemberMap memberMap, Expression sourceExpression, Expression destExpression,
+            PropertyMap propertyMap, Expression sourceExpression, Expression destExpression,
             Expression contextExpression) =>
                 ToType(
                     Call(EnumToObject, Constant(destExpression.Type),

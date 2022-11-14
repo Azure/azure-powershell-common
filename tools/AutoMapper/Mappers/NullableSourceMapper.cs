@@ -12,13 +12,13 @@ namespace AutoMapper.Mappers
         public bool IsMatch(TypePair context) => context.SourceType.IsNullableType();
 
         public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap,
-            IMemberMap memberMap, Expression sourceExpression, Expression destExpression,
+            PropertyMap propertyMap, Expression sourceExpression, Expression destExpression,
             Expression contextExpression) =>
                 ExpressionBuilder.MapExpression(configurationProvider, profileMap,
                     new TypePair(Nullable.GetUnderlyingType(sourceExpression.Type), destExpression.Type),
                     Property(sourceExpression, sourceExpression.Type.GetDeclaredProperty("Value")),
                     contextExpression,
-                    memberMap,
+                    propertyMap,
                     destExpression
                 );
 
