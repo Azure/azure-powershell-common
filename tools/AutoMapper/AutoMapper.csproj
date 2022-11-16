@@ -4,13 +4,13 @@
     <Summary>A convention-based object-object mapper.</Summary>
     <Description>A convention-based object-object mapper.</Description>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <AssemblyName>Microsoft.Azure.PowerShell.AutoMapper</AssemblyName>
+    <AssemblyName>AutoMapper</AssemblyName>
     <AssemblyOriginatorKeyFile>..\..\src\MSSharedLibKey.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <Version>6.2.2</Version>
     <DelaySign>true</DelaySign>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
-    <PackageId>Microsoft.Azure.PowerShell.AutoMapper</PackageId>
+    <PackageId>AutoMapper</PackageId>
     <PackageProjectUrl>https://automapper.org</PackageProjectUrl>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <RepositoryType>git</RepositoryType>
