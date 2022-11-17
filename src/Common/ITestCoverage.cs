@@ -12,21 +12,17 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-namespace Microsoft.Azure.PowerShell.Common.Config
+namespace Microsoft.WindowsAzure.Commands.Common
 {
     /// <summary>
-    /// This class stores keys of pre-defined configs.
+    /// All properties and actions defined for test coverage
     /// </summary>
-    /// <remarks>
-    /// All keys should be defined in ConfigKeys class in Azure/azure-powershell repo.
-    /// If the key is used in common code, duplicate it here.
-    /// Keys defined here should NEVER be removed or changed to prevent breaking change.
-    /// </remarks>
-    public static class ConfigKeysForCommon
+    public interface ITestCoverage
     {
-        public const string EnableInterceptSurvey  = "DisplaySurveyMessage";
-        public const string DisplayBreakingChangeWarning = "DisplayBreakingChangeWarning";
-        public const string EnableDataCollection = "EnableDataCollection";
-        public const string EnableTestCoverage = "EnableTestCoverage";
+        /// <summary>
+        /// Log the raw data from QoS event object
+        /// </summary>
+        /// <param name="qos"></param>
+        void LogRawData(AzurePSQoSEvent qos);
     }
 }
