@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Summary>A convention-based object-object mapper.</Summary>
+    <Description>A convention-based object-object mapper.</Description>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <AssemblyName>Microsoft.Azure.PowerShell.AutoMapper</AssemblyName>
+    <AssemblyOriginatorKeyFile>..\..\src\MSSharedLibKey.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <Version>6.2.2</Version>
+    <DelaySign>true</DelaySign>
+    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+    <PackageId>Microsoft.Azure.PowerShell.AutoMapper</PackageId>
+    <PackageProjectUrl>https://automapper.org</PackageProjectUrl>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/AutoMapper/AutoMapper</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+        <None Include="licenses\LICENSE.txt" Pack="true" PackagePath="LICENSE.txt"/>
+  </ItemGroup>
+</Project>
