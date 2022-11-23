@@ -51,6 +51,8 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
 
         public DateTime Today { get; }
 
+        private int ExecuteCmdletCount { get; set; }
+
 
         private SurveyHelper()
         {
@@ -59,6 +61,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
             _ignoreSchedule = false;
             LastPromptDate = DateTime.MinValue;
             ExpectedDate = DateTime.MinValue;
+            ExecuteCmdletCount = 0;
         }
 
         public static SurveyHelper GetInstance()
@@ -71,6 +74,11 @@ namespace Microsoft.Azure.PowerShell.Common.Share.Survey
         }
         public bool ShouldPromptAzSurvey(){
             if (_ignoreSchedule)
+            {
+                return false;
+            }
+            ExecuteCmdletCount = ExecuteCmdletCount + 1;
+            if (ExecuteCmdletCount < 3)
             {
                 return false;
             }

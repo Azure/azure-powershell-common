@@ -69,6 +69,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         public string ProfileFile { get; set; }
 
         /// <summary>
+        /// Gets or sets keystore file name.
+        /// </summary>
+        public string KeyStoreFile { get; set; }
+
+        /// <summary>
         /// Gets or sets the context container file for azure resource manager
         /// </summary>
         public string ResourceManagerContextFile { get; set; }

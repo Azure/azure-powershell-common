@@ -27,5 +27,6 @@ namespace Microsoft.Azure.PowerShell.Common.Config
         public const string EnableInterceptSurvey  = "DisplaySurveyMessage";
         public const string DisplayBreakingChangeWarning = "DisplayBreakingChangeWarning";
         public const string EnableDataCollection = "EnableDataCollection";
+        public const string EnableTestCoverage = "EnableTestCoverage";
     }
 }
