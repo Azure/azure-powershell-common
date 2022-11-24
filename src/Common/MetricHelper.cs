@@ -18,6 +18,7 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Commands.Common;
 using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using Microsoft.Azure.PowerShell.Common.Config;
 using Microsoft.Azure.PowerShell.Common.Share;
 using Microsoft.Rest.Azure;
 using Microsoft.WindowsAzure.Commands.Common.Utilities;
@@ -32,6 +33,7 @@ using System.Management.Automation.Host;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace Microsoft.WindowsAzure.Commands.Common
 {
@@ -180,10 +182,19 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
         public void LogQoSEvent(AzurePSQoSEvent qos, bool isUsageMetricEnabled, bool isErrorMetricEnabled)
         {
-            if (qos == null || !IsMetricTermAccepted())
-            {
+            if (qos == null)
                 return;
+
+            if (!string.IsNullOrEmpty(qos.SourceScript)
+                && AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
+                && configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableTestCoverage)
+                && AzureSession.Instance.TryGetComponent<ITestCoverage>(nameof(ITestCoverage), out var testCoverage))
+            {
+                testCoverage.LogRawData(qos);
             }
+
+            if (!IsMetricTermAccepted())
+                return;
 
             if (isUsageMetricEnabled)
             {
@@ -303,6 +314,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             eventProperties.Add("HashMacAddress", HashMacAddress);
             eventProperties.Add("PowerShellVersion", qos.PSVersion);
             eventProperties.Add("Version", qos.AzVersion);
+            eventProperties.Add("AccountsVersion", qos.AzAccountsVersion);
             eventProperties.Add("CommandParameterSetName", qos.ParameterSetName);
             eventProperties.Add("CommandInvocationName", qos.InvocationName);
             eventProperties.Add("start-time", qos.StartTime.ToUniversalTime().ToString("o"));
@@ -571,12 +583,15 @@ public class AzurePSQoSEvent
     public string ModuleName { get; set; }
     public string ModuleVersion { get; set; }
     //Version of PowerShell runspace ($Host.Runspace.Version)
+    public string SourceScript { get; set; }
+    public int ScriptLineNumber { get; set; }
     public string PSVersion { get; set; }
     //Host version of PowerShell ($Host.Version) which can be customized by PowerShell wrapper
     public string HostVersion { get; set; }
     //Host Name of PowerShell
     public string PSHostName { get; set; }
     public string AzVersion { get; set; }
+    public string AzAccountsVersion { get; set; }
     public string UserAgent { get; set; }
     public string Parameters { get; set; }
     public bool? InputFromPipeline { get; set; }
@@ -592,6 +607,7 @@ public class AzurePSQoSEvent
     public string ParameterSetName { get; set; }
     public string InvocationName { get; set; }
     public Dictionary<string, string> CustomProperties { get; private set; }
+    private static bool ShowTelemetry = string.Equals(bool.TrueString, Environment.GetEnvironmentVariable("AZUREPS_DEBUG_SHOW_TELEMETRY"), StringComparison.OrdinalIgnoreCase);
 
     public AzurePSQoSEvent()
     {
@@ -620,18 +636,29 @@ public class AzurePSQoSEvent
 
     public override string ToString()
     {
-#if DEBUG
-        string ret = $"AzureQoSEvent: Module: {ModuleName}:{ModuleVersion}; Session:{SessionId}; CommandName: {CommandName}; PSVersion: {PSVersion}; InternalCalledCmdlets: {Microsoft.WindowsAzure.Commands.Common.MetricHelper.InternalCalledCmdlets}";
-#else
-        string ret = $"AzureQoSEvent: Module: {ModuleName}:{ModuleVersion}; CommandName: {CommandName}; PSVersion: {PSVersion}";
-#endif 
+        StringBuilder sb = new StringBuilder("AzureQoSEvent: ");
+        if (ShowTelemetry) 
+        {   
+            foreach(PropertyDescriptor descriptor in TypeDescriptor.GetProperties((this)))
+                {
+                    string name = descriptor.Name;
+                    object value = descriptor.GetValue(this);
+                    sb.Append($"{name}: {value}; ");
+                }
+            //InstallationId and InternalCalledCmdlets are properties of MetricHelper and  not in qosEventObject.
+            sb.Append($"InternalCalledCmdlets: {Microsoft.WindowsAzure.Commands.Common.MetricHelper.InternalCalledCmdlets}; InstallaionId: {Microsoft.WindowsAzure.Commands.Common.MetricHelper.InstallationId}");
+        }
+        else
+        {
+            sb = sb.Append($" Module: {ModuleName}:{ModuleVersion}; CommandName: {CommandName}; PSVersion: {PSVersion}");
+        }
         
-        ret += $"; IsSuccess: {IsSuccess}; Duration: {Duration}";
+        sb.Append($"; IsSuccess: {IsSuccess}; Duration: {Duration}");
 
         if (Exception != null)
         {
-            ret += $"; Exception: {Exception.Message};";
+            sb.Append($"; Exception: {Exception.Message};");
         }
-        return ret;
+        return sb.ToString();
     }
 }
