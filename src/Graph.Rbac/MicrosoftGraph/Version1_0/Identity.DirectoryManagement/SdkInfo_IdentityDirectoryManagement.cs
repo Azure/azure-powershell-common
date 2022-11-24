@@ -13,13 +13,13 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Identity.DirectoryM
 
   internal static partial class SdkInfo
   {
-      public static IEnumerable<Tuple<string, string, string>> ApiInfo_IdentityDirectoryManagement
+      public static IEnumerable<Tuple<string, string, string>> ApiInfo_MicrosoftGraphClient
       {
           get
           {
               return new Tuple<string, string, string>[]
               {
-                new Tuple<string, string, string>("IdentityDirectoryManagement", "organization.organization", "v1.0"),
+                new Tuple<string, string, string>("MicrosoftGraphClient", "organization.organization", "v1.0"),
               }.AsEnumerable();
           }
       }

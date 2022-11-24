@@ -108,23 +108,5 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Identity.DirectoryM
         /// </summary>
         [JsonProperty(PropertyName = "ttl")]
         public int? Ttl { get; set; }
-
-        /// <summary>
-        /// Validate the object.
-        /// </summary>
-        /// <exception cref="ValidationException">
-        /// Thrown if validation fails
-        /// </exception>
-        public virtual void Validate()
-        {
-            if (Ttl > 2147483647)
-            {
-                throw new ValidationException(ValidationRules.InclusiveMaximum, "Ttl", 2147483647);
-            }
-            if (Ttl < -2147483648)
-            {
-                throw new ValidationException(ValidationRules.InclusiveMinimum, "Ttl", -2147483648);
-            }
-        }
     }
 }

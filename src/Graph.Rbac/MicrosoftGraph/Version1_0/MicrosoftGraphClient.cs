@@ -10,6 +10,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
     using Microsoft.Azure.Commands.Common.MSGraph.Version1_0.DirectoryObjects;
     using Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Groups;
     using Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Users;
+    using Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Identity.DirectoryManagement;
     using Microsoft.Rest;
     using Microsoft.Rest.Azure;
     using Microsoft.Rest.Serialization;
@@ -95,6 +96,11 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
         /// Gets the IDirectoryObjectsOperations.
         /// </summary>
         public virtual IDirectoryObjectsOperations DirectoryObjects { get; private set; }
+
+        /// <summary>
+        /// Gets the IOrganizationOperations.
+        /// </summary>
+        public virtual IOrganizationOperations Organization { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the MicrosoftGraphClient class.

@@ -17,9 +17,9 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Identity.DirectoryM
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Extension methods for Organizationorganization.
+    /// Extension methods for OrganizationOperations.
     /// </summary>
-    public static partial class OrganizationorganizationExtensions
+    public static partial class OrganizationOperationsExtensions
     {
             /// <summary>
             /// List organization
@@ -55,7 +55,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Identity.DirectoryM
             /// <param name='expand'>
             /// Expand related entities
             /// </param>
-            public static MicrosoftgraphorganizationCollectionResponse ListOrganization(this IOrganizationorganization operations, int? top = default(int?), int? skip = default(int?), string search = default(string), string filter = default(string), bool? count = default(bool?), IList<string> orderby = default(IList<string>), IList<string> select = default(IList<string>), IList<string> expand = default(IList<string>))
+            public static MicrosoftgraphorganizationCollectionResponse ListOrganization(this IOrganizationOperations operations, int? top = default(int?), int? skip = default(int?), string search = default(string), string filter = default(string), bool? count = default(bool?), IList<string> orderby = default(IList<string>), IList<string> select = default(IList<string>), IList<string> expand = default(IList<string>))
             {
                 return operations.ListOrganizationAsync(top, skip, search, filter, count, orderby, select, expand).GetAwaiter().GetResult();
             }
@@ -97,7 +97,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Identity.DirectoryM
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<MicrosoftgraphorganizationCollectionResponse> ListOrganizationAsync(this IOrganizationorganization operations, int? top = default(int?), int? skip = default(int?), string search = default(string), string filter = default(string), bool? count = default(bool?), IList<string> orderby = default(IList<string>), IList<string> select = default(IList<string>), IList<string> expand = default(IList<string>), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<MicrosoftgraphorganizationCollectionResponse> ListOrganizationAsync(this IOrganizationOperations operations, int? top = default(int?), int? skip = default(int?), string search = default(string), string filter = default(string), bool? count = default(bool?), IList<string> orderby = default(IList<string>), IList<string> select = default(IList<string>), IList<string> expand = default(IList<string>), CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.ListOrganizationWithHttpMessagesAsync(top, skip, search, filter, count, orderby, select, expand, null, cancellationToken).ConfigureAwait(false))
                 {
@@ -114,7 +114,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Identity.DirectoryM
             /// <param name='body'>
             /// New entity
             /// </param>
-            public static Microsoftgraphorganization CreateOrganization(this IOrganizationorganization operations, Microsoftgraphorganization body)
+            public static Microsoftgraphorganization CreateOrganization(this IOrganizationOperations operations, Microsoftgraphorganization body)
             {
                 return operations.CreateOrganizationAsync(body).GetAwaiter().GetResult();
             }
@@ -131,7 +131,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Identity.DirectoryM
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<Microsoftgraphorganization> CreateOrganizationAsync(this IOrganizationorganization operations, Microsoftgraphorganization body, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<Microsoftgraphorganization> CreateOrganizationAsync(this IOrganizationOperations operations, Microsoftgraphorganization body, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.CreateOrganizationWithHttpMessagesAsync(body, null, cancellationToken).ConfigureAwait(false))
                 {

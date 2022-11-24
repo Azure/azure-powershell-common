@@ -91,39 +91,5 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Identity.DirectoryM
         /// </summary>
         [JsonProperty(PropertyName = "warning")]
         public int? Warning { get; set; }
-
-        /// <summary>
-        /// Validate the object.
-        /// </summary>
-        /// <exception cref="ValidationException">
-        /// Thrown if validation fails
-        /// </exception>
-        public virtual void Validate()
-        {
-            if (Enabled > 2147483647)
-            {
-                throw new ValidationException(ValidationRules.InclusiveMaximum, "Enabled", 2147483647);
-            }
-            if (Enabled < -2147483648)
-            {
-                throw new ValidationException(ValidationRules.InclusiveMinimum, "Enabled", -2147483648);
-            }
-            if (Suspended > 2147483647)
-            {
-                throw new ValidationException(ValidationRules.InclusiveMaximum, "Suspended", 2147483647);
-            }
-            if (Suspended < -2147483648)
-            {
-                throw new ValidationException(ValidationRules.InclusiveMinimum, "Suspended", -2147483648);
-            }
-            if (Warning > 2147483647)
-            {
-                throw new ValidationException(ValidationRules.InclusiveMaximum, "Warning", 2147483647);
-            }
-            if (Warning < -2147483648)
-            {
-                throw new ValidationException(ValidationRules.InclusiveMinimum, "Warning", -2147483648);
-            }
-        }
     }
 }

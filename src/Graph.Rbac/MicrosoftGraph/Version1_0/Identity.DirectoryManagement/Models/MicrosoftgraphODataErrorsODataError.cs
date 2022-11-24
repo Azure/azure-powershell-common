@@ -56,23 +56,5 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Identity.DirectoryM
         /// </summary>
         [JsonProperty(PropertyName = "error")]
         public MicrosoftgraphODataErrorsMainError Error { get; set; }
-
-        /// <summary>
-        /// Validate the object.
-        /// </summary>
-        /// <exception cref="ValidationException">
-        /// Thrown if validation fails
-        /// </exception>
-        public virtual void Validate()
-        {
-            if (Error == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "Error");
-            }
-            if (Error != null)
-            {
-                Error.Validate();
-            }
-        }
     }
 }

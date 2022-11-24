@@ -23,12 +23,12 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Identity.DirectoryM
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Organizationorganization operations.
+    /// OrganizationOperations operations.
     /// </summary>
-    public partial class Organizationorganization : IServiceOperations<IdentityDirectoryManagement>, IOrganizationorganization
+    public partial class OrganizationOperations : IServiceOperations<MicrosoftGraphClient>, IOrganizationOperations
     {
         /// <summary>
-        /// Initializes a new instance of the Organizationorganization class.
+        /// Initializes a new instance of the OrganizationOperations class.
         /// </summary>
         /// <param name='client'>
         /// Reference to the service client.
@@ -36,7 +36,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Identity.DirectoryM
         /// <exception cref="System.ArgumentNullException">
         /// Thrown when a required parameter is null
         /// </exception>
-        public Organizationorganization(IdentityDirectoryManagement client)
+        public OrganizationOperations(MicrosoftGraphClient client)
         {
             if (client == null)
             {
@@ -46,9 +46,9 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Identity.DirectoryM
         }
 
         /// <summary>
-        /// Gets a reference to the IdentityDirectoryManagement
+        /// Gets a reference to the MicrosoftGraphClient
         /// </summary>
-        public IdentityDirectoryManagement Client { get; private set; }
+        public MicrosoftGraphClient Client { get; private set; }
 
         /// <summary>
         /// List organization
@@ -330,10 +330,6 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Identity.DirectoryM
             if (body == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "body");
-            }
-            if (body != null)
-            {
-                body.Validate();
             }
             // Tracing
             bool _shouldTrace = ServiceClientTracing.IsEnabled;

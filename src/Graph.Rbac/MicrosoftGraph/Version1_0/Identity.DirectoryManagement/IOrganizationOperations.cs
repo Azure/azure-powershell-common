@@ -18,9 +18,9 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Identity.DirectoryM
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Organizationorganization operations.
+    /// OrganizationOperations operations.
     /// </summary>
-    public partial interface IOrganizationorganization
+    public partial interface IOrganizationOperations
     {
         /// <summary>
         /// List organization

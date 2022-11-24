@@ -115,41 +115,5 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Identity.DirectoryM
         /// </summary>
         [JsonProperty(PropertyName = "skuPartNumber")]
         public string SkuPartNumber { get; set; }
-
-        /// <summary>
-        /// Validate the object.
-        /// </summary>
-        /// <exception cref="ValidationException">
-        /// Thrown if validation fails
-        /// </exception>
-        public virtual void Validate()
-        {
-            if (ConsumedUnits > 2147483647)
-            {
-                throw new ValidationException(ValidationRules.InclusiveMaximum, "ConsumedUnits", 2147483647);
-            }
-            if (ConsumedUnits < -2147483648)
-            {
-                throw new ValidationException(ValidationRules.InclusiveMinimum, "ConsumedUnits", -2147483648);
-            }
-            if (PrepaidUnits != null)
-            {
-                PrepaidUnits.Validate();
-            }
-            if (ServicePlans != null)
-            {
-                foreach (var element in ServicePlans)
-                {
-                    if (element != null)
-                    {
-                        element.Validate();
-                    }
-                }
-            }
-            if (!System.Text.RegularExpressions.Regex.IsMatch(SkuId, "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"))
-            {
-                throw new ValidationException(ValidationRules.Pattern, "SkuId", "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
-            }
-        }
     }
 }
