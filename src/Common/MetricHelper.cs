@@ -186,9 +186,9 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 return;
 
             if (!string.IsNullOrEmpty(qos.SourceScript)
+                && AzureSession.Instance.TryGetComponent<ITestCoverage>(nameof(ITestCoverage), out var testCoverage)
                 && AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
-                && configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableTestCoverage)
-                && AzureSession.Instance.TryGetComponent<ITestCoverage>(nameof(ITestCoverage), out var testCoverage))
+                && configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableTestCoverage))
             {
                 testCoverage.LogRawData(qos);
             }
