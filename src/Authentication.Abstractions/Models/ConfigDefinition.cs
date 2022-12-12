@@ -89,10 +89,16 @@ namespace Microsoft.Azure.PowerShell.Common.Config
         public virtual void Validate(object value) { }
 
         /// <summary>
-        /// Override in derived classes to perform side effects of applying the config value.
+        /// Override in derived classes to perform side effects *before* applying the config value.
         /// If a exception is thrown, the config will not be updated.
         /// </summary>
         /// <param name="value">Value of the config to apply.</param>
         public virtual void Apply(object value) { }
+
+        /// <summary>
+        /// Override in derived classes to perform side effects *after* applying the config value.
+        /// </summary>
+        /// <param name="value">Updated value.</param>
+        public virtual void AfterApply(object value) { }
     }
 }
