@@ -64,6 +64,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         string ProfileFile { get; set; }
 
         /// <summary>
+        /// Gets or sets keystore file name.
+        /// </summary>
+        string KeyStoreFile { get; set; }
+
+        /// <summary>
         /// Gets or sets file name for the migration backup.
         /// </summary>
         string OldProfileFileBackup { get; set; }

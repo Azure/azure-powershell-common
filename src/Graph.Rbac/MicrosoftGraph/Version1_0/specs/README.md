@@ -14,6 +14,7 @@ autorest.cmd README.md --version=v2 --tag=Applications
 autorest.cmd README.md --version=v2 --tag=DirectoryObjects
 autorest.cmd README.md --version=v2 --tag=Groups
 autorest.cmd README.md --version=v2 --tag=Users
+autorest.cmd README.md --version=v2 --tag=Identity.DirectoryManagement
 ```
 
 ### AutoRest Configuration
@@ -83,4 +84,14 @@ input-file:
 output-folder: Users
 
 namespace: Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Users
+```
+
+### Tag: Identity.DirectoryManagement
+``` yaml $(tag) == 'Identity.DirectoryManagement'
+input-file:
+  - Identity.DirectoryManagement.yml
+
+output-folder: Identity.DirectoryManagement
+
+namespace: Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Identity.DirectoryManagement
 ```

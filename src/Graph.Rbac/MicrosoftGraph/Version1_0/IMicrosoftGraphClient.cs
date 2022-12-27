@@ -10,6 +10,7 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
     using Microsoft.Azure.Commands.Common.MSGraph.Version1_0.DirectoryObjects;
     using Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Groups;
     using Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Users;
+    using Microsoft.Azure.Commands.Common.MSGraph.Version1_0.Identity.DirectoryManagement;
     using Microsoft.Rest;
     using Microsoft.Rest.Azure;
     using Newtonsoft.Json;
@@ -85,6 +86,11 @@ namespace Microsoft.Azure.Commands.Common.MSGraph.Version1_0
         /// Gets the IDirectoryObjectsOperations.
         /// </summary>
         IDirectoryObjectsOperations DirectoryObjects { get; }
+
+        /// <summary>
+        /// Gets the IOrganizationOperations.
+        /// </summary>
+        IOrganizationOperations Organization { get; }
 
     }
 }

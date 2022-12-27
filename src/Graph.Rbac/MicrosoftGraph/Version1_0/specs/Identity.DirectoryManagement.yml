@@ -1,0 +1,2230 @@
+swagger: '2.0'
+info:
+  title: Identity.DirectoryManagement
+  version: v1.0
+host: graph.microsoft.com
+basePath: /v1.0/
+schemes:
+  - https
+paths:
+  /organization:
+    get:
+      produces:
+        - application/json
+      parameters:
+        - description: Show only the first n items
+          in: query
+          minimum: 0
+          name: $top
+          type: integer
+          x-example: 50
+        - description: Skip the first n items
+          in: query
+          minimum: 0
+          name: $skip
+          type: integer
+        - description: Search items by search phrases
+          in: query
+          name: $search
+          type: string
+        - description: Filter items by property values
+          in: query
+          name: $filter
+          type: string
+        - description: Include count of items
+          in: query
+          name: $count
+          type: boolean
+        - collectionFormat: csv
+          description: Order items by property values
+          in: query
+          items:
+            enum:
+              - id
+              - id desc
+              - deletedDateTime
+              - deletedDateTime desc
+              - assignedPlans
+              - assignedPlans desc
+              - businessPhones
+              - businessPhones desc
+              - city
+              - city desc
+              - country
+              - country desc
+              - countryLetterCode
+              - countryLetterCode desc
+              - createdDateTime
+              - createdDateTime desc
+              - displayName
+              - displayName desc
+              - marketingNotificationEmails
+              - marketingNotificationEmails desc
+              - onPremisesLastSyncDateTime
+              - onPremisesLastSyncDateTime desc
+              - onPremisesSyncEnabled
+              - onPremisesSyncEnabled desc
+              - postalCode
+              - postalCode desc
+              - preferredLanguage
+              - preferredLanguage desc
+              - privacyProfile
+              - privacyProfile desc
+              - provisionedPlans
+              - provisionedPlans desc
+              - securityComplianceNotificationMails
+              - securityComplianceNotificationMails desc
+              - securityComplianceNotificationPhones
+              - securityComplianceNotificationPhones desc
+              - state
+              - state desc
+              - street
+              - street desc
+              - technicalNotificationMails
+              - technicalNotificationMails desc
+              - tenantType
+              - tenantType desc
+              - verifiedDomains
+              - verifiedDomains desc
+              - mobileDeviceManagementAuthority
+              - mobileDeviceManagementAuthority desc
+            type: string
+          name: $orderby
+          type: array
+          uniqueItems: true
+        - collectionFormat: csv
+          description: Select properties to be returned
+          in: query
+          items:
+            enum:
+              - id
+              - deletedDateTime
+              - assignedPlans
+              - businessPhones
+              - city
+              - country
+              - countryLetterCode
+              - createdDateTime
+              - displayName
+              - marketingNotificationEmails
+              - onPremisesLastSyncDateTime
+              - onPremisesSyncEnabled
+              - postalCode
+              - preferredLanguage
+              - privacyProfile
+              - provisionedPlans
+              - securityComplianceNotificationMails
+              - securityComplianceNotificationPhones
+              - state
+              - street
+              - technicalNotificationMails
+              - tenantType
+              - verifiedDomains
+              - mobileDeviceManagementAuthority
+              - branding
+              - certificateBasedAuthConfiguration
+              - extensions
+            type: string
+          name: $select
+          type: array
+          uniqueItems: true
+        - collectionFormat: csv
+          description: Expand related entities
+          in: query
+          items:
+            enum:
+              - '*'
+              - branding
+              - certificateBasedAuthConfiguration
+              - extensions
+            type: string
+          name: $expand
+          type: array
+          uniqueItems: true
+      responses:
+        '200':
+          description: Retrieved collection
+          schema:
+            $ref: '#/definitions/microsoft.graph.organizationCollectionResponse'
+        default:
+          description: error
+          schema:
+            $ref: '#/definitions/microsoft.graph.ODataErrors.ODataError'
+      tags:
+        - organization.organization
+      externalDocs:
+        description: Find more info here
+        url: >-
+          https://docs.microsoft.com/graph/api/organization-list?view=graph-rest-1.0
+      description: Retrieve a list of organization objects.
+      operationId: organization.organization_ListOrganization
+      summary: List organization
+      x-ms-docs-operation-type: operation
+      x-ms-pageable:
+        nextLinkName: '@odata.nextLink'
+        operationName: listMore
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - description: New entity
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/microsoft.graph.organization'
+      responses:
+        '201':
+          description: Created entity
+          schema:
+            $ref: '#/definitions/microsoft.graph.organization'
+        default:
+          description: error
+          schema:
+            $ref: '#/definitions/microsoft.graph.ODataErrors.ODataError'
+      tags:
+        - organization.organization
+      operationId: organization.organization_CreateOrganization
+      summary: Add new entity to organization
+      x-ms-docs-operation-type: operation
+definitions:
+  ReferenceCreate:
+    additionalProperties:
+      type: object
+    properties:
+      '@odata.id':
+        type: string
+    type: object
+  StringCollectionResponse:
+    additionalProperties:
+      type: object
+    properties:
+      '@odata.nextLink':
+        type: string
+        x-nullable: true
+      value:
+        items:
+          type: string
+        type: array
+    title: Collection of string
+    type: object
+  microsoft.graph.ODataErrors.ErrorDetails:
+    additionalProperties:
+      type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      target:
+        type: string
+        x-nullable: true
+    required:
+      - code
+      - message
+    type: object
+  microsoft.graph.ODataErrors.InnerError:
+    additionalProperties:
+      type: object
+    description: The structure of this object is service-specific
+    type: object
+  microsoft.graph.ODataErrors.MainError:
+    additionalProperties:
+      type: object
+    properties:
+      code:
+        type: string
+      details:
+        items:
+          $ref: '#/definitions/microsoft.graph.ODataErrors.ErrorDetails'
+        type: array
+      innererror:
+        $ref: '#/definitions/microsoft.graph.ODataErrors.InnerError'
+      message:
+        type: string
+      target:
+        type: string
+        x-nullable: true
+    required:
+      - code
+      - message
+    type: object
+  microsoft.graph.ODataErrors.ODataError:
+    additionalProperties:
+      type: object
+    properties:
+      error:
+        $ref: '#/definitions/microsoft.graph.ODataErrors.MainError'
+    required:
+      - error
+    type: object
+  microsoft.graph.administrativeUnit:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.directoryObject'
+      - additionalProperties:
+          type: object
+        properties:
+          description:
+            description: >-
+              An optional description for the administrative unit. Supports
+              $filter (eq, ne, in, startsWith), $search.
+            type: string
+            x-nullable: true
+          displayName:
+            description: >-
+              Display name for the administrative unit. Supports $filter (eq,
+              ne, not, ge, le, in, startsWith, and eq on null values), $search,
+              and $orderBy.
+            type: string
+            x-nullable: true
+          extensions:
+            description: >-
+              The collection of open extensions defined for this administrative
+              unit. Nullable.
+            items:
+              $ref: '#/definitions/microsoft.graph.extension'
+            type: array
+            x-ms-navigationProperty: true
+          members:
+            description: >-
+              Users and groups that are members of this administrative unit.
+              Supports $expand.
+            items:
+              $ref: '#/definitions/microsoft.graph.directoryObject'
+            type: array
+            x-ms-navigationProperty: true
+          scopedRoleMembers:
+            description: Scoped-role members of this administrative unit.
+            items:
+              $ref: '#/definitions/microsoft.graph.scopedRoleMembership'
+            type: array
+            x-ms-navigationProperty: true
+          visibility:
+            description: >-
+              Controls whether the administrative unit and its members are
+              hidden or public. Can be set to HiddenMembership. If not set
+              (value is null), the default behavior is public. When set to
+              HiddenMembership, only members of the administrative unit can list
+              other members of the administrative unit.
+            type: string
+            x-nullable: true
+        title: administrativeUnit
+        type: object
+  microsoft.graph.administrativeUnitCollectionResponse:
+    additionalProperties:
+      type: object
+    properties:
+      '@odata.nextLink':
+        type: string
+        x-nullable: true
+      value:
+        items:
+          $ref: '#/definitions/microsoft.graph.administrativeUnit'
+        type: array
+    title: Collection of administrativeUnit
+    type: object
+  microsoft.graph.alternativeSecurityId:
+    additionalProperties:
+      type: object
+    properties:
+      identityProvider:
+        description: For internal use only
+        type: string
+        x-nullable: true
+      key:
+        description: For internal use only
+        format: base64url
+        type: string
+        x-nullable: true
+      type:
+        description: For internal use only
+        format: int32
+        maximum: 2147483647
+        minimum: -2147483648
+        type: integer
+        x-nullable: true
+    title: alternativeSecurityId
+    type: object
+  microsoft.graph.assignedPlan:
+    additionalProperties:
+      type: object
+    properties:
+      assignedDateTime:
+        description: >-
+          The date and time at which the plan was assigned. The Timestamp type
+          represents date and time information using ISO 8601 format and is
+          always in UTC time. For example, midnight UTC on Jan 1, 2014 is
+          2014-01-01T00:00:00Z.
+        format: date-time
+        pattern: >-
+          ^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$
+        type: string
+        x-nullable: true
+      capabilityStatus:
+        description: >-
+          Condition of the capability assignment. The possible values are
+          Enabled, Warning, Suspended, Deleted, LockedOut. See a detailed
+          description of each value.
+        type: string
+        x-nullable: true
+      service:
+        description: 'The name of the service; for example, exchange.'
+        type: string
+        x-nullable: true
+      servicePlanId:
+        description: >-
+          A GUID that identifies the service plan. For a complete list of GUIDs
+          and their equivalent friendly service names, see Product names and
+          service plan identifiers for licensing.
+        format: uuid
+        pattern: >-
+          ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$
+        type: string
+        x-nullable: true
+    title: assignedPlan
+    type: object
+  microsoft.graph.authenticationProtocol:
+    enum:
+      - wsFed
+      - saml
+      - unknownFutureValue
+    title: authenticationProtocol
+    type: string
+  microsoft.graph.certificateAuthority:
+    additionalProperties:
+      type: object
+    properties:
+      certificate:
+        description: >-
+          Required. The base64 encoded string representing the public
+          certificate.
+        format: base64url
+        type: string
+      certificateRevocationListUrl:
+        description: The URL of the certificate revocation list.
+        type: string
+        x-nullable: true
+      deltaCertificateRevocationListUrl:
+        description: >-
+          The URL contains the list of all revoked certificates since the last
+          time a full certificate revocaton list was created.
+        type: string
+        x-nullable: true
+      isRootAuthority:
+        description: >-
+          Required. true if the trusted certificate is a root authority, false
+          if the trusted certificate is an intermediate authority.
+        type: boolean
+      issuer:
+        description: >-
+          The issuer of the certificate, calculated from the certificate value.
+          Read-only.
+        type: string
+      issuerSki:
+        description: >-
+          The subject key identifier of the certificate, calculated from the
+          certificate value. Read-only.
+        type: string
+    title: certificateAuthority
+    type: object
+  microsoft.graph.certificateBasedAuthConfiguration:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.entity'
+      - additionalProperties:
+          type: object
+        properties:
+          certificateAuthorities:
+            description: >-
+              Collection of certificate authorities which creates a trusted
+              certificate chain.
+            items:
+              $ref: '#/definitions/microsoft.graph.certificateAuthority'
+            type: array
+        title: certificateBasedAuthConfiguration
+        type: object
+  microsoft.graph.contract:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.directoryObject'
+      - additionalProperties:
+          type: object
+        properties:
+          contractType:
+            description: >-
+              Type of contract. Possible values are:  SyndicationPartner,
+              BreadthPartner, ResellerPartner. See more in the table below.
+            type: string
+            x-nullable: true
+          customerId:
+            description: >-
+              The unique identifier for the customer tenant referenced by this
+              partnership. Corresponds to the id property of the customer
+              tenant's organization resource.
+            format: uuid
+            pattern: >-
+              ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$
+            type: string
+            x-nullable: true
+          defaultDomainName:
+            description: >-
+              A copy of the customer tenant's default domain name. The copy is
+              made when the partnership with the customer is established. It is
+              not automatically updated if the customer tenant's default domain
+              name changes.
+            type: string
+            x-nullable: true
+          displayName:
+            description: >-
+              A copy of the customer tenant's display name. The copy is made
+              when the partnership with the customer is established. It is not
+              automatically updated if the customer tenant's display name
+              changes.
+            type: string
+            x-nullable: true
+        title: contract
+        type: object
+  microsoft.graph.contractCollectionResponse:
+    additionalProperties:
+      type: object
+    properties:
+      '@odata.nextLink':
+        type: string
+        x-nullable: true
+      value:
+        items:
+          $ref: '#/definitions/microsoft.graph.contract'
+        type: array
+    title: Collection of contract
+    type: object
+  microsoft.graph.device:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.directoryObject'
+      - additionalProperties:
+          type: object
+        properties:
+          accountEnabled:
+            description: >-
+              true if the account is enabled; otherwise, false. Required.
+              Default is true.  Supports $filter (eq, ne, not, in). Only callers
+              in Global Administrator and Cloud Device Administrator roles can
+              set this property.
+            type: boolean
+            x-nullable: true
+          alternativeSecurityIds:
+            description: >-
+              For internal use only. Not nullable. Supports $filter (eq, not,
+              ge, le).
+            items:
+              $ref: '#/definitions/microsoft.graph.alternativeSecurityId'
+            type: array
+          approximateLastSignInDateTime:
+            description: >-
+              The timestamp type represents date and time information using ISO
+              8601 format and is always in UTC time. For example, midnight UTC
+              on Jan 1, 2014 is 2014-01-01T00:00:00Z. Read-only. Supports
+              $filter (eq, ne, not, ge, le, and eq on null values) and $orderBy.
+            format: date-time
+            pattern: >-
+              ^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$
+            type: string
+            x-nullable: true
+          complianceExpirationDateTime:
+            description: >-
+              The timestamp when the device is no longer deemed compliant. The
+              timestamp type represents date and time information using ISO 8601
+              format and is always in UTC time. For example, midnight UTC on Jan
+              1, 2014 is 2014-01-01T00:00:00Z. Read-only.
+            format: date-time
+            pattern: >-
+              ^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$
+            type: string
+            x-nullable: true
+          deviceId:
+            description: >-
+              Unique identifier set by Azure Device Registration Service at the
+              time of registration. Supports $filter (eq, ne, not, startsWith).
+            type: string
+            x-nullable: true
+          deviceMetadata:
+            description: For internal use only. Set to null.
+            type: string
+            x-nullable: true
+          deviceVersion:
+            description: For internal use only.
+            format: int32
+            maximum: 2147483647
+            minimum: -2147483648
+            type: integer
+            x-nullable: true
+          displayName:
+            description: >-
+              The display name for the device. Required. Supports $filter (eq,
+              ne, not, ge, le, in, startsWith, and eq on null values), $search,
+              and $orderBy.
+            type: string
+            x-nullable: true
+          extensions:
+            description: >-
+              The collection of open extensions defined for the device.
+              Read-only. Nullable.
+            items:
+              $ref: '#/definitions/microsoft.graph.extension'
+            type: array
+            x-ms-navigationProperty: true
+          isCompliant:
+            description: >-
+              true if the device complies with Mobile Device Management (MDM)
+              policies; otherwise, false. Read-only. This can only be updated by
+              Intune for any device OS type or by an approved MDM app for
+              Windows OS devices. Supports $filter (eq, ne, not).
+            type: boolean
+            x-nullable: true
+          isManaged:
+            description: >-
+              true if the device is managed by a Mobile Device Management (MDM)
+              app; otherwise, false. This can only be updated by Intune for any
+              device OS type or by an approved MDM app for Windows OS devices.
+              Supports $filter (eq, ne, not).
+            type: boolean
+            x-nullable: true
+          mdmAppId:
+            description: >-
+              Application identifier used to register device into MDM.
+              Read-only. Supports $filter (eq, ne, not, startsWith).
+            type: string
+            x-nullable: true
+          memberOf:
+            description: >-
+              Groups and administrative units that this device is a member of.
+              Read-only. Nullable. Supports $expand.
+            items:
+              $ref: '#/definitions/microsoft.graph.directoryObject'
+            type: array
+            x-ms-navigationProperty: true
+          onPremisesLastSyncDateTime:
+            description: >-
+              The last time at which the object was synced with the on-premises
+              directory. The Timestamp type represents date and time information
+              using ISO 8601 format and is always in UTC time. For example,
+              midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z Read-only.
+              Supports $filter (eq, ne, not, ge, le, in).
+            format: date-time
+            pattern: >-
+              ^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$
+            type: string
+            x-nullable: true
+          onPremisesSyncEnabled:
+            description: >-
+              true if this object is synced from an on-premises directory; false
+              if this object was originally synced from an on-premises directory
+              but is no longer synced; null if this object has never been synced
+              from an on-premises directory (default). Read-only. Supports
+              $filter (eq, ne, not, in, and eq on null values).
+            type: boolean
+            x-nullable: true
+          operatingSystem:
+            description: >-
+              The type of operating system on the device. Required. Supports
+              $filter (eq, ne, not, ge, le, startsWith, and eq on null values).
+            type: string
+            x-nullable: true
+          operatingSystemVersion:
+            description: >-
+              The version of the operating system on the device. Required.
+              Supports $filter (eq, ne, not, ge, le, startsWith, and eq on null
+              values).
+            type: string
+            x-nullable: true
+          physicalIds:
+            description: >-
+              For internal use only. Not nullable. Supports $filter (eq, not,
+              ge, le, startsWith, and counting empty collections).
+            items:
+              type: string
+            type: array
+          profileType:
+            description: >-
+              The profile type of the device. Possible values: RegisteredDevice
+              (default), SecureVM, Printer, Shared, IoT.
+            type: string
+            x-nullable: true
+          registeredOwners:
+            description: >-
+              The user that cloud joined the device or registered their personal
+              device. The registered owner is set at the time of registration.
+              Currently, there can be only one owner. Read-only. Nullable.
+              Supports $expand.
+            items:
+              $ref: '#/definitions/microsoft.graph.directoryObject'
+            type: array
+            x-ms-navigationProperty: true
+          registeredUsers:
+            description: >-
+              Collection of registered users of the device. For cloud joined
+              devices and registered personal devices, registered users are set
+              to the same value as registered owners at the time of
+              registration. Read-only. Nullable. Supports $expand.
+            items:
+              $ref: '#/definitions/microsoft.graph.directoryObject'
+            type: array
+            x-ms-navigationProperty: true
+          systemLabels:
+            description: >-
+              List of labels applied to the device by the system. Supports
+              $filter (eq when counting empty collections).
+            items:
+              type: string
+            type: array
+          transitiveMemberOf:
+            description: >-
+              Groups and administrative units that the device is a member of.
+              This operation is transitive. Supports $expand.
+            items:
+              $ref: '#/definitions/microsoft.graph.directoryObject'
+            type: array
+            x-ms-navigationProperty: true
+          trustType:
+            description: >-
+              Type of trust for the joined device. Read-only. Possible values: 
+              Workplace (indicates bring your own personal devices), AzureAd
+              (Cloud only joined devices), ServerAd (on-premises domain joined
+              devices joined to Azure AD). For more details, see Introduction to
+              device management in Azure Active Directory
+            type: string
+            x-nullable: true
+        title: device
+        type: object
+  microsoft.graph.deviceCollectionResponse:
+    additionalProperties:
+      type: object
+    properties:
+      '@odata.nextLink':
+        type: string
+        x-nullable: true
+      value:
+        items:
+          $ref: '#/definitions/microsoft.graph.device'
+        type: array
+    title: Collection of device
+    type: object
+  microsoft.graph.directory:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.entity'
+      - additionalProperties:
+          type: object
+        properties:
+          administrativeUnits:
+            description: Conceptual container for user and group directory objects.
+            items:
+              $ref: '#/definitions/microsoft.graph.administrativeUnit'
+            type: array
+            x-ms-navigationProperty: true
+          deletedItems:
+            description: Recently deleted items. Read-only. Nullable.
+            items:
+              $ref: '#/definitions/microsoft.graph.directoryObject'
+            type: array
+            x-ms-navigationProperty: true
+          federationConfigurations:
+            description: >-
+              Configure domain federation with organizations whose identity
+              provider (IdP) supports either the SAML or WS-Fed protocol.
+            items:
+              $ref: '#/definitions/microsoft.graph.identityProviderBase'
+            type: array
+            x-ms-navigationProperty: true
+        title: directory
+        type: object
+  microsoft.graph.directoryObject:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.entity'
+      - additionalProperties:
+          type: object
+        properties:
+          deletedDateTime:
+            description: >-
+              Date and time when this object was deleted. Always null when the
+              object hasn't been deleted.
+            format: date-time
+            pattern: >-
+              ^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$
+            type: string
+            x-nullable: true
+        title: directoryObject
+        type: object
+  microsoft.graph.directoryObjectCollectionResponse:
+    additionalProperties:
+      type: object
+    properties:
+      '@odata.nextLink':
+        type: string
+        x-nullable: true
+      value:
+        items:
+          $ref: '#/definitions/microsoft.graph.directoryObject'
+        type: array
+    title: Collection of directoryObject
+    type: object
+  microsoft.graph.directoryRole:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.directoryObject'
+      - additionalProperties:
+          type: object
+        properties:
+          description:
+            description: >-
+              The description for the directory role. Read-only. Supports
+              $filter (eq), $search, $select.
+            type: string
+            x-nullable: true
+          displayName:
+            description: >-
+              The display name for the directory role. Read-only. Supports
+              $filter (eq), $search, $select.
+            type: string
+            x-nullable: true
+          members:
+            description: >-
+              Users that are members of this directory role. HTTP Methods: GET,
+              POST, DELETE. Read-only. Nullable. Supports $expand.
+            items:
+              $ref: '#/definitions/microsoft.graph.directoryObject'
+            type: array
+            x-ms-navigationProperty: true
+          roleTemplateId:
+            description: >-
+              The id of the directoryRoleTemplate that this role is based on.
+              The property must be specified when activating a directory role in
+              a tenant with a POST operation. After the directory role has been
+              activated, the property is read only. Supports $filter (eq),
+              $select.
+            type: string
+            x-nullable: true
+          scopedMembers:
+            description: >-
+              Members of this directory role that are scoped to administrative
+              units. Read-only. Nullable.
+            items:
+              $ref: '#/definitions/microsoft.graph.scopedRoleMembership'
+            type: array
+            x-ms-navigationProperty: true
+        title: directoryRole
+        type: object
+  microsoft.graph.directoryRoleCollectionResponse:
+    additionalProperties:
+      type: object
+    properties:
+      '@odata.nextLink':
+        type: string
+        x-nullable: true
+      value:
+        items:
+          $ref: '#/definitions/microsoft.graph.directoryRole'
+        type: array
+    title: Collection of directoryRole
+    type: object
+  microsoft.graph.directoryRoleTemplate:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.directoryObject'
+      - additionalProperties:
+          type: object
+        properties:
+          description:
+            description: The description to set for the directory role. Read-only.
+            type: string
+            x-nullable: true
+          displayName:
+            description: The display name to set for the directory role. Read-only.
+            type: string
+            x-nullable: true
+        title: directoryRoleTemplate
+        type: object
+  microsoft.graph.directoryRoleTemplateCollectionResponse:
+    additionalProperties:
+      type: object
+    properties:
+      '@odata.nextLink':
+        type: string
+        x-nullable: true
+      value:
+        items:
+          $ref: '#/definitions/microsoft.graph.directoryRoleTemplate'
+        type: array
+    title: Collection of directoryRoleTemplate
+    type: object
+  microsoft.graph.domain:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.entity'
+      - additionalProperties:
+          type: object
+        properties:
+          authenticationType:
+            description: >-
+              Indicates the configured authentication type for the domain. The
+              value is either Managed or Federated. Managed indicates a cloud
+              managed domain where Azure AD performs user authentication.
+              Federated indicates authentication is federated with an identity
+              provider such as the tenant's on-premises Active Directory via
+              Active Directory Federation Services. This property is read-only
+              and is not nullable.
+            type: string
+          availabilityStatus:
+            description: >-
+              This property is always null except when the verify action is
+              used. When the verify action is used, a domain entity is returned
+              in the response. The availabilityStatus property of the domain
+              entity in the response is either AvailableImmediately or
+              EmailVerifiedDomainTakeoverScheduled.
+            type: string
+            x-nullable: true
+          domainNameReferences:
+            description: >-
+              The objects such as users and groups that reference the domain ID.
+              Read-only, Nullable. Supports $expand and $filter by the OData
+              type of objects returned. For example
+              /domains/{domainId}/domainNameReferences/microsoft.graph.user and
+              /domains/{domainId}/domainNameReferences/microsoft.graph.group.
+            items:
+              $ref: '#/definitions/microsoft.graph.directoryObject'
+            type: array
+            x-ms-navigationProperty: true
+          federationConfiguration:
+            description: >-
+              Domain settings configured by a customer when federated with Azure
+              AD. Supports $expand.
+            items:
+              $ref: '#/definitions/microsoft.graph.internalDomainFederation'
+            type: array
+            x-ms-navigationProperty: true
+          isAdminManaged:
+            description: >-
+              The value of the property is false if the DNS record management of
+              the domain has been delegated to Microsoft 365. Otherwise, the
+              value is true. Not nullable
+            type: boolean
+          isDefault:
+            description: >-
+              true if this is the default domain that is used for user creation.
+              There is only one default domain per company. Not nullable
+            type: boolean
+          isInitial:
+            description: >-
+              true if this is the initial domain created by Microsoft Online
+              Services (companyname.onmicrosoft.com). There is only one initial
+              domain per company. Not nullable
+            type: boolean
+          isRoot:
+            description: >-
+              true if the domain is a verified root domain. Otherwise, false if
+              the domain is a subdomain or unverified. Not nullable
+            type: boolean
+          isVerified:
+            description: >-
+              true if the domain has completed domain ownership verification.
+              Not nullable
+            type: boolean
+          manufacturer:
+            type: string
+            x-nullable: true
+          model:
+            type: string
+            x-nullable: true
+          passwordNotificationWindowInDays:
+            description: >-
+              Specifies the number of days before a user receives notification
+              that their password will expire. If the property is not set, a
+              default value of 14 days will be used.
+            format: int32
+            maximum: 2147483647
+            minimum: -2147483648
+            type: integer
+            x-nullable: true
+          passwordValidityPeriodInDays:
+            description: >-
+              Specifies the length of time that a password is valid before it
+              must be changed. If the property is not set, a default value of 90
+              days will be used.
+            format: int32
+            maximum: 2147483647
+            minimum: -2147483648
+            type: integer
+            x-nullable: true
+          serviceConfigurationRecords:
+            description: >-
+              DNS records the customer adds to the DNS zone file of the domain
+              before the domain can be used by Microsoft Online services.
+              Read-only, Nullable. Supports $expand.
+            items:
+              $ref: '#/definitions/microsoft.graph.domainDnsRecord'
+            type: array
+            x-ms-navigationProperty: true
+          state:
+            $ref: '#/definitions/microsoft.graph.domainState'
+          supportedServices:
+            description: >-
+              The capabilities assigned to the domain. Can include 0, 1 or more
+              of following values: Email, Sharepoint, EmailInternalRelayOnly,
+              OfficeCommunicationsOnline, SharePointDefaultDomain,
+              FullRedelegation, SharePointPublic, OrgIdAuthentication, Yammer,
+              Intune. The values which you can add/remove using Graph API
+              include: Email, OfficeCommunicationsOnline, Yammer. Not nullable.
+            items:
+              type: string
+            type: array
+          verificationDnsRecords:
+            description: >-
+              DNS records that the customer adds to the DNS zone file of the
+              domain before the customer can complete domain ownership
+              verification with Azure AD. Read-only, Nullable. Supports $expand.
+            items:
+              $ref: '#/definitions/microsoft.graph.domainDnsRecord'
+            type: array
+            x-ms-navigationProperty: true
+        title: domain
+        type: object
+  microsoft.graph.domainCollectionResponse:
+    additionalProperties:
+      type: object
+    properties:
+      '@odata.nextLink':
+        type: string
+        x-nullable: true
+      value:
+        items:
+          $ref: '#/definitions/microsoft.graph.domain'
+        type: array
+    title: Collection of domain
+    type: object
+  microsoft.graph.domainDnsRecord:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.entity'
+      - additionalProperties:
+          type: object
+        properties:
+          isOptional:
+            description: >-
+              If false, this record must be configured by the customer at the
+              DNS host for Microsoft Online Services to operate correctly with
+              the domain.
+            type: boolean
+          label:
+            description: >-
+              Value used when configuring the name of the DNS record at the DNS
+              host.
+            type: string
+          recordType:
+            description: >-
+              Indicates what type of DNS record this entity represents.The value
+              can be one of the following: CName, Mx, Srv, Txt.
+            type: string
+            x-nullable: true
+          supportedService:
+            description: >-
+              Microsoft Online Service or feature that has a dependency on this
+              DNS record.Can be one of the following values: null, Email,
+              Sharepoint, EmailInternalRelayOnly, OfficeCommunicationsOnline,
+              SharePointDefaultDomain, FullRedelegation, SharePointPublic,
+              OrgIdAuthentication, Yammer, Intune.
+            type: string
+          ttl:
+            description: >-
+              Value to use when configuring the time-to-live (ttl) property of
+              the DNS record at the DNS host. Not nullable.
+            format: int32
+            maximum: 2147483647
+            minimum: -2147483648
+            type: integer
+        title: domainDnsRecord
+        type: object
+  microsoft.graph.domainDnsRecordCollectionResponse:
+    additionalProperties:
+      type: object
+    properties:
+      '@odata.nextLink':
+        type: string
+        x-nullable: true
+      value:
+        items:
+          $ref: '#/definitions/microsoft.graph.domainDnsRecord'
+        type: array
+    title: Collection of domainDnsRecord
+    type: object
+  microsoft.graph.domainState:
+    additionalProperties:
+      type: object
+    properties:
+      lastActionDateTime:
+        description: >-
+          Timestamp for when the last activity occurred. The value is updated
+          when an operation is scheduled, the asynchronous task starts, and when
+          the operation completes.
+        format: date-time
+        pattern: >-
+          ^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$
+        type: string
+        x-nullable: true
+      operation:
+        description: >-
+          Type of asynchronous operation. The values can be ForceDelete or
+          Verification
+        type: string
+        x-nullable: true
+      status:
+        description: >-
+          Current status of the operation.  Scheduled - Operation has been
+          scheduled but has not started.  InProgress - Task has started and is
+          in progress.  Failed - Operation has failed.
+        type: string
+        x-nullable: true
+    title: domainState
+    type: object
+  microsoft.graph.entity:
+    additionalProperties:
+      type: object
+    properties:
+      id:
+        description: The unique idenfier for an entity. Read-only.
+        type: string
+    title: entity
+    type: object
+  microsoft.graph.extension:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.entity'
+      - additionalProperties:
+          type: object
+        title: extension
+        type: object
+  microsoft.graph.extensionCollectionResponse:
+    additionalProperties:
+      type: object
+    properties:
+      '@odata.nextLink':
+        type: string
+        x-nullable: true
+      value:
+        items:
+          $ref: '#/definitions/microsoft.graph.extension'
+        type: array
+    title: Collection of extension
+    type: object
+  microsoft.graph.extensionProperty:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.directoryObject'
+      - additionalProperties:
+          type: object
+        properties:
+          appDisplayName:
+            description: >-
+              Display name of the application object on which this extension
+              property is defined. Read-only.
+            type: string
+            x-nullable: true
+          dataType:
+            description: >-
+              Specifies the data type of the value the extension property can
+              hold. Following values are supported. Not nullable. Binary - 256
+              bytes maximumBooleanDateTime - Must be specified in ISO 8601
+              format. Will be stored in UTC.Integer - 32-bit value.LargeInteger
+              - 64-bit value.String - 256 characters maximum
+            type: string
+          isSyncedFromOnPremises:
+            description: >-
+              Indicates if this extension property was synced from on-premises
+              active directory using Azure AD Connect. Read-only.
+            type: boolean
+            x-nullable: true
+          name:
+            description: >-
+              Name of the extension property. Not nullable. Supports $filter
+              (eq).
+            type: string
+          targetObjects:
+            description: >-
+              Following values are supported. Not nullable.
+              UserGroupAdministrativeUnitApplicationDeviceOrganization
+            items:
+              type: string
+            type: array
+        title: extensionProperty
+        type: object
+  microsoft.graph.federatedIdpMfaBehavior:
+    enum:
+      - acceptIfMfaDoneByFederatedIdp
+      - enforceMfaByFederatedIdp
+      - rejectMfaByFederatedIdp
+      - unknownFutureValue
+    title: federatedIdpMfaBehavior
+    type: string
+  microsoft.graph.identity:
+    additionalProperties:
+      type: object
+    properties:
+      displayName:
+        description: >-
+          The display name of the identity. Note that this might not always be
+          available or up to date. For example, if a user changes their display
+          name, the API might show the new value in a future response, but the
+          items associated with the user won't show up as having changed when
+          using delta.
+        type: string
+        x-nullable: true
+      id:
+        description: Unique identifier for the identity.
+        type: string
+        x-nullable: true
+    title: identity
+    type: object
+  microsoft.graph.identityProviderBase:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.entity'
+      - additionalProperties:
+          type: object
+        properties:
+          displayName:
+            description: The display name of the identity provider.
+            type: string
+            x-nullable: true
+        title: identityProviderBase
+        type: object
+  microsoft.graph.identityProviderBaseCollectionResponse:
+    additionalProperties:
+      type: object
+    properties:
+      '@odata.nextLink':
+        type: string
+        x-nullable: true
+      value:
+        items:
+          $ref: '#/definitions/microsoft.graph.identityProviderBase'
+        type: array
+    title: Collection of identityProviderBase
+    type: object
+  microsoft.graph.internalDomainFederation:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.samlOrWsFedProvider'
+      - additionalProperties:
+          type: object
+        properties:
+          activeSignInUri:
+            description: >-
+              URL of the endpoint used by active clients when authenticating
+              with federated domains set up for single sign-on in Azure Active
+              Directory (Azure AD). Corresponds to the ActiveLogOnUri property
+              of the Set-MsolDomainFederationSettings MSOnline v1 PowerShell
+              cmdlet.
+            type: string
+            x-nullable: true
+          federatedIdpMfaBehavior:
+            $ref: '#/definitions/microsoft.graph.federatedIdpMfaBehavior'
+          isSignedAuthenticationRequestRequired:
+            description: >-
+              If true, when SAML authentication requests are sent to the
+              federated SAML IdP, Azure AD will sign those requests using the
+              OrgID signing key. If false (default), the SAML authentication
+              requests sent to the federated IdP are not signed.
+            type: boolean
+            x-nullable: true
+          nextSigningCertificate:
+            description: >-
+              Fallback token signing certificate that is used to sign tokens
+              when the primary signing certificate expires. Formatted as Base64
+              encoded strings of the public portion of the federated IdP's token
+              signing certificate. Needs to be compatible with the
+              X509Certificate2 class. Much like the signingCertificate, the
+              nextSigningCertificate property is used if a rollover is required
+              outside of the auto-rollover update, a new federation service is
+              being set up, or if the new token signing certificate is not
+              present in the federation properties after the federation service
+              certificate has been updated.
+            type: string
+            x-nullable: true
+          promptLoginBehavior:
+            $ref: '#/definitions/microsoft.graph.promptLoginBehavior'
+          signOutUri:
+            description: >-
+              URI that clients are redirected to when they sign out of Azure AD
+              services. Corresponds to the LogOffUri property of the
+              Set-MsolDomainFederationSettings MSOnline v1 PowerShell cmdlet.
+            type: string
+            x-nullable: true
+          signingCertificateUpdateStatus:
+            $ref: '#/definitions/microsoft.graph.signingCertificateUpdateStatus'
+        title: internalDomainFederation
+        type: object
+  microsoft.graph.internalDomainFederationCollectionResponse:
+    additionalProperties:
+      type: object
+    properties:
+      '@odata.nextLink':
+        type: string
+        x-nullable: true
+      value:
+        items:
+          $ref: '#/definitions/microsoft.graph.internalDomainFederation'
+        type: array
+    title: Collection of internalDomainFederation
+    type: object
+  microsoft.graph.licenseUnitsDetail:
+    additionalProperties:
+      type: object
+    properties:
+      enabled:
+        description: >-
+          The number of units that are enabled for the active subscription of
+          the service SKU.
+        format: int32
+        maximum: 2147483647
+        minimum: -2147483648
+        type: integer
+        x-nullable: true
+      suspended:
+        description: >-
+          The number of units that are suspended because the subscription of the
+          service SKU has been cancelled. The units cannot be assigned but can
+          still be reactivated before they are deleted.
+        format: int32
+        maximum: 2147483647
+        minimum: -2147483648
+        type: integer
+        x-nullable: true
+      warning:
+        description: >-
+          The number of units that are in warning status. When the subscription
+          of the service SKU has expired, the customer has a grace period to
+          renew their subscription before it is cancelled (moved to a suspended
+          state).
+        format: int32
+        maximum: 2147483647
+        minimum: -2147483648
+        type: integer
+        x-nullable: true
+    title: licenseUnitsDetail
+    type: object
+  microsoft.graph.mdmAuthority:
+    description: Mobile device management authority.
+    enum:
+      - unknown
+      - intune
+      - sccm
+      - office365
+    title: mdmAuthority
+    type: string
+    x-ms-enum:
+      modelAsString: false
+      name: mdmAuthority
+      values:
+        - description: Unknown
+          name: unknown
+          value: unknown
+        - description: Intune
+          name: intune
+          value: intune
+        - description: SCCM
+          name: sccm
+          value: sccm
+        - description: Office365
+          name: office365
+          value: office365
+  microsoft.graph.onPremisesProvisioningError:
+    additionalProperties:
+      type: object
+    properties:
+      category:
+        description: >-
+          Category of the provisioning error. Note: Currently, there is only one
+          possible value. Possible value: PropertyConflict - indicates a
+          property value is not unique. Other objects contain the same value for
+          the property.
+        type: string
+        x-nullable: true
+      occurredDateTime:
+        description: The date and time at which the error occurred.
+        format: date-time
+        pattern: >-
+          ^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$
+        type: string
+        x-nullable: true
+      propertyCausingError:
+        description: >-
+          Name of the directory property causing the error. Current possible
+          values: UserPrincipalName or ProxyAddress
+        type: string
+        x-nullable: true
+      value:
+        description: Value of the property causing the error.
+        type: string
+        x-nullable: true
+    title: onPremisesProvisioningError
+    type: object
+  microsoft.graph.orgContact:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.directoryObject'
+      - additionalProperties:
+          type: object
+        properties:
+          addresses:
+            items:
+              $ref: '#/definitions/microsoft.graph.physicalOfficeAddress'
+            type: array
+          companyName:
+            type: string
+            x-nullable: true
+          department:
+            type: string
+            x-nullable: true
+          directReports:
+            items:
+              $ref: '#/definitions/microsoft.graph.directoryObject'
+            type: array
+            x-ms-navigationProperty: true
+          displayName:
+            type: string
+            x-nullable: true
+          givenName:
+            type: string
+            x-nullable: true
+          jobTitle:
+            type: string
+            x-nullable: true
+          mail:
+            type: string
+            x-nullable: true
+          mailNickname:
+            type: string
+            x-nullable: true
+          manager:
+            $ref: '#/definitions/microsoft.graph.directoryObject'
+          memberOf:
+            items:
+              $ref: '#/definitions/microsoft.graph.directoryObject'
+            type: array
+            x-ms-navigationProperty: true
+          onPremisesLastSyncDateTime:
+            format: date-time
+            pattern: >-
+              ^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$
+            type: string
+            x-nullable: true
+          onPremisesProvisioningErrors:
+            items:
+              $ref: '#/definitions/microsoft.graph.onPremisesProvisioningError'
+            type: array
+          onPremisesSyncEnabled:
+            type: boolean
+            x-nullable: true
+          phones:
+            items:
+              $ref: '#/definitions/microsoft.graph.phone'
+            type: array
+          proxyAddresses:
+            items:
+              type: string
+            type: array
+          surname:
+            type: string
+            x-nullable: true
+          transitiveMemberOf:
+            items:
+              $ref: '#/definitions/microsoft.graph.directoryObject'
+            type: array
+            x-ms-navigationProperty: true
+        title: orgContact
+        type: object
+  microsoft.graph.orgContactCollectionResponse:
+    additionalProperties:
+      type: object
+    properties:
+      '@odata.nextLink':
+        type: string
+        x-nullable: true
+      value:
+        items:
+          $ref: '#/definitions/microsoft.graph.orgContact'
+        type: array
+    title: Collection of orgContact
+    type: object
+  microsoft.graph.organization:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.directoryObject'
+      - additionalProperties:
+          type: object
+        properties:
+          assignedPlans:
+            description: >-
+              The collection of service plans associated with the tenant. Not
+              nullable.
+            items:
+              $ref: '#/definitions/microsoft.graph.assignedPlan'
+            type: array
+          branding:
+            $ref: '#/definitions/microsoft.graph.organizationalBranding'
+          businessPhones:
+            description: >-
+              Telephone number for the organization. Although this is a string
+              collection, only one number can be set for this property.
+            items:
+              type: string
+            type: array
+          certificateBasedAuthConfiguration:
+            description: >-
+              Navigation property to manage certificate-based authentication
+              configuration. Only a single instance of
+              certificateBasedAuthConfiguration can be created in the
+              collection.
+            items:
+              $ref: '#/definitions/microsoft.graph.certificateBasedAuthConfiguration'
+            type: array
+            x-ms-navigationProperty: true
+          city:
+            description: City name of the address for the organization.
+            type: string
+            x-nullable: true
+          country:
+            description: Country/region name of the address for the organization.
+            type: string
+            x-nullable: true
+          countryLetterCode:
+            description: >-
+              Country or region abbreviation for the organization in ISO 3166-2
+              format.
+            type: string
+            x-nullable: true
+          createdDateTime:
+            description: >-
+              Timestamp of when the organization was created. The value cannot
+              be modified and is automatically populated when the organization
+              is created. The Timestamp type represents date and time
+              information using ISO 8601 format and is always in UTC time. For
+              example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z.
+              Read-only.
+            format: date-time
+            pattern: >-
+              ^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$
+            type: string
+            x-nullable: true
+          displayName:
+            description: The display name for the tenant.
+            type: string
+            x-nullable: true
+          extensions:
+            description: >-
+              The collection of open extensions defined for the organization.
+              Read-only. Nullable.
+            items:
+              $ref: '#/definitions/microsoft.graph.extension'
+            type: array
+            x-ms-navigationProperty: true
+          marketingNotificationEmails:
+            description: Not nullable.
+            items:
+              type: string
+            type: array
+          mobileDeviceManagementAuthority:
+            $ref: '#/definitions/microsoft.graph.mdmAuthority'
+          onPremisesLastSyncDateTime:
+            description: >-
+              The time and date at which the tenant was last synced with the
+              on-premises directory. The Timestamp type represents date and time
+              information using ISO 8601 format and is always in UTC time. For
+              example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z.
+              Read-only.
+            format: date-time
+            pattern: >-
+              ^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$
+            type: string
+            x-nullable: true
+          onPremisesSyncEnabled:
+            description: >-
+              true if this object is synced from an on-premises directory; false
+              if this object was originally synced from an on-premises directory
+              but is no longer synced. Nullable. null if this object has never
+              been synced from an on-premises directory (default).
+            type: boolean
+            x-nullable: true
+          postalCode:
+            description: Postal code of the address for the organization.
+            type: string
+            x-nullable: true
+          preferredLanguage:
+            description: >-
+              The preferred language for the organization. Should follow ISO
+              639-1 Code; for example, en.
+            type: string
+            x-nullable: true
+          privacyProfile:
+            $ref: '#/definitions/microsoft.graph.privacyProfile'
+          provisionedPlans:
+            description: Not nullable.
+            items:
+              $ref: '#/definitions/microsoft.graph.provisionedPlan'
+            type: array
+          securityComplianceNotificationMails:
+            items:
+              type: string
+            type: array
+          securityComplianceNotificationPhones:
+            items:
+              type: string
+            type: array
+          state:
+            description: State name of the address for the organization.
+            type: string
+            x-nullable: true
+          street:
+            description: Street name of the address for organization.
+            type: string
+            x-nullable: true
+          technicalNotificationMails:
+            description: Not nullable.
+            items:
+              type: string
+            type: array
+          tenantType:
+            type: string
+            x-nullable: true
+          verifiedDomains:
+            description: >-
+              The collection of domains associated with this tenant. Not
+              nullable.
+            items:
+              $ref: '#/definitions/microsoft.graph.verifiedDomain'
+            type: array
+        title: organization
+        type: object
+  microsoft.graph.organizationCollectionResponse:
+    additionalProperties:
+      type: object
+    properties:
+      '@odata.nextLink':
+        type: string
+        x-nullable: true
+      value:
+        items:
+          $ref: '#/definitions/microsoft.graph.organization'
+        type: array
+    title: Collection of organization
+    type: object
+  microsoft.graph.organizationalBranding:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.organizationalBrandingProperties'
+      - additionalProperties:
+          type: object
+        properties:
+          localizations:
+            description: Add different branding based on a locale.
+            items:
+              $ref: '#/definitions/microsoft.graph.organizationalBrandingLocalization'
+            type: array
+            x-ms-navigationProperty: true
+        title: organizationalBranding
+        type: object
+  microsoft.graph.organizationalBrandingLocalization:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.organizationalBrandingProperties'
+      - additionalProperties:
+          type: object
+        title: organizationalBrandingLocalization
+        type: object
+  microsoft.graph.organizationalBrandingLocalizationCollectionResponse:
+    additionalProperties:
+      type: object
+    properties:
+      '@odata.nextLink':
+        type: string
+        x-nullable: true
+      value:
+        items:
+          $ref: '#/definitions/microsoft.graph.organizationalBrandingLocalization'
+        type: array
+    title: Collection of organizationalBrandingLocalization
+    type: object
+  microsoft.graph.organizationalBrandingProperties:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.entity'
+      - additionalProperties:
+          type: object
+        properties:
+          backgroundColor:
+            description: >-
+              Color that will appear in place of the background image in
+              low-bandwidth connections. We recommend that you use the primary
+              color of your banner logo or your organization color. Specify this
+              in hexadecimal format, for example, white is #FFFFFF.
+            type: string
+            x-nullable: true
+          backgroundImage:
+            description: >-
+              Image that appears as the background of the sign-in page. The
+              allowed types are PNG or JPEG not smaller than 300 KB and not
+              larger than 1920 ├ù 1080 pixels. A smaller image will reduce
+              bandwidth requirements and make the page load faster.
+            format: base64url
+            type: string
+            x-nullable: true
+          backgroundImageRelativeUrl:
+            description: >-
+              A relative URL for the backgroundImage property that is combined
+              with a CDN base URL from the cdnList to provide the version served
+              by a CDN. Read-only.
+            type: string
+            x-nullable: true
+          bannerLogo:
+            description: >-
+              A banner version of your company logo that appears on the sign-in
+              page. The allowed types are PNG or JPEG no larger than 36 ├ù 245
+              pixels. We recommend using a transparent image with no padding
+              around the logo.
+            format: base64url
+            type: string
+            x-nullable: true
+          bannerLogoRelativeUrl:
+            description: >-
+              A relative url for the bannerLogo property that is combined with a
+              CDN base URL from the cdnList to provide the read-only version
+              served by a CDN. Read-only.
+            type: string
+            x-nullable: true
+          cdnList:
+            description: >-
+              A list of base URLs for all available CDN providers that are
+              serving the assets of the current resource. Several CDN providers
+              are used at the same time for high availability of read requests.
+              Read-only.
+            items:
+              type: string
+              x-nullable: true
+            type: array
+          signInPageText:
+            description: >-
+              Text that appears at the bottom of the sign-in box. You can use
+              this to communicate additional information, such as the phone
+              number to your help desk or a legal statement. This text must be
+              Unicode and not exceed 1024 characters.
+            type: string
+            x-nullable: true
+          squareLogo:
+            description: >-
+              A square version of your company logo that appears in Windows 10
+              out-of-box experiences (OOBE) and when Windows Autopilot is
+              enabled for deployment. Allowed types are PNG or JPEG no larger
+              than 240 x 240 pixels and no more than 10 KB in size. We recommend
+              using a transparent image with no padding around the logo.
+            format: base64url
+            type: string
+            x-nullable: true
+          squareLogoRelativeUrl:
+            description: >-
+              A relative url for the squareLogo property that is combined with a
+              CDN base URL from the cdnList to provide the version served by a
+              CDN. Read-only.
+            type: string
+            x-nullable: true
+          usernameHintText:
+            description: >-
+              String that shows as the hint in the username textbox on the
+              sign-in screen. This text must be a Unicode, without links or
+              code, and can't exceed 64 characters.
+            type: string
+            x-nullable: true
+        title: organizationalBrandingProperties
+        type: object
+  microsoft.graph.phone:
+    additionalProperties:
+      type: object
+    properties:
+      language:
+        type: string
+        x-nullable: true
+      number:
+        description: The phone number.
+        type: string
+        x-nullable: true
+      region:
+        type: string
+        x-nullable: true
+      type:
+        $ref: '#/definitions/microsoft.graph.phoneType'
+    title: phone
+    type: object
+  microsoft.graph.phoneType:
+    enum:
+      - home
+      - business
+      - mobile
+      - other
+      - assistant
+      - homeFax
+      - businessFax
+      - otherFax
+      - pager
+      - radio
+    title: phoneType
+    type: string
+  microsoft.graph.physicalOfficeAddress:
+    additionalProperties:
+      type: object
+    properties:
+      city:
+        description: The city.
+        type: string
+        x-nullable: true
+      countryOrRegion:
+        description: >-
+          The country or region. It's a free-format string value, for example,
+          'United States'.
+        type: string
+        x-nullable: true
+      officeLocation:
+        description: >-
+          Office location such as building and office number for an
+          organizational contact.
+        type: string
+        x-nullable: true
+      postalCode:
+        description: The postal code.
+        type: string
+        x-nullable: true
+      state:
+        description: The state.
+        type: string
+        x-nullable: true
+      street:
+        description: The street.
+        type: string
+        x-nullable: true
+    title: physicalOfficeAddress
+    type: object
+  microsoft.graph.privacyProfile:
+    additionalProperties:
+      type: object
+    properties:
+      contactEmail:
+        description: >-
+          A valid smtp email address for the privacy statement contact. Not
+          required.
+        type: string
+        x-nullable: true
+      statementUrl:
+        description: >-
+          A valid URL format that begins with http:// or https://. Maximum
+          length is 255 characters. The URL that directs to the company's
+          privacy statement. Not required.
+        type: string
+        x-nullable: true
+    title: privacyProfile
+    type: object
+  microsoft.graph.promptLoginBehavior:
+    enum:
+      - translateToFreshPasswordAuthentication
+      - nativeSupport
+      - disabled
+      - unknownFutureValue
+    title: promptLoginBehavior
+    type: string
+  microsoft.graph.provisionedPlan:
+    additionalProperties:
+      type: object
+    properties:
+      capabilityStatus:
+        description: 'For example, ''Enabled''.'
+        type: string
+        x-nullable: true
+      provisioningStatus:
+        description: 'For example, ''Success''.'
+        type: string
+        x-nullable: true
+      service:
+        description: 'The name of the service; for example, ''AccessControlS2S'''
+        type: string
+        x-nullable: true
+    title: provisionedPlan
+    type: object
+  microsoft.graph.samlOrWsFedProvider:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.identityProviderBase'
+      - additionalProperties:
+          type: object
+        properties:
+          issuerUri:
+            description: Issuer URI of the federation server.
+            type: string
+            x-nullable: true
+          metadataExchangeUri:
+            description: >-
+              URI of the metadata exchange endpoint used for authentication from
+              rich client applications.
+            type: string
+            x-nullable: true
+          passiveSignInUri:
+            description: >-
+              URI that web-based clients are directed to when signing in to
+              Azure Active Directory (Azure AD) services.
+            type: string
+            x-nullable: true
+          preferredAuthenticationProtocol:
+            $ref: '#/definitions/microsoft.graph.authenticationProtocol'
+          signingCertificate:
+            description: >-
+              Current certificate used to sign tokens passed to the Microsoft
+              identity platform. The certificate is formatted as a Base64
+              encoded string of the public portion of the federated IdP's token
+              signing certificate and must be compatible with the
+              X509Certificate2 class.   This property is used in the following
+              scenarios:  if a rollover is required outside of the autorollover
+              update a new federation service is being set up  if the new token
+              signing certificate isn't present in the federation properties
+              after the federation service certificate has been updated.   Azure
+              AD updates certificates via an autorollover process in which it
+              attempts to retrieve a new certificate from the federation service
+              metadata, 30 days before expiry of the current certificate. If a
+              new certificate isn't available, Azure AD monitors the metadata
+              daily and will update the federation settings for the domain when
+              a new certificate is available.
+            type: string
+            x-nullable: true
+        title: samlOrWsFedProvider
+        type: object
+  microsoft.graph.scopedRoleMembership:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.entity'
+      - additionalProperties:
+          type: object
+        properties:
+          administrativeUnitId:
+            description: >-
+              Unique identifier for the administrative unit that the directory
+              role is scoped to
+            type: string
+          roleId:
+            description: Unique identifier for the directory role that the member is in.
+            type: string
+          roleMemberInfo:
+            $ref: '#/definitions/microsoft.graph.identity'
+        title: scopedRoleMembership
+        type: object
+  microsoft.graph.scopedRoleMembershipCollectionResponse:
+    additionalProperties:
+      type: object
+    properties:
+      '@odata.nextLink':
+        type: string
+        x-nullable: true
+      value:
+        items:
+          $ref: '#/definitions/microsoft.graph.scopedRoleMembership'
+        type: array
+    title: Collection of scopedRoleMembership
+    type: object
+  microsoft.graph.servicePlanInfo:
+    additionalProperties:
+      type: object
+    properties:
+      appliesTo:
+        description: >-
+          The object the service plan can be assigned to. The possible values
+          are:User - service plan can be assigned to individual users.Company -
+          service plan can be assigned to the entire tenant.
+        type: string
+        x-nullable: true
+      provisioningStatus:
+        description: >-
+          The provisioning status of the service plan. The possible values
+          are:Success - Service is fully provisioned.Disabled - Service has been
+          disabled.ErrorStatus - The service plan has not been provisioned and
+          is in an error state.PendingInput - Service is not yet provisioned;
+          awaiting service confirmation.PendingActivation - Service is
+          provisioned but requires explicit activation by administrator (for
+          example, Intune_O365 service plan)PendingProvisioning - Microsoft has
+          added a new service to the product SKU and it has not been activated
+          in the tenant, yet.
+        type: string
+        x-nullable: true
+      servicePlanId:
+        description: The unique identifier of the service plan.
+        format: uuid
+        pattern: >-
+          ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$
+        type: string
+        x-nullable: true
+      servicePlanName:
+        description: The name of the service plan.
+        type: string
+        x-nullable: true
+    title: servicePlanInfo
+    type: object
+  microsoft.graph.signingCertificateUpdateStatus:
+    additionalProperties:
+      type: object
+    properties:
+      certificateUpdateResult:
+        description: >-
+          Status of the last certificate update. Read-only. For a list of
+          statuses, see certificateUpdateResult status.
+        type: string
+        x-nullable: true
+      lastRunDateTime:
+        description: >-
+          Date and time in ISO 8601 format and in UTC time when the certificate
+          was last updated. Read-only.
+        format: date-time
+        pattern: >-
+          ^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$
+        type: string
+        x-nullable: true
+    title: signingCertificateUpdateStatus
+    type: object
+  microsoft.graph.subscribedSku:
+    allOf:
+      - $ref: '#/definitions/microsoft.graph.entity'
+      - additionalProperties:
+          type: object
+        properties:
+          appliesTo:
+            description: 'For example, ''User'' or ''Company''.'
+            type: string
+            x-nullable: true
+          capabilityStatus:
+            description: >-
+              Possible values are: Enabled, Warning, Suspended, Deleted,
+              LockedOut. The capabilityStatus is Enabled if the prepaidUnits
+              property has at least 1 unit that is enabled, and LockedOut if the
+              customer cancelled their subscription.
+            type: string
+            x-nullable: true
+          consumedUnits:
+            description: The number of licenses that have been assigned.
+            format: int32
+            maximum: 2147483647
+            minimum: -2147483648
+            type: integer
+            x-nullable: true
+          prepaidUnits:
+            $ref: '#/definitions/microsoft.graph.licenseUnitsDetail'
+          servicePlans:
+            description: >-
+              Information about the service plans that are available with the
+              SKU. Not nullable
+            items:
+              $ref: '#/definitions/microsoft.graph.servicePlanInfo'
+            type: array
+          skuId:
+            description: The unique identifier (GUID) for the service SKU.
+            format: uuid
+            pattern: >-
+              ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$
+            type: string
+            x-nullable: true
+          skuPartNumber:
+            description: >-
+              The SKU part number; for example: 'AAD_PREMIUM' or 'RMSBASIC'. To
+              get a list of commercial subscriptions that an organization has
+              acquired, see List subscribedSkus.
+            type: string
+            x-nullable: true
+        title: subscribedSku
+        type: object
+  microsoft.graph.subscribedSkuCollectionResponse:
+    additionalProperties:
+      type: object
+    properties:
+      '@odata.nextLink':
+        type: string
+        x-nullable: true
+      value:
+        items:
+          $ref: '#/definitions/microsoft.graph.subscribedSku'
+        type: array
+    title: Collection of subscribedSku
+    type: object
+  microsoft.graph.verifiedDomain:
+    additionalProperties:
+      type: object
+    properties:
+      capabilities:
+        description: 'For example, Email, OfficeCommunicationsOnline.'
+        type: string
+        x-nullable: true
+      isDefault:
+        description: >-
+          true if this is the default domain associated with the tenant;
+          otherwise, false.
+        type: boolean
+        x-nullable: true
+      isInitial:
+        description: >-
+          true if this is the initial domain associated with the tenant;
+          otherwise, false.
+        type: boolean
+        x-nullable: true
+      name:
+        description: 'The domain name; for example, contoso.onmicrosoft.com.'
+        type: string
+        x-nullable: true
+      type:
+        description: 'For example, Managed.'
+        type: string
+        x-nullable: true
+    title: verifiedDomain
+    type: object
+securityDefinitions:
+  azureaadv2:
+    authorizationUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize'
+    flow: accessCode
+    scopes: {}
+    tokenUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
+    type: oauth2
+security:
+  - azureaadv2: []
+x-components:
+  parameters:
+    count:
+      description: Include count of items
+      in: query
+      name: $count
+      type: boolean
+    filter:
+      description: Filter items by property values
+      in: query
+      name: $filter
+      type: string
+    search:
+      description: Search items by search phrases
+      in: query
+      name: $search
+      type: string
+    skip:
+      description: Skip the first n items
+      in: query
+      minimum: 0
+      name: $skip
+      type: integer
+    top:
+      description: Show only the first n items
+      in: query
+      minimum: 0
+      name: $top
+      type: integer
+      x-example: 50
+  responses:
+    StringCollectionResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/definitions/StringCollectionResponse'
+      description: Retrieved collection
+    error:
+      content:
+        application/json:
+          schema:
+            $ref: '#/definitions/microsoft.graph.ODataErrors.ODataError'
+      description: error
+    microsoft.graph.administrativeUnitCollectionResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/definitions/microsoft.graph.administrativeUnitCollectionResponse'
+      description: Retrieved collection
+    microsoft.graph.contractCollectionResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/definitions/microsoft.graph.contractCollectionResponse'
+      description: Retrieved collection
+    microsoft.graph.deviceCollectionResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/definitions/microsoft.graph.deviceCollectionResponse'
+      description: Retrieved collection
+    microsoft.graph.directoryObjectCollectionResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/definitions/microsoft.graph.directoryObjectCollectionResponse'
+      description: Retrieved collection
+    microsoft.graph.directoryRoleCollectionResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/definitions/microsoft.graph.directoryRoleCollectionResponse'
+      description: Retrieved collection
+    microsoft.graph.directoryRoleTemplateCollectionResponse:
+      content:
+        application/json:
+          schema:
+            $ref: >-
+              #/definitions/microsoft.graph.directoryRoleTemplateCollectionResponse
+      description: Retrieved collection
+    microsoft.graph.domainCollectionResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/definitions/microsoft.graph.domainCollectionResponse'
+      description: Retrieved collection
+    microsoft.graph.domainDnsRecordCollectionResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/definitions/microsoft.graph.domainDnsRecordCollectionResponse'
+      description: Retrieved collection
+    microsoft.graph.extensionCollectionResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/definitions/microsoft.graph.extensionCollectionResponse'
+      description: Retrieved collection
+    microsoft.graph.identityProviderBaseCollectionResponse:
+      content:
+        application/json:
+          schema:
+            $ref: >-
+              #/definitions/microsoft.graph.identityProviderBaseCollectionResponse
+      description: Retrieved collection
+    microsoft.graph.internalDomainFederationCollectionResponse:
+      content:
+        application/json:
+          schema:
+            $ref: >-
+              #/definitions/microsoft.graph.internalDomainFederationCollectionResponse
+      description: Retrieved collection
+    microsoft.graph.orgContactCollectionResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/definitions/microsoft.graph.orgContactCollectionResponse'
+      description: Retrieved collection
+    microsoft.graph.organizationCollectionResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/definitions/microsoft.graph.organizationCollectionResponse'
+      description: Retrieved collection
+    microsoft.graph.organizationalBrandingLocalizationCollectionResponse:
+      content:
+        application/json:
+          schema:
+            $ref: >-
+              #/definitions/microsoft.graph.organizationalBrandingLocalizationCollectionResponse
+      description: Retrieved collection
+    microsoft.graph.scopedRoleMembershipCollectionResponse:
+      content:
+        application/json:
+          schema:
+            $ref: >-
+              #/definitions/microsoft.graph.scopedRoleMembershipCollectionResponse
+      description: Retrieved collection
+    microsoft.graph.subscribedSkuCollectionResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/definitions/microsoft.graph.subscribedSkuCollectionResponse'
+      description: Retrieved collection
+  requestBodies:
+    refPostBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/definitions/ReferenceCreate'
+      description: New navigation property ref value
+      required: true
