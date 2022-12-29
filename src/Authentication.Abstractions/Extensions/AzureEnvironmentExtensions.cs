@@ -319,6 +319,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     case AzureEnvironment.ExtendedEndpoint.AzureAppConfigurationEndpointResourceId:
                         environment.SetProperty(AzureEnvironment.ExtendedEndpoint.AzureAppConfigurationEndpointResourceId, propertyValue);
                         break;
+                    case AzureEnvironment.ExtendedEndpoint.ContainerRegistryEndpointResourceId:
+                        environment.SetProperty(AzureEnvironment.ExtendedEndpoint.ContainerRegistryEndpointResourceId, propertyValue);
+                        break;                        
                 }
             }
         }
@@ -380,6 +383,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 case AzureEnvironment.ExtendedEndpoint.AzureAppConfigurationEndpointResourceId:
                     resource = AzureEnvironment.ExtendedEndpoint.AzureAppConfigurationEndpointResourceId;
                     break;
+                case AzureEnvironment.ExtendedEndpoint.ContainerRegistryEndpointResourceId:
+                    resource = AzureEnvironment.ExtendedEndpoint.ContainerRegistryEndpointResourceId;
+                    break;                    
                 default:
                     resource = AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId;
                     break;
