@@ -227,6 +227,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzurePurviewEndpointResourceId, AzureEnvironmentConstants.AzurePurviewEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureAppConfigurationEndpointSuffix, AzureEnvironmentConstants.AzureAppConfigurationEndpointSuffix);
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureAppConfigurationEndpointResourceId, AzureEnvironmentConstants.AzureAppConfigurationEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.ContainerRegistryEndpointResourceId, AzureEnvironmentConstants.ContainerRegistryEndpointResourceId);            
             }
 
             if (azureEnvironments.ContainsKey(EnvironmentName.AzureChinaCloud))
@@ -635,7 +636,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 AzurePurviewEndpointSuffix = "AzurePurviewEndpointSuffix",
                 AzurePurviewEndpointResourceId = "AzurePurviewEndpointResourceId",
                 AzureAppConfigurationEndpointSuffix = "AzureAppConfigurationEndpointSuffix",
-                AzureAppConfigurationEndpointResourceId = "AzureAppConfigurationEndpointResourceId";
+                AzureAppConfigurationEndpointResourceId = "AzureAppConfigurationEndpointResourceId",
+                ContainerRegistryEndpointResourceId = "ContainerRegistryEndpointResourceId";
         }
     }
 }
