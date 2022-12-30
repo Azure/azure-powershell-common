@@ -227,7 +227,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzurePurviewEndpointResourceId, AzureEnvironmentConstants.AzurePurviewEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureAppConfigurationEndpointSuffix, AzureEnvironmentConstants.AzureAppConfigurationEndpointSuffix);
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureAppConfigurationEndpointResourceId, AzureEnvironmentConstants.AzureAppConfigurationEndpointResourceId);
-                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.ContainerRegistryEndpointResourceId, AzureEnvironmentConstants.ContainerRegistryEndpointResourceId);            
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.ContainerRegistryEndpointResourceId, AzureEnvironmentConstants.AzureContainerRegistryEndpointResourceId);            
             }
 
             if (azureEnvironments.ContainsKey(EnvironmentName.AzureChinaCloud))
@@ -242,6 +242,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointSuffix, AzureEnvironmentConstants.ChinaManagedHsmDnsSuffix);
                 azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.MicrosoftGraphEndpointResourceId, AzureEnvironmentConstants.ChinaMicrosoftGraphEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.MicrosoftGraphUrl, AzureEnvironmentConstants.ChinaMicrosoftGraphUrl);
+                azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.ContainerRegistryEndpointResourceId, AzureEnvironmentConstants.ChinaContainerRegistryEndpointResourceId);
             }
 
             if (azureEnvironments.ContainsKey(EnvironmentName.AzureUSGovernment))
@@ -256,6 +257,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.ManagedHsmServiceEndpointSuffix, AzureEnvironmentConstants.USGovernmentManagedHsmDnsSuffix);
                 azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.MicrosoftGraphEndpointResourceId, AzureEnvironmentConstants.USGovernmentMicrosoftGraphEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.MicrosoftGraphUrl, AzureEnvironmentConstants.USGovernmentMicrosoftGraphUrl);
+                azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.ContainerRegistryEndpointResourceId, AzureEnvironmentConstants.USGovernmentContainerRegistryEndpointResourceId);
             }
         }
 

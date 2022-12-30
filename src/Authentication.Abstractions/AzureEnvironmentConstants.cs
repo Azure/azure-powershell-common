@@ -274,6 +274,13 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzureAppConfigurationEndpointSuffix = "azconfig.io";
         public const string AzureAppConfigurationEndpointResourceId = "https://azconfig.io";
 
-        public const string ContainerRegistryEndpointResourceId = "https://management.azure.com";
+        /// <summary>
+        /// The endpoint Resource Id for Azure Container Registry
+        /// </summary>
+        public const string ChinaContainerRegistryEndpointResourceId = "https://management.chinacloudapi.cn";
+        public const string USGovernmentContainerRegistryEndpointResourceId = "https://management.usgovcloudapi.net";
+        public const string AzureContainerRegistryEndpointResourceId = "https://management.azure.com";
+
+
     }
 }
