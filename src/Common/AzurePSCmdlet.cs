@@ -56,7 +56,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         // Using Ansi Code to control font color(97(Bold White)) and background color(0;120;212(RGB))
         private static readonly string ansiCodePrefix = "\u001b[97;48;2;0;120;212m";
 
-        // using '[k' for erase in line. '[0m' to ending ansi code  
+        // using '[k' for erase in line. '[0m' to ending ansi code
         private static readonly string ansiCodeSuffix = "\u001b[K\u001b[0m";
 
         protected AzurePSDataCollectionProfile _dataCollectionProfile
@@ -386,8 +386,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// </summary>
         protected override void EndProcessing()
         {
-            if (MetricHelper.IsCalledByUser() 
-                && SurveyHelper.GetInstance().ShouldPromptAzSurvey() 
+            if (MetricHelper.IsCalledByUser()
+                && SurveyHelper.GetInstance().ShouldPromptAzSurvey()
                 && (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
                 && !configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableInterceptSurvey).Equals(false)))
             {
@@ -406,6 +406,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 // When cmdlet is called within another cmdlet, we will not add a new telemetry, but add the cmdlet name to InternalCalledCmdlets
                 MetricHelper.AppendInternalCalledCmdlet(this.MyInvocation?.MyCommand?.Name);
             }
+            WriteEndProcessingRecommendation();
             LogCmdletEndInvocationInfo();
             TearDownDebuggingTraces();
             TearDownHttpClientPipeline();
@@ -413,6 +414,13 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             base.EndProcessing();
         }
 
+        private void WriteEndProcessingRecommendation()
+        {
+            if (AzureSession.Instance.TryGetComponent<IEndProcessingRecommendationService>(nameof(IEndProcessingRecommendationService), out var service))
+            {
+                service.Handle(this, MyInvocation);
+            }
+        }
 
         protected string CurrentPath()
         {
