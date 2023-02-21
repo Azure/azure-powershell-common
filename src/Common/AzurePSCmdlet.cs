@@ -1065,7 +1065,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         {
             try
             {
-                var outputs = this.ExecuteScript<PSObject>("$Host.Runspace.Version");
+                var outputs = this.ExecuteScript<PSObject>("$PSVersionTable.PSVersion");
                 foreach (PSObject obj in outputs)
                 {
                     string psVersion = obj.ToString();
