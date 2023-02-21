@@ -16,17 +16,11 @@ using System.Management.Automation;
 
 namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 {
-    internal abstract class IEndProcessingRecommendationService
+    public abstract class IEndProcessingRecommendationService
     {
-        public virtual void Handle(AzurePSCmdlet azurePSCmdlet, InvocationInfo myInvocation) // wrap/abstract both types for testing
+        public virtual void Handle(AzurePSCmdlet azurePSCmdlet, InvocationInfo myInvocation, AzurePSQoSEvent _qosEvent) // wrap/abstract both types for testing
         {
-            if (myInvocation.InvocationName == "New-AzVM")
-            {
-                if (myInvocation.BoundParameters["location"] as string == "deprecated location")
-                {
-                    azurePSCmdlet.WriteInformation(new HostInformationMessage() { Message = "please use recommended location" }, new string[] { "PSHOST" });
-                }
-            }
+            // no op
         }
     }
 }

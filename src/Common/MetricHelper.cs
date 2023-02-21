@@ -331,6 +331,10 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 eventProperties.Add("survey-prompted", qos.SurveyPrompted.ToString());
             }
+            if (qos.DisplayRegionIdentified)
+            {
+                eventProperties.Add("display-region-identified", qos.DisplayRegionIdentified.ToString());
+            }
             if (qos.Uid != null)
             {
                 eventProperties.Add("UserId", qos.Uid);
@@ -603,6 +607,19 @@ public class AzurePSQoSEvent
     public string SubscriptionId { get; set; }
     public string TenantId { get; set; }
     public bool SurveyPrompted { get; set; }
+
+    /// <summary>
+    /// Appear in certain resource creation commands like New-AzVM. See RegionalRecommender (PS repo).
+    /// true if we displayed the recommendation about region.
+    /// </summary>
+    public bool DisplayRegionIdentified { get; set; } // todo: more data?
+
+    /// <summary>
+    /// Appear in Update-AzConfig.
+    /// Pairs of config key and value being updated.
+    /// "key1:value1;key2:value2"
+    /// </summary>
+    public string UpdatedConfig { get; set; }
 
     public string ParameterSetName { get; set; }
     public string InvocationName { get; set; }

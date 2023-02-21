@@ -386,6 +386,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         /// </summary>
         protected override void EndProcessing()
         {
+            WriteEndProcessingRecommendation();
             if (MetricHelper.IsCalledByUser()
                 && SurveyHelper.GetInstance().ShouldPromptAzSurvey()
                 && (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
@@ -406,7 +407,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 // When cmdlet is called within another cmdlet, we will not add a new telemetry, but add the cmdlet name to InternalCalledCmdlets
                 MetricHelper.AppendInternalCalledCmdlet(this.MyInvocation?.MyCommand?.Name);
             }
-            WriteEndProcessingRecommendation();
             LogCmdletEndInvocationInfo();
             TearDownDebuggingTraces();
             TearDownHttpClientPipeline();
@@ -418,7 +418,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         {
             if (AzureSession.Instance.TryGetComponent<IEndProcessingRecommendationService>(nameof(IEndProcessingRecommendationService), out var service))
             {
-                service.Handle(this, MyInvocation);
+                service.Handle(this, MyInvocation, _qosEvent);
             }
         }
 
