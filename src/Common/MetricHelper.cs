@@ -119,7 +119,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                         try
                         {
                             var macAddress = _networkHelper.GetMACAddress();
-                            _hashMacAddress = string.IsNullOrWhiteSpace(macAddress) 
+                            _hashMacAddress = string.IsNullOrWhiteSpace(macAddress)
                                 ? null : GenerateSha256HashString(macAddress)?.Replace("-", string.Empty)?.ToLowerInvariant();
                         }
                         catch
@@ -255,7 +255,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 Dictionary<string, string> eventProperties = new Dictionary<string, string>();
                 LoadTelemetryClientContext(qos, client.Context);
                 PopulatePropertiesFromQos(qos, eventProperties);
-                // qos.Exception contains exception message which may contain Users specific data. 
+                // qos.Exception contains exception message which may contain Users specific data.
                 // We should not collect users specific data.
                 eventProperties.Add("Message", "Message removed due to PII.");
                 eventProperties.Add("StackTrace", qos.Exception.StackTrace);
@@ -401,7 +401,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                                                     ? qos.Exception.Data[AzurePSErrorDataKeys.ErrorKindKey].ToString()
                                                     : null;
                         cloudErrorCode = (string)qos.Exception.Data[AzurePSErrorDataKeys.CloudErrorCodeKey];
-                        // For the time being, we consider ResourceNotFound and ResourceGroupNotFound as user's input error. 
+                        // For the time being, we consider ResourceNotFound and ResourceGroupNotFound as user's input error.
                         // We are considering if ResourceNotFound should be false positive error.
                         if (("ResourceNotFound".Equals(cloudErrorCode) || "ResourceGroupNotFound".Equals(cloudErrorCode))
                             && existingErrorKind != ErrorKind.FalseError)
@@ -413,7 +413,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                     StringBuilder sb = new StringBuilder();
                     foreach (var key in qos.Exception.Data?.Keys)
                     {
-                        if (AzurePSErrorDataKeys.IsKeyPredefined(key.ToString()) 
+                        if (AzurePSErrorDataKeys.IsKeyPredefined(key.ToString())
                             && !AzurePSErrorDataKeys.HttpStatusCode.Equals(key))
                         {
                             if (sb.Length > 0)
@@ -481,8 +481,8 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
         public bool IsMetricTermAccepted()
         {
-            return _profile != null 
-                && _profile.EnableAzureDataCollection.HasValue 
+            return _profile != null
+                && _profile.EnableAzureDataCollection.HasValue
                 && _profile.EnableAzureDataCollection.Value;
         }
 
@@ -604,6 +604,12 @@ public class AzurePSQoSEvent
     public string TenantId { get; set; }
     public bool SurveyPrompted { get; set; }
 
+    /// <summary>
+    /// Appear in certain resource creation commands like New-AzVM. See RegionalRecommender (PS repo).
+    /// Represent the recommended region if we do have recommendation.
+    /// </summary>
+    public string DisplayRegionIdentified { get; set; }
+
     public string ParameterSetName { get; set; }
     public string InvocationName { get; set; }
     public Dictionary<string, string> CustomProperties { get; private set; }
@@ -637,8 +643,8 @@ public class AzurePSQoSEvent
     public override string ToString()
     {
         StringBuilder sb = new StringBuilder("AzureQoSEvent: ");
-        if (ShowTelemetry) 
-        {   
+        if (ShowTelemetry)
+        {
             foreach(PropertyDescriptor descriptor in TypeDescriptor.GetProperties((this)))
                 {
                     string name = descriptor.Name;
@@ -652,7 +658,7 @@ public class AzurePSQoSEvent
         {
             sb = sb.Append($" Module: {ModuleName}:{ModuleVersion}; CommandName: {CommandName}; PSVersion: {PSVersion}");
         }
-        
+
         sb.Append($"; IsSuccess: {IsSuccess}; Duration: {Duration}");
 
         if (Exception != null)
