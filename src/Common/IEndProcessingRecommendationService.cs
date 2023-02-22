@@ -22,9 +22,12 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
     /// </summary>
     public abstract class IEndProcessingRecommendationService
     {
-        public virtual void Process(AzurePSCmdlet azurePSCmdlet, InvocationInfo myInvocation, AzurePSQoSEvent _qosEvent)
-        {
-            // no op
-        }
+        /// <summary>
+        /// Process the cmdlet execution and display recommendation messages if any.
+        /// </summary>
+        /// <param name="azurePSCmdlet">Cmdlet instance, for writing messages.</param>
+        /// <param name="myInvocation">Contains info about cmdlet, module, parameters.</param>
+        /// <param name="_qosEvent">To record successful recommendation.</param>
+        public abstract void Process(AzurePSCmdlet azurePSCmdlet, InvocationInfo myInvocation, AzurePSQoSEvent _qosEvent);
     }
 }
