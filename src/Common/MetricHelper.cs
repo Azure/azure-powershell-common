@@ -331,6 +331,10 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 eventProperties.Add("survey-prompted", qos.SurveyPrompted.ToString());
             }
+            if (!string.IsNullOrEmpty(qos.DisplayRegionIdentified))
+            {
+                eventProperties.Add("DisplayRegionIdentified", qos.DisplayRegionIdentified);
+            }
             if (qos.Uid != null)
             {
                 eventProperties.Add("UserId", qos.Uid);
