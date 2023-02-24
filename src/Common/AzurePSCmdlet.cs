@@ -19,6 +19,7 @@ using Microsoft.Azure.PowerShell.Common.Share.Survey;
 using Microsoft.Azure.ServiceManagement.Common.Models;
 using Microsoft.WindowsAzure.Commands.Common;
 using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
+using Microsoft.WindowsAzure.Commands.Common.Utilities;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -702,9 +703,16 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             if (this.MyInvocation != null && this.MyInvocation.BoundParameters != null
                 && this.MyInvocation.BoundParameters.Keys != null)
             {
-                _qosEvent.Parameters = string.Join(" ",
-                    this.MyInvocation.BoundParameters.Keys.Select(
-                        s => string.Format(CultureInfo.InvariantCulture, "-{0} ***", s)));
+                if (AzureSession.Instance.TryGetComponent<IParameterTelemetryFormatter>(nameof(IParameterTelemetryFormatter), out var formatter))
+                {
+                    _qosEvent.Parameters = formatter.FormatParameters(MyInvocation.BoundParameters);
+                }
+                else
+                {
+                    _qosEvent.Parameters = string.Join(" ",
+                        this.MyInvocation.BoundParameters.Keys.Select(
+                            s => string.Format(CultureInfo.InvariantCulture, "-{0} ***", s)));
+                }
             }
         }
 
