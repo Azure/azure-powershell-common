@@ -33,6 +33,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
     {
         private const string ArmMetadataEnvVariable = "ARM_CLOUD_METADATA_URL";
 
+        private const string DefaultArmMetaDataEndpoint = "https://management.azure.com/metadata/endpoints?api-version=2022-09-01";
         private const string DisableArmMetaDataEndpoint = "DISABLED";
 
         internal static IDictionary<string, AzureEnvironment> InitializeBuiltInEnvironments(string armMetadataRequestUri, Action<string> debugLogger = null, Action<string> warningLogger = null, IHttpOperations httpOperations = null)
@@ -56,13 +57,21 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 if (!string.IsNullOrEmpty(armMetadataRequestUri))
                 {
                     debugLogger?.Invoke($"Discover environments via {armMetadataRequestUri}");
-                    var list = InitializeEnvironmentsFromArm(armMetadataRequestUri, httpOperations).ConfigureAwait(false).GetAwaiter().GetResult();
-                    foreach (var metadata in list)
+                    try
                     {
-                        var env = MapArmToAzureEnvironment(metadata);
-                        env.Type = TypeDiscovered;
-                        armAzureEnvironments[env.Name] = env;
-                        debugLogger?.Invoke($"Added discovered environment {env.Name}");
+                        var list = InitializeEnvironmentsFromArm(armMetadataRequestUri, httpOperations).ConfigureAwait(false).GetAwaiter().GetResult();
+                        foreach (var metadata in list)
+                        {
+                            var env = MapArmToAzureEnvironment(metadata);
+                            env.Type = TypeDiscovered;
+                            armAzureEnvironments[env.Name] = env;
+                            debugLogger?.Invoke($"Added discovered environment {env.Name}");
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        warningLogger?.Invoke($"Cannot discover environments from Arm with Uri {armMetadataRequestUri}");
+                        warningLogger?.Invoke(e.StackTrace);
                     }
                 }
             }
@@ -191,7 +200,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             if (!string.IsNullOrEmpty(armMetadata.MicrosoftGraphResourceId))
             {
                 azureEnvironment.SetProperty(ExtendedEndpoint.MicrosoftGraphEndpointResourceId, armMetadata.MicrosoftGraphResourceId);
-                //Default ARM endpoint doens't provide MicrosoftGraphUrl. Keep it here just in case.
+                // ARM endpoint only gives us graph resource ID (with ending slash "/"),
+                // we assume the Url (endpoint to where we send requests) equals the resource ID without the slash
                 if (armMetadata.MicrosoftGraphResourceId.EndsWith("/"))
                 {
                     azureEnvironment.SetProperty(ExtendedEndpoint.MicrosoftGraphUrl,
@@ -216,8 +226,13 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     azureEnvironment.SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointSuffix, armMetadata.Suffixes.SynapseAnalytics);
                 }
             }
-            //Todo:MhsmDns=ManagedHsmServiceEndpointSuffix;AzureManagedHsmServiceEndpointResourceId not provided
-            //Todo:AcrLoginServer=ContainerRegistryEndpointSuffix;ContainerRegistryEndpointResourceId not provided
+
+            //ManagedHsmServiceEndpointSuffix currently uses Built-in endpoint.
+            //In new ArmMedata, ManagedHsmServiceEndpointSuffix is provided as so 'MhsmDns'.
+            //But it doesn't' make sense to just refresh ManagedHsmServiceEndpointSuffix from ARM without AzureManagedHsmServiceEndpointResourceId.
+            //If we want to refresh AzureManagedHsmServiceEndpointResourceId with reference to ManagedHsmServiceEndpointSuffix,
+            //we need to check with Arm team and service team. And so we can do this when we receive the request from the service team.
+            //ContainerRegistryEndpointSuffix(AcrLoginServer) is the same case.
 
             return azureEnvironment;
         }

@@ -12,15 +12,7 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces;
-using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
@@ -35,7 +27,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// </summary>
         private static AzureEnvironment GetBuiltInAzureCloud()
         {
-            var azureEnv = new AzureEnvironment
+            return new AzureEnvironment
             {
                 Name = EnvironmentName.AzureCloud,
                 Type = TypeBuiltIn,
@@ -70,7 +62,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     { ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId, AzureEnvironmentConstants.AzureSynapseAnalyticsEndpointResourceId }
                 }
             };
-            return azureEnv;
         }
 
         /// <summary>
@@ -78,7 +69,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// </summary>
         private static AzureEnvironment GetBuiltInChinaAzureCloud()
         {
-            var azureEnv = new AzureEnvironment
+            return new AzureEnvironment
             {
                 Name = EnvironmentName.AzureChinaCloud,
                 Type = TypeBuiltIn,
@@ -111,7 +102,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     { ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId, AzureEnvironmentConstants.ChinaSynapseAnalyticsEndpointResourceId }
                 }
             };
-            return azureEnv;
         }
 
         /// <summary>
@@ -119,7 +109,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// </summary>
         private static AzureEnvironment GetBuiltInUSGovernmentCloud()
         {
-            var azureEnv = new AzureEnvironment
+            return new AzureEnvironment
             {
                 Name = EnvironmentName.AzureUSGovernment,
                 Type = TypeBuiltIn,
@@ -152,7 +142,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     { ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId, AzureEnvironmentConstants.USGovernmentAnalysisServicesEndpointResourceId }
                 }
             };
-            return azureEnv;
         }
 
         /// <summary>
