@@ -70,8 +70,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     }
                     catch (Exception e)
                     {
-                        warningLogger?.Invoke($"Cannot discover environments from Arm with Uri {armMetadataRequestUri}");
-                        warningLogger?.Invoke(e.StackTrace);
+                        warningLogger?.Invoke($"Cannot discover environments from ARM with URI {armMetadataRequestUri}. Falling back to built-in environments.");
+                        debugLogger?.Invoke(e.StackTrace);
                     }
                 }
             }
