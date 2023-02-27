@@ -705,7 +705,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             {
                 if (AzureSession.Instance.TryGetComponent<IParameterTelemetryFormatter>(nameof(IParameterTelemetryFormatter), out var formatter))
                 {
-                    _qosEvent.Parameters = formatter.FormatParameters(MyInvocation.BoundParameters);
+                    _qosEvent.Parameters = formatter.FormatParameters(MyInvocation);
                 }
                 else
                 {

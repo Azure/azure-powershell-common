@@ -13,6 +13,7 @@
 // ----------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Management.Automation;
 
 namespace Microsoft.WindowsAzure.Commands.Common.Utilities
 {
@@ -24,8 +25,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Utilities
         /// <summary>
         /// Format the bound parameters to a string without sensitive data.
         /// </summary>
-        /// <param name="boundParameters">Used parameters of current invocation.</param>
+        /// <param name="invocation">Info about cmdlet invocation</param>
         /// <returns>The formatted string.</returns>
-        string FormatParameters(IDictionary<string, object> boundParameters);
+        string FormatParameters(InvocationInfo invocation);
     }
 }
