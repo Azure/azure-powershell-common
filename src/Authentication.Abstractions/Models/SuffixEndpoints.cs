@@ -21,7 +21,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models
     {
         /// <summary>
         /// Gets or sets the AzureDataLakeStoreFileSystem endpoint.
-        /// </summary>        
+        /// </summary>
         public string AzureDataLakeStoreFileSystem { get; set; }
 
         /// <summary>
@@ -48,5 +48,45 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models
         /// Gets or sets the Storage endpoint.
         /// </summary>
         public string Storage { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Azure FrontDoor endpoint.
+        /// </summary>
+        public string AzureFrontDoorEndpointSuffix { get; set; }
+
+        /// <summary>
+        /// Gets or sets the StorageSync endpoint.
+        /// </summary>
+        public string StorageSyncEndpointSuffix { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ManagedHSM endpoint.
+        /// </summary>
+        public string MhsmDns { get; set; }
+
+        /// <summary>
+        /// Gets or sets the MySqlServer endpoint.
+        /// </summary>
+        public string MysqlServerEndpoint { get; set; }
+
+        /// <summary>
+        /// Gets or sets the PostgresqlServer endpoint.
+        /// </summary>
+        public string PostgresqlServerEndpoint { get; set; }
+
+        /// <summary>
+        /// Gets or sets the MariadbServer endpoint.
+        /// </summary>
+        public string MariadbServerEndpoint { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SynapseAnalytics endpoint.
+        /// </summary>
+        public string SynapseAnalytics { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Attestation endpoint.
+        /// </summary>
+        public string AttestationEndpoint { get; set; }
     }
 }

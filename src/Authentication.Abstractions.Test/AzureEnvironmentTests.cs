@@ -53,6 +53,29 @@ namespace Authentication.Abstractions.Test
         }
 
         [Fact]
+        public void TestArmCloudMetadata20220901Init()
+        {
+            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData\ArmResponse2022-09-01.json");
+            var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
+
+            // Check all discovered environments are loaded.
+            Assert.Equal(3, armEnvironments.Count);
+            foreach (var env in armEnvironments.Values)
+            {
+                if (env.Name == "AzureCloud")
+                {
+                    Assert.Equal(AzureEnvironment.TypeDiscovered, env.Type);
+                }
+                else
+                {
+                    Assert.Equal(AzureEnvironment.TypeBuiltIn, env.Type);
+                }
+                Assert.EndsWith("/", env.ServiceManagementUrl);
+                Assert.StartsWith(".", env.SqlDatabaseDnsSuffix);
+            }
+        }
+
+        [Fact]
         public void TestArmResponseNoAzureCloud()
         {
             Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData\ArmResponseNoAzureCloud.json");

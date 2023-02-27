@@ -87,5 +87,40 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models
         /// Gets or sets the Gallery endpoint.
         /// </summary>
         public string Gallery { get; set; }
+
+        /// <summary>
+        /// Gets or sets the MicrosoftGraph endpoint.
+        /// </summary>
+        public string MicrosoftGraphResourceId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ApplicationInsight endpoint.
+        /// </summary>
+        public string AppInsightsResourceId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ApplicationInsightsTelemetryChannel endpoint.
+        /// </summary>
+        public string AppInsightsTelemetryChannelResourceId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Attestation endpoint.
+        /// </summary>
+        public string AttestationResourceId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SynapseAnalytics endpoint.
+        /// </summary>
+        public string SynapseAnalyticsResourceId { set; get; }
+
+        /// <summary>
+        /// Gets or sets the LogAnalytics endpoint.
+        /// </summary>
+        public string LogAnalyticsResourceId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the OssrDbms endpoint.
+        /// </summary>
+        public string OssrDbmsResourceId { get; set; }
     }
 }
