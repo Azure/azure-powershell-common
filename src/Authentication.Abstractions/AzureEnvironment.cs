@@ -44,7 +44,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 if (string.IsNullOrEmpty(armMetadataRequestUri))
                 {
                     armMetadataRequestUri = Environment.GetEnvironmentVariable(ArmMetadataEnvVariable);
-                    if (!string.IsNullOrEmpty(armMetadataRequestUri))
+                    if (string.IsNullOrEmpty(armMetadataRequestUri))
+                    {
+                        armMetadataRequestUri = DefaultArmMetaDataEndpoint;
+                    }
+                    else
                     {
                         debugLogger?.Invoke($"Get {armMetadataRequestUri} from environment variable {ArmMetadataEnvVariable}");
                     }
