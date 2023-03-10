@@ -224,7 +224,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 
             if (!string.IsNullOrEmpty(armMetadata.SynapseAnalyticsResourceId))
             {
-                azureEnvironment.SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointSuffix, armMetadata.SynapseAnalyticsResourceId);
+                azureEnvironment.SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId, armMetadata.SynapseAnalyticsResourceId);
                 if (!string.IsNullOrEmpty(armMetadata.Suffixes.SynapseAnalytics))
                 {
                     azureEnvironment.SetProperty(ExtendedEndpoint.AzureSynapseAnalyticsEndpointSuffix, armMetadata.Suffixes.SynapseAnalytics);
