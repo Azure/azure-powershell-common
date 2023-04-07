@@ -467,17 +467,11 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 Message = ansiCodePrefix + "https://go.microsoft.com/fwlink/?linkid=2202892"+ ansiCodeSuffix,
                 NoNewLine = true,
             };
-            HostInformationMessage dot = new HostInformationMessage()
-            {
-                Message = ansiCodePrefix + "."+ ansiCodeSuffix,
-                NoNewLine = true,
-            };
             WriteInformation(newLine, new string[] { "PSHOST" });
             WriteInformation(howWas, new string[] { "PSHOST" });
             WriteInformation(link, new string[] { "PSHOST" });
             WriteInformation(action, new string[] { "PSHOST" });
             WriteInformation(website, new string[] { "PSHOST" });
-            WriteInformation(dot, new string[] { "PSHOST" });
             WriteInformation(newLine, new string[] { "PSHOST" });
 
 
