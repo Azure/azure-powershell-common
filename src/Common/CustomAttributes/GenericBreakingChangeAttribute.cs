@@ -35,7 +35,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
     public class GenericBreakingChangeAttribute : System.Attribute
     {
         private string _message;
-        //A dexcription of what the change is about, non mandatory
+        //A description of what the change is about, non mandatory
         public string ChangeDescription { get; set; } = null;
 
         //The version the change is effective from, non mandatory
@@ -83,9 +83,9 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 
         /**
          * This function returns the breaking change text for the attribute
-         * If the withCmdletName is true we return the message with the cmdlet name in it otherwse not
+         * If the withCmdletName is true we return the message with the cmdlet name in it otherwise not
          *
-         * We get the cmdlet name from the passed in Type (it is expected to have the CMdlet attribute decorated on the class)
+         * We get the cmdlet name from the passed in Type (it is expected to have the Cmdlet attribute decorated on the class)
          */
         public string GetBreakingChangeTextFromAttribute(Type type, bool withCmdletName)
         {
@@ -128,7 +128,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
          * If the "withCmdletName" is specified, the message is printed out with the cmdlet name in it
          * otherwise not
          * 
-         * We get the cmdlet name from the passed in Type (it is expected to have the CMdlet attribute decorated on the class)
+         * We get the cmdlet name from the passed in Type (it is expected to have the Cmdlet attribute decorated on the class)
          * */
         public void PrintCustomAttributeInfo(Type type, bool withCmdletName, Action<string> writeOutput)
         {
