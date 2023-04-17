@@ -1,12 +1,4 @@
-﻿//public CmdletOutputBreakingChangeWithVersionAttribute(string message, string deprecateByVersion) : base(message, deprecateByVersion)
-//{
-//}
-
-//public CmdletOutputBreakingChangeWithVersionAttribute(string message, string deprecateByVersion, string changeInEfectByDate) : base(message, deprecateByVersion, changeInEfectByDate)
-//{
-//}
-
-// ----------------------------------------------------------------------------------
+﻿// ----------------------------------------------------------------------------------
 //
 // Copyright Microsoft Corporation
 // Licensed under the Apache License, Version 2.0 (the "License");
