@@ -139,7 +139,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     { ExtendedEndpoint.MicrosoftGraphEndpointResourceId, AzureEnvironmentConstants.USGovernmentMicrosoftGraphEndpointResourceId },
                     { ExtendedEndpoint.MicrosoftGraphUrl, AzureEnvironmentConstants.USGovernmentMicrosoftGraphUrl },
                     { ExtendedEndpoint.AzureSynapseAnalyticsEndpointSuffix, AzureEnvironmentConstants.USGovernmentSynapseAnalyticsEndpointSuffix },
-                    { ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId, AzureEnvironmentConstants.USGovernmentAnalysisServicesEndpointResourceId }
+                    { ExtendedEndpoint.AzureSynapseAnalyticsEndpointResourceId, AzureEnvironmentConstants.USGovernmentSynapseAnalyticsEndpointResourceId }
                 }
             };
         }
