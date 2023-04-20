@@ -281,6 +281,15 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string USGovernmentContainerRegistryEndpointResourceId = "https://management.usgovcloudapi.net";
         public const string AzureContainerRegistryEndpointResourceId = "https://management.azure.com";
 
+        /// <summary>
+        /// The domain name suffix for Azure DevCenter
+        /// </summary>
+        public const string AzureDevCenterEndpointSuffix = "devcenter.azure.net";
+
+        /// <summary>
+        /// The token audience for authorizing DevCenter Service requests
+        /// </summary>
+        public const string AzureDevCenterEndpointResourceId = "https://devcenter.azure.net";
 
     }
 }
