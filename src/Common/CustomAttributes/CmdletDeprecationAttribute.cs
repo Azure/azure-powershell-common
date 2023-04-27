@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 {
+    [Obsolete("CmdletDeprecationAttribute is deprecated. Please use CmdletDeprecationWithVersionAttribute instead to ensure that version information is included in the deprecation message.", false)]
     [AttributeUsage(
      AttributeTargets.Class,
      AllowMultiple = true)]

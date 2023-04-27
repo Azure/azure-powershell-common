@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 {
+    [Obsolete("CmdletOutputBreakingChangeAttribute is deprecated. Please use CmdletOutputBreakingChangeWithVersionAttribute instead to ensure that version information is included in the breaking change message.", false)]
     [AttributeUsage(
      AttributeTargets.Class,
      AllowMultiple = true)]

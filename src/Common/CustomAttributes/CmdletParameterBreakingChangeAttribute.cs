@@ -22,6 +22,7 @@ using System.Management.Automation;
 
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 {
+    [Obsolete("CmdletParameterBreakingChangeAttribute is deprecated. Please use CmdletParameterBreakingChangeWithVersionAttribute instead to ensure that version information is included in the breaking change message.", false)]
     [AttributeUsage(
      AttributeTargets.Property |
      AttributeTargets.Field,
@@ -80,7 +81,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
                 }
             }
 
-           //See if the type of the param is changing
+            //See if the type of the param is changing
             if (OldParamaterType != null && !string.IsNullOrWhiteSpace(NewParameterTypeName))
             {
                 message.Append(string.Format(Resources.BreakingChangeAttributeParameterTypeChange, OldParamaterType.FullName, NewParameterTypeName));
@@ -90,7 +91,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 
         /// <summary>
         /// See if the bound parameters contain the current parameter, if they do
-        /// then the attribbute is applicable
+        /// then the attribute is applicable
         /// If the invocationInfo is null we return true
         /// </summary>
         /// <param name="invocationInfo"></param>

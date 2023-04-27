@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 {
+    [Obsolete("GenericBreakingChangeAttribute is deprecated. Please use GenericBreakingChangeWithVersionAttribute instead to ensure that version information is included in the breaking change message.", false)]
     [AttributeUsage(
      AttributeTargets.Class |
      AttributeTargets.Field |
