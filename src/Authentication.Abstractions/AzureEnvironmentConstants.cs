@@ -284,12 +284,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// The domain name suffix for Azure DevCenter
         /// </summary>
-        public const string AzureDevCenterEndpointSuffix = "devcenter.azure.net";
+        public const string AzureDevCenterEndpointSuffix = "devcenter.azure.com";
 
         /// <summary>
         /// The token audience for authorizing DevCenter Service requests
         /// </summary>
-        public const string AzureDevCenterEndpointResourceId = "https://devcenter.azure.net";
+        public const string AzureDevCenterEndpointResourceId = "https://devcenter.azure.com";
 
     }
 }
