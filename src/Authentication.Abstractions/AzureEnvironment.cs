@@ -563,7 +563,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 AzurePurviewEndpointResourceId = "AzurePurviewEndpointResourceId",
                 AzureAppConfigurationEndpointSuffix = "AzureAppConfigurationEndpointSuffix",
                 AzureAppConfigurationEndpointResourceId = "AzureAppConfigurationEndpointResourceId",
-                ContainerRegistryEndpointResourceId = "ContainerRegistryEndpointResourceId";
+                ContainerRegistryEndpointResourceId = "ContainerRegistryEndpointResourceId",
+                AzureDevCenterEndpointSuffix = "AzureDevCenterEndpointSuffix",
+                AzureDevCenterEndpointResourceId = "AzureDevCenterEndpointResourceId";
         }
     }
 }
