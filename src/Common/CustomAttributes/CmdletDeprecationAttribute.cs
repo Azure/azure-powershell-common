@@ -28,6 +28,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
     {
         public string ReplacementCmdletName { get; set; }
 
+        [Obsolete("Please provide the deprecate version", false)]
         public CmdletDeprecationAttribute() :
             base(string.Empty)
         {
