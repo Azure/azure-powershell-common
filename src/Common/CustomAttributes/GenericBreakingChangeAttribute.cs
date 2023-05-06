@@ -51,6 +51,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         //New way fo calling the cmdlet
         public string NewWay { get; set; }
 
+        [Obsolete("Please provide the deprecate version", false)]
         public GenericBreakingChangeAttribute(string message)
         {
             _message = message;

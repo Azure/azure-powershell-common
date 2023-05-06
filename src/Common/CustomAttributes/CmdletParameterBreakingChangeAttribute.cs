@@ -38,6 +38,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 
         public String NewParameterTypeName { get; set; }
 
+        [Obsolete("Please provide the deprecate version", false)]
         public CmdletParameterBreakingChangeAttribute(string nameOfParameterChanging) :
             base(string.Empty)
         {
