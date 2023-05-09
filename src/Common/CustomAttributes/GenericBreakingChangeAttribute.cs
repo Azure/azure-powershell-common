@@ -174,5 +174,10 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         {
             return _message;
         }
+
+        protected virtual string GetAttributeSpecificVersion()
+        {
+            return DeprecateByVersion;
+        }
     }
 }
