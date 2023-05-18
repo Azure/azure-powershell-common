@@ -44,15 +44,29 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         {
             this.NameOfParameterChanging = nameOfParameterChanging;
         }
-
+        
+        [Obsolete("Please provide the deprecate Az version and module version")]
         public CmdletParameterBreakingChangeAttribute(string nameOfParameterChanging, string deprecateByVersion) :
              base(string.Empty, deprecateByVersion)
         {
             this.NameOfParameterChanging = nameOfParameterChanging;
         }
 
+        [Obsolete("Please provide the deprecate Az version and module version")]
         public CmdletParameterBreakingChangeAttribute(string nameOfParameterChanging, string deprecateByVersion, string changeInEfectByDate) :
              base(string.Empty, deprecateByVersion, changeInEfectByDate)
+        {
+            this.NameOfParameterChanging = nameOfParameterChanging;
+        }
+        
+        public CmdletParameterBreakingChangeAttribute(string nameOfParameterChanging, Version deprecateByAzVersion, Version deprecateByVersion) :
+             base(string.Empty, deprecateByAzVersion, deprecateByVersion)
+        {
+            this.NameOfParameterChanging = nameOfParameterChanging;
+        }
+
+        public CmdletParameterBreakingChangeAttribute(string nameOfParameterChanging, Version deprecateByAzVersion, Version deprecateByVersion, string changeInEfectByDate) :
+             base(string.Empty, deprecateByAzVersion, deprecateByVersion, changeInEfectByDate)
         {
             this.NameOfParameterChanging = nameOfParameterChanging;
         }
