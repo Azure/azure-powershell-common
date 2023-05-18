@@ -35,7 +35,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         public string[] DeprecatedOutputProperties { get; set; }
 
         public string[] NewOutputProperties { get; set; }
-
+        
         [Obsolete("Please provide the deprecate Az version and module version")]
         public CmdletOutputBreakingChangeAttribute(Type deprecatedCmdletOutputTypeName) :
             base(string.Empty)
