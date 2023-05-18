@@ -35,22 +35,36 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         public string[] DeprecatedOutputProperties { get; set; }
 
         public string[] NewOutputProperties { get; set; }
-        
-        [Obsolete("Please provide the deprecate version", false)]
+
+        [Obsolete("Please provide the deprecate Az version and module version")]
         public CmdletOutputBreakingChangeAttribute(Type deprecatedCmdletOutputTypeName) :
             base(string.Empty)
         {
             this.DeprecatedCmdLetOutputType = deprecatedCmdletOutputTypeName;
         }
-
+        
+        [Obsolete("Please provide the deprecate Az version and module version")]
         public CmdletOutputBreakingChangeAttribute(Type deprecatedCmdletOutputTypeName, string deprecateByVersion) :
              base(string.Empty, deprecateByVersion)
         {
             this.DeprecatedCmdLetOutputType = deprecatedCmdletOutputTypeName;
         }
 
+        [Obsolete("Please provide the deprecate Az version and module version")]
         public CmdletOutputBreakingChangeAttribute(Type deprecatedCmdletOutputTypeName, string deprecateByVersion, string changeInEfectByDate) :
              base(string.Empty, deprecateByVersion, changeInEfectByDate)
+        {
+            this.DeprecatedCmdLetOutputType = deprecatedCmdletOutputTypeName;
+        }
+        
+        public CmdletOutputBreakingChangeAttribute(Type deprecatedCmdletOutputTypeName, Version deprecateByAzVersion, Version deprecateByVersion) :
+             base(string.Empty, deprecateByAzVersion, deprecateByVersion)
+        {
+            this.DeprecatedCmdLetOutputType = deprecatedCmdletOutputTypeName;
+        }
+
+        public CmdletOutputBreakingChangeAttribute(Type deprecatedCmdletOutputTypeName, Version deprecateByAzVersion, Version deprecateByVersion, string changeInEfectByDate) :
+             base(string.Empty, deprecateByAzVersion, deprecateByVersion, changeInEfectByDate)
         {
             this.DeprecatedCmdLetOutputType = deprecatedCmdletOutputTypeName;
         }
