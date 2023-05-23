@@ -103,11 +103,6 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
                 breakingChangeMessage.Append(string.Format(Resources.BreakingChangesAttributesInEffectByDateMessage, this.ChangeInEffectByDate));
             }
 
-            if (!string.IsNullOrWhiteSpace(DeprecateByAzVersion))
-            {
-                breakingChangeMessage.Append(string.Format(Resources.BreakingChangesAttributesInEffectByAzVersion, this.DeprecateByAzVersion));
-            }
-
             if (!string.IsNullOrWhiteSpace(DeprecateByVersion))
             {
                 breakingChangeMessage.Append(string.Format(Resources.BreakingChangesAttributesInEffectByVersion, this.DeprecateByVersion));
@@ -151,11 +146,6 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             if (ChangeInEffectByDateSet)
             {
                 writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByDateMessage, this.ChangeInEffectByDate));
-            }
-
-            if (!string.IsNullOrWhiteSpace(DeprecateByAzVersion))
-            {
-                writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByAzVersion, this.DeprecateByAzVersion));
             }
 
             if (!string.IsNullOrWhiteSpace(DeprecateByVersion))
