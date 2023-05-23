@@ -28,18 +28,31 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
     {
         public string ReplacementCmdletName { get; set; }
 
+        [Obsolete("Please provide the deprecate Az version and module version")]
         public CmdletDeprecationAttribute() :
             base(string.Empty)
         {
         }
 
+        [Obsolete("Please provide the deprecate Az version and module version")]
         public CmdletDeprecationAttribute(string deprecateByVersione) :
              base(string.Empty, deprecateByVersione)
         {
         }
 
+        [Obsolete("Please provide the deprecate Az version and module version")]
         public CmdletDeprecationAttribute(string deprecateByVersion, string changeInEfectByDate) :
              base(string.Empty, deprecateByVersion, changeInEfectByDate)
+        {
+        }
+
+        public CmdletDeprecationAttribute(Version deprecateByAzVersion, Version deprecateByVersion) :
+             base(string.Empty, deprecateByAzVersion, deprecateByVersion)
+        {
+        }
+
+        public CmdletDeprecationAttribute(Version deprecateByAzVersion, Version deprecateByVersion, string changeInEfectByDate) :
+             base(string.Empty, deprecateByAzVersion, deprecateByVersion, changeInEfectByDate)
         {
         }
 
