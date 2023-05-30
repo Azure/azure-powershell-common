@@ -14,33 +14,23 @@
 
 using Microsoft.WindowsAzure.Commands.Common.Properties;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 {
-    [Obsolete("CmdletDeprecationAttribute is deprecated. Please use CmdletDeprecationWithVersionAttribute instead to ensure that version information is included in the deprecation message.", false)]
     [AttributeUsage(
      AttributeTargets.Class,
      AllowMultiple = true)]
-    public class CmdletDeprecationAttribute : GenericBreakingChangeAttribute
+    public class CmdletDeprecationWithVersionAttribute : GenericBreakingChangeAttribute
     {
         public string ReplacementCmdletName { get; set; }
 
-        public CmdletDeprecationAttribute() :
-            base(string.Empty)
+        public CmdletDeprecationWithVersionAttribute(string deprecateByVersion) :
+             base(string.Empty, deprecateByVersion)
         {
         }
 
-        public CmdletDeprecationAttribute(string deprecateByVersione) :
-             base(string.Empty, deprecateByVersione)
-        {
-        }
-
-        public CmdletDeprecationAttribute(string deprecateByVersion, string changeInEfectByDate) :
-             base(string.Empty, deprecateByVersion, changeInEfectByDate)
+        public CmdletDeprecationWithVersionAttribute(string deprecateByVersion, string changeInEffectByDate) :
+             base(string.Empty, deprecateByVersion, changeInEffectByDate)
         {
         }
 

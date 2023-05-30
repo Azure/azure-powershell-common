@@ -14,20 +14,16 @@
 
 using Microsoft.WindowsAzure.Commands.Common.Properties;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Management.Automation;
-
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 {
-    [Obsolete("CmdletParameterBreakingChangeAttribute is deprecated. Please use CmdletParameterBreakingChangeWithVersionAttribute instead to ensure that version information is included in the breaking change message.", false)]
     [AttributeUsage(
-     AttributeTargets.Property |
-     AttributeTargets.Field,
-     AllowMultiple = true)]
-    public class CmdletParameterBreakingChangeAttribute : GenericBreakingChangeAttribute
+        AttributeTargets.Property |
+        AttributeTargets.Field,
+        AllowMultiple = true)]
+    public class CmdletParameterBreakingChangeWithVersionAttribute : GenericBreakingChangeWithVersionAttribute
     {
         public string NameOfParameterChanging { get; }
 
@@ -38,21 +34,16 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         public Type OldParamaterType { get; set; }
 
         public String NewParameterTypeName { get; set; }
+        
 
-        public CmdletParameterBreakingChangeAttribute(string nameOfParameterChanging) :
-            base(string.Empty)
-        {
-            this.NameOfParameterChanging = nameOfParameterChanging;
-        }
-
-        public CmdletParameterBreakingChangeAttribute(string nameOfParameterChanging, string deprecateByVersion) :
+        public CmdletParameterBreakingChangeWithVersionAttribute(string nameOfParameterChanging, string deprecateByVersion) :
              base(string.Empty, deprecateByVersion)
         {
             this.NameOfParameterChanging = nameOfParameterChanging;
         }
 
-        public CmdletParameterBreakingChangeAttribute(string nameOfParameterChanging, string deprecateByVersion, string changeInEfectByDate) :
-             base(string.Empty, deprecateByVersion, changeInEfectByDate)
+        public CmdletParameterBreakingChangeWithVersionAttribute(string nameOfParameterChanging, string deprecateByVersion, string changeInEffectByDate) :
+             base(string.Empty, deprecateByVersion, changeInEffectByDate)
         {
             this.NameOfParameterChanging = nameOfParameterChanging;
         }
@@ -60,7 +51,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         protected override string GetAttributeSpecificMessage()
         {
             StringBuilder message = new StringBuilder();
-           if (!string.IsNullOrWhiteSpace(ReplaceMentCmdletParameterName))
+            if (!string.IsNullOrWhiteSpace(ReplaceMentCmdletParameterName))
             {
                 if (IsBecomingMandatory)
                 {
@@ -70,12 +61,14 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
                 {
                     message.Append(string.Format(Resources.BreakingChangeAttributeParameterReplaced, NameOfParameterChanging, ReplaceMentCmdletParameterName));
                 }
-            } else
+            }
+            else
             {
                 if (IsBecomingMandatory)
                 {
                     message.Append(string.Format(Resources.BreakingChangeAttributeParameterMandatoryNow, NameOfParameterChanging));
-                } else
+                }
+                else
                 {
                     message.Append(string.Format(Resources.BreakingChangeAttributeParameterChanging, NameOfParameterChanging));
                 }

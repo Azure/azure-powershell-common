@@ -14,18 +14,14 @@
 
 using Microsoft.WindowsAzure.Commands.Common.Properties;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 {
-    [Obsolete("CmdletOutputBreakingChangeAttribute is deprecated. Please use CmdletOutputBreakingChangeWithVersionAttribute instead to ensure that version information is included in the breaking change message.", false)]
     [AttributeUsage(
      AttributeTargets.Class,
      AllowMultiple = true)]
-    public class CmdletOutputBreakingChangeAttribute : GenericBreakingChangeAttribute
+    public class CmdletOutputBreakingChangeWithVersionAttribute : GenericBreakingChangeWithVersionAttribute
     {
         public Type DeprecatedCmdLetOutputType { get; }
 
@@ -36,20 +32,15 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         public string[] DeprecatedOutputProperties { get; set; }
 
         public string[] NewOutputProperties { get; set; }
+        
 
-        public CmdletOutputBreakingChangeAttribute(Type deprecatedCmdletOutputTypeName) :
-            base(string.Empty)
-        {
-            this.DeprecatedCmdLetOutputType = deprecatedCmdletOutputTypeName;
-        }
-
-        public CmdletOutputBreakingChangeAttribute(Type deprecatedCmdletOutputTypeName, string deprecateByVersion) :
+        public CmdletOutputBreakingChangeWithVersionAttribute(Type deprecatedCmdletOutputTypeName, string deprecateByVersion) :
              base(string.Empty, deprecateByVersion)
         {
             this.DeprecatedCmdLetOutputType = deprecatedCmdletOutputTypeName;
         }
 
-        public CmdletOutputBreakingChangeAttribute(Type deprecatedCmdletOutputTypeName, string deprecateByVersion, string changeInEfectByDate) :
+        public CmdletOutputBreakingChangeWithVersionAttribute(Type deprecatedCmdletOutputTypeName, string deprecateByVersion, string changeInEfectByDate) :
              base(string.Empty, deprecateByVersion, changeInEfectByDate)
         {
             this.DeprecatedCmdLetOutputType = deprecatedCmdletOutputTypeName;
