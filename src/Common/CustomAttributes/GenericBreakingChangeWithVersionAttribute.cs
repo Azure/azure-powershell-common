@@ -147,16 +147,10 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             {
                 writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByDateMessage, this.ChangeInEffectByDate));
             }
-
-            if (!string.IsNullOrWhiteSpace(DeprecateByAzVersion))
-            {
-                writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByAzVersion, this.DeprecateByAzVersion));
-            }
-
-            if (!string.IsNullOrWhiteSpace(DeprecateByVersion))
-            {
-                writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByVersion, this.DeprecateByVersion));
-            }
+            
+            writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByAzVersion, this.DeprecateByAzVersion));
+            
+            writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByVersion, this.DeprecateByVersion));
             
             if (OldWay != null && NewWay != null)
             {
