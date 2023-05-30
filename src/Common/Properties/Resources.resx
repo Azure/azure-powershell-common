@@ -1736,6 +1736,7 @@ Note : Go to {0} for steps to suppress this breaking change warning, and other i
     <value>This cmdlet is in preview. The functionality may not be available in the selected subscription.</value>
   </data>
   <data name="BreakingChangesAttributesInEffectByAzVersion" xml:space="preserve">
-    <value>- The change is expected to take effect from the Az version : '{0}'</value>
+    <value>
+- The change is expected to take effect from Az version : '{0}'</value>
   </data>
 </root>
