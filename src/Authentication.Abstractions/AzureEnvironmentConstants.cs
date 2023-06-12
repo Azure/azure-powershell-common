@@ -47,8 +47,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// Template gallery endpoints
         /// </summary>
+        [Obsolete("Gallery endpoint is removed from ARM metadata.")]
         public const string GalleryEndpoint = "https://gallery.azure.com/";
+        [Obsolete("Gallery endpoint is removed from ARM metadata.")]
         public const string ChinaGalleryEndpoint = "https://gallery.chinacloudapi.cn/";
+        [Obsolete("Gallery endpoint is removed from ARM metadata.")]
         public const string USGovernmentGalleryEndpoint = "https://gallery.usgovcloudapi.net/";
         [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanGalleryEndpoint = "https://gallery.cloudapi.de/";
