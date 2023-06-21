@@ -18,6 +18,9 @@ using System.Text;
 
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 {
+    /// <summary>
+    /// This attribute is used to mark cmdlets output type has breaking changes. It provides information about the breaking change, including change description, the version from which the change is deprecated (DeprecateByVersion), the Azure version from which the change is deprecated (DeprecateByAzVersion). This class provides functionality to generate breaking change messages and display information about the breaking changes when needed.
+    /// </summary>
     [AttributeUsage(
      AttributeTargets.Class,
      AllowMultiple = true)]

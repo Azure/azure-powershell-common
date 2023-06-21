@@ -20,15 +20,14 @@ using System.Text;
 
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 {
+    /// <summary>
+    /// This attribute is used to mark classes, fields, and properties that have breaking changes in Azure commands. It provides information about the breaking change, including change description, the version from which the change is deprecated (DeprecateByVersion), the Azure version from which the change is deprecated (DeprecateByAzVersion), and the date on which the change comes into effect (ChangeInEffectByDate). This class serves as a base class for defining breaking changes in Azure commands. It provides functionality to generate breaking change messages and display information about the breaking changes when needed.
+    /// </summary>
     [AttributeUsage(
      AttributeTargets.Class |
      AttributeTargets.Field |
      AttributeTargets.Property,
      AllowMultiple = true)]
-
-    /*
-     * This class acts as the base
-     */
     public class GenericBreakingChangeWithVersionAttribute : System.Attribute
     {
         private string _message;

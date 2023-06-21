@@ -14,10 +14,8 @@
 
 using Microsoft.WindowsAzure.Commands.Common.Properties;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Management.Automation;
 
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
