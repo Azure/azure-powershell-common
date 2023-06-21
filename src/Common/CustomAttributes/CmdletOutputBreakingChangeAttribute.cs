@@ -24,6 +24,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
     [AttributeUsage(
      AttributeTargets.Class,
      AllowMultiple = true)]
+    [Obsolete("This attribute is deprecated. Please use CmdletOutputBreakingChangeWithVersionAttribute instead to provide the deprecate Az version and module version")]
     public class CmdletOutputBreakingChangeAttribute : GenericBreakingChangeAttribute
     {
         public Type DeprecatedCmdLetOutputType { get; }
@@ -36,21 +37,18 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 
         public string[] NewOutputProperties { get; set; }
         
-        [Obsolete("Please provide the deprecate Az version and module version")]
         public CmdletOutputBreakingChangeAttribute(Type deprecatedCmdletOutputTypeName) :
             base(string.Empty)
         {
             this.DeprecatedCmdLetOutputType = deprecatedCmdletOutputTypeName;
         }
         
-        [Obsolete("Please provide the deprecate Az version and module version")]
         public CmdletOutputBreakingChangeAttribute(Type deprecatedCmdletOutputTypeName, string deprecateByVersion) :
              base(string.Empty, deprecateByVersion)
         {
             this.DeprecatedCmdLetOutputType = deprecatedCmdletOutputTypeName;
         }
-
-        [Obsolete("Please provide the deprecate Az version and module version")]
+        
         public CmdletOutputBreakingChangeAttribute(Type deprecatedCmdletOutputTypeName, string deprecateByVersion, string changeInEfectByDate) :
              base(string.Empty, deprecateByVersion, changeInEfectByDate)
         {

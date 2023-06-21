@@ -28,10 +28,10 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
      AttributeTargets.Field |
      AttributeTargets.Property,
      AllowMultiple = true)]
-
+    [Obsolete("This attribute is deprecated. Please use GenericBreakingChangeWithVersionAttribute instead to provide the deprecate Az version and module version")]
     /*
      * This class acts as the base
-     */ 
+     */
     public class GenericBreakingChangeAttribute : System.Attribute
     {
         private string _message;
@@ -50,14 +50,12 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         public string OldWay { get; set; }
         //New way fo calling the cmdlet
         public string NewWay { get; set; }
-
-        [Obsolete("Please provide the deprecate Az version and module version")]
+        
         public GenericBreakingChangeAttribute(string message)
         {
             _message = message;
         }
-
-        [Obsolete("Please provide the deprecate Az version and module version")]
+        
         public GenericBreakingChangeAttribute(string message, string deprecateByVersion)
         {
             _message = message;
@@ -65,7 +63,6 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             this.DeprecateByVersionSet = true;
         }
         
-        [Obsolete("Please provide the deprecate Az version and module version")]
         public GenericBreakingChangeAttribute(string message, string deprecateByVersion, string changeInEfectByDate)
         {
             _message = message;

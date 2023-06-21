@@ -26,6 +26,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
      AttributeTargets.Property |
      AttributeTargets.Field,
      AllowMultiple = true)]
+    [Obsolete("This attribute is deprecated. Please use CmdletParameterBreakingChangeWithVersionAttribute instead to provide the deprecate Az version and module version")]
     public class CmdletParameterBreakingChangeAttribute : GenericBreakingChangeAttribute
     {
         public string NameOfParameterChanging { get; }
@@ -37,22 +38,19 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         public Type OldParamaterType { get; set; }
 
         public String NewParameterTypeName { get; set; }
-
-        [Obsolete("Please provide the deprecate version", false)]
+        
         public CmdletParameterBreakingChangeAttribute(string nameOfParameterChanging) :
             base(string.Empty)
         {
             this.NameOfParameterChanging = nameOfParameterChanging;
         }
         
-        [Obsolete("Please provide the deprecate Az version and module version")]
         public CmdletParameterBreakingChangeAttribute(string nameOfParameterChanging, string deprecateByVersion) :
              base(string.Empty, deprecateByVersion)
         {
             this.NameOfParameterChanging = nameOfParameterChanging;
         }
-
-        [Obsolete("Please provide the deprecate Az version and module version")]
+        
         public CmdletParameterBreakingChangeAttribute(string nameOfParameterChanging, string deprecateByVersion, string changeInEfectByDate) :
              base(string.Empty, deprecateByVersion, changeInEfectByDate)
         {

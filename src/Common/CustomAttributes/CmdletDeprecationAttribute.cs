@@ -24,23 +24,21 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
     [AttributeUsage(
      AttributeTargets.Class,
      AllowMultiple = true)]
+    [Obsolete("This attribute is deprecated. Please use CmdletDeprecationWithVersionAttribute instead to provide the deprecate Az version and module version")]
     public class CmdletDeprecationAttribute : GenericBreakingChangeAttribute
     {
         public string ReplacementCmdletName { get; set; }
-
-        [Obsolete("Please provide the deprecate Az version and module version")]
+        
         public CmdletDeprecationAttribute() :
             base(string.Empty)
         {
         }
-
-        [Obsolete("Please provide the deprecate Az version and module version")]
+        
         public CmdletDeprecationAttribute(string deprecateByVersione) :
              base(string.Empty, deprecateByVersione)
         {
         }
-
-        [Obsolete("Please provide the deprecate Az version and module version")]
+        
         public CmdletDeprecationAttribute(string deprecateByVersion, string changeInEfectByDate) :
              base(string.Empty, deprecateByVersion, changeInEfectByDate)
         {
