@@ -40,7 +40,6 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 
         //The version the change is effective from, non mandatory
         public string DeprecateByVersion { get; }
-        public string DeprecateByAzVersion { get; }
         public bool DeprecateByVersionSet { get; } = false;
 
         //The date on which the change comes in effect
@@ -79,29 +78,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
                 this.ChangeInEfectByDateSet = true;
             }
         }
-
-        public GenericBreakingChangeAttribute(string message, Version deprecateByAzVersion, Version deprecateByVersion)
-        {
-            _message = message;
-            this.DeprecateByAzVersion = deprecateByAzVersion.ToString();
-            this.DeprecateByVersion = deprecateByVersion.ToString();
-            this.DeprecateByVersionSet = true;
-        }
-
-        public GenericBreakingChangeAttribute(string message, Version deprecateByAzVersion, Version deprecateByVersion, string changeInEfectByDate)
-        {
-            _message = message;
-            this.DeprecateByVersion = deprecateByVersion.ToString();
-            this.DeprecateByVersionSet = true;
-            this.DeprecateByAzVersion = deprecateByAzVersion.ToString();
-
-            if (DateTime.TryParse(changeInEfectByDate, new CultureInfo("en-US"), DateTimeStyles.None, out DateTime result))
-            {
-                this.ChangeInEfectByDate = result;
-                this.ChangeInEfectByDateSet = true;
-            }
-        }
-
+        
         public DateTime getInEffectByDate()
         {
             return this.ChangeInEfectByDate.Date;
@@ -198,11 +175,6 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         protected virtual string GetAttributeSpecificMessage()
         {
             return _message;
-        }
-
-        protected virtual string GetAttributeSpecificVersion()
-        {
-            return DeprecateByVersion;
         }
     }
 }
