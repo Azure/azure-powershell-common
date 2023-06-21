@@ -79,7 +79,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
          * */
         public static void ProcessCustomAttributesAtRuntime(Type type, InvocationInfo invocationInfo, Action<string> writeOutput)
         {
-            List<GenericBreakingChangeAttribute> attributes = new List<GenericBreakingChangeAttribute>(GetAllBreakingChangeAttributesInType(type, invocationInfo));
+            List<GenericBreakingChangeWithVersionAttribute> attributes = new List<GenericBreakingChangeWithVersionAttribute>(GetAllBreakingChangeAttributesInType(type, invocationInfo));
             StringBuilder sb = new StringBuilder();
             Action<string> appendBreakingChangeInfo = (string s) => sb.Append(s);
 
@@ -87,7 +87,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             {
                 appendBreakingChangeInfo(string.Format(Resources.BreakingChangesAttributesHeaderMessage, Utilities.GetNameFromCmdletType(type)));
 
-                foreach (GenericBreakingChangeAttribute attribute in attributes)
+                foreach (GenericBreakingChangeWithVersionAttribute attribute in attributes)
                 {
                     attribute.PrintCustomAttributeInfo(type, false, appendBreakingChangeInfo);
                 }
@@ -109,7 +109,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 
             //This is used as a migration guide, we need to process all properties/fields, moreover at this point of time we do not have a list of all the
             //bound params anyways
-            foreach (GenericBreakingChangeAttribute attribute in GetAllBreakingChangeAttributesInType(type, null))
+            foreach (GenericBreakingChangeWithVersionAttribute attribute in GetAllBreakingChangeAttributesInType(type, null))
             {
                 messages.Add(attribute.GetBreakingChangeTextFromAttribute(type, true));
             }
@@ -124,25 +124,25 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
          * the boundParameterNames is a list of parameters bound to the cmdlet at runtime,
          * We only process the Parameter beaking change attributes attached only params listed in this list (if present)
          **/
-        public static IEnumerable<GenericBreakingChangeAttribute> GetAllBreakingChangeAttributesInType(Type type, InvocationInfo invocationInfo)
+        public static IEnumerable<GenericBreakingChangeWithVersionAttribute> GetAllBreakingChangeAttributesInType(Type type, InvocationInfo invocationInfo)
         {
-            List<GenericBreakingChangeAttribute> attributeList = new List<GenericBreakingChangeAttribute>();
+            List<GenericBreakingChangeWithVersionAttribute> attributeList = new List<GenericBreakingChangeWithVersionAttribute>();
 
-            attributeList.AddRange(type.GetCustomAttributes(typeof(GenericBreakingChangeAttribute), false).Cast<GenericBreakingChangeAttribute>());
+            attributeList.AddRange(type.GetCustomAttributes(typeof(GenericBreakingChangeWithVersionAttribute), false).Cast<GenericBreakingChangeWithVersionAttribute>());
 
             foreach (MethodInfo m in type.GetRuntimeMethods())
             {
-                attributeList.AddRange((m.GetCustomAttributes(typeof(GenericBreakingChangeAttribute), false).Cast<GenericBreakingChangeAttribute>()));
+                attributeList.AddRange((m.GetCustomAttributes(typeof(GenericBreakingChangeWithVersionAttribute), false).Cast<GenericBreakingChangeWithVersionAttribute>()));
             }
 
             foreach (FieldInfo f in type.GetRuntimeFields())
             {
-                attributeList.AddRange(f.GetCustomAttributes(typeof(GenericBreakingChangeAttribute), false).Cast<GenericBreakingChangeAttribute>());
+                attributeList.AddRange(f.GetCustomAttributes(typeof(GenericBreakingChangeWithVersionAttribute), false).Cast<GenericBreakingChangeWithVersionAttribute>());
             }
 
             foreach (PropertyInfo p in type.GetRuntimeProperties())
             {
-                    attributeList.AddRange(p.GetCustomAttributes(typeof(GenericBreakingChangeAttribute), false).Cast<GenericBreakingChangeAttribute>());
+                    attributeList.AddRange(p.GetCustomAttributes(typeof(GenericBreakingChangeWithVersionAttribute), false).Cast<GenericBreakingChangeWithVersionAttribute>());
             }
 
             return invocationInfo == null ? attributeList : attributeList.Where(e => e.IsApplicableToInvocation(invocationInfo));

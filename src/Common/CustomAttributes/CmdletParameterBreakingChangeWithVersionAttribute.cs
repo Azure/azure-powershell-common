@@ -17,15 +17,16 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Management.Automation;
-
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 {
+    /// <summary>
+    /// This attribute is used to mark cmdlets parameters have breaking changes. It provides information about the breaking change, including change description, the version from which the change is deprecated (DeprecateByVersion), the Azure version from which the change is deprecated (DeprecateByAzVersion). This class provides functionality to generate breaking change messages and display information about the breaking changes when needed.
+    /// </summary>
     [AttributeUsage(
-     AttributeTargets.Property |
-     AttributeTargets.Field,
-     AllowMultiple = true)]
-    [Obsolete("This attribute is deprecated. Please use CmdletParameterBreakingChangeWithVersionAttribute instead to provide the deprecate Az version and module version")]
-    public class CmdletParameterBreakingChangeAttribute : GenericBreakingChangeAttribute
+        AttributeTargets.Property |
+        AttributeTargets.Field,
+        AllowMultiple = true)]
+    public class CmdletParameterBreakingChangeWithVersionAttribute : GenericBreakingChangeWithVersionAttribute
     {
         public string NameOfParameterChanging { get; }
 
@@ -36,21 +37,16 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         public Type OldParamaterType { get; set; }
 
         public String NewParameterTypeName { get; set; }
-        
-        public CmdletParameterBreakingChangeAttribute(string nameOfParameterChanging) :
-            base(string.Empty)
+
+
+        public CmdletParameterBreakingChangeWithVersionAttribute(string nameOfParameterChanging, string deprecateByAzVersion, string deprecateByVersion) :
+             base(string.Empty, deprecateByAzVersion, deprecateByVersion)
         {
             this.NameOfParameterChanging = nameOfParameterChanging;
         }
-        
-        public CmdletParameterBreakingChangeAttribute(string nameOfParameterChanging, string deprecateByVersion) :
-             base(string.Empty, deprecateByVersion)
-        {
-            this.NameOfParameterChanging = nameOfParameterChanging;
-        }
-        
-        public CmdletParameterBreakingChangeAttribute(string nameOfParameterChanging, string deprecateByVersion, string changeInEfectByDate) :
-             base(string.Empty, deprecateByVersion, changeInEfectByDate)
+
+        public CmdletParameterBreakingChangeWithVersionAttribute(string nameOfParameterChanging, string deprecateByAzVersion, string deprecateByVersion, string changeInEffectByDate) :
+             base(string.Empty, deprecateByAzVersion, deprecateByVersion, changeInEffectByDate)
         {
             this.NameOfParameterChanging = nameOfParameterChanging;
         }
@@ -58,7 +54,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         protected override string GetAttributeSpecificMessage()
         {
             StringBuilder message = new StringBuilder();
-           if (!string.IsNullOrWhiteSpace(ReplaceMentCmdletParameterName))
+            if (!string.IsNullOrWhiteSpace(ReplaceMentCmdletParameterName))
             {
                 if (IsBecomingMandatory)
                 {
@@ -68,18 +64,20 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
                 {
                     message.Append(string.Format(Resources.BreakingChangeAttributeParameterReplaced, NameOfParameterChanging, ReplaceMentCmdletParameterName));
                 }
-            } else
+            }
+            else
             {
                 if (IsBecomingMandatory)
                 {
                     message.Append(string.Format(Resources.BreakingChangeAttributeParameterMandatoryNow, NameOfParameterChanging));
-                } else
+                }
+                else
                 {
                     message.Append(string.Format(Resources.BreakingChangeAttributeParameterChanging, NameOfParameterChanging));
                 }
             }
 
-           //See if the type of the param is changing
+            //See if the type of the param is changing
             if (OldParamaterType != null && !string.IsNullOrWhiteSpace(NewParameterTypeName))
             {
                 message.Append(string.Format(Resources.BreakingChangeAttributeParameterTypeChange, OldParamaterType.FullName, NewParameterTypeName));
@@ -89,7 +87,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 
         /// <summary>
         /// See if the bound parameters contain the current parameter, if they do
-        /// then the attribbute is applicable
+        /// then the attribute is applicable
         /// If the invocationInfo is null we return true
         /// </summary>
         /// <param name="invocationInfo"></param>

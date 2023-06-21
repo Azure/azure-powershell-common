@@ -19,7 +19,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -237,7 +237,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         ///The data is collected by Microsoft.
         ///
         ///Use the Disable-AzDataCollection cmdlet to turn the feature Off. The cmdlet can be found in the Az.Accounts module. To disable data collection: PS &gt; Disable-AzDataCollection.
-        ///Use the Enable-AzDataCollection cmdlet to turn the feature On. The cmdlet can be found in the Az.Accounts module. To enable  [rest of string was truncated]&quot;;.
+        ///Use the Enable-AzDataCollection cmdlet to turn the feature On. The cmdlet can be found in the Az.Accounts module. To enable data collection: PS &gt; Ena [rest of string was truncated]&quot;;.
         /// </summary>
         public static string ARMDataCollectionMessage {
             get {
@@ -426,7 +426,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The parameter : &apos;{0}&apos; is changing..
+        ///   Looks up a localized string similar to 
+        ///- The parameter : &apos;{0}&apos; is changing..
         /// </summary>
         public static string BreakingChangeAttributeParameterChanging {
             get {
@@ -435,7 +436,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The parameter : &apos;{0}&apos; is becoming mandatory..
+        ///   Looks up a localized string similar to 
+        ///- The parameter : &apos;{0}&apos; is becoming mandatory..
         /// </summary>
         public static string BreakingChangeAttributeParameterMandatoryNow {
             get {
@@ -444,7 +446,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The parameter : &apos;{0}&apos; is being replaced by parameter : &apos;{1}&apos;..
+        ///   Looks up a localized string similar to 
+        ///- The parameter : &apos;{0}&apos; is being replaced by parameter : &apos;{1}&apos;..
         /// </summary>
         public static string BreakingChangeAttributeParameterReplaced {
             get {
@@ -453,7 +456,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The parameter : &apos;{0}&apos; is being replaced by mandatory parameter : &apos;{1}&apos;..
+        ///   Looks up a localized string similar to 
+        ///- The parameter : &apos;{0}&apos; is being replaced by mandatory parameter : &apos;{1}&apos;..
         /// </summary>
         public static string BreakingChangeAttributeParameterReplacedMandatory {
             get {
@@ -462,7 +466,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 	The type of the parameter is changing from &apos;{0}&apos; to &apos;{1}&apos;..
+        ///   Looks up a localized string similar to 
+        ///The type of the parameter is changing from &apos;{0}&apos; to &apos;{1}&apos;..
         /// </summary>
         public static string BreakingChangeAttributeParameterTypeChange {
             get {
@@ -471,8 +476,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 	Change description : {0}
-        ///.
+        ///   Looks up a localized string similar to 
+        ///- Change description : {0} .
         /// </summary>
         public static string BreakingChangesAttributesChangeDescriptionMessage {
             get {
@@ -499,7 +504,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The output type is changing from the existing type :&apos;{0}&apos; to the new type :&apos;{1}&apos;.
+        ///   Looks up a localized string similar to 
+        ///- The output type is changing from the existing type :&apos;{0}&apos; to the new type :&apos;{1}&apos;.
         /// </summary>
         public static string BreakingChangesAttributesCmdLetOutputChange1 {
             get {
@@ -508,7 +514,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &quot;The output type &apos;{0}&apos; is changing&quot;.
+        ///   Looks up a localized string similar to 
+        ///- The output type &apos;{0}&apos; is changing.
         /// </summary>
         public static string BreakingChangesAttributesCmdLetOutputChange2 {
             get {
@@ -518,8 +525,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to 
-        ///- The following properties are being added to the output type :
-        ///.
+        ///- The following properties are being added to the output type :.
         /// </summary>
         public static string BreakingChangesAttributesCmdLetOutputPropertiesAdded {
             get {
@@ -529,8 +535,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to 
-        /// - The following properties in the output type are being deprecated :
-        ///.
+        ///- The following properties in the output type are being deprecated :.
         /// </summary>
         public static string BreakingChangesAttributesCmdLetOutputPropertiesRemoved {
             get {
@@ -539,7 +544,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The output type &apos;{0}&apos; is being deprecated without a replacement..
+        ///   Looks up a localized string similar to 
+        ///The output type &apos;{0}&apos; is being deprecated without a replacement..
         /// </summary>
         public static string BreakingChangesAttributesCmdLetOutputTypeDeprecated {
             get {
@@ -548,9 +554,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  - {0}
-        ///
-        ///.
+        ///   Looks up a localized string similar to {0}.
         /// </summary>
         public static string BreakingChangesAttributesDeclarationMessage {
             get {
@@ -559,9 +563,9 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  - Cmdlet : &apos;{0}&apos;
-        /// - {1}
-        ///.
+        ///   Looks up a localized string similar to 
+        ///- Cmdlet : &apos;{0}&apos;
+        /// - {1}.
         /// </summary>
         public static string BreakingChangesAttributesDeclarationMessageWithCmdletName {
             get {
@@ -570,7 +574,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to NOTE : Go to {0} for steps to suppress  (and other related information on) the breaking change messages..
+        ///   Looks up a localized string similar to 
+        ///Note : Go to {0} for steps to suppress this breaking change warning, and other information on breaking changes in Azure PowerShell..
         /// </summary>
         public static string BreakingChangesAttributesFooterMessage {
             get {
@@ -579,7 +584,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Breaking changes in the cmdlet &apos;{0}&apos; :.
+        ///   Looks up a localized string similar to Upcoming breaking changes in the cmdlet &apos;{0}&apos; :.
         /// </summary>
         public static string BreakingChangesAttributesHeaderMessage {
             get {
@@ -588,8 +593,18 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 	Note : This change will take effect on &apos;{0}&apos;
-        ///.
+        ///   Looks up a localized string similar to 
+        ///- The change is expected to take effect from Az version : &apos;{0}&apos;.
+        /// </summary>
+        public static string BreakingChangesAttributesInEffectByAzVersion {
+            get {
+                return ResourceManager.GetString("BreakingChangesAttributesInEffectByAzVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        ///- This change will take effect on &apos;{0}&apos;.
         /// </summary>
         public static string BreakingChangesAttributesInEffectByDateMessage {
             get {
@@ -598,9 +613,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Note :The change is expected to take effect from the version :  &apos;{0}&apos;
-        ///
-        ///.
+        ///   Looks up a localized string similar to 
+        ///- The change is expected to take effect from version : &apos;{0}&apos;.
         /// </summary>
         public static string BreakingChangesAttributesInEffectByVersion {
             get {
@@ -616,7 +630,6 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         ///# New
         ///{1}
         ///```
-        ///
         ///.
         /// </summary>
         public static string BreakingChangesAttributesUsageChangeMessage {
@@ -626,29 +639,17 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cmdlet invocation changes :
-        ///	Old Way : {0}
-        ///	New Way : {1}.
+        ///   Looks up a localized string similar to 
+        ///Cmdlet invocation changes :
+        ///    Old Way : {0}
+        ///    New Way : {1}.
         /// </summary>
         public static string BreakingChangesAttributesUsageChangeMessageConsole {
             get {
                 return ResourceManager.GetString("BreakingChangesAttributesUsageChangeMessageConsole", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   The cmdlet is in experimental stage. The function may not be enabled in current subscription.
-        /// </summary>
-        public static string ExperimentalCmdletMessage
-        {
-            get
-            {
-                return ResourceManager.GetString("ExperimentalCmdletMessage", resourceCulture);
-            }
-        }
-
         
-
         /// <summary>
         ///   Looks up a localized string similar to CACHERUNTIMEURL.
         /// </summary>
@@ -2560,19 +2561,16 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
                 return ResourceManager.GetString("PortalInstructionsGit", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        /// Looks up a localized string similar to This cmdlet is in preview. The functionality may not be available in the selected subscription.
+        ///   Looks up a localized string similar to This cmdlet is in preview. The functionality may not be available in the selected subscription..
         /// </summary>
-        public static string PreviewCmdletMessage
-        {
-            get
-            {
+        public static string PreviewCmdletMessage {
+            get {
                 return ResourceManager.GetString("PreviewCmdletMessage", resourceCulture);
             }
         }
         
-
         /// <summary>
         ///   Looks up a localized string similar to A value for the Primary Peer Subnet has to be provided..
         /// </summary>

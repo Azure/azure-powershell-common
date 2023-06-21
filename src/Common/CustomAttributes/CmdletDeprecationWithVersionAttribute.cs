@@ -17,26 +17,23 @@ using System;
 
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 {
+    /// <summary>
+    /// This attribute is used to mark cmdlets as deprecated. It provides information about the breaking change, including change description, the version from which the change is deprecated (DeprecateByVersion), the Azure version from which the change is deprecated (DeprecateByAzVersion). This class provides functionality to generate breaking change messages and display information about the breaking changes when needed.
+    /// </summary>
     [AttributeUsage(
      AttributeTargets.Class,
      AllowMultiple = true)]
-    [Obsolete("This attribute is deprecated. Please use CmdletDeprecationWithVersionAttribute instead to provide the deprecate Az version and module version")]
-    public class CmdletDeprecationAttribute : GenericBreakingChangeAttribute
+    public class CmdletDeprecationWithVersionAttribute : GenericBreakingChangeWithVersionAttribute
     {
         public string ReplacementCmdletName { get; set; }
-        
-        public CmdletDeprecationAttribute() :
-            base(string.Empty)
+
+        public CmdletDeprecationWithVersionAttribute(string deprecateByAzVersion, string deprecateByVersion) :
+             base(string.Empty, deprecateByAzVersion, deprecateByVersion)
         {
         }
-        
-        public CmdletDeprecationAttribute(string deprecateByVersione) :
-             base(string.Empty, deprecateByVersione)
-        {
-        }
-        
-        public CmdletDeprecationAttribute(string deprecateByVersion, string changeInEfectByDate) :
-             base(string.Empty, deprecateByVersion, changeInEfectByDate)
+
+        public CmdletDeprecationWithVersionAttribute(string deprecateByAzVersion, string deprecateByVersion, string changeInEffectByDate) :
+             base(string.Empty, deprecateByAzVersion, deprecateByVersion, changeInEffectByDate)
         {
         }
 
