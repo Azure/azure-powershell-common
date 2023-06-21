@@ -46,16 +46,6 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         {
         }
 
-        public CmdletDeprecationAttribute(Version deprecateByAzVersion, Version deprecateByVersion) :
-             base(string.Empty, deprecateByAzVersion, deprecateByVersion)
-        {
-        }
-
-        public CmdletDeprecationAttribute(Version deprecateByAzVersion, Version deprecateByVersion, string changeInEfectByDate) :
-             base(string.Empty, deprecateByAzVersion, deprecateByVersion, changeInEfectByDate)
-        {
-        }
-
         protected override string GetAttributeSpecificMessage()
         {
             if (string.IsNullOrWhiteSpace(ReplacementCmdletName))

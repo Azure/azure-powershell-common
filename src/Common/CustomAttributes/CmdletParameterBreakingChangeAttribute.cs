@@ -58,18 +58,6 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         {
             this.NameOfParameterChanging = nameOfParameterChanging;
         }
-        
-        public CmdletParameterBreakingChangeAttribute(string nameOfParameterChanging, Version deprecateByAzVersion, Version deprecateByVersion) :
-             base(string.Empty, deprecateByAzVersion, deprecateByVersion)
-        {
-            this.NameOfParameterChanging = nameOfParameterChanging;
-        }
-
-        public CmdletParameterBreakingChangeAttribute(string nameOfParameterChanging, Version deprecateByAzVersion, Version deprecateByVersion, string changeInEfectByDate) :
-             base(string.Empty, deprecateByAzVersion, deprecateByVersion, changeInEfectByDate)
-        {
-            this.NameOfParameterChanging = nameOfParameterChanging;
-        }
 
         protected override string GetAttributeSpecificMessage()
         {

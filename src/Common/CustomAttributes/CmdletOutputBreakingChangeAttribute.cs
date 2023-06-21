@@ -56,18 +56,6 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         {
             this.DeprecatedCmdLetOutputType = deprecatedCmdletOutputTypeName;
         }
-        
-        public CmdletOutputBreakingChangeAttribute(Type deprecatedCmdletOutputTypeName, Version deprecateByAzVersion, Version deprecateByVersion) :
-             base(string.Empty, deprecateByAzVersion, deprecateByVersion)
-        {
-            this.DeprecatedCmdLetOutputType = deprecatedCmdletOutputTypeName;
-        }
-
-        public CmdletOutputBreakingChangeAttribute(Type deprecatedCmdletOutputTypeName, Version deprecateByAzVersion, Version deprecateByVersion, string changeInEfectByDate) :
-             base(string.Empty, deprecateByAzVersion, deprecateByVersion, changeInEfectByDate)
-        {
-            this.DeprecatedCmdLetOutputType = deprecatedCmdletOutputTypeName;
-        }
 
         protected override string GetAttributeSpecificMessage()
         {
