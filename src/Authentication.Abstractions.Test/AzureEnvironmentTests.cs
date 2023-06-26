@@ -140,7 +140,7 @@ namespace Authentication.Abstractions.Test
             Assert.Equal(AzureEnvironment.TypeDiscovered, armEnvironments[EnvironmentName.AzureCloud].Type);
             Assert.Equal(AzureEnvironment.TypeDiscovered, armEnvironments[EnvironmentName.AzureChinaCloud].Type);
             Assert.Equal(AzureEnvironment.TypeDiscovered, armEnvironments[EnvironmentName.AzureUSGovernment].Type);
-            Assert.Empty(armEnvironments[EnvironmentName.AzureCloud].GalleryUrl);
+            Assert.Null(armEnvironments[EnvironmentName.AzureCloud].GalleryUrl);
             Assert.Empty(armEnvironments[EnvironmentName.AzureChinaCloud].GalleryUrl);
             Assert.Empty(armEnvironments[EnvironmentName.AzureUSGovernment].GalleryUrl);
         }

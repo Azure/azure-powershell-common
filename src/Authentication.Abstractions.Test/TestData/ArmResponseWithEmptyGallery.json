@@ -27,8 +27,7 @@
     "resourceManager": "https://management.azure.com/",
     "vmImageAliasDoc": "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-compute/quickstart-templates/aliases.json",
     "activeDirectoryDataLake": "https://datalake.azure.net/",
-    "sqlManagement": "https://management.core.windows.net:8443/",
-    "gallery": ""
+    "sqlManagement": "https://management.core.windows.net:8443/"
   },
   {
     "portal": "https://portal.azure.cn",
