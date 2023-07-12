@@ -14,6 +14,7 @@
 
 using Microsoft.WindowsAzure.Commands.Common.Properties;
 using System;
+using System.Globalization;
 using System.Management.Automation;
 
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
@@ -25,6 +26,10 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
     {
         public string _message;
 
+        public DateTime EstimatedGaDate { get; }
+
+        public bool IsEstimatedGaDateSet { get; } = false;
+
         public CmdletPreviewAttribute()
         {
             this._message = Resources.PreviewCmdletMessage;
@@ -35,9 +40,27 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             this._message = message;
         }
 
+
+        public CmdletPreviewAttribute(string message, string estimatedDateOfGa)
+        {
+            this._message = message;
+
+
+            if (DateTime.TryParse(estimatedDateOfGa, new CultureInfo("en-US"), DateTimeStyles.None, out DateTime result))
+            {
+                this.EstimatedGaDate = result;
+                this.IsEstimatedGaDateSet = true;
+            }
+
+        }
+
         public void PrintCustomAttributeInfo(Action<string> writeOutput)
         {
             writeOutput(this._message);
+            if (IsEstimatedGaDateSet)
+            {
+                writeOutput(string.Format(Resources.PreviewCmdletETAMessage, this.EstimatedGaDate));
+            }
         }
 
         public virtual bool IsApplicableToInvocation(InvocationInfo invocation)

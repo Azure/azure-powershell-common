@@ -378,7 +378,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 && configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisplayBreakingChangeWarning))
             {
                 BreakingChangeAttributeHelper.ProcessCustomAttributesAtRuntime(this.GetType(), this.MyInvocation, WriteWarning);
-                PreviewAttributeHelper.ProcessCustomAttributesAtRuntime(this.GetType(), this.MyInvocation, WriteDebug);
+                PreviewAttributeHelper.ProcessCustomAttributesAtRuntime(this.GetType(), this.MyInvocation, WriteWarning);
             }
         }
 
