@@ -16,11 +16,14 @@ using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 using Microsoft.Azure.PowerShell.Common.Config;
 using Microsoft.Azure.PowerShell.Common.Share.Survey;
+using Microsoft.Azure.PowerShell.Common.Share.UpgradeNotification;
 using Microsoft.Azure.ServiceManagement.Common.Models;
 using Microsoft.WindowsAzure.Commands.Common;
 using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
 using Microsoft.WindowsAzure.Commands.Common.Utilities;
+using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,6 +34,7 @@ using System.Management.Automation;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 {
@@ -388,7 +392,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         protected override void EndProcessing()
         {
             WriteEndProcessingRecommendation();
-
+            WriteWarningMessageForVersionUpgrade();
+            
             if (MetricHelper.IsCalledByUser()
                 && SurveyHelper.GetInstance().ShouldPromptAzSurvey()
                 && (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
@@ -421,6 +426,90 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             if (AzureSession.Instance.TryGetComponent<IEndProcessingRecommendationService>(nameof(IEndProcessingRecommendationService), out var service))
             {
                 service.Process(this, MyInvocation, _qosEvent);
+            }
+        }
+
+        private void WriteWarningMessageForVersionUpgrade()
+        {
+            _qosEvent.HigherVersionsChecked = false;
+            _qosEvent.UpgradeNotificationPrompted = false;
+
+            try
+            {
+                // not run by user, skip
+                if (!MetricHelper.IsCalledByUser())
+                {
+                    return;
+                }
+
+                //disabled by az config, skip
+                if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
+                    && configManager.GetConfigValue<bool>(ConfigKeysForCommon.CheckForUpgrade).Equals(false))
+                {
+                    return;
+                }
+
+                //has done check this session, skip
+                if (UpgradeNotificationHelper.GetInstance().hasNotified)
+                {
+                    return;
+                }
+
+                //register verion check and upgrade notification in frequency service
+                AzureSession.Instance.TryGetComponent<IFrequencyService>(nameof(IFrequencyService), out var frequencyService);
+                frequencyService.Add(UpgradeNotificationHelper.FrequencyKeyForUpgradeCheck, UpgradeNotificationHelper.FrequencyTimeSpanForUpgradeCheck);
+                frequencyService.Add(UpgradeNotificationHelper.FrequencyKeyForUpgradeNotification, UpgradeNotificationHelper.FrequencyTimeSpanForUpgradeNotification);
+
+                string checkModuleName = "Az";
+                string checkModuleCurrentVersion = _qosEvent.AzVersion;
+                string upgradeModuleNames = "Az";
+                if ("0.0.0" == _qosEvent.AzVersion)
+                {
+                    checkModuleName = _qosEvent.ModuleName;
+                    checkModuleCurrentVersion = _qosEvent.ModuleVersion;
+                    upgradeModuleNames = "Az.*";
+                }
+
+                //refresh az module versions if necessary
+                frequencyService.Check(UpgradeNotificationHelper.FrequencyKeyForUpgradeCheck, () => true, () =>
+                {
+                    Thread loadHigherVersionsThread = new Thread(new ThreadStart(() =>
+                    {
+                        _qosEvent.HigherVersionsChecked = true;
+                        try {
+                            //no lock for this method, may skip some notifications, it's expected.
+                            UpgradeNotificationHelper.GetInstance().RefreshVersionInfo(upgradeModuleNames);
+                        }catch (Exception) {
+                            //do nothing
+                        }
+                    }));
+                    loadHigherVersionsThread.Start();
+                });
+
+                bool shouldPrintWarningMsg = UpgradeNotificationHelper.GetInstance().HasHigherVersion(checkModuleName, checkModuleCurrentVersion);
+
+                //prompt warning message for upgrade if necessary
+                frequencyService.Check(UpgradeNotificationHelper.FrequencyKeyForUpgradeNotification, () => shouldPrintWarningMsg, () =>
+                {
+                    _qosEvent.UpgradeNotificationPrompted = true;
+                    UpgradeNotificationHelper.GetInstance().hasNotified = true;
+
+                    string latestModuleVersion = UpgradeNotificationHelper.GetInstance().GetModuleLatestVersion(checkModuleName);
+                    string updateModuleCmdletName = UpgradeNotificationHelper.GetCmdletForUpdateModule();
+                    string warningMsg = $"The current {checkModuleName} Version is {checkModuleCurrentVersion}, but the latest Version is: {latestModuleVersion}. \n";
+                    warningMsg += "Consider using following cmdlets to upgrade Az Modules:\n";
+                    warningMsg += $"  {updateModuleCmdletName} {upgradeModuleNames} -WhatIf \t -- View the effect after updating {upgradeModuleNames} modules. \n";
+                    warningMsg += $"  {updateModuleCmdletName} {upgradeModuleNames} \t\t -- Update {upgradeModuleNames} modules\n";
+                    if ("Az".Equals(checkModuleName) && UpgradeNotificationHelper.GetInstance().HasHigherMajorVersion(checkModuleName, checkModuleCurrentVersion))
+                    {
+                        string azpsGuideLink = "https://learn.microsoft.com/powershell/azure";
+                        warningMsg += $"There will be breaking changes from {checkModuleCurrentVersion} to {latestModuleVersion}. Open {azpsGuideLink}, click 'Migration' and then 'Migrate from previous versions of Az'. Refer to the corresponding Migration Guides below it.\n";
+                    }
+                    WriteWarning(warningMsg);
+                });
+            }
+            catch (Exception ex) {
+                WriteDebug($"Failed to write warning message for version upgrade due to '{ex.Message}'.");
             }
         }
 
