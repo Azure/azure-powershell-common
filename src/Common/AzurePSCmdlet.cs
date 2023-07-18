@@ -502,8 +502,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                     warningMsg += $"  {updateModuleCmdletName} {upgradeModuleNames} \t\t -- Update {upgradeModuleNames} modules\n";
                     if ("Az".Equals(checkModuleName) && UpgradeNotificationHelper.GetInstance().HasHigherMajorVersion(checkModuleName, checkModuleCurrentVersion))
                     {
-                        string azpsGuideLink = "https://learn.microsoft.com/powershell/azure";
-                        warningMsg += $"There will be breaking changes from {checkModuleCurrentVersion} to {latestModuleVersion}. Open {azpsGuideLink}, click 'Migration' and then 'Migrate from previous versions of Az'. Refer to the corresponding Migration Guides below it.\n";
+                        string azpsGuideLink = "https://go.microsoft.com/fwlink/?linkid=2241373";
+                        warningMsg += $"There will be breaking changes from {checkModuleCurrentVersion} to {latestModuleVersion}. Open {azpsGuideLink} and check the details.\n";
                     }
                     WriteWarning(warningMsg);
                 });
