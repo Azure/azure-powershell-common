@@ -21,9 +21,7 @@ using Microsoft.Azure.ServiceManagement.Common.Models;
 using Microsoft.WindowsAzure.Commands.Common;
 using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
 using Microsoft.WindowsAzure.Commands.Common.Utilities;
-using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -436,12 +434,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
             try
             {
-                // not run by user, skip
-                if (!MetricHelper.IsCalledByUser())
-                {
-                    return;
-                }
-
                 //disabled by az config, skip
                 if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
                     && configManager.GetConfigValue<bool>(ConfigKeysForCommon.CheckForUpgrade).Equals(false))
