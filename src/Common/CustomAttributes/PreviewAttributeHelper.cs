@@ -35,13 +35,13 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         {
             List<CmdletPreviewAttribute> attributes = new List<CmdletPreviewAttribute>(GetAllAttributesInType(type, invocationInfo));
             StringBuilder sb = new StringBuilder();
-            Action<string> appendBreakingChangeInfo = (string s) => sb.Append(s);
+            Action<string> appendPreviewMessage = (string s) => sb.Append(s);
 
             if (attributes != null && attributes.Count > 0)
             {
                 foreach (CmdletPreviewAttribute attribute in attributes)
                 {
-                    attribute.PrintCustomAttributeInfo(appendBreakingChangeInfo);
+                    attribute.PrintCustomAttributeInfo(appendPreviewMessage);
                 }
                 writeOutput(sb.ToString());
 
