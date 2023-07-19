@@ -37,21 +37,16 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 
         public CmdletPreviewAttribute(string message)
         {
-            this._message = message;
+            this._message = string.IsNullOrEmpty(message) ? Resources.PreviewCmdletMessage : message;
         }
 
-
-        public CmdletPreviewAttribute(string message, string estimatedDateOfGa)
+        public CmdletPreviewAttribute(string message, string estimatedDateOfGa) : this(message)
         {
-            this._message = message;
-
-
             if (DateTime.TryParse(estimatedDateOfGa, new CultureInfo("en-US"), DateTimeStyles.None, out DateTime result))
             {
                 this.EstimatedGaDate = result;
                 this.IsEstimatedGaDateSet = true;
             }
-
         }
 
         public void PrintCustomAttributeInfo(Action<string> writeOutput)
