@@ -488,10 +488,9 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
                     string latestModuleVersion = UpgradeNotificationHelper.GetInstance().GetModuleLatestVersion(checkModuleName);
                     string updateModuleCmdletName = UpgradeNotificationHelper.GetCmdletForUpdateModule();
-                    string warningMsg = $"The current {checkModuleName} Version is {checkModuleCurrentVersion}, but the latest Version is: {latestModuleVersion}. \n";
-                    warningMsg += "Consider using following cmdlets to upgrade Az Modules:\n";
-                    warningMsg += $"  {updateModuleCmdletName} {upgradeModuleNames} -WhatIf \t -- View the effect after updating {upgradeModuleNames} modules. \n";
-                    warningMsg += $"  {updateModuleCmdletName} {upgradeModuleNames} \t\t -- Update {upgradeModuleNames} modules\n";
+                    string warningMsg = $"You're using {checkModuleName} version {checkModuleCurrentVersion}. The latest version of {checkModuleName} is {latestModuleVersion}. Upgrade your Az modules using the following commands:\n";
+                    warningMsg += $"  {updateModuleCmdletName} {upgradeModuleNames} -WhatIf \t -- Simulate updating your Az modules.\n";
+                    warningMsg += $"  {updateModuleCmdletName} {upgradeModuleNames} \t\t -- Update your Az modules.\n";
                     if ("Az".Equals(checkModuleName) && UpgradeNotificationHelper.GetInstance().HasHigherMajorVersion(checkModuleName, checkModuleCurrentVersion))
                     {
                         string azpsGuideLink = "https://go.microsoft.com/fwlink/?linkid=2241373";
