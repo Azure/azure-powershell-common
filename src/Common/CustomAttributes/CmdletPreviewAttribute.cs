@@ -59,7 +59,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             writeOutput(this._message);
             if (IsEstimatedGaDateSet)
             {
-                writeOutput(string.Format(Resources.PreviewCmdletETAMessage, this.EstimatedGaDate));
+                writeOutput(string.Format(Resources.PreviewCmdletETAMessage, this.EstimatedGaDate.ToShortDateString()));
             }
         }
 
