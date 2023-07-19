@@ -47,6 +47,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         IAzureEventListener _azureEventListener;
         protected static ConcurrentQueue<string> InitializationWarnings { get; set; } = new ConcurrentQueue<string>();
 
+        protected static ConcurrentQueue<string> AnnouncedPreviewMessageCmdlets { get; set; } = new ConcurrentQueue<string>();
+
         private RecordingTracingInterceptor _httpTracingInterceptor;
         private object lockObject = new object();
         private AzurePSDataCollectionProfile _cachedProfile = null;
@@ -378,7 +380,19 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 && configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisplayBreakingChangeWarning))
             {
                 BreakingChangeAttributeHelper.ProcessCustomAttributesAtRuntime(this.GetType(), this.MyInvocation, WriteWarning);
-                PreviewAttributeHelper.ProcessCustomAttributesAtRuntime(this.GetType(), this.MyInvocation, WriteWarning);
+
+                if (PreviewAttributeHelper.ContainsPreviewAttribute(this.GetType(), this.MyInvocation)
+                    && !AnnouncedPreviewMessageCmdlets.Contains(this.MyInvocation.MyCommand.Name))
+                {
+                    lock (lockObject)
+                    {
+                        if (!AnnouncedPreviewMessageCmdlets.Contains(this.MyInvocation.MyCommand.Name))
+                        {
+                            PreviewAttributeHelper.ProcessCustomAttributesAtRuntime(this.GetType(), this.MyInvocation, WriteWarning);
+                            AnnouncedPreviewMessageCmdlets.Enqueue(this.MyInvocation.MyCommand.Name);
+                        }
+                    }
+                }
             }
         }
 

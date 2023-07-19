@@ -48,6 +48,17 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             }
         }
 
+        /// <summary>
+        /// Process CmdletExperimentation attribute in runtime
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="invocationInfo"></param>
+        /// <param name="writeOutput"></param>
+        public static bool ContainsPreviewAttribute(Type type, InvocationInfo invocationInfo)
+        {
+            return GetAllAttributesInType(type, invocationInfo).Count() > 0;
+        }
+
         private static IEnumerable<CmdletPreviewAttribute> GetAllAttributesInType(Type type, InvocationInfo invocationInfo)
         {
             List<CmdletPreviewAttribute> attributeList = new List<CmdletPreviewAttribute>();

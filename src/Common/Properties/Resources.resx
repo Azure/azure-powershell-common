@@ -1740,6 +1740,6 @@ Note : Go to {0} for steps to suppress this breaking change warning, and other i
 - The change is expected to take effect from Az version : '{0}'</value>
   </data>
   <data name="PreviewCmdletETAMessage" xml:space="preserve">
-    <value>The estimated generally available date is '{0}'.</value>
+    <value> The estimated generally available date is '{0}'.</value>
   </data>
 </root>

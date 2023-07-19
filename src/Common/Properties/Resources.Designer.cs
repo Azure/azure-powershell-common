@@ -2563,7 +2563,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The estimated generally available date is &apos;{0}&apos;..
+        ///   Looks up a localized string similar to  The estimated generally available date is &apos;{0}&apos;..
         /// </summary>
         internal static string PreviewCmdletETAMessage {
             get {
