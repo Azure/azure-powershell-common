@@ -34,7 +34,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         public static void ProcessCustomAttributesAtRuntime(Type type, InvocationInfo invocationInfo, Action<string> writeOutput)
         {
             List<CmdletPreviewAttribute> attributes = new List<CmdletPreviewAttribute>(GetAllAttributesInType(type, invocationInfo));
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder().Clear();
             Action<string> appendPreviewMessage = (string s) => sb.Append(s);
 
             if (attributes != null && attributes.Count > 0)

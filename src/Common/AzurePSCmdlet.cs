@@ -381,17 +381,14 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             {
                 BreakingChangeAttributeHelper.ProcessCustomAttributesAtRuntime(this.GetType(), this.MyInvocation, WriteWarning);
 
-                if (PreviewAttributeHelper.ContainsPreviewAttribute(this.GetType(), this.MyInvocation)
-                    && !AnnouncedPreviewMessageCmdlets.Contains(this.MyInvocation.MyCommand.Name))
+                // Write preview message once for each cmdlet in one session
+                // Preview message may be outputed more than once if a cmdlet is concurrently called
+                // Considering lock affects performance but warning message is no harm
+                if (!AnnouncedPreviewMessageCmdlets.Contains(this.MyInvocation.MyCommand.Name)
+                    && PreviewAttributeHelper.ContainsPreviewAttribute(this.GetType(), this.MyInvocation))
                 {
-                    lock (lockObject)
-                    {
-                        if (!AnnouncedPreviewMessageCmdlets.Contains(this.MyInvocation.MyCommand.Name))
-                        {
-                            PreviewAttributeHelper.ProcessCustomAttributesAtRuntime(this.GetType(), this.MyInvocation, WriteWarning);
-                            AnnouncedPreviewMessageCmdlets.Enqueue(this.MyInvocation.MyCommand.Name);
-                        }
-                    }
+                    PreviewAttributeHelper.ProcessCustomAttributesAtRuntime(this.GetType(), this.MyInvocation, WriteWarning);
+                    AnnouncedPreviewMessageCmdlets.Enqueue(this.MyInvocation.MyCommand.Name);
                 }
             }
         }
