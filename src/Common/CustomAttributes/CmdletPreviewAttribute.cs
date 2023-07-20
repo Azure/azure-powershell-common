@@ -26,6 +26,11 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
     {
         public string _message;
 
+        /// <summary>
+        ///  EstimatedGaDate assumes value follows "en-US" culture,
+        ///  which means dates are written in the month–day–year order like
+        ///  July 19, 2023, 19 July 2023, 07/19/2023 or 2023-07-19
+        /// </summary>
         public DateTime EstimatedGaDate { get; }
 
         public bool IsEstimatedGaDateSet { get; } = false;
@@ -40,9 +45,14 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             this._message = string.IsNullOrEmpty(message) ? Resources.PreviewCmdletMessage : message;
         }
 
-        public CmdletPreviewAttribute(string message, string estimatedDateOfGa) : this(message)
+        /// <summary>
+        /// Constructor with message and estimated GA date
+        /// </summary>
+        /// <param name="message">Customized preview message</param>
+        /// <param name="estimatedGaDate">EstimatedGaDate assumes value follows "en-US" culture, which means dates are written in the month–day–year order</param>
+        public CmdletPreviewAttribute(string message, string estimatedGaDate) : this(message)
         {
-            if (DateTime.TryParse(estimatedDateOfGa, new CultureInfo("en-US"), DateTimeStyles.None, out DateTime result))
+            if (DateTime.TryParse(estimatedGaDate, new CultureInfo("en-US"), DateTimeStyles.None, out DateTime result))
             {
                 this.EstimatedGaDate = result;
                 this.IsEstimatedGaDateSet = true;
