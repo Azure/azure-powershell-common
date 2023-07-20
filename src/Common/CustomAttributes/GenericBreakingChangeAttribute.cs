@@ -104,7 +104,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 
             if (ChangeInEfectByDateSet)
             {
-                breakingChangeMessage.Append(string.Format(Resources.BreakingChangesAttributesInEffectByDateMessage, this.ChangeInEfectByDate));
+                breakingChangeMessage.Append(string.Format(Resources.BreakingChangesAttributesInEffectByDateMessage, this.ChangeInEfectByDate.ToShortDateString()));
             }
 
             if (DeprecateByVersionSet)
@@ -147,7 +147,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 
             if (ChangeInEfectByDateSet)
             {
-                writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByDateMessage, this.ChangeInEfectByDate));
+                writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByDateMessage, this.ChangeInEfectByDate.ToShortDateString()));
             }
 
             if (DeprecateByVersionSet)
