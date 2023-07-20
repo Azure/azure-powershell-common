@@ -32,7 +32,6 @@ using System.Management.Automation;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 {
@@ -429,79 +428,9 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         private void WriteWarningMessageForVersionUpgrade()
         {
-            _qosEvent.HigherVersionsChecked = false;
-            _qosEvent.UpgradeNotificationPrompted = false;
-
-            try
-            {
-                //disabled by az config, skip
-                if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
-                    && configManager.GetConfigValue<bool>(ConfigKeysForCommon.CheckForUpgrade).Equals(false))
-                {
-                    return;
-                }
-
-                //has done check this session, skip
-                if (UpgradeNotificationHelper.GetInstance().hasNotified)
-                {
-                    return;
-                }
-
-                //register verion check and upgrade notification in frequency service
-                AzureSession.Instance.TryGetComponent<IFrequencyService>(nameof(IFrequencyService), out var frequencyService);
-                frequencyService.Add(UpgradeNotificationHelper.FrequencyKeyForUpgradeCheck, UpgradeNotificationHelper.FrequencyTimeSpanForUpgradeCheck);
-                frequencyService.Add(UpgradeNotificationHelper.FrequencyKeyForUpgradeNotification, UpgradeNotificationHelper.FrequencyTimeSpanForUpgradeNotification);
-
-                string checkModuleName = "Az";
-                string checkModuleCurrentVersion = _qosEvent.AzVersion;
-                string upgradeModuleNames = "Az";
-                if ("0.0.0" == _qosEvent.AzVersion)
-                {
-                    checkModuleName = _qosEvent.ModuleName;
-                    checkModuleCurrentVersion = _qosEvent.ModuleVersion;
-                    upgradeModuleNames = "Az.*";
-                }
-
-                //refresh az module versions if necessary
-                frequencyService.Check(UpgradeNotificationHelper.FrequencyKeyForUpgradeCheck, () => true, () =>
-                {
-                    Thread loadHigherVersionsThread = new Thread(new ThreadStart(() =>
-                    {
-                        _qosEvent.HigherVersionsChecked = true;
-                        try {
-                            //no lock for this method, may skip some notifications, it's expected.
-                            UpgradeNotificationHelper.GetInstance().RefreshVersionInfo(upgradeModuleNames);
-                        }catch (Exception) {
-                            //do nothing
-                        }
-                    }));
-                    loadHigherVersionsThread.Start();
-                });
-
-                bool shouldPrintWarningMsg = UpgradeNotificationHelper.GetInstance().HasHigherVersion(checkModuleName, checkModuleCurrentVersion);
-
-                //prompt warning message for upgrade if necessary
-                frequencyService.Check(UpgradeNotificationHelper.FrequencyKeyForUpgradeNotification, () => shouldPrintWarningMsg, () =>
-                {
-                    _qosEvent.UpgradeNotificationPrompted = true;
-                    UpgradeNotificationHelper.GetInstance().hasNotified = true;
-
-                    string latestModuleVersion = UpgradeNotificationHelper.GetInstance().GetModuleLatestVersion(checkModuleName);
-                    string updateModuleCmdletName = UpgradeNotificationHelper.GetCmdletForUpdateModule();
-                    string warningMsg = $"You're using {checkModuleName} version {checkModuleCurrentVersion}. The latest version of {checkModuleName} is {latestModuleVersion}. Upgrade your Az modules using the following commands:\n";
-                    warningMsg += $"  {updateModuleCmdletName} {upgradeModuleNames} -WhatIf \t -- Simulate updating your Az modules.\n";
-                    warningMsg += $"  {updateModuleCmdletName} {upgradeModuleNames} \t\t -- Update your Az modules.\n";
-                    if ("Az".Equals(checkModuleName) && UpgradeNotificationHelper.GetInstance().HasHigherMajorVersion(checkModuleName, checkModuleCurrentVersion))
-                    {
-                        string azpsGuideLink = "https://go.microsoft.com/fwlink/?linkid=2241373";
-                        warningMsg += $"There will be breaking changes from {checkModuleCurrentVersion} to {latestModuleVersion}. Open {azpsGuideLink} and check the details.\n";
-                    }
-                    WriteWarning(warningMsg);
-                });
-            }
-            catch (Exception ex) {
-                WriteDebug($"Failed to write warning message for version upgrade due to '{ex.Message}'.");
-            }
+            AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager);
+            AzureSession.Instance.TryGetComponent<IFrequencyService>(nameof(IFrequencyService), out var frequencyService);
+            UpgradeNotificationHelper.GetInstance().WriteWarningMessageForVersionUpgrade(this, _qosEvent, configManager, frequencyService);
         }
 
         protected string CurrentPath()
