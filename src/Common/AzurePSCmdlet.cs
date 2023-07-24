@@ -48,7 +48,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         IAzureEventListener _azureEventListener;
         protected static ConcurrentQueue<string> InitializationWarnings { get; set; } = new ConcurrentQueue<string>();
 
-        protected static ConcurrentQueue<string> PromptedPreviewMessageCmdlets { get; set; } = new ConcurrentQueue<string>();
+        public static ConcurrentQueue<string> PromptedPreviewMessageCmdlets { get; set; } = new ConcurrentQueue<string>();
 
         private RecordingTracingInterceptor _httpTracingInterceptor;
         private object lockObject = new object();
