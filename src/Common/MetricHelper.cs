@@ -322,6 +322,8 @@ namespace Microsoft.WindowsAzure.Commands.Common
             eventProperties.Add("duration", qos.Duration.ToString("c"));
             eventProperties.Add("InternalCalledCmdlets", MetricHelper.InternalCalledCmdlets);
             eventProperties.Add("InstallationId", MetricHelper.InstallationId);
+            eventProperties.Add("upgrade-notification-checked", qos.HigherVersionsChecked.ToString());
+            eventProperties.Add("upgrade-notification-prompted", qos.UpgradeNotificationPrompted.ToString());
             if (!string.IsNullOrWhiteSpace(SharedVariable.PredictorCorrelationId))
             {
                 eventProperties.Add("predictor-correlation-id", SharedVariable.PredictorCorrelationId);
@@ -456,6 +458,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 eventProperties.Add("OutputToPipeline", qos.OutputToPipeline.Value.ToString());
             }
+            
             foreach (var key in qos.CustomProperties.Keys)
             {
                 eventProperties[key] = qos.CustomProperties[key];
@@ -607,6 +610,8 @@ public class AzurePSQoSEvent
     public string SubscriptionId { get; set; }
     public string TenantId { get; set; }
     public bool SurveyPrompted { get; set; }
+    public bool HigherVersionsChecked { get; set; }
+    public bool UpgradeNotificationPrompted { get; set; }
 
     /// <summary>
     /// Appear in certain resource creation commands like New-AzVM. See RegionalRecommender (PS repo).

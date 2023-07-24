@@ -16,6 +16,7 @@ using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 using Microsoft.Azure.PowerShell.Common.Config;
 using Microsoft.Azure.PowerShell.Common.Share.Survey;
+using Microsoft.Azure.PowerShell.Common.Share.UpgradeNotification;
 using Microsoft.Azure.ServiceManagement.Common.Models;
 using Microsoft.WindowsAzure.Commands.Common;
 using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
@@ -400,7 +401,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         protected override void EndProcessing()
         {
             WriteEndProcessingRecommendation();
-
+            WriteWarningMessageForVersionUpgrade();
+            
             if (MetricHelper.IsCalledByUser()
                 && SurveyHelper.GetInstance().ShouldPromptAzSurvey()
                 && (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
@@ -434,6 +436,13 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             {
                 service.Process(this, MyInvocation, _qosEvent);
             }
+        }
+
+        private void WriteWarningMessageForVersionUpgrade()
+        {
+            AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager);
+            AzureSession.Instance.TryGetComponent<IFrequencyService>(nameof(IFrequencyService), out var frequencyService);
+            UpgradeNotificationHelper.GetInstance().WriteWarningMessageForVersionUpgrade(this, _qosEvent, configManager, frequencyService);
         }
 
         protected string CurrentPath()

@@ -28,5 +28,6 @@ namespace Microsoft.Azure.PowerShell.Common.Config
         public const string DisplayBreakingChangeWarning = "DisplayBreakingChangeWarning";
         public const string EnableDataCollection = "EnableDataCollection";
         public const string EnableTestCoverage = "EnableTestCoverage";
+        public const string CheckForUpgrade = "CheckForUpgrade";
     }
 }
