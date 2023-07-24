@@ -48,6 +48,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         IAzureEventListener _azureEventListener;
         protected static ConcurrentQueue<string> InitializationWarnings { get; set; } = new ConcurrentQueue<string>();
 
+        public static ConcurrentQueue<string> PromptedPreviewMessageCmdlets { get; set; } = new ConcurrentQueue<string>();
+
         private RecordingTracingInterceptor _httpTracingInterceptor;
         private object lockObject = new object();
         private AzurePSDataCollectionProfile _cachedProfile = null;
@@ -379,7 +381,17 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 && configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisplayBreakingChangeWarning))
             {
                 BreakingChangeAttributeHelper.ProcessCustomAttributesAtRuntime(this.GetType(), this.MyInvocation, WriteWarning);
-                PreviewAttributeHelper.ProcessCustomAttributesAtRuntime(this.GetType(), this.MyInvocation, WriteDebug);
+
+                // Write preview message once for each cmdlet in one session
+                // Preview message may be outputed more than once if a cmdlet is concurrently called
+                // Considering lock affects performance but warning message is no harm
+                if (this.MyInvocation?.MyCommand != null
+                    && !PromptedPreviewMessageCmdlets.Contains(this.MyInvocation?.MyCommand?.Name)
+                    && PreviewAttributeHelper.ContainsPreviewAttribute(this.GetType(), this.MyInvocation))
+                {
+                    PreviewAttributeHelper.ProcessCustomAttributesAtRuntime(this.GetType(), this.MyInvocation, WriteWarning);
+                    PromptedPreviewMessageCmdlets.Enqueue(this.MyInvocation.MyCommand.Name);
+                }
             }
         }
 
