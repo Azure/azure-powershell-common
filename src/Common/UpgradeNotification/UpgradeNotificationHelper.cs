@@ -77,8 +77,8 @@ namespace Microsoft.Azure.PowerShell.Common.Share.UpgradeNotification
                 if (frequencyService == null) {
                     return;
                 }
-                frequencyService.Add(FrequencyKeyForUpgradeCheck, FrequencyTimeSpanForUpgradeCheck);
-                frequencyService.Add(FrequencyKeyForUpgradeNotification, FrequencyTimeSpanForUpgradeNotification);
+                frequencyService.Register(FrequencyKeyForUpgradeCheck, FrequencyTimeSpanForUpgradeCheck);
+                frequencyService.Register(FrequencyKeyForUpgradeNotification, FrequencyTimeSpanForUpgradeNotification);
 
                 string checkModuleName = "Az";
                 string checkModuleCurrentVersion = _qosEvent.AzVersion;
@@ -91,7 +91,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.UpgradeNotification
                 }
 
                 //refresh az module versions if necessary
-                frequencyService.Check(FrequencyKeyForUpgradeCheck, () => true, () =>
+                frequencyService.TryRun(FrequencyKeyForUpgradeCheck, () => true, () =>
                 {
                     Thread loadHigherVersionsThread = new Thread(new ThreadStart(() =>
                     {
@@ -112,7 +112,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.UpgradeNotification
                 bool shouldPrintWarningMsg = HasHigherVersion(checkModuleName, checkModuleCurrentVersion);
 
                 //prompt warning message for upgrade if necessary
-                frequencyService.Check(FrequencyKeyForUpgradeNotification, () => shouldPrintWarningMsg, () =>
+                frequencyService.TryRun(FrequencyKeyForUpgradeNotification, () => shouldPrintWarningMsg, () =>
                 {
                     _qosEvent.UpgradeNotificationPrompted = true;
                     hasNotified = true;

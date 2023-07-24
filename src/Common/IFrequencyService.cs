@@ -14,20 +14,20 @@ namespace Microsoft.WindowsAzure.Commands.Common
         /// <param name="featureName">The name of the feature to check.</param>
         /// <param name="businessCheck">A function that returns true if the business logic should be executed.</param>
         /// <param name="business">An action to execute if the business logic should be executed.</param>
-        void Check(string featureName, Func<bool> businessCheck, Action business);
+        void TryRun(string featureName, Func<bool> businessCheck, Action business);
 
         /// <summary>
-        /// Adds a feature with the specified name and frequency to the service.
+        /// Registers a feature with the specified name and frequency to the service.
         /// </summary>
         /// <param name="featureName">The name of the feature to add.</param>
         /// <param name="frequency">The frequency at which the business logic should be executed for the feature.</param>
-        void Add(string featureName, TimeSpan frequency);
+        void Register(string featureName, TimeSpan frequency);
 
         /// <summary>
-        /// Adds the specified feature to the service's per-PSsession registry.
+        /// Registers the specified feature to the service's per-PSsession registry.
         /// </summary>
         /// <param name="featureName">The name of the feature to add.</param>
-        void AddSession(string featureName);
+        void RegisterInSession(string featureName);
 
         /// <summary>
         /// Saves the current state of the service to persistent storage.
