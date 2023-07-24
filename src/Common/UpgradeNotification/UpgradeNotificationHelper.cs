@@ -83,7 +83,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.UpgradeNotification
                 string checkModuleName = "Az";
                 string checkModuleCurrentVersion = _qosEvent.AzVersion;
                 string upgradeModuleNames = "Az";
-                if ("0.0.0" == _qosEvent.AzVersion)
+                if ("0.0.0".Equals(_qosEvent.AzVersion))
                 {
                     checkModuleName = _qosEvent.ModuleName;
                     checkModuleCurrentVersion = _qosEvent.ModuleVersion;
@@ -119,12 +119,12 @@ namespace Microsoft.Azure.PowerShell.Common.Share.UpgradeNotification
 
                     string latestModuleVersion = GetModuleLatestVersion(checkModuleName);
                     string updateModuleCmdletName = GetCmdletForUpdateModule();
-                    string warningMsg = $"You're using {checkModuleName} version {checkModuleCurrentVersion}. The latest version of {checkModuleName} is {latestModuleVersion}. Upgrade your Az modules using the following commands:\n";
-                    warningMsg += $"  {updateModuleCmdletName} {upgradeModuleNames} -WhatIf \t -- Simulate updating your Az modules.\n";
-                    warningMsg += $"  {updateModuleCmdletName} {upgradeModuleNames} \t\t -- Update your Az modules.\n";
+                    string warningMsg = $"You're using {checkModuleName} version {checkModuleCurrentVersion}. The latest version of {checkModuleName} is {latestModuleVersion}. Upgrade your Az modules using the following commands:{Environment.NewLine}";
+                    warningMsg += $"  {updateModuleCmdletName} {upgradeModuleNames} -WhatIf    -- Simulate updating your Az modules.{Environment.NewLine}";
+                    warningMsg += $"  {updateModuleCmdletName} {upgradeModuleNames}            -- Update your Az modules.{Environment.NewLine}";
                     if ("Az".Equals(checkModuleName) && GetInstance().HasHigherMajorVersion(checkModuleName, checkModuleCurrentVersion))
                     {
-                        warningMsg += $"There will be breaking changes from {checkModuleCurrentVersion} to {latestModuleVersion}. Open {AZPSMigrationGuideLink} and check the details.\n";
+                        warningMsg += $"There will be breaking changes from {checkModuleCurrentVersion} to {latestModuleVersion}. Open {AZPSMigrationGuideLink} and check the details.{Environment.NewLine}";
                     }
                     cmdlet.WriteWarning(warningMsg);
                 });
@@ -239,6 +239,7 @@ namespace Microsoft.Azure.PowerShell.Common.Share.UpgradeNotification
             }
         }
 
+        // This method is copied from CmdletExtensions.ExecuteScript. But it'll run with NewRunspace, ignore the warning or error message.
         private static List<T> ExecutePSScript<T>(string contents)
         {
             List<T> output = new List<T>();
