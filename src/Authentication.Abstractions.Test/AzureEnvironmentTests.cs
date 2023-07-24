@@ -62,13 +62,15 @@ namespace Authentication.Abstractions.Test
             Assert.Equal(3, armEnvironments.Count);
             foreach (var env in armEnvironments.Values)
             {
-                if (env.Name == "AzureCloud")
+                if (env.Name == EnvironmentName.AzureCloud)
                 {
                     Assert.Equal(AzureEnvironment.TypeDiscovered, env.Type);
+                    Assert.Null(env.GalleryUrl);
                 }
                 else
                 {
                     Assert.Equal(AzureEnvironment.TypeBuiltIn, env.Type);
+                    Assert.NotEmpty(env.GalleryUrl);
                 }
                 Assert.EndsWith("/", env.ServiceManagementUrl);
                 Assert.StartsWith(".", env.SqlDatabaseDnsSuffix);
@@ -126,6 +128,21 @@ namespace Authentication.Abstractions.Test
             {
                 Assert.Equal(AzureEnvironment.TypeBuiltIn, env.Type);
             }
+        }
+
+        [Fact]
+        public void TestArmResponseWithEmptyGalleryEndpoint()
+        {
+            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData\ArmResponseWithEmptyGallery.json");
+            var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
+
+            Assert.Equal(3, armEnvironments.Count);
+            Assert.Equal(AzureEnvironment.TypeDiscovered, armEnvironments[EnvironmentName.AzureCloud].Type);
+            Assert.Equal(AzureEnvironment.TypeDiscovered, armEnvironments[EnvironmentName.AzureChinaCloud].Type);
+            Assert.Equal(AzureEnvironment.TypeDiscovered, armEnvironments[EnvironmentName.AzureUSGovernment].Type);
+            Assert.Null(armEnvironments[EnvironmentName.AzureCloud].GalleryUrl);
+            Assert.Empty(armEnvironments[EnvironmentName.AzureChinaCloud].GalleryUrl);
+            Assert.Empty(armEnvironments[EnvironmentName.AzureUSGovernment].GalleryUrl);
         }
     }
 }

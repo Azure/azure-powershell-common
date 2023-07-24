@@ -20,69 +20,63 @@ using System.Text;
 
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 {
+    /// <summary>
+    /// This attribute is used to mark classes, fields, and properties that have breaking changes in Azure commands. It provides information about the breaking change, including change description, the version from which the change is deprecated (DeprecateByVersion), the Azure version from which the change is deprecated (DeprecateByAzVersion), and the date on which the change comes into effect (ChangeInEffectByDate). This class serves as a base class for defining breaking changes in Azure commands. It provides functionality to generate breaking change messages and display information about the breaking changes when needed.
+    /// </summary>
     [AttributeUsage(
      AttributeTargets.Class |
      AttributeTargets.Field |
      AttributeTargets.Property,
      AllowMultiple = true)]
-    [Obsolete("This attribute is deprecated. Please use GenericBreakingChangeWithVersionAttribute instead to provide the deprecate Az version and module version")]
-    /*
-     * This class acts as the base
-     */
-    public class GenericBreakingChangeAttribute : System.Attribute
+    public class GenericBreakingChangeWithVersionAttribute : System.Attribute
     {
         private string _message;
-        //A dexcription of what the change is about, non mandatory
+        //A description of what the change is about, non mandatory
         public string ChangeDescription { get; set; } = null;
 
         //The version the change is effective from, non mandatory
         public string DeprecateByVersion { get; }
-        public bool DeprecateByVersionSet { get; } = false;
+        public string DeprecateByAzVersion { get; }
 
         //The date on which the change comes in effect
-        public DateTime ChangeInEfectByDate { get; }
-        public bool ChangeInEfectByDateSet { get; } = false;
+        public DateTime ChangeInEffectByDate { get; }
+        public bool ChangeInEffectByDateSet { get; } = false;
 
         //Old way of calling the cmdlet
         public string OldWay { get; set; }
         //New way fo calling the cmdlet
         public string NewWay { get; set; }
-        
-        public GenericBreakingChangeAttribute(string message)
-        {
-            _message = message;
-        }
-        
-        public GenericBreakingChangeAttribute(string message, string deprecateByVersion)
-        {
-            _message = message;
-            this.DeprecateByVersion = deprecateByVersion;
-            this.DeprecateByVersionSet = true;
-        }
-        
-        public GenericBreakingChangeAttribute(string message, string deprecateByVersion, string changeInEfectByDate)
-        {
-            _message = message;
-            this.DeprecateByVersion = deprecateByVersion;
-            this.DeprecateByVersionSet = true;
 
-            if (DateTime.TryParse(changeInEfectByDate, new CultureInfo("en-US"), DateTimeStyles.None, out DateTime result))
-            { 
-                this.ChangeInEfectByDate = result;
-                this.ChangeInEfectByDateSet = true;
+        public GenericBreakingChangeWithVersionAttribute(string message, string deprecateByAzVersion, string deprecateByVersion)
+        {
+            _message = message;
+            this.DeprecateByAzVersion = deprecateByAzVersion;
+            this.DeprecateByVersion = deprecateByVersion;
+        }
+
+        public GenericBreakingChangeWithVersionAttribute(string message, string deprecateByAzVersion, string deprecateByVersion, string changeInEffectByDate)
+        {
+            _message = message;
+            this.DeprecateByAzVersion = deprecateByAzVersion;
+            this.DeprecateByVersion = deprecateByVersion;
+
+            if (DateTime.TryParse(changeInEffectByDate, new CultureInfo("en-US"), DateTimeStyles.None, out DateTime result))
+            {
+                this.ChangeInEffectByDate = result;
+                this.ChangeInEffectByDateSet = true;
             }
         }
-        
+
         public DateTime getInEffectByDate()
         {
-            return this.ChangeInEfectByDate.Date;
+            return this.ChangeInEffectByDate.Date;
         }
 
         /**
          * This function returns the breaking change text for the attribute
-         * If the withCmdletName is true we return the message with the cmdlet name in it otherwse not
+         * If the withCmdletName is true we return the message with the cmdlet name in it otherwise not
          *
-         * We get the cmdlet name from the passed in Type (it is expected to have the CMdlet attribute decorated on the class)
+         * We get the cmdlet name from the passed in Type (it is expected to have the Cmdlet attribute decorated on the class)
          */
         public string GetBreakingChangeTextFromAttribute(Type type, bool withCmdletName)
         {
@@ -91,7 +85,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             if (!withCmdletName)
             {
                 breakingChangeMessage.Append(string.Format(Resources.BreakingChangesAttributesDeclarationMessage, GetAttributeSpecificMessage()));
-            } else
+            }
+            else
             {
 
                 breakingChangeMessage.Append(string.Format(Resources.BreakingChangesAttributesDeclarationMessageWithCmdletName, Utilities.GetNameFromCmdletType(type), GetAttributeSpecificMessage()));
@@ -102,12 +97,12 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
                 breakingChangeMessage.Append(string.Format(Resources.BreakingChangesAttributesChangeDescriptionMessage, this.ChangeDescription));
             }
 
-            if (ChangeInEfectByDateSet)
+            if (ChangeInEffectByDateSet)
             {
-                breakingChangeMessage.Append(string.Format(Resources.BreakingChangesAttributesInEffectByDateMessage, this.ChangeInEfectByDate.ToShortDateString()));
+                breakingChangeMessage.Append(string.Format(Resources.BreakingChangesAttributesInEffectByDateMessage, this.ChangeInEffectByDate.ToShortDateString()));
             }
 
-            if (DeprecateByVersionSet)
+            if (!string.IsNullOrWhiteSpace(DeprecateByVersion))
             {
                 breakingChangeMessage.Append(string.Format(Resources.BreakingChangesAttributesInEffectByVersion, this.DeprecateByVersion));
             }
@@ -120,22 +115,24 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             return breakingChangeMessage.ToString();
         }
 
-         /**
-         * This function prints out the breaking change message for the attribute on the cmdline
-         * If the "withCmdletName" is specified, the message is printed out with the cmdlet name in it
-         * otherwise not
-         * 
-         * We get the cmdlet name from the passed in Type (it is expected to have the CMdlet attribute decorated on the class)
-         * */
+        /**
+        * This function prints out the breaking change message for the attribute on the cmdline
+        * If the "withCmdletName" is specified, the message is printed out with the cmdlet name in it
+        * otherwise not
+        * 
+        * We get the cmdlet name from the passed in Type (it is expected to have the Cmdlet attribute decorated on the class)
+        * */
         public void PrintCustomAttributeInfo(Type type, bool withCmdletName, Action<string> writeOutput)
         {
-            if (!withCmdletName) {
+            if (!withCmdletName)
+            {
                 if (!GetAttributeSpecificMessage().StartsWith(Environment.NewLine))
                 {
                     writeOutput(Environment.NewLine);
                 }
                 writeOutput(string.Format(Resources.BreakingChangesAttributesDeclarationMessage, GetAttributeSpecificMessage()));
-            } else
+            }
+            else
             {
                 writeOutput(string.Format(Resources.BreakingChangesAttributesDeclarationMessageWithCmdletName, Utilities.GetNameFromCmdletType(type), GetAttributeSpecificMessage()));
             }
@@ -145,16 +142,15 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
                 writeOutput(string.Format(Resources.BreakingChangesAttributesChangeDescriptionMessage, this.ChangeDescription));
             }
 
-            if (ChangeInEfectByDateSet)
+            if (ChangeInEffectByDateSet)
             {
-                writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByDateMessage, this.ChangeInEfectByDate.ToShortDateString()));
+                writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByDateMessage, this.ChangeInEffectByDate.ToShortDateString()));
             }
-
-            if (DeprecateByVersionSet)
-            {
-                writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByVersion, this.DeprecateByVersion));
-            }
-
+            
+            writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByAzVersion, this.DeprecateByAzVersion));
+            
+            writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByVersion, this.DeprecateByVersion));
+            
             if (OldWay != null && NewWay != null)
             {
                 writeOutput(string.Format(Resources.BreakingChangesAttributesUsageChangeMessageConsole, OldWay, NewWay));

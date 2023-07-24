@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
+using System.Text;
 
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 {
@@ -33,14 +34,29 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         public static void ProcessCustomAttributesAtRuntime(Type type, InvocationInfo invocationInfo, Action<string> writeOutput)
         {
             List<CmdletPreviewAttribute> attributes = new List<CmdletPreviewAttribute>(GetAllAttributesInType(type, invocationInfo));
+            StringBuilder sb = new StringBuilder().Clear();
+            Action<string> appendPreviewMessage = (string s) => sb.Append(s);
 
             if (attributes != null && attributes.Count > 0)
             {
                 foreach (CmdletPreviewAttribute attribute in attributes)
                 {
-                    attribute.PrintCustomAttributeInfo(writeOutput);
+                    attribute.PrintCustomAttributeInfo(appendPreviewMessage);
                 }
+                writeOutput(sb.ToString());
+
             }
+        }
+
+        /// <summary>
+        /// Process CmdletExperimentation attribute in runtime
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="invocationInfo"></param>
+        /// <param name="writeOutput"></param>
+        public static bool ContainsPreviewAttribute(Type type, InvocationInfo invocationInfo)
+        {
+            return GetAllAttributesInType(type, invocationInfo).Count() > 0;
         }
 
         private static IEnumerable<CmdletPreviewAttribute> GetAllAttributesInType(Type type, InvocationInfo invocationInfo)
