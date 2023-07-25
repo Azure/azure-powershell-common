@@ -1,5 +1,7 @@
 ﻿using Microsoft.Azure.PowerShell.Common.Config;
 using Microsoft.WindowsAzure.Commands.Common;
+using Microsoft.WindowsAzure.Commands.Common.Properties;
+using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,11 +10,10 @@ using System.IO;
 using System.Management.Automation;
 using System.Threading;
 
-namespace Microsoft.Azure.PowerShell.Common.Share.UpgradeNotification
+namespace Microsoft.Azure.PowerShell.Common.UpgradeNotification
 {
     public class UpgradeNotificationHelper
     {
-        private const string AZPSMigrationGuideLink = "https://go.microsoft.com/fwlink/?linkid=2241373";
         private const string FrequencyKeyForUpgradeNotification = "VersionUpgradeNotification";
         private static TimeSpan FrequencyTimeSpanForUpgradeNotification = TimeSpan.FromDays(30);
 
@@ -55,14 +56,18 @@ namespace Microsoft.Azure.PowerShell.Common.Share.UpgradeNotification
             return _instance;
         }
 
-        public void WriteWarningMessageForVersionUpgrade(Microsoft.WindowsAzure.Commands.Utilities.Common.AzurePSCmdlet cmdlet, AzurePSQoSEvent _qosEvent, IConfigManager configManager, IFrequencyService frequencyService) {
-            _qosEvent.HigherVersionsChecked = false;
-            _qosEvent.UpgradeNotificationPrompted = false;
-
+        public void WriteWarningMessageForVersionUpgrade(AzurePSCmdlet cmdlet, AzurePSQoSEvent _qosEvent, IConfigManager configManager, IFrequencyService frequencyService) {
+            // skip if it's the exceptional case.
+            if (cmdlet == null || _qosEvent == null || configManager == null || frequencyService == null) {
+                return;
+            }
             try
             {
+                _qosEvent.HigherVersionsChecked = false;
+                _qosEvent.UpgradeNotificationPrompted = false;
+
                 //disabled by az config, skip
-                if (configManager!=null&& configManager.GetConfigValue<bool>(ConfigKeysForCommon.CheckForUpgrade).Equals(false))
+                if (configManager.GetConfigValue<bool>(ConfigKeysForCommon.CheckForUpgrade).Equals(false))
                 {
                     return;
                 }
@@ -73,10 +78,6 @@ namespace Microsoft.Azure.PowerShell.Common.Share.UpgradeNotification
                     return;
                 }
 
-                //register verion check and upgrade notification in frequency service
-                if (frequencyService == null) {
-                    return;
-                }
                 frequencyService.Register(FrequencyKeyForUpgradeCheck, FrequencyTimeSpanForUpgradeCheck);
                 frequencyService.Register(FrequencyKeyForUpgradeNotification, FrequencyTimeSpanForUpgradeNotification);
 
@@ -119,12 +120,11 @@ namespace Microsoft.Azure.PowerShell.Common.Share.UpgradeNotification
 
                     string latestModuleVersion = GetModuleLatestVersion(checkModuleName);
                     string updateModuleCmdletName = GetCmdletForUpdateModule();
-                    string warningMsg = $"You're using {checkModuleName} version {checkModuleCurrentVersion}. The latest version of {checkModuleName} is {latestModuleVersion}. Upgrade your Az modules using the following commands:{Environment.NewLine}";
-                    warningMsg += $"  {updateModuleCmdletName} {upgradeModuleNames} -WhatIf    -- Simulate updating your Az modules.{Environment.NewLine}";
-                    warningMsg += $"  {updateModuleCmdletName} {upgradeModuleNames}            -- Update your Az modules.{Environment.NewLine}";
+                    string warningMsg = string.Format(Resources.VersionUpgradeMessage, checkModuleName, checkModuleCurrentVersion, latestModuleVersion, updateModuleCmdletName, upgradeModuleNames);
                     if ("Az".Equals(checkModuleName) && GetInstance().HasHigherMajorVersion(checkModuleName, checkModuleCurrentVersion))
                     {
-                        warningMsg += $"There will be breaking changes from {checkModuleCurrentVersion} to {latestModuleVersion}. Open {AZPSMigrationGuideLink} and check the details.{Environment.NewLine}";
+                        warningMsg += Environment.NewLine;
+                        warningMsg += string.Format(Resources.BreakingChangesMessage, checkModuleCurrentVersion, latestModuleVersion, Resources.MigrationGuideLink);
                     }
                     cmdlet.WriteWarning(warningMsg);
                 });

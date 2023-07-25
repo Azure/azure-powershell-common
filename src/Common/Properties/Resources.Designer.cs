@@ -651,6 +651,15 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There will be breaking changes from {0} to {1}. Open {2} and check the details..
+        /// </summary>
+        public static string BreakingChangesMessage {
+            get {
+                return ResourceManager.GetString("BreakingChangesMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to CACHERUNTIMEURL.
         /// </summary>
         public static string CacheRuntimeUrl {
@@ -2011,6 +2020,15 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         public static string ManifestUri {
             get {
                 return ResourceManager.GetString("ManifestUri", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://go.microsoft.com/fwlink/?linkid=2241373.
+        /// </summary>
+        public static string MigrationGuideLink {
+            get {
+                return ResourceManager.GetString("MigrationGuideLink", resourceCulture);
             }
         }
         
@@ -4435,6 +4453,17 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         public static string UserNameNeedsToBeSpecified {
             get {
                 return ResourceManager.GetString("UserNameNeedsToBeSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You&apos;re using {0} version {1}. The latest version of {0} is {2}. Upgrade your Az modules using the following commands:
+        ///  {3} {4} -WhatIf    -- Simulate updating your Az modules.
+        ///  {3} {4}            -- Update your Az modules..
+        /// </summary>
+        public static string VersionUpgradeMessage {
+            get {
+                return ResourceManager.GetString("VersionUpgradeMessage", resourceCulture);
             }
         }
         
