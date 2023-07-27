@@ -1742,4 +1742,15 @@ Note : Go to {0} for steps to suppress this breaking change warning, and other i
   <data name="PreviewCmdletETAMessage" xml:space="preserve">
     <value> The estimated generally available date is '{0}'.</value>
   </data>
+  <data name="BreakingChangesMessage" xml:space="preserve">
+    <value>There will be breaking changes from {0} to {1}. Open {2} and check the details.</value>
+  </data>
+  <data name="MigrationGuideLink" xml:space="preserve">
+    <value>https://go.microsoft.com/fwlink/?linkid=2241373</value>
+  </data>
+  <data name="VersionUpgradeMessage" xml:space="preserve">
+    <value>You're using {0} version {1}. The latest version of {0} is {2}. Upgrade your Az modules using the following commands:
+  {3} {4} -WhatIf    -- Simulate updating your Az modules.
+  {3} {4}            -- Update your Az modules.</value>
+  </data>
 </root>

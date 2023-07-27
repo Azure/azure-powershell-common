@@ -16,7 +16,7 @@ using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 using Microsoft.Azure.PowerShell.Common.Config;
 using Microsoft.Azure.PowerShell.Common.Share.Survey;
-using Microsoft.Azure.PowerShell.Common.Share.UpgradeNotification;
+using Microsoft.Azure.PowerShell.Common.UpgradeNotification;
 using Microsoft.Azure.ServiceManagement.Common.Models;
 using Microsoft.WindowsAzure.Commands.Common;
 using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
