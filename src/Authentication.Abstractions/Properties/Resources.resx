@@ -120,6 +120,9 @@
   <data name="CertificateNotFoundInStore" xml:space="preserve">
     <value>No certificate was found in the certificate store with thumbprint {0}</value>
   </data>
+  <data name="DataMemberNotDeepCloneable" xml:space="preserve">
+    <value>Not all the class data member is copyable</value>
+  </data>
   <data name="IllegalPath" xml:space="preserve">
     <value>Illegal characters in path.</value>
   </data>
