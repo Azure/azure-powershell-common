@@ -22,7 +22,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
     /// a model class for azure accoutn credentials
     /// </summary>
     [Serializable]
-    public class AzureAccount : IAzureAccount
+    public class AzureAccount : IAzureAccount, IDeepCloneable<AzureAccount>
     {
         /// <summary>
         /// The account displayable id
@@ -48,6 +48,16 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// Additional proeprties for accounts
         /// </summary>
         public IDictionary<string, string> ExtendedProperties { get; } = new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Deep clone the Azure Account.
+        /// </summary>
+        public AzureAccount DeepClone()
+        {
+            var clone = new AzureAccount();
+            clone.CopyFrom(this);
+            return clone;
+        }
 
         /// <summary>
         /// identifier specific equality comparer

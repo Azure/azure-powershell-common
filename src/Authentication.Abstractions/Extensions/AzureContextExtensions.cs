@@ -14,9 +14,11 @@
 
 using System;
 using System.Linq;
+
 #if NETSTANDARD
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Core;
 #endif
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Properties;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
@@ -159,20 +161,23 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             {
                 return null;
             }
-            var deepCopy = new AzureContext()
+            if (context.Account is IDeepCloneable<AzureAccount> azureAccount
+                && context.Tenant is IDeepCloneable<AzureTenant> azureTenat
+                && context.Subscription is IDeepCloneable<AzureSubscription> azureSubscription
+                && context.Environment is IDeepCloneable<AzureEnvironment> azureEnvironment)
             {
-                Account = new AzureAccount(),
-                Tenant = new AzureTenant(),
-                Subscription = new AzureSubscription(),
-                Environment = new AzureEnvironment(),
-                VersionProfile = context.VersionProfile
-            };
-            deepCopy.Account.CopyFrom(context.Account);
-            deepCopy.Tenant.CopyFrom(context.Tenant);
-            deepCopy.Subscription.CopyFrom(context.Subscription);
-            deepCopy.Environment.CopyFrom(context.Environment);
-            deepCopy.CopyPropertiesFrom(context);
-            return deepCopy;
+                var deepCopy = new AzureContext(azureSubscription.DeepClone()
+                    , azureAccount.DeepClone()
+                    , azureEnvironment.DeepClone()
+                    , azureTenat.DeepClone()
+                    , context.TokenCache.CacheData?.ToArray())
+                {
+                    VersionProfile = context.VersionProfile
+                };
+                deepCopy.CopyPropertiesFrom(context);
+                return deepCopy;
+            }
+            throw new InvalidOperationException(Resources.DataMemberNotDeepCloneable);
         }
     }
 }
