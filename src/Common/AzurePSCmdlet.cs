@@ -636,7 +636,9 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         private void FlushDebugMessages(bool record = false)
         {
-            if (record)
+            //Use DisableErrorRecordsPersistence as opt-out for now, will replace it with EnableErrorRecordsPersistence as opt-in at next major release (November 2023)
+            if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
+                && configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisableErrorRecordsPersistence) && record)
             {
                 RecordDebugMessages();
             }
