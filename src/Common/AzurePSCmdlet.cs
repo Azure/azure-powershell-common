@@ -500,9 +500,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         protected new void WriteError(ErrorRecord errorRecord)
         {
             FlushDebugMessages();
-            //Use DisableErrorRecordsPersistence as opt-out for now, will replace it with EnableErrorRecordsPersistence as opt-in at next major release (November 2023)
-            if ((!AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
-                || !configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisableErrorRecordsPersistence)) && IsDataCollectionAllowed())
+            if (shouldRecordDebugMessages())
             {
                 RecordDebugMessages();
             }
@@ -512,7 +510,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 _qosEvent.IsSuccess = false;
             }
             base.WriteError(errorRecord);
-            if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out configManager)
+            if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
                 && configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisplayBreakingChangeWarning))
             {
                 PreviewAttributeHelper.ProcessCustomAttributesAtRuntime(this.GetType(), this.MyInvocation, WriteWarning);
@@ -522,9 +520,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         protected new void ThrowTerminatingError(ErrorRecord errorRecord)
         {
             FlushDebugMessages();
-            //Use DisableErrorRecordsPersistence as opt-out for now, will replace it with EnableErrorRecordsPersistence as opt-in at next major release (November 2023)
-            if ((!AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
-                || !configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisableErrorRecordsPersistence)) && IsDataCollectionAllowed())
+            if (shouldRecordDebugMessages())
             {
                 RecordDebugMessages();
             }
@@ -782,6 +778,14 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             {
                 // do not throw an error if recording debug messages fails
             }
+        }
+
+        //Use DisableErrorRecordsPersistence as opt-out for now, will replace it with EnableErrorRecordsPersistence as opt-in at next major release (November 2023)
+        private bool shouldRecordDebugMessages()
+        {
+            return (!AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
+                || !configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisableErrorRecordsPersistence)) 
+                && IsDataCollectionAllowed();
         }
 
         /// <summary>
