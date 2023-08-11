@@ -499,7 +499,11 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         }
         protected new void WriteError(ErrorRecord errorRecord)
         {
-            FlushDebugMessages(IsDataCollectionAllowed());
+            FlushDebugMessages();
+            if (ShouldRecordDebugMessages())
+            {
+                RecordDebugMessages();
+            }
             if (_qosEvent != null && errorRecord != null)
             {
                 _qosEvent.Exception = errorRecord.Exception;
@@ -515,7 +519,11 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         protected new void ThrowTerminatingError(ErrorRecord errorRecord)
         {
-            FlushDebugMessages(IsDataCollectionAllowed());
+            FlushDebugMessages();
+            if (ShouldRecordDebugMessages())
+            {
+                RecordDebugMessages();
+            }
             base.ThrowTerminatingError(errorRecord);
         }
 
@@ -634,13 +642,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             WriteObject(customObject);
         }
 
-        private void FlushDebugMessages(bool record = false)
+        private void FlushDebugMessages()
         {
-            if (record)
-            {
-                RecordDebugMessages();
-            }
-
             string message;
             while (DebugMessages.TryDequeue(out message))
             {
@@ -775,6 +778,14 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             {
                 // do not throw an error if recording debug messages fails
             }
+        }
+
+        //Use DisableErrorRecordsPersistence as opt-out for now, will replace it with EnableErrorRecordsPersistence as opt-in at next major release (November 2023)
+        private bool ShouldRecordDebugMessages()
+        {
+            return (!AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
+                || !configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisableErrorRecordsPersistence)) 
+                && IsDataCollectionAllowed();
         }
 
         /// <summary>
