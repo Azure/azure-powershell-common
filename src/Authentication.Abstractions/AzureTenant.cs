@@ -22,7 +22,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
     /// A model for an Azure Active Directory Tenant
     /// </summary>
     [Serializable]
-    public class AzureTenant : IAzureTenant, IDeepCloneable<AzureTenant>
+    public class AzureTenant : IAzureTenant
     {
         /// <summary>
         /// The tenant ID (globally-unique identifier)
@@ -44,19 +44,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// Custom proeprties of the tenant
         /// </summary>
         public IDictionary<string, string> ExtendedProperties { get; } = new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-        /// <summary>
-        /// Deep clone the Azure Tenant.
-        /// </summary>
-        public AzureTenant DeepClone()
-        {
-            var clone = new AzureTenant()
-            {
-                Directory = Directory,
-            };
-            clone.CopyFrom(this);
-            return clone;
-        }
 
         public static class Property
         {

@@ -22,7 +22,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
     /// A model for an Azure subscription
     /// </summary>
     [Serializable]
-    public class AzureSubscription : IAzureSubscription, IDeepCloneable<AzureSubscription>
+    public class AzureSubscription : IAzureSubscription
     {
         /// <summary>
         /// The subscription identifier, a globbaly-unique identifier
@@ -69,15 +69,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             {
                 return anotherSubscription.Id == Id;
             }
-        }
-        /// <summary>
-        /// Deep clone the Azure Subscription.
-        /// </summary>
-        public AzureSubscription DeepClone()
-        {
-            var clone = new AzureSubscription();
-            clone.CopyFrom(this);
-            return clone;
         }
 
         /// <summary>

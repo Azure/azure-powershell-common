@@ -14,11 +14,9 @@
 
 using System;
 using System.Linq;
-
 #if NETSTANDARD
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Core;
 #endif
-using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Properties;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
@@ -161,23 +159,28 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             {
                 return null;
             }
-            if (context.Account is IDeepCloneable<AzureAccount> azureAccount
-                && context.Tenant is IDeepCloneable<AzureTenant> azureTenat
-                && context.Subscription is IDeepCloneable<AzureSubscription> azureSubscription
-                && context.Environment is IDeepCloneable<AzureEnvironment> azureEnvironment)
+            var deepCopy = new AzureContext()
             {
-                var deepCopy = new AzureContext(azureSubscription.DeepClone()
-                    , azureAccount.DeepClone()
-                    , azureEnvironment.DeepClone()
-                    , azureTenat.DeepClone()
-                    , context.TokenCache.CacheData?.ToArray())
-                {
-                    VersionProfile = context.VersionProfile
-                };
-                deepCopy.CopyPropertiesFrom(context);
-                return deepCopy;
+                Account = new AzureAccount(),
+                Tenant = new AzureTenant(),
+                Subscription = new AzureSubscription(),
+                Environment = new AzureEnvironment(),
+                VersionProfile = context.VersionProfile
+            };
+            deepCopy.Account.CopyFrom(context.Account);
+            deepCopy.Tenant.CopyFrom(context.Tenant);
+            deepCopy.Subscription.CopyFrom(context.Subscription);
+            deepCopy.Environment.CopyFrom(context.Environment);
+            if (context.Tenant is AzureTenant azureTenant)
+            {
+                ((AzureTenant)deepCopy.Tenant).Directory = azureTenant.Directory;
             }
-            throw new InvalidOperationException(Resources.DataMemberNotDeepCloneable);
+            if (context.Environment is AzureEnvironment azureEnvironment)
+            {
+                ((AzureEnvironment)deepCopy.Environment).Type = azureEnvironment.Type;
+            }
+            deepCopy.CopyPropertiesFrom(context);
+            return deepCopy;
         }
     }
 }

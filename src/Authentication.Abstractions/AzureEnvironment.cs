@@ -29,7 +29,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
     /// location fo service-specific endpoints, and information for bootstrapping authentication
     /// </summary>
     [Serializable]
-    public partial class AzureEnvironment : IAzureEnvironment, IEquatable<AzureEnvironment>, IDeepCloneable<AzureEnvironment>
+    public partial class AzureEnvironment : IAzureEnvironment, IEquatable<AzureEnvironment>
     {
         private const string ArmMetadataEnvVariable = "ARM_CLOUD_METADATA_URL";
 
@@ -515,19 +515,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                    && string.Equals(this.AzureDataLakeStoreFileSystemEndpointSuffix, other.AzureDataLakeStoreFileSystemEndpointSuffix, StringComparison.OrdinalIgnoreCase)
                    && string.Equals(this.AdTenant?.TrimEnd('/'), other.AdTenant?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase)
                    && string.Equals(this.ContainerRegistryEndpointSuffix?.TrimEnd('/'), other.ContainerRegistryEndpointSuffix?.TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
-        }
-
-        /// <summary>
-        /// Deep clone the Azure Environment.
-        /// </summary>
-        public AzureEnvironment DeepClone()
-        {
-            var clone = new AzureEnvironment()
-            {
-                Type = Type
-            };
-            clone.CopyFrom(this);
-            return clone;
         }
 
 
