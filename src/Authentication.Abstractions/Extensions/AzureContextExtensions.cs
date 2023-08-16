@@ -171,6 +171,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             deepCopy.Tenant.CopyFrom(context.Tenant);
             deepCopy.Subscription.CopyFrom(context.Subscription);
             deepCopy.Environment.CopyFrom(context.Environment);
+
+            //TODO：Whenever to introduce more properties that needs to be copied here, extract the logic to a new method.
             if (context.Tenant is AzureTenant azureTenant)
             {
                 ((AzureTenant)deepCopy.Tenant).Directory = azureTenant.Directory;
