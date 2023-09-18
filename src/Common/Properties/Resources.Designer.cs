@@ -623,6 +623,16 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 
+        ///- The change is expected to take effect from {0} version : &apos;{1}&apos;.
+        /// </summary>
+        public static string BreakingChangesAttributesInEffectByVersion2 {
+            get {
+                return ResourceManager.GetString("BreakingChangesAttributesInEffectByVersion2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ```powershell
         ///# Old
         ///{0}

@@ -1753,4 +1753,8 @@ Note : Go to {0} for steps to suppress this breaking change warning, and other i
   {3} {4} -WhatIf    -- Simulate updating your Az modules.
   {3} {4}            -- Update your Az modules.</value>
   </data>
+  <data name="BreakingChangesAttributesInEffectByVersion2" xml:space="preserve">
+    <value>
+- The change is expected to take effect from {0} version : '{1}'</value>
+  </data>
 </root>

@@ -80,6 +80,16 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
          */
         public string GetBreakingChangeTextFromAttribute(Type type, bool withCmdletName)
         {
+            return GetBreakingChangeTextFromAttributeInternal(type, withCmdletName, null);
+        }
+
+        public string GetBreakingChangeTextFromAttribute(Type type, bool withCmdletName, String moduleName)
+        {
+            return GetBreakingChangeTextFromAttributeInternal(type, withCmdletName, moduleName);
+        }
+
+        private string GetBreakingChangeTextFromAttributeInternal(Type type, bool withCmdletName, String moduleName)
+        {
             StringBuilder breakingChangeMessage = new StringBuilder();
 
             if (!withCmdletName)
@@ -104,7 +114,13 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 
             if (!string.IsNullOrWhiteSpace(DeprecateByVersion))
             {
-                breakingChangeMessage.Append(string.Format(Resources.BreakingChangesAttributesInEffectByVersion, this.DeprecateByVersion));
+                if (moduleName != null)
+                {
+                    breakingChangeMessage.Append(string.Format(Resources.BreakingChangesAttributesInEffectByVersion2, moduleName, this.DeprecateByVersion));
+                }
+                else {
+                    breakingChangeMessage.Append(string.Format(Resources.BreakingChangesAttributesInEffectByVersion, this.DeprecateByVersion));
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(OldWay) && !string.IsNullOrWhiteSpace(NewWay))
@@ -123,6 +139,16 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
         * We get the cmdlet name from the passed in Type (it is expected to have the Cmdlet attribute decorated on the class)
         * */
         public void PrintCustomAttributeInfo(Type type, bool withCmdletName, Action<string> writeOutput)
+        {
+            PrintCustomAttributeInfoInternal(type, withCmdletName, null, writeOutput);
+        }
+
+        public void PrintCustomAttributeInfo(Type type, bool withCmdletName, String moduleName, Action<string> writeOutput)
+        {
+            PrintCustomAttributeInfoInternal(type, withCmdletName, moduleName, writeOutput);
+        }
+
+        private void PrintCustomAttributeInfoInternal(Type type, bool withCmdletName, String moduleName, Action<string> writeOutput)
         {
             if (!withCmdletName)
             {
@@ -146,11 +172,17 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             {
                 writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByDateMessage, this.ChangeInEffectByDate.ToShortDateString()));
             }
-            
+
             writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByAzVersion, this.DeprecateByAzVersion));
-            
-            writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByVersion, this.DeprecateByVersion));
-            
+
+            if (moduleName != null)
+            {
+                writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByVersion2, moduleName, this.DeprecateByVersion));
+            }
+            else {
+                writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByVersion, this.DeprecateByVersion));
+            }
+
             if (OldWay != null && NewWay != null)
             {
                 writeOutput(string.Format(Resources.BreakingChangesAttributesUsageChangeMessageConsole, OldWay, NewWay));
