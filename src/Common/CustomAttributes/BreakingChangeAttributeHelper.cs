@@ -89,13 +89,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 
                 foreach (GenericBreakingChangeWithVersionAttribute attribute in attributes)
                 {
-                    if (invocationInfo != null && invocationInfo.MyCommand != null && invocationInfo.MyCommand.ModuleName != null)
-                    {
-                        attribute.PrintCustomAttributeInfo(type, false, invocationInfo.MyCommand.ModuleName, appendBreakingChangeInfo);
-                    }
-                    else {
-                        attribute.PrintCustomAttributeInfo(type, false, appendBreakingChangeInfo);
-                    }
+                    attribute.PrintCustomAttributeInfo(type, false, invocationInfo?.MyCommand?.ModuleName, appendBreakingChangeInfo);
                 }
 
                 appendBreakingChangeInfo(string.Format(Resources.BreakingChangesAttributesFooterMessage, BREAKING_CHANGE_ATTRIBUTE_INFORMATION_LINK));
@@ -131,14 +125,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             //bound params anyways
             foreach (GenericBreakingChangeWithVersionAttribute attribute in GetAllBreakingChangeAttributesInType(type, null))
             {
-                if (invocationInfo != null && invocationInfo.MyCommand != null && invocationInfo.MyCommand.ModuleName != null)
-                {
-                    messages.Add(attribute.GetBreakingChangeTextFromAttribute(type, true, invocationInfo.MyCommand.ModuleName));
-                }
-                else {
-                    messages.Add(attribute.GetBreakingChangeTextFromAttribute(type, true));
-                }
-                
+                messages.Add(attribute.GetBreakingChangeTextFromAttribute(type, true, invocationInfo?.MyCommand?.ModuleName));
             }
 
             return messages;

@@ -83,7 +83,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             return GetBreakingChangeTextFromAttributeInternal(type, withCmdletName, null);
         }
 
-        public string GetBreakingChangeTextFromAttribute(Type type, bool withCmdletName, String moduleName)
+        internal string GetBreakingChangeTextFromAttribute(Type type, bool withCmdletName, String moduleName)
         {
             return GetBreakingChangeTextFromAttributeInternal(type, withCmdletName, moduleName);
         }
@@ -118,7 +118,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
                 {
                     breakingChangeMessage.Append(string.Format(Resources.BreakingChangesAttributesInEffectByVersion2, moduleName, this.DeprecateByVersion));
                 }
-                else {
+                else 
+                {
                     breakingChangeMessage.Append(string.Format(Resources.BreakingChangesAttributesInEffectByVersion, this.DeprecateByVersion));
                 }
             }
@@ -143,7 +144,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             PrintCustomAttributeInfoInternal(type, withCmdletName, null, writeOutput);
         }
 
-        public void PrintCustomAttributeInfo(Type type, bool withCmdletName, String moduleName, Action<string> writeOutput)
+        internal void PrintCustomAttributeInfo(Type type, bool withCmdletName, String moduleName, Action<string> writeOutput)
         {
             PrintCustomAttributeInfoInternal(type, withCmdletName, moduleName, writeOutput);
         }
@@ -179,7 +180,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             {
                 writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByVersion2, moduleName, this.DeprecateByVersion));
             }
-            else {
+            else 
+            {
                 writeOutput(string.Format(Resources.BreakingChangesAttributesInEffectByVersion, this.DeprecateByVersion));
             }
 
