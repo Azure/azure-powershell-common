@@ -89,7 +89,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 
                 foreach (GenericBreakingChangeWithVersionAttribute attribute in attributes)
                 {
-                    attribute.PrintCustomAttributeInfo(type, false, appendBreakingChangeInfo);
+                    attribute.PrintCustomAttributeInfo(type, false, invocationInfo?.MyCommand?.ModuleName, appendBreakingChangeInfo);
                 }
 
                 appendBreakingChangeInfo(string.Format(Resources.BreakingChangesAttributesFooterMessage, BREAKING_CHANGE_ATTRIBUTE_INFORMATION_LINK));
@@ -112,6 +112,20 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
             foreach (GenericBreakingChangeWithVersionAttribute attribute in GetAllBreakingChangeAttributesInType(type, null))
             {
                 messages.Add(attribute.GetBreakingChangeTextFromAttribute(type, true));
+            }
+
+            return messages;
+        }
+
+        public static List<string> GetBreakingChangeMessagesForType(Type type, InvocationInfo invocationInfo)
+        {
+            List<string> messages = new List<string>();
+
+            //This is used as a migration guide, we need to process all properties/fields, moreover at this point of time we do not have a list of all the
+            //bound params anyways
+            foreach (GenericBreakingChangeWithVersionAttribute attribute in GetAllBreakingChangeAttributesInType(type, null))
+            {
+                messages.Add(attribute.GetBreakingChangeTextFromAttribute(type, true, invocationInfo?.MyCommand?.ModuleName));
             }
 
             return messages;
