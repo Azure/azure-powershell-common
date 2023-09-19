@@ -594,7 +594,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to 
-        ///- The change is expected to take effect from Az version : &apos;{0}&apos;.
+        ///- The change is expected to take effect in Az version : &apos;{0}&apos;.
         /// </summary>
         public static string BreakingChangesAttributesInEffectByAzVersion {
             get {
@@ -614,7 +614,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to 
-        ///- The change is expected to take effect from version : &apos;{0}&apos;.
+        ///- The change is expected to take effect in version : &apos;{0}&apos;.
         /// </summary>
         public static string BreakingChangesAttributesInEffectByVersion {
             get {
@@ -624,7 +624,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to 
-        ///- The change is expected to take effect from {0} version : &apos;{1}&apos;.
+        ///- The change is expected to take effect in {0} version : &apos;{1}&apos;.
         /// </summary>
         public static string BreakingChangesAttributesInEffectByVersion2 {
             get {
