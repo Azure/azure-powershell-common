@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
@@ -156,7 +157,12 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
 
             foreach (PropertyInfo p in type.GetRuntimeProperties())
             {
-                    attributeList.AddRange(p.GetCustomAttributes(typeof(GenericBreakingChangeWithVersionAttribute), false).Cast<GenericBreakingChangeWithVersionAttribute>());
+                attributeList.AddRange(p.GetCustomAttributes(typeof(GenericBreakingChangeWithVersionAttribute), false).Cast<GenericBreakingChangeWithVersionAttribute>());
+            }
+
+            foreach (ParameterMetadata param in invocationInfo.MyCommand.Parameters.Values)
+            {
+                attributeList.AddRange(param.Attributes.Where(a => a is GenericBreakingChangeWithVersionAttribute).Select(a => a as GenericBreakingChangeWithVersionAttribute));
             }
 
             return invocationInfo == null ? attributeList : attributeList.Where(e => e.IsApplicableToInvocation(invocationInfo));
