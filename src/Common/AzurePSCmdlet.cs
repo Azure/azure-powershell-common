@@ -551,6 +551,19 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             base.WriteWarning(text);
         }
 
+        protected new void WriteInformation(object messageData, string[] tags)
+        {
+            FlushDebugMessages();
+            base.WriteInformation(messageData, tags);
+        }
+
+        protected void WriteInformation(string text)
+        {
+            FlushDebugMessages();
+            HostInformationMessage message = new HostInformationMessage { Message = ansiCodePrefix + text + ansiCodeSuffix, NoNewLine = false };
+            base.WriteInformation(message, new string[1] {"PSHOST"});
+        }
+
         protected new void WriteCommandDetail(string text)
         {
             FlushDebugMessages();
@@ -590,6 +603,14 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             if (CommandRuntime != null)
             {
                 WriteWarning(string.Format("{0:T} - {1}", DateTime.Now, message));
+            }
+        }
+
+        protected void WriteInformationWithTimestamp(string message)
+        {
+            if (CommandRuntime != null)
+            {
+                WriteInformation(string.Format("{0:T} - {1}", DateTime.Now, message));
             }
         }
 

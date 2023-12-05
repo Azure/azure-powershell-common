@@ -53,6 +53,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         public const string WriteDebugKey = "WriteDebug";
         public const string WriteVerboseKey = "WriteVerbose";
         public const string WriteWarningKey = "WriteWarning";
+        public const string WriteInformationKey = "WriteInformation";
         public const string EnqueueDebugKey = "EnqueueDebug";
         private const string SubscriptionIdParameter = "SubscriptionId";
 
@@ -214,7 +215,6 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
 
             return subscriptionObjects;
         }
-
 
         private IAccessToken GetTokenForTenant(string tenantId)
         {
@@ -572,6 +572,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         private event EventHandler<StreamEventArgs> _writeDebugEvent;
         private event EventHandler<StreamEventArgs> _writeVerboseEvent;
         private event EventHandler<StreamEventArgs> _writeWarningEvent;
+        private event EventHandler<StreamEventArgs> _writeInformationEvent;
         private event EventHandler<StreamEventArgs> _enqueueDebugEvent;
 
         private void InitializeEventHandlers()
@@ -582,11 +583,14 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             _writeVerboseEvent += WriteVerboseSender;
             _writeWarningEvent -= WriteWarningSender;
             _writeWarningEvent += WriteWarningSender;
+            _writeInformationEvent -= WriteInformationSender;
+            _writeInformationEvent += WriteInformationSender;
             _enqueueDebugEvent -= EnqueueDebugSender;
             _enqueueDebugEvent += EnqueueDebugSender;
             AzureSession.Instance.RegisterComponent(WriteDebugKey, () => _writeDebugEvent, true);
             AzureSession.Instance.RegisterComponent(WriteVerboseKey, () => _writeVerboseEvent, true);
             AzureSession.Instance.RegisterComponent(WriteWarningKey, () => _writeWarningEvent, true);
+            AzureSession.Instance.RegisterComponent(WriteInformationKey, () => _writeInformationEvent, true);
             AzureSession.Instance.RegisterComponent(EnqueueDebugKey, () => _enqueueDebugEvent, true);
         }
 
@@ -603,6 +607,11 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         private void WriteWarningSender(object sender, StreamEventArgs args)
         {
             WriteWarningWithTimestamp(args.Message);
+        }
+
+        private void WriteInformationSender(object sender, StreamEventArgs args)
+        {
+            WriteInformationWithTimestamp(args.Message);
         }
 
         private void EnqueueDebugSender(object sender, StreamEventArgs args)
