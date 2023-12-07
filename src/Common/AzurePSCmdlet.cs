@@ -468,13 +468,14 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             var link = "'Open-AzSurveyLink'";
             var action = " to open in browser. Learn more at ";
             var website = "https://go.microsoft.com/fwlink/?linkid=2202892";
-            WriteInformationWithAnsicodeStyle(newLine);
-            WriteInformationWithAnsicodeStyle(howWas, true);
-            WriteInformationWithAnsicodeStyle(link, true);
-            WriteInformationWithAnsicodeStyle(action, true);
-            WriteInformationWithAnsicodeStyle(website, true);
-            WriteInformationWithAnsicodeStyle(newLine);
+            WriteInformationWithAnsiCodeStyle(newLine);
+            WriteInformationWithAnsiCodeStyle(howWas, true);
+            WriteInformationWithAnsiCodeStyle(link, true);
+            WriteInformationWithAnsiCodeStyle(action, true);
+            WriteInformationWithAnsiCodeStyle(website, true);
+            WriteInformationWithAnsiCodeStyle(newLine);
         }
+
         protected new void WriteError(ErrorRecord errorRecord)
         {
             FlushDebugMessages();
@@ -535,7 +536,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             base.WriteInformation(messageData, tags);
         }
 
-        protected void WriteInformationWithAnsicodeStyle(string text, bool? noNewLine = null)
+        protected void WriteInformationWithAnsiCodeStyle(string text, bool? noNewLine = null)
         {
             HostInformationMessage message = new HostInformationMessage { Message = ansiCodePrefix + text + ansiCodeSuffix, NoNewLine = noNewLine };
             WriteInformation(message, new string[1] { "PSHOST" });
