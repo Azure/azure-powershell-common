@@ -473,7 +473,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             WriteInformationWithAnsicodeStyle(link, true);
             WriteInformationWithAnsicodeStyle(action, true);
             WriteInformationWithAnsicodeStyle(website, true);
-            WriteInformationWithAnsicodeStyle(newLine, true);
+            WriteInformationWithAnsicodeStyle(newLine);
         }
         protected new void WriteError(ErrorRecord errorRecord)
         {
