@@ -463,39 +463,17 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         protected void WriteSurvey()
         {
-            HostInformationMessage newLine = new HostInformationMessage()
-            {
-                Message = ansiCodePrefix + "\n" + ansiCodeSuffix
-            };
-            HostInformationMessage howWas = new HostInformationMessage()
-            {
-                Message = ansiCodePrefix + "[Survey] Help us improve Azure PowerShell by sharing your experience. This survey should take about 5 minutes. Run "+ ansiCodeSuffix,
-                NoNewLine = true
-            };
-            HostInformationMessage link = new HostInformationMessage()
-            {
-                Message = ansiCodePrefix + "'Open-AzSurveyLink'"+ ansiCodeSuffix,
-                NoNewLine = true,
-            };
-            HostInformationMessage action = new HostInformationMessage()
-            {
-                Message = ansiCodePrefix + " to open in browser. Learn more at "+ ansiCodeSuffix,
-                NoNewLine = true,
-
-            };
-            HostInformationMessage website = new HostInformationMessage()
-            {
-                Message = ansiCodePrefix + "https://go.microsoft.com/fwlink/?linkid=2202892"+ ansiCodeSuffix,
-                NoNewLine = true,
-            };
-            WriteInformation(newLine, new string[] { "PSHOST" });
-            WriteInformation(howWas, new string[] { "PSHOST" });
-            WriteInformation(link, new string[] { "PSHOST" });
-            WriteInformation(action, new string[] { "PSHOST" });
-            WriteInformation(website, new string[] { "PSHOST" });
-            WriteInformation(newLine, new string[] { "PSHOST" });
-
-
+            var newLine = "\n";
+            var howWas = "[Survey] Help us improve Azure PowerShell by sharing your experience. This survey should take about 5 minutes. Run ";
+            var link = "'Open-AzSurveyLink'";
+            var action = " to open in browser. Learn more at ";
+            var website = "https://go.microsoft.com/fwlink/?linkid=2202892";
+            WriteInformationWithAnsicodeStyle(newLine);
+            WriteInformationWithAnsicodeStyle(howWas, true);
+            WriteInformationWithAnsicodeStyle(link, true);
+            WriteInformationWithAnsicodeStyle(action, true);
+            WriteInformationWithAnsicodeStyle(website, true);
+            WriteInformationWithAnsicodeStyle(newLine, true);
         }
         protected new void WriteError(ErrorRecord errorRecord)
         {
@@ -557,11 +535,10 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             base.WriteInformation(messageData, tags);
         }
 
-        protected void WriteInformation(string text)
+        protected void WriteInformationWithAnsicodeStyle(string text, bool? noNewLine = null)
         {
-            FlushDebugMessages();
-            HostInformationMessage message = new HostInformationMessage { Message = ansiCodePrefix + text + ansiCodeSuffix, NoNewLine = false };
-            base.WriteInformation(message, new string[1] {"PSHOST"});
+            HostInformationMessage message = new HostInformationMessage { Message = ansiCodePrefix + text + ansiCodeSuffix, NoNewLine = noNewLine };
+            WriteInformation(message, new string[1] { "PSHOST" });
         }
 
         protected new void WriteCommandDetail(string text)
@@ -610,7 +587,9 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         {
             if (CommandRuntime != null)
             {
-                WriteInformation(string.Format("{0:T} - {1}", DateTime.Now, message));
+                WriteInformation(
+                    new HostInformationMessage { Message = string.Format("{0:T} - {1}", DateTime.Now, message), NoNewLine = false },
+                    new string[1] { "PSHOST" });
             }
         }
 
