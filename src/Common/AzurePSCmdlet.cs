@@ -468,12 +468,12 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             var link = "'Open-AzSurveyLink'";
             var action = " to open in browser. Learn more at ";
             var website = "https://go.microsoft.com/fwlink/?linkid=2202892";
-            WriteInformationWithAnsiCodeStyle(newLine);
-            WriteInformationWithAnsiCodeStyle(howWas, true);
-            WriteInformationWithAnsiCodeStyle(link, true);
-            WriteInformationWithAnsiCodeStyle(action, true);
-            WriteInformationWithAnsiCodeStyle(website, true);
-            WriteInformationWithAnsiCodeStyle(newLine);
+            WriteInformationWrappedByAnsiCode(newLine);
+            WriteInformationWrappedByAnsiCode(howWas, true);
+            WriteInformationWrappedByAnsiCode(link, true);
+            WriteInformationWrappedByAnsiCode(action, true);
+            WriteInformationWrappedByAnsiCode(website, true);
+            WriteInformationWrappedByAnsiCode(newLine);
         }
 
         protected new void WriteError(ErrorRecord errorRecord)
@@ -536,9 +536,15 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             base.WriteInformation(messageData, tags);
         }
 
-        protected void WriteInformationWithAnsiCodeStyle(string text, bool? noNewLine = null)
+        protected void WriteInformationWrappedByAnsiCode(string text, bool? noNewLine = null)
         {
             HostInformationMessage message = new HostInformationMessage { Message = ansiCodePrefix + text + ansiCodeSuffix, NoNewLine = noNewLine };
+            WriteInformation(message, new string[1] { "PSHOST" });
+        }
+
+        protected void WriteHighlightedInformation(string text, bool? noNewLine = null)
+        {
+            HostInformationMessage message = new HostInformationMessage { Message = text, NoNewLine = noNewLine, BackgroundColor = ConsoleColor.Blue, ForegroundColor = ConsoleColor.White };
             WriteInformation(message, new string[1] { "PSHOST" });
         }
 
