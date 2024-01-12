@@ -57,12 +57,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         protected IList<Regex> _matchers { get;  private set; }  = new List<Regex>();
         private static readonly Regex _defaultMatcher = new Regex("(\\s*\"access_token\"\\s*:\\s*)\"[^\"]+\"");
 
-        // Using Ansi Code to control font color(97(Bold White)) and background color(0;120;212(RGB))
-        private static readonly string ansiCodePrefix = "\u001b[97;48;2;0;120;212m";
-
-        // using '[k' for erase in line. '[0m' to ending ansi code
-        private static readonly string ansiCodeSuffix = "\u001b[K\u001b[0m";
-
         protected AzurePSDataCollectionProfile _dataCollectionProfile
         {
             get
@@ -468,12 +462,12 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             var link = "'Open-AzSurveyLink'";
             var action = " to open in browser. Learn more at ";
             var website = "https://go.microsoft.com/fwlink/?linkid=2202892";
-            WriteInformationWrappedByAnsiCode(newLine);
-            WriteInformationWrappedByAnsiCode(howWas, true);
-            WriteInformationWrappedByAnsiCode(link, true);
-            WriteInformationWrappedByAnsiCode(action, true);
-            WriteInformationWrappedByAnsiCode(website, true);
-            WriteInformationWrappedByAnsiCode(newLine);
+            WriteHighlightedInformation(newLine);
+            WriteHighlightedInformation(howWas, true);
+            WriteHighlightedInformation(link, true);
+            WriteHighlightedInformation(action, true);
+            WriteHighlightedInformation(website, true);
+            WriteHighlightedInformation(newLine);
         }
 
         protected new void WriteError(ErrorRecord errorRecord)
@@ -534,12 +528,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         {
             FlushDebugMessages();
             base.WriteInformation(messageData, tags);
-        }
-
-        protected void WriteInformationWrappedByAnsiCode(string text, bool? noNewLine = null)
-        {
-            HostInformationMessage message = new HostInformationMessage { Message = ansiCodePrefix + text + ansiCodeSuffix, NoNewLine = noNewLine };
-            WriteInformation(message, new string[1] { "PSHOST" });
         }
 
         protected void WriteHighlightedInformation(string text, bool? noNewLine = null)
