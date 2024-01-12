@@ -4287,6 +4287,15 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to [Survey] Help us improve Azure PowerShell by sharing your experience. This survey should take about 5 minutes. Run &apos;Open-AzSurveyLink&apos; to open in browser. Learn more at {0}.
+        /// </summary>
+        public static string SurveyPreface {
+            get {
+                return ResourceManager.GetString("SurveyPreface", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Suspend.
         /// </summary>
         public static string Suspend {

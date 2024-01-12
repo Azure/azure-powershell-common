@@ -20,6 +20,7 @@ using Microsoft.Azure.PowerShell.Common.UpgradeNotification;
 using Microsoft.Azure.ServiceManagement.Common.Models;
 using Microsoft.WindowsAzure.Commands.Common;
 using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
+using Microsoft.WindowsAzure.Commands.Common.Properties;
 using Microsoft.WindowsAzure.Commands.Common.Utilities;
 using System;
 using System.Collections.Concurrent;
@@ -457,17 +458,9 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         protected void WriteSurvey()
         {
-            var newLine = "\n";
-            var howWas = "[Survey] Help us improve Azure PowerShell by sharing your experience. This survey should take about 5 minutes. Run ";
-            var link = "'Open-AzSurveyLink'";
-            var action = " to open in browser. Learn more at ";
             var website = "https://go.microsoft.com/fwlink/?linkid=2202892";
-            WriteHighlightedInformation(newLine);
-            WriteHighlightedInformation(howWas, true);
-            WriteHighlightedInformation(link, true);
-            WriteHighlightedInformation(action, true);
-            WriteHighlightedInformation(website, true);
-            WriteHighlightedInformation(newLine);
+            WriteHighlightedInformation(Environment.NewLine);
+            WriteHighlightedInformation(string.Format(Resources.SurveyPreface, website), false);
         }
 
         protected new void WriteError(ErrorRecord errorRecord)

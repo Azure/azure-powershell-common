@@ -1757,4 +1757,7 @@ Note : Go to {0} for steps to suppress this breaking change warning, and other i
     <value>
 - The change is expected to take effect in {0} version : '{1}'</value>
   </data>
+  <data name="SurveyPreface" xml:space="preserve">
+    <value>[Survey] Help us improve Azure PowerShell by sharing your experience. This survey should take about 5 minutes. Run 'Open-AzSurveyLink' to open in browser. Learn more at {0}</value>
+  </data>
 </root>
