@@ -154,7 +154,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
                 // WE can only fill in tokens for 3 tennats in the aux header, if tehre are more tenants fail now
                 if (tenantIds.Count() > MAX_NUMBER_OF_TOKENS_ALLOWED_IN_AUX_HEADER)
                 {
-                    throw new ArgumentException("Number of tenants (tenants other than the one in the current context), that the requested resources belongs to, exceeds maximum allowed number of " + MAX_NUMBER_OF_TOKENS_ALLOWED_IN_AUX_HEADER);
+                    throw new ArgumentException("Number of tenants (tenants other than the one in the current context), that the requested resources belong to, exceeds maximum allowed number of " + MAX_NUMBER_OF_TOKENS_ALLOWED_IN_AUX_HEADER);
                 }
 
                 //get the tokens for each tenant and prepare the string in the following format :
