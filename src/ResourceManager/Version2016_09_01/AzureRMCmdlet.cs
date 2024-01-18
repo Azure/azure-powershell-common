@@ -160,7 +160,9 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
                 //get the tokens for each tenant and prepare the string in the following format :
                 //"Header Value :: Bearer <auxiliary token1>;EncryptedBearer <auxiliary token2>; Bearer <auxiliary token3>"
 
-                var tokens = tenantIds.Select(t => (new StringBuilder(AUX_TOKEN_PREFIX).Append(" ").Append(GetTokenForTenant(t)?.AccessToken))?.ToString())?.ConcatStrings(AUX_TOKEN_APPEND_CHAR);
+var tokens = tenantIds
+    .Select(t => $"{AUX_TOKEN_PREFIX} {GetTokenForTenant(t)?.AccessToken}")
+    .ConcatStrings(AUX_TOKEN_APPEND_CHAR);
 
                 var auxHeader = new Dictionary<String, List<String>>();
 
