@@ -147,28 +147,26 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
 
         private IAzureContextContainer _clonedDefaultProfile;
 
-        protected IDictionary<string, List<string>> GetAuxiliaryAuthHeaderFromTenantIds(IEnumerable<string> tenantIds)
+        protected IDictionary<string, IList<string>> GetAuxiliaryAuthHeaderFromTenantIds(IEnumerable<string> tenantIds)
         {
-            if ((tenantIds != null) && (tenantIds.Count() > 0))
+            if ((tenantIds != null) && tenantIds.Any())
             {
                 // WE can only fill in tokens for 3 tennats in the aux header, if tehre are more tenants fail now
                 if (tenantIds.Count() > MAX_NUMBER_OF_TOKENS_ALLOWED_IN_AUX_HEADER)
                 {
-                    throw new ArgumentException("Number of tenants (tenants other than the one in the current context), that the requested resources belong to, exceeds maximum allowed number of " + MAX_NUMBER_OF_TOKENS_ALLOWED_IN_AUX_HEADER);
+                    throw new ArgumentException($"Number of tenants (tenants other than the one in the current context), that the requested resources belong to, exceeds maximum allowed number of {MAX_NUMBER_OF_TOKENS_ALLOWED_IN_AUX_HEADER}");
                 }
 
                 //get the tokens for each tenant and prepare the string in the following format :
                 //"Header Value :: Bearer <auxiliary token1>;EncryptedBearer <auxiliary token2>; Bearer <auxiliary token3>"
+                var tokens = tenantIds
+                    .Select(t => $"{AUX_TOKEN_PREFIX} {GetTokenForTenant(t)?.AccessToken}")?
+                    .ConcatStrings(AUX_TOKEN_APPEND_CHAR);
 
-var tokens = tenantIds
-    .Select(t => $"{AUX_TOKEN_PREFIX} {GetTokenForTenant(t)?.AccessToken}")
-    .ConcatStrings(AUX_TOKEN_APPEND_CHAR);
-
-                var auxHeader = new Dictionary<String, List<String>>();
-
-                List<string> headerValues = new List<string>(1);
-                headerValues.Add(tokens);
-                auxHeader.Add(AUX_HEADER_NAME, headerValues);
+                var auxHeader = new Dictionary<String, IList<String>>()
+                {
+                    { AUX_HEADER_NAME, new List<string>(1) { tokens } }
+                };
                 return auxHeader;
             }
             return null;
