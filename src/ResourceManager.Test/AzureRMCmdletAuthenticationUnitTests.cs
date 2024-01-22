@@ -83,7 +83,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Test
 
         public class MockCmdlet : AzureRMCmdlet
         {
-            public IDictionary<string, List<string>> GetAuxilaryAuthHeaderByTenatIds(IEnumerable<string> tenantIds)
+            public IDictionary<string, IList<string>> GetAuxilaryAuthHeaderByTenatIds(IEnumerable<string> tenantIds)
             {
                 return base.GetAuxiliaryAuthHeaderFromTenantIds(tenantIds);
             }
