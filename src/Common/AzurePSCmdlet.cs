@@ -458,9 +458,14 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         protected void WriteSurvey()
         {
+            // Using color same with Azure brand event. 
+            // Using Ansi Code to control font color(97(Bold White)) and background color(0;120;212(RGB))
+            string ansiCodePrefix = "\u001b[97;48;2;0;120;212m";
+            // using '[k' for erase in line. '[0m' to ending ansi code
+            string ansiCodeSuffix = "\u001b[K\u001b[0m";
             var website = "https://go.microsoft.com/fwlink/?linkid=2202892";
-            WriteHighlightedInformation(Environment.NewLine);
-            WriteHighlightedInformation(string.Format(Resources.SurveyPreface, website), false);
+            WriteStringAsInformation(Environment.NewLine);
+            WriteStringAsInformation(ansiCodePrefix+string.Format(Resources.SurveyPreface, website)+ ansiCodeSuffix, false);
         }
 
         protected new void WriteError(ErrorRecord errorRecord)
@@ -523,7 +528,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             base.WriteInformation(messageData, tags);
         }
 
-        protected void WriteHighlightedInformation(string text, bool? noNewLine = null)
+        protected void WriteStringAsInformation(string text, bool? noNewLine = null)
         {
             HostInformationMessage message = new HostInformationMessage { Message = text, NoNewLine = noNewLine, BackgroundColor = ConsoleColor.Blue, ForegroundColor = ConsoleColor.White };
             WriteInformation(message, new string[1] { "PSHOST" });
