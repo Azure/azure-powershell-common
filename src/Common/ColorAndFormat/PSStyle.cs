@@ -2,6 +2,7 @@
 {
     /// <summary>
     /// Contains configuration for how PowerShell renders text.
+    /// A subset of https://github.com/PowerShell/PowerShell/blob/master/src/System.Management.Automation/FormatAndOutput/common/PSStyle.cs
     /// </summary>
     public sealed class PSStyle
     {

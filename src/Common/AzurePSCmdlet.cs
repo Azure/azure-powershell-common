@@ -465,7 +465,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             string ansiCodeSuffix = "\u001b[K\u001b[0m";
             var website = "https://go.microsoft.com/fwlink/?linkid=2202892";
             WriteStringInformation(Environment.NewLine);
-            WriteStringInformation(ansiCodePrefix+string.Format(Resources.SurveyPreface, website)+ ansiCodeSuffix, false);
+            WriteStringInformation(ansiCodePrefix + string.Format(Resources.SurveyPreface, website) + ansiCodeSuffix, false);
         }
 
         protected new void WriteError(ErrorRecord errorRecord)
@@ -530,7 +530,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         protected void WriteStringInformation(string text, bool? noNewLine = null)
         {
-            HostInformationMessage message = new HostInformationMessage { Message = text, NoNewLine = noNewLine, BackgroundColor = ConsoleColor.Blue, ForegroundColor = ConsoleColor.White };
+            HostInformationMessage message = new HostInformationMessage { Message = text, NoNewLine = noNewLine };
             WriteInformation(message, new string[1] { "PSHOST" });
         }
 
