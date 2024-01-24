@@ -155,7 +155,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.CustomAttributes
                 attributeList.AddRange(f.GetCustomAttributes(typeof(GenericBreakingChangeWithVersionAttribute), false).Cast<GenericBreakingChangeWithVersionAttribute>());
             }
 
-            foreach (ParameterMetadata param in invocationInfo.MyCommand.Parameters.Values)
+            foreach (ParameterMetadata param in invocationInfo?.MyCommand?.Parameters?.Values)
             {
                 attributeList.AddRange(param.Attributes.Where(a => a is GenericBreakingChangeWithVersionAttribute).Select(a => a as GenericBreakingChangeWithVersionAttribute));
             }
