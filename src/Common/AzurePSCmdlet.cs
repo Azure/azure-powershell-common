@@ -528,7 +528,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             base.WriteInformation(messageData, tags);
         }
 
-        protected void WriteInformationToPsHost(string text, bool? noNewLine = null)
+        protected void WriteInformation(string text, bool? noNewLine = null)
         {
             HostInformationMessage message = new HostInformationMessage { Message = text, NoNewLine = noNewLine };
             WriteInformation(message, new string[1] { "PSHOST" });
