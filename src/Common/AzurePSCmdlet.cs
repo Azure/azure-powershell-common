@@ -464,8 +464,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             // using '[k' for erase in line. '[0m' to ending ansi code
             string ansiCodeSuffix = "\u001b[K\u001b[0m";
             var website = "https://go.microsoft.com/fwlink/?linkid=2202892";
-            WriteInformationToPsHost(Environment.NewLine);
-            WriteInformationToPsHost(ansiCodePrefix + string.Format(Resources.SurveyPreface, website) + ansiCodeSuffix, false);
+            WriteInformation(Environment.NewLine);
+            WriteInformation(ansiCodePrefix + string.Format(Resources.SurveyPreface, website) + ansiCodeSuffix, false);
         }
 
         protected new void WriteError(ErrorRecord errorRecord)
