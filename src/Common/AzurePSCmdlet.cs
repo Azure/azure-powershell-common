@@ -20,6 +20,7 @@ using Microsoft.Azure.PowerShell.Common.UpgradeNotification;
 using Microsoft.Azure.ServiceManagement.Common.Models;
 using Microsoft.WindowsAzure.Commands.Common;
 using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
+using Microsoft.WindowsAzure.Commands.Common.Properties;
 using Microsoft.WindowsAzure.Commands.Common.Utilities;
 using System;
 using System.Collections.Concurrent;
@@ -56,12 +57,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         protected IList<Regex> _matchers { get;  private set; }  = new List<Regex>();
         private static readonly Regex _defaultMatcher = new Regex("(\\s*\"access_token\"\\s*:\\s*)\"[^\"]+\"");
-
-        // Using Ansi Code to control font color(97(Bold White)) and background color(0;120;212(RGB))
-        private static readonly string ansiCodePrefix = "\u001b[97;48;2;0;120;212m";
-
-        // using '[k' for erase in line. '[0m' to ending ansi code
-        private static readonly string ansiCodeSuffix = "\u001b[K\u001b[0m";
 
         protected AzurePSDataCollectionProfile _dataCollectionProfile
         {
@@ -463,40 +458,16 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         protected void WriteSurvey()
         {
-            HostInformationMessage newLine = new HostInformationMessage()
-            {
-                Message = ansiCodePrefix + "\n" + ansiCodeSuffix
-            };
-            HostInformationMessage howWas = new HostInformationMessage()
-            {
-                Message = ansiCodePrefix + "[Survey] Help us improve Azure PowerShell by sharing your experience. This survey should take about 5 minutes. Run "+ ansiCodeSuffix,
-                NoNewLine = true
-            };
-            HostInformationMessage link = new HostInformationMessage()
-            {
-                Message = ansiCodePrefix + "'Open-AzSurveyLink'"+ ansiCodeSuffix,
-                NoNewLine = true,
-            };
-            HostInformationMessage action = new HostInformationMessage()
-            {
-                Message = ansiCodePrefix + " to open in browser. Learn more at "+ ansiCodeSuffix,
-                NoNewLine = true,
-
-            };
-            HostInformationMessage website = new HostInformationMessage()
-            {
-                Message = ansiCodePrefix + "https://go.microsoft.com/fwlink/?linkid=2202892"+ ansiCodeSuffix,
-                NoNewLine = true,
-            };
-            WriteInformation(newLine, new string[] { "PSHOST" });
-            WriteInformation(howWas, new string[] { "PSHOST" });
-            WriteInformation(link, new string[] { "PSHOST" });
-            WriteInformation(action, new string[] { "PSHOST" });
-            WriteInformation(website, new string[] { "PSHOST" });
-            WriteInformation(newLine, new string[] { "PSHOST" });
-
-
+            // Using color same with Azure brand event. 
+            // Using Ansi Code to control font color(97(Bold White)) and background color(0;120;212(RGB))
+            string ansiCodePrefix = "\u001b[97;48;2;0;120;212m";
+            // using '[k' for erase in line. '[0m' to ending ansi code
+            string ansiCodeSuffix = "\u001b[K\u001b[0m";
+            var website = "https://go.microsoft.com/fwlink/?linkid=2202892";
+            WriteInformation(Environment.NewLine);
+            WriteInformation(ansiCodePrefix + string.Format(Resources.SurveyPreface, website) + ansiCodeSuffix, false);
         }
+
         protected new void WriteError(ErrorRecord errorRecord)
         {
             FlushDebugMessages();
@@ -551,6 +522,18 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             base.WriteWarning(text);
         }
 
+        protected new void WriteInformation(object messageData, string[] tags)
+        {
+            FlushDebugMessages();
+            base.WriteInformation(messageData, tags);
+        }
+
+        protected void WriteInformation(string text, bool? noNewLine = null)
+        {
+            HostInformationMessage message = new HostInformationMessage { Message = text, NoNewLine = noNewLine };
+            WriteInformation(message, new string[1] { "PSHOST" });
+        }
+
         protected new void WriteCommandDetail(string text)
         {
             FlushDebugMessages();
@@ -590,6 +573,16 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             if (CommandRuntime != null)
             {
                 WriteWarning(string.Format("{0:T} - {1}", DateTime.Now, message));
+            }
+        }
+
+        protected void WriteInformationWithTimestamp(string message)
+        {
+            if (CommandRuntime != null)
+            {
+                WriteInformation(
+                    new HostInformationMessage { Message = string.Format("{0:T} - {1}", DateTime.Now, message), NoNewLine = false },
+                    new string[1] { "PSHOST" });
             }
         }
 
