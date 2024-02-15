@@ -4044,6 +4044,15 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This output may compromise security by showing the following secrets: {0}. Learn more at https://aka.ms/azpssecrets.
+        /// </summary>
+        public static string ShowSecretsWarningMessage {
+            get {
+                return ResourceManager.GetString("ShowSecretsWarningMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shutdown.
         /// </summary>
         public static string Shutdown {

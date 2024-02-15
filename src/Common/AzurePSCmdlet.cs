@@ -21,6 +21,7 @@ using Microsoft.Azure.ServiceManagement.Common.Models;
 using Microsoft.WindowsAzure.Commands.Common;
 using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
 using Microsoft.WindowsAzure.Commands.Common.Properties;
+using Microsoft.WindowsAzure.Commands.Common.Sanitizer;
 using Microsoft.WindowsAzure.Commands.Common.Utilities;
 using System;
 using System.Collections.Concurrent;
@@ -55,7 +56,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         private object lockObject = new object();
         private AzurePSDataCollectionProfile _cachedProfile = null;
 
-        protected IList<Regex> _matchers { get;  private set; }  = new List<Regex>();
+        protected IList<Regex> _matchers { get; private set; } = new List<Regex>();
         private static readonly Regex _defaultMatcher = new Regex("(\\s*\"access_token\"\\s*:\\s*)\"[^\"]+\"");
 
         protected AzurePSDataCollectionProfile _dataCollectionProfile
@@ -165,6 +166,12 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 _asJobDynamicParameters = value;
             }
         }
+
+        private SanitizerTelemetry _sanitizerInfo;
+
+        private AzurePSSanitizer _sanitizer;
+
+        protected AzurePSSanitizer Sanitizer => _sanitizer ?? (_sanitizer = new AzurePSSanitizer());
 
         /// <summary>
         /// Resolve user submitted paths correctly on all platforms
@@ -331,7 +338,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             SessionState = base.SessionState;
             var profile = _dataCollectionProfile;
             //TODO: Inject from CI server
-            if(_metricHelper == null)
+            if (_metricHelper == null)
             {
                 lock (lockObject)
                 {
@@ -390,6 +397,14 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
+        private void WriteShowSecretsWarningMessage()
+        {
+            if (_sanitizerInfo?.DetectedProperties?.Count > 0)
+            {
+                WriteWarning(string.Format(Resources.ShowSecretsWarningMessage, string.Join(", ", _sanitizerInfo.DetectedProperties)));
+            }
+        }
+
         /// <summary>
         /// Perform end of pipeline processing.
         /// </summary>
@@ -397,7 +412,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         {
             WriteEndProcessingRecommendation();
             WriteWarningMessageForVersionUpgrade();
-            
+
             if (MetricHelper.IsCalledByUser()
                 && SurveyHelper.GetInstance().ShouldPromptAzSurvey()
                 && (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
@@ -414,10 +429,13 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 // Send telemetry when cmdlet is directly called by user
                 LogQosEvent();
             }
-            else {
+            else
+            {
                 // When cmdlet is called within another cmdlet, we will not add a new telemetry, but add the cmdlet name to InternalCalledCmdlets
                 MetricHelper.AppendInternalCalledCmdlet(this.MyInvocation?.MyCommand?.Name);
             }
+
+            WriteShowSecretsWarningMessage();
             LogCmdletEndInvocationInfo();
             TearDownDebuggingTraces();
             TearDownHttpClientPipeline();
@@ -501,12 +519,30 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         protected new void WriteObject(object sendToPipeline)
         {
             FlushDebugMessages();
+            var watch = Stopwatch.StartNew();
+            _sanitizerInfo = new SanitizerTelemetry();
+            if (Sanitizer.RequireSecretsDetection)
+            {
+                Sanitizer.Sanitize(sendToPipeline, _sanitizerInfo);
+            }
+            watch.Stop();
+            WriteDebug($"Sanitizer took {watch.ElapsedMilliseconds}ms to process the object of cmdlet {MyInvocation.InvocationName}.");
+            _sanitizerInfo.SanitizerDuration = watch.Elapsed;
             base.WriteObject(sendToPipeline);
         }
 
         protected new void WriteObject(object sendToPipeline, bool enumerateCollection)
         {
             FlushDebugMessages();
+            var watch = Stopwatch.StartNew();
+            _sanitizerInfo = new SanitizerTelemetry();
+            if (Sanitizer.RequireSecretsDetection)
+            {
+                Sanitizer.Sanitize(sendToPipeline, _sanitizerInfo);
+            }
+            watch.Stop();
+            WriteDebug($"Sanitizer took {watch.ElapsedMilliseconds}ms to process the object of cmdlet {MyInvocation.InvocationName}.");
+            _sanitizerInfo.SanitizerDuration = watch.Elapsed;
             base.WriteObject(sendToPipeline, enumerateCollection);
         }
 
@@ -777,7 +813,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         private bool ShouldRecordDebugMessages()
         {
             return (!AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
-                || !configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisableErrorRecordsPersistence)) 
+                || !configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisableErrorRecordsPersistence))
                 && IsDataCollectionAllowed();
         }
 
@@ -792,6 +828,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
 
             _qosEvent.ParameterSetName = this.ParameterSetName;
+            _qosEvent.SanitizerInfo = _sanitizerInfo;
             _qosEvent.FinishQosEvent();
 
             if (!IsUsageMetricEnabled && (!IsErrorMetricEnabled || _qosEvent.IsSuccess))
@@ -1009,7 +1046,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 _adalListener.Dispose();
                 _adalListener = null;
             }
-
         }
 
         public void Dispose()
@@ -1059,11 +1095,11 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 List<PSObject> outputs;
                 if (ListAvailable)
                 {
-                   outputs = this.ExecuteScript<PSObject>($"Get-Module -Name {Module} -ListAvailable");
+                    outputs = this.ExecuteScript<PSObject>($"Get-Module -Name {Module} -ListAvailable");
                 }
                 else
                 {
-                   outputs = this.ExecuteScript<PSObject>($"Get-Module -Name {Module}");
+                    outputs = this.ExecuteScript<PSObject>($"Get-Module -Name {Module}");
                 }
                 foreach (PSObject obj in outputs)
                 {
@@ -1105,7 +1141,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 foreach (PSObject obj in outputs)
                 {
                     string psVersion = obj.ToString();
-                    return string.IsNullOrWhiteSpace(psVersion) ? DEFAULT_PSVERSION: psVersion;
+                    return string.IsNullOrWhiteSpace(psVersion) ? DEFAULT_PSVERSION : psVersion;
                 }
             }
             catch (Exception e)
