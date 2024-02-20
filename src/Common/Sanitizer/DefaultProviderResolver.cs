@@ -21,7 +21,7 @@ using System.Reflection;
 
 namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 {
-    internal class DefaultProviderResolver : ISanitizerProviderResolver
+    public class DefaultProviderResolver : ISanitizerProviderResolver
     {
         private readonly SanitizerProviderCache<Type, SanitizerProvider> _providerCache;
 
