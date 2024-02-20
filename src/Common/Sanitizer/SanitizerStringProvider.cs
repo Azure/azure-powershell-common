@@ -20,22 +20,15 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
     {
         internal override SanitizerProviderType ProviderType => SanitizerProviderType.String;
 
-        public SanitizerStringProvider() { }
+        public SanitizerStringProvider(ISanitizerService service) : base(service) { }
 
-        public SanitizerStringProvider(ISanitizerSettings settings) : base(settings) { }
-
-        internal override void SanitizeValue(object sanitizingObject, Stack<object> sanitizingStack, ISanitizerProviderResolver resolver, SanitizerProperty property, SanitizerTelemetry telemetry)
+        public override void SanitizeValue(object sanitizingObject, Stack<object> sanitizingStack, ISanitizerProviderResolver resolver, SanitizerProperty property, SanitizerTelemetry telemetry)
         {
             var propertyValue = property.ValueProvider.GetValue(sanitizingObject);
             if (propertyValue is string data)
             {
-                if (Settings.HasSensitiveData(data, out string sanitizedData))
+                if (Service.TrySanitizeData(data, out string sanitizedData))
                 {
-                    // Sanitize string value
-                    if (Settings.RequireSecretsRedaction())
-                    {
-
-                    }
                     telemetry.DetectedProperties.Add(ResolvePropertyPath(property));
                 }
             }

@@ -167,11 +167,9 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
+        private IAzurePSSanitizer Sanitizer => AzureSession.Instance.TryGetComponent<IAzurePSSanitizer>(nameof(IAzurePSSanitizer), out var sanitizer) ? sanitizer : null;
+
         private SanitizerTelemetry _sanitizerInfo;
-
-        private AzurePSSanitizer _sanitizer;
-
-        protected AzurePSSanitizer Sanitizer => _sanitizer ?? (_sanitizer = new AzurePSSanitizer());
 
         /// <summary>
         /// Resolve user submitted paths correctly on all platforms
@@ -519,30 +517,22 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         protected new void WriteObject(object sendToPipeline)
         {
             FlushDebugMessages();
-            var watch = Stopwatch.StartNew();
-            _sanitizerInfo = new SanitizerTelemetry();
-            if (Sanitizer.RequireSecretsDetection)
+            if (Sanitizer != null && Sanitizer.RequireSecretsDetection)
             {
-                Sanitizer.Sanitize(sendToPipeline, _sanitizerInfo);
+                Sanitizer.Sanitize(sendToPipeline, out _sanitizerInfo);
+                WriteDebug($"Sanitizer took {_sanitizerInfo?.SanitizerDuration.TotalMilliseconds}ms to process the object of cmdlet {MyInvocation.InvocationName}.");
             }
-            watch.Stop();
-            WriteDebug($"Sanitizer took {watch.ElapsedMilliseconds}ms to process the object of cmdlet {MyInvocation.InvocationName}.");
-            _sanitizerInfo.SanitizerDuration = watch.Elapsed;
             base.WriteObject(sendToPipeline);
         }
 
         protected new void WriteObject(object sendToPipeline, bool enumerateCollection)
         {
             FlushDebugMessages();
-            var watch = Stopwatch.StartNew();
-            _sanitizerInfo = new SanitizerTelemetry();
-            if (Sanitizer.RequireSecretsDetection)
+            if (Sanitizer != null && Sanitizer.RequireSecretsDetection)
             {
-                Sanitizer.Sanitize(sendToPipeline, _sanitizerInfo);
+                Sanitizer.Sanitize(sendToPipeline, out _sanitizerInfo);
+                WriteDebug($"Sanitizer took {_sanitizerInfo?.SanitizerDuration.TotalMilliseconds}ms to process the object of cmdlet {MyInvocation.InvocationName}.");
             }
-            watch.Stop();
-            WriteDebug($"Sanitizer took {watch.ElapsedMilliseconds}ms to process the object of cmdlet {MyInvocation.InvocationName}.");
-            _sanitizerInfo.SanitizerDuration = watch.Elapsed;
             base.WriteObject(sendToPipeline, enumerateCollection);
         }
 

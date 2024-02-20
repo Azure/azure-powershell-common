@@ -18,14 +18,12 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 {
     public abstract class SanitizerProvider
     {
-        protected ISanitizerSettings Settings { get; private set; }
+        protected ISanitizerService Service { get; private set; }
 
-        public SanitizerProvider(ISanitizerSettings settings)
+        public SanitizerProvider(ISanitizerService service)
         {
-            Settings = settings;
+            Service = service;
         }
-
-        public SanitizerProvider() : this(new DefaultSanitizerSettings()) { }
 
         internal string ResolvePropertyPath(SanitizerProperty property)
         {
@@ -41,6 +39,6 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 
         internal abstract SanitizerProviderType ProviderType { get; }
 
-        internal abstract void SanitizeValue(object sanitizingObject, Stack<object> sanitizingStack, ISanitizerProviderResolver resolver, SanitizerProperty property, SanitizerTelemetry telemetry);
+        public abstract void SanitizeValue(object sanitizingObject, Stack<object> sanitizingStack, ISanitizerProviderResolver resolver, SanitizerProperty property, SanitizerTelemetry telemetry);
     }
 }

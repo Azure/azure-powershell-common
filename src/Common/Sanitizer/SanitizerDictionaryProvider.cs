@@ -21,11 +21,9 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
     {
         internal override SanitizerProviderType ProviderType => SanitizerProviderType.Dictionary;
 
-        public SanitizerDictionaryProvider() { }
+        public SanitizerDictionaryProvider(ISanitizerService service) : base(service) { }
 
-        public SanitizerDictionaryProvider(ISanitizerSettings settings) : base(settings) { }
-
-        internal override void SanitizeValue(object sanitizingObject, Stack<object> sanitizingStack, ISanitizerProviderResolver resolver, SanitizerProperty property, SanitizerTelemetry telemetry)
+        public override void SanitizeValue(object sanitizingObject, Stack<object> sanitizingStack, ISanitizerProviderResolver resolver, SanitizerProperty property, SanitizerTelemetry telemetry)
         {
             sanitizingStack.Push(sanitizingObject);
 
@@ -39,13 +37,9 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
                     {
                         if (dictItemValue.GetType() == typeof(string))
                         {
-                            if (Settings.HasSensitiveData(dictItemValue as string, out string sanitizedData))
+                            if (Service.TrySanitizeData(dictItemValue as string, out string sanitizedData))
                             {
                                 // Sanitize dictionary item value
-                                if (Settings.RequireSecretsRedaction())
-                                {
-
-                                }
                                 telemetry.DetectedProperties.Add(ResolvePropertyPath(property));
                             }
                         }
@@ -53,7 +47,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
                         {
                             if (!sanitizingStack.HasCircularReference(dictItemValue))
                             {
-                                var provider = resolver.ResolveSanitizerProvider(dictItemValue.GetType());
+                                var provider = resolver.ResolveProvider(dictItemValue.GetType());
                                 provider?.SanitizeValue(dictItemValue, sanitizingStack, resolver, property, telemetry);
                             }
                         }

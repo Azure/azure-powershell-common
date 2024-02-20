@@ -22,11 +22,9 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 
         internal List<SanitizerProperty> Properties { get; set; } = new List<SanitizerProperty>();
 
-        public SanitizerCustomObjectProvider() { }
+        public SanitizerCustomObjectProvider(ISanitizerService service) : base(service) { }
 
-        public SanitizerCustomObjectProvider(ISanitizerSettings settings) : base(settings) { }
-
-        internal override void SanitizeValue(object sanitizingObject, Stack<object> sanitizingStack, ISanitizerProviderResolver resolver, SanitizerProperty property, SanitizerTelemetry telemetry)
+        public override void SanitizeValue(object sanitizingObject, Stack<object> sanitizingStack, ISanitizerProviderResolver resolver, SanitizerProperty property, SanitizerTelemetry telemetry)
         {
             sanitizingStack.Push(sanitizingObject);
 
@@ -37,7 +35,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
                 var propValue = prop.ValueProvider.GetValue(sanitizingObject);
                 if (propValue != null)
                 {
-                    var provider = resolver.ResolveSanitizerProvider(propValue.GetType());
+                    var provider = resolver.ResolveProvider(propValue.GetType());
                     if (provider?.GetType() == typeof(SanitizerStringProvider))
                     {
                         provider?.SanitizeValue(sanitizingObject, sanitizingStack, resolver, prop, telemetry);

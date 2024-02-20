@@ -21,11 +21,9 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
     {
         internal override SanitizerProviderType ProviderType => SanitizerProviderType.JsonArray;
 
-        public SanitizerJsonArrayProvider() { }
+        public SanitizerJsonArrayProvider(ISanitizerService service) : base(service) { }
 
-        public SanitizerJsonArrayProvider(ISanitizerSettings settings) : base(settings) { }
-
-        internal override void SanitizeValue(object sanitizingObject, Stack<object> sanitizingStack, ISanitizerProviderResolver resolver, SanitizerProperty property, SanitizerTelemetry telemetry)
+        public override void SanitizeValue(object sanitizingObject, Stack<object> sanitizingStack, ISanitizerProviderResolver resolver, SanitizerProperty property, SanitizerTelemetry telemetry)
         {
             if (sanitizingObject is JArray arrJson)
             {
@@ -37,19 +35,14 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
                         switch (jItem.Type)
                         {
                             case JTokenType.String:
-                                if (Settings.HasSensitiveData(jItem.Value<string>(), out string sanitizedData))
+                                if (Service.TrySanitizeData(jItem.Value<string>(), out string sanitizedData))
                                 {
-                                    // Sanitize json string value
-                                    if (Settings.RequireSecretsRedaction())
-                                    {
-
-                                    }
                                     telemetry.DetectedProperties.Add(ResolvePropertyPath(property));
                                 }
                                 break;
                             case JTokenType.Array:
                             case JTokenType.Object:
-                                var provider = resolver.ResolveSanitizerProvider(jItem.GetType());
+                                var provider = resolver.ResolveProvider(jItem.GetType());
                                 provider?.SanitizeValue(jItem, sanitizingStack, resolver, property, telemetry);
                                 break;
                         }

@@ -21,11 +21,9 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
     {
         internal override SanitizerProviderType ProviderType => SanitizerProviderType.Collection;
 
-        public SanitizerCollectionProvider() { }
+        public SanitizerCollectionProvider(ISanitizerService service) : base(service) { }
 
-        public SanitizerCollectionProvider(ISanitizerSettings settings) : base(settings) { }
-
-        internal override void SanitizeValue(object sanitizingObject, Stack<object> sanitizingStack, ISanitizerProviderResolver resolver, SanitizerProperty property, SanitizerTelemetry telemetry)
+        public override void SanitizeValue(object sanitizingObject, Stack<object> sanitizingStack, ISanitizerProviderResolver resolver, SanitizerProperty property, SanitizerTelemetry telemetry)
         {
             sanitizingStack.Push(sanitizingObject);
 
@@ -38,13 +36,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
                     {
                         if (collItem.GetType() == typeof(string))
                         {
-                            if (Settings.HasSensitiveData(collItem as string, out string sanitizedData))
+                            if (Service.TrySanitizeData(collItem as string, out string sanitizedData))
                             {
-                                // Sanitize collection item value
-                                if (Settings.RequireSecretsRedaction())
-                                {
-
-                                }
                                 telemetry.DetectedProperties.Add(ResolvePropertyPath(property));
                             }
                         }
@@ -52,7 +45,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
                         {
                             if (!sanitizingStack.HasCircularReference(collItem))
                             {
-                                var provider = resolver.ResolveSanitizerProvider(collItem.GetType());
+                                var provider = resolver.ResolveProvider(collItem.GetType());
                                 provider?.SanitizeValue(collItem, sanitizingStack, resolver, property, telemetry);
                             }
                         }

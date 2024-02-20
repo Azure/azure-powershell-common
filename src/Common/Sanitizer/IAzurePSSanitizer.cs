@@ -12,28 +12,12 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using System;
-using System.Reflection;
-
 namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 {
-    public class SanitizerProperty
+    public interface IAzurePSSanitizer
     {
-        public string PropertyName { get; private set; }
+        bool RequireSecretsDetection { get; }
 
-        public Type PropertyType { get; private set; }
-
-        internal PropertyInfo ValueProvider { get; private set; }
-
-        //internal SanitizerProvider SanitizerProvider { get; private set; }
-
-        internal SanitizerProperty ParentProperty { get; set; }
-
-        public SanitizerProperty(PropertyInfo property)
-        {
-            PropertyName = property.Name;
-            PropertyType = property.PropertyType;
-            ValueProvider = property;
-        }
+        void Sanitize(object sanitizingObject, out SanitizerTelemetry telemetryData);
     }
 }

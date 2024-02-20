@@ -18,8 +18,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 {
     public interface ISanitizerProviderResolver
     {
-        ISanitizerSettings Settings { get; }
+        ISanitizerService Service { get; }
 
-        SanitizerProvider ResolveSanitizerProvider(Type type);
+        SanitizerProvider ResolveProvider(Type type);
     }
 }

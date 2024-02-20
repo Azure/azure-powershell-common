@@ -21,11 +21,9 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
     {
         internal override SanitizerProviderType ProviderType => SanitizerProviderType.JsonObject;
 
-        public SanitizerJsonObjectProvider() { }
+        public SanitizerJsonObjectProvider(ISanitizerService service) : base(service) { }
 
-        public SanitizerJsonObjectProvider(ISanitizerSettings settings) : base(settings) { }
-
-        internal override void SanitizeValue(object sanitizingObject, Stack<object> sanitizingStack, ISanitizerProviderResolver resolver, SanitizerProperty property, SanitizerTelemetry telemetry)
+        public override void SanitizeValue(object sanitizingObject, Stack<object> sanitizingStack, ISanitizerProviderResolver resolver, SanitizerProperty property, SanitizerTelemetry telemetry)
         {
             if (sanitizingObject is JObject objJson)
             {
@@ -37,19 +35,14 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
                         switch (propValue.Type)
                         {
                             case JTokenType.String:
-                                if (Settings.HasSensitiveData(propValue.Value<string>(), out string sanitizedData))
+                                if (Service.TrySanitizeData(propValue.Value<string>(), out string sanitizedData))
                                 {
-                                    // Sanitize json string value
-                                    if (Settings.RequireSecretsRedaction())
-                                    {
-
-                                    }
                                     telemetry.DetectedProperties.Add(ResolvePropertyPath(property));
                                 }
                                 break;
                             case JTokenType.Array:
                             case JTokenType.Object:
-                                var provider = resolver.ResolveSanitizerProvider(propValue.GetType());
+                                var provider = resolver.ResolveProvider(propValue.GetType());
                                 provider?.SanitizeValue(propValue, sanitizingStack, resolver, property, telemetry);
                                 break;
                         }

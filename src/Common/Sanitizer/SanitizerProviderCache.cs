@@ -18,7 +18,7 @@ using System.Threading;
 
 namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 {
-    internal class SanitizerProviderCache<TKey, TValue> where TValue : SanitizerProvider
+    public class SanitizerProviderCache<TKey, TValue> where TValue : SanitizerProvider
     {
         private readonly ConcurrentDictionary<TKey, Lazy<TValue>> _safeProviderCache;
 

@@ -14,12 +14,10 @@
 
 namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 {
-    public interface ISanitizerSettings
+    public interface ISanitizerService
     {
         string SanitizedValue { get; }
 
-        bool HasSensitiveData(string data, out string sanitizedData);
-
-        bool RequireSecretsRedaction(string invocationName = null);
+        bool TrySanitizeData(string data, out string sanitizedData);
     }
 }

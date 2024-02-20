@@ -12,6 +12,7 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using Microsoft.Azure.Commands.Common.Authentication;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
@@ -20,7 +21,7 @@ using System.Reflection;
 
 namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 {
-    public class DefaultProviderResolver : ISanitizerProviderResolver
+    internal class DefaultProviderResolver : ISanitizerProviderResolver
     {
         private readonly SanitizerProviderCache<Type, SanitizerProvider> _providerCache;
 
@@ -28,14 +29,14 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 
         public static ISanitizerProviderResolver Instance => _instance;
 
-        public ISanitizerSettings Settings => new DefaultSanitizerSettings();
+        public ISanitizerService Service => AzureSession.Instance.TryGetComponent<ISanitizerService>(nameof(ISanitizerService), out var service) ? service : null;
 
         private DefaultProviderResolver()
         {
             _providerCache = new SanitizerProviderCache<Type, SanitizerProvider>(CreateProvider);
         }
 
-        public SanitizerProvider ResolveSanitizerProvider(Type type)
+        public SanitizerProvider ResolveProvider(Type type)
         {
             return _providerCache.GetSanitizerProvider(type);
         }
@@ -44,7 +45,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
         {
             SanitizerProvider provider = null;
 
-            if (!type.IsByRef)
+            if (Service != null && !type.IsByRef)
             {
                 switch (type)
                 {
@@ -79,7 +80,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 
         private SanitizerProvider CreateStringProvider()
         {
-            return new SanitizerStringProvider();
+            return new SanitizerStringProvider(Service);
         }
 
         private bool IsOfTypeJsonObject(Type type)
@@ -89,7 +90,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 
         private SanitizerProvider CreateJsonObjectProvider()
         {
-            return new SanitizerJsonObjectProvider();
+            return new SanitizerJsonObjectProvider(Service);
         }
 
         private bool IsOfTypeJsonArray(Type type)
@@ -99,7 +100,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 
         private SanitizerProvider CreateJsonArrayProvider()
         {
-            return new SanitizerJsonArrayProvider();
+            return new SanitizerJsonArrayProvider(Service);
         }
 
         private bool IsOfTypeDictionary(Type type)
@@ -141,7 +142,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 
         private SanitizerProvider CreateDictionaryProvider()
         {
-            return new SanitizerDictionaryProvider();
+            return new SanitizerDictionaryProvider(Service);
         }
 
         private bool IsOfTypeCollection(Type type)
@@ -172,7 +173,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 
         private SanitizerProvider CreateCollectionProvider()
         {
-            return new SanitizerCollectionProvider();
+            return new SanitizerCollectionProvider(Service);
         }
 
         private bool IsOfTypeCustomObject(Type type)
@@ -182,7 +183,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 
         private SanitizerProvider CreateCustomObjectProvider(Type objType)
         {
-            var objProvider = new SanitizerCustomObjectProvider();
+            var objProvider = new SanitizerCustomObjectProvider(Service);
             foreach (var property in objType.GetRuntimeProperties())
             {
                 if (property.CanRead && !property.PropertyType.IsValueType && property.GetMethod != null && !property.GetMethod.IsStatic)
