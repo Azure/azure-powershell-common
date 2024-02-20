@@ -27,6 +27,6 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 
         public Exception DetectionError { get; set; }
 
-        public TimeSpan SanitizerDuration { get; set; }
+        public TimeSpan SanitizeDuration { get; set; }
     }
 }

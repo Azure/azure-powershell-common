@@ -475,7 +475,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                         string sanitizerExceptionStack = string.Join(";", sanitizerTrace.GetFrames().Take(3).Select(f => ConvertFrameToString(f)));
                         eventProperties.Add("secrets-detection-exception-stack", sanitizerExceptionStack);
                     }
-                    eventProperties.Add("secrets-detection-duration", qos.SanitizerInfo.SanitizerDuration.ToString("c"));
+                    eventProperties.Add("secrets-sanitize-duration", qos.SanitizerInfo.SanitizeDuration.ToString("c"));
                 }
             }
 

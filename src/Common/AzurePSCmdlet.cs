@@ -520,7 +520,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             if (Sanitizer != null && Sanitizer.RequireSecretsDetection)
             {
                 Sanitizer.Sanitize(sendToPipeline, out _sanitizerInfo);
-                WriteDebug($"Sanitizer took {_sanitizerInfo?.SanitizerDuration.TotalMilliseconds}ms to process the object of cmdlet {MyInvocation.InvocationName}.");
+                WriteDebug($"Sanitizer took {_sanitizerInfo?.SanitizeDuration.TotalMilliseconds}ms to process the object of cmdlet {MyInvocation.InvocationName}.");
             }
             base.WriteObject(sendToPipeline);
         }
@@ -531,7 +531,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             if (Sanitizer != null && Sanitizer.RequireSecretsDetection)
             {
                 Sanitizer.Sanitize(sendToPipeline, out _sanitizerInfo);
-                WriteDebug($"Sanitizer took {_sanitizerInfo?.SanitizerDuration.TotalMilliseconds}ms to process the object of cmdlet {MyInvocation.InvocationName}.");
+                WriteDebug($"Sanitizer took {_sanitizerInfo?.SanitizeDuration.TotalMilliseconds}ms to process the object of cmdlet {MyInvocation.InvocationName}.");
             }
             base.WriteObject(sendToPipeline, enumerateCollection);
         }
