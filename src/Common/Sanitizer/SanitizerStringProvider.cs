@@ -24,7 +24,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 
         public override void SanitizeValue(object sanitizingObject, Stack<object> sanitizingStack, ISanitizerProviderResolver resolver, SanitizerProperty property, SanitizerTelemetry telemetry)
         {
-            var propertyValue = property.ValueProvider.GetValue(sanitizingObject);
+            var propertyValue = property.GetValue(sanitizingObject);
             if (propertyValue is string data)
             {
                 if (Service.TrySanitizeData(data, out string sanitizedData))

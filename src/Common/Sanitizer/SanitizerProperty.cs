@@ -23,9 +23,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 
         public Type PropertyType { get; private set; }
 
-        internal PropertyInfo ValueProvider { get; private set; }
-
-        //internal SanitizerProvider SanitizerProvider { get; private set; }
+        internal PropertyInfo ValueSupplier { get; private set; }
 
         internal SanitizerProperty ParentProperty { get; set; }
 
@@ -33,7 +31,12 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
         {
             PropertyName = property.Name;
             PropertyType = property.PropertyType;
-            ValueProvider = property;
+            ValueSupplier = property;
+        }
+
+        public object GetValue(object instance)
+        {
+            return ValueSupplier.GetValue(instance);
         }
     }
 }

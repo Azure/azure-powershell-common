@@ -32,7 +32,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
             {
                 prop.ParentProperty = property;
 
-                var propValue = prop.ValueProvider.GetValue(sanitizingObject);
+                var propValue = prop.GetValue(sanitizingObject);
                 if (propValue != null)
                 {
                     var provider = resolver.ResolveProvider(propValue.GetType());

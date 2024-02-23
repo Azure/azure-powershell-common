@@ -12,11 +12,15 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 {
     public interface ISanitizerService
     {
         string SanitizedValue { get; }
+
+        Dictionary<string, IEnumerable<string>> IgnoredProperties { get; }
 
         bool TrySanitizeData(string data, out string sanitizedData);
     }

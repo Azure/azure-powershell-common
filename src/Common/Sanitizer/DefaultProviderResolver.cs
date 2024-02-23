@@ -17,6 +17,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
@@ -181,12 +182,24 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
             return type != null && type != typeof(string) && type.IsClass && !type.FullName.StartsWith("System.");
         }
 
+        private bool IsIgnoredProperty(string typeName, string propertyName)
+        {
+            bool ignored = true;
+
+            if (Service.IgnoredProperties.ContainsKey(typeName))
+            {
+                ignored = Service.IgnoredProperties[typeName].Contains(propertyName);
+            }
+
+            return ignored;
+        }
+
         private SanitizerProvider CreateCustomObjectProvider(Type objType)
         {
             var objProvider = new SanitizerCustomObjectProvider(Service);
             foreach (var property in objType.GetRuntimeProperties())
             {
-                if (property.CanRead && !property.PropertyType.IsValueType && property.GetMethod != null && !property.GetMethod.IsStatic)
+                if (property.CanRead && !property.PropertyType.IsValueType && property.GetMethod != null && !property.GetMethod.IsStatic && !IsIgnoredProperty(objType.FullName, property.Name))
                 {
                     var sanitizerProperty = new SanitizerProperty(property);
                     objProvider.Properties.Add(sanitizerProperty);
