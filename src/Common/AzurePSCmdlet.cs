@@ -167,7 +167,25 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
-        private IAzurePSSanitizer Sanitizer => AzureSession.Instance.TryGetComponent<IAzurePSSanitizer>(nameof(IAzurePSSanitizer), out var sanitizer) ? sanitizer : null;
+        private IAzurePSSanitizer Sanitizer
+        {
+            get
+            {
+                try
+                {
+                    if (AzureSession.Instance.TryGetComponent<IAzurePSSanitizer>(nameof(IAzurePSSanitizer), out var sanitizer))
+                    {
+                        return sanitizer;
+                    }
+                }
+                catch
+                {
+                    // Ignore exceptions
+                }
+
+                return null;
+            }
+        }
 
         private SanitizerTelemetry _sanitizerInfo;
 

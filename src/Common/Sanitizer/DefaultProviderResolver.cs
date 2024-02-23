@@ -184,7 +184,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 
         private bool IsIgnoredProperty(string typeName, string propertyName)
         {
-            bool ignored = true;
+            bool ignored = false;
 
             if (Service.IgnoredProperties.ContainsKey(typeName))
             {
