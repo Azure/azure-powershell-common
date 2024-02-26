@@ -199,7 +199,9 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
             var objProvider = new SanitizerCustomObjectProvider(Service);
             foreach (var property in objType.GetRuntimeProperties())
             {
-                if (property.CanRead && !property.PropertyType.IsValueType && property.GetMethod != null && !property.GetMethod.IsStatic && !IsIgnoredProperty(objType.FullName, property.Name))
+                if (property.CanRead && !property.PropertyType.IsValueType && property.GetMethod != null && !property.GetMethod.IsStatic
+                    && property.GetIndexParameters().Length == 0
+                    && !IsIgnoredProperty(objType.FullName, property.Name))
                 {
                     var sanitizerProperty = new SanitizerProperty(property);
                     objProvider.Properties.Add(sanitizerProperty);

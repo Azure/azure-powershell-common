@@ -36,15 +36,18 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
                 if (propValue != null)
                 {
                     var provider = resolver.ResolveProvider(propValue.GetType());
-                    if (provider?.GetType() == typeof(SanitizerStringProvider))
+                    if (provider != null)
                     {
-                        provider?.SanitizeValue(sanitizingObject, sanitizingStack, resolver, prop, telemetry);
-                    }
-                    else
-                    {
-                        if (!sanitizingStack.HasCircularReference(propValue))
+                        if (provider.GetType() == typeof(SanitizerStringProvider))
                         {
-                            provider?.SanitizeValue(propValue, sanitizingStack, resolver, prop, telemetry);
+                            provider.SanitizeValue(sanitizingObject, sanitizingStack, resolver, prop, telemetry);
+                        }
+                        else
+                        {
+                            if (!sanitizingStack.HasCircularReference(propValue))
+                            {
+                                provider.SanitizeValue(propValue, sanitizingStack, resolver, prop, telemetry);
+                            }
                         }
                     }
                 }

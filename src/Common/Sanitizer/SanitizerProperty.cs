@@ -36,7 +36,16 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 
         public object GetValue(object instance)
         {
-            return ValueSupplier.GetValue(instance);
+            try
+            {
+                return ValueSupplier.GetValue(instance);
+            }
+            catch
+            {
+                // Ignore exceptions
+            }
+
+            return null;
         }
     }
 }
