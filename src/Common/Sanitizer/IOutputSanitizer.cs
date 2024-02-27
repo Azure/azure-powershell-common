@@ -12,26 +12,12 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using System.Collections.Generic;
-
 namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 {
-    public class SanitizerStringProvider : SanitizerProvider
+    public interface IOutputSanitizer
     {
-        internal override SanitizerProviderType ProviderType => SanitizerProviderType.String;
+        bool RequireSecretsDetection { get; }
 
-        public SanitizerStringProvider(ISanitizerService service) : base(service) { }
-
-        public override void SanitizeValue(object sanitizingObject, Stack<object> sanitizingStack, ISanitizerProviderResolver resolver, SanitizerProperty property, SanitizerTelemetry telemetry)
-        {
-            var propertyValue = property.GetValue(sanitizingObject);
-            if (propertyValue is string data)
-            {
-                if (Service.TrySanitizeData(data, out string sanitizedData))
-                {
-                    telemetry.DetectedProperties.Add(ResolvePropertyPath(property));
-                }
-            }
-        }
+        void Sanitize(object sanitizingObject, out SanitizerTelemetry telemetryData);
     }
 }

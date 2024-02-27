@@ -1165,6 +1165,15 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The output of cmdlet {0} may compromise security by showing the following secrets: {1}. Learn more at https://go.microsoft.com/fwlink/?linkid=2258844.
+        /// </summary>
+        public static string DisplaySecretsWarningMessage {
+            get {
+                return ResourceManager.GetString("DisplaySecretsWarningMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The provided dns {0} doesn&apos;t exist.
         /// </summary>
         public static string DnsDoesNotExist {
@@ -4040,15 +4049,6 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         public static string ShouldProcessFailWhatIf {
             get {
                 return ResourceManager.GetString("ShouldProcessFailWhatIf", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This output may compromise security by showing the following secrets: {0}. Learn more at https://aka.ms/azpssecrets.
-        /// </summary>
-        public static string ShowSecretsWarningMessage {
-            get {
-                return ResourceManager.GetString("ShowSecretsWarningMessage", resourceCulture);
             }
         }
         

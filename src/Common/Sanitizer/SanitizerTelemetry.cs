@@ -28,5 +28,17 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
         public Exception DetectionError { get; set; }
 
         public TimeSpan SanitizeDuration { get; set; }
+
+        public void Combine(SanitizerTelemetry telemetry)
+        {
+            if (telemetry != null)
+            {
+                ShowSecretsWarning = ShowSecretsWarning || telemetry.ShowSecretsWarning;
+                DetectedProperties.UnionWith(telemetry.DetectedProperties);
+                HasErrorInDetection = HasErrorInDetection || telemetry.HasErrorInDetection;
+                DetectionError = DetectionError ?? telemetry.DetectionError;
+                SanitizeDuration += telemetry.SanitizeDuration;
+            }
+        }
     }
 }

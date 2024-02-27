@@ -167,27 +167,16 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
-        private IAzurePSSanitizer Sanitizer
+        private IOutputSanitizer OutputSanitizer
         {
             get
             {
-                try
-                {
-                    if (AzureSession.Instance.TryGetComponent<IAzurePSSanitizer>(nameof(IAzurePSSanitizer), out var sanitizer))
-                    {
-                        return sanitizer;
-                    }
-                }
-                catch
-                {
-                    // Ignore exceptions
-                }
+                if (AzureSession.Instance != null && AzureSession.Instance.TryGetComponent<IOutputSanitizer>(nameof(IOutputSanitizer), out var outputSanitizer))
+                    return outputSanitizer;
 
                 return null;
             }
         }
-
-        private SanitizerTelemetry _sanitizerInfo;
 
         /// <summary>
         /// Resolve user submitted paths correctly on all platforms
@@ -413,11 +402,19 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
-        private void WriteShowSecretsWarningMessage()
+        private void WriteSecretsWarningMessage()
         {
-            if (_sanitizerInfo?.DetectedProperties?.Count > 0)
+            if (_qosEvent?.SanitizerInfo != null)
             {
-                WriteWarning(string.Format(Resources.ShowSecretsWarningMessage, string.Join(", ", _sanitizerInfo.DetectedProperties)));
+                var sanitizerInfo = _qosEvent.SanitizerInfo;
+                if (sanitizerInfo.ShowSecretsWarning)
+                {
+                    if (sanitizerInfo.DetectedProperties?.Count > 0)
+                    {
+                        WriteWarning(string.Format(Resources.DisplaySecretsWarningMessage, MyInvocation.InvocationName, string.Join(", ", sanitizerInfo.DetectedProperties)));
+                    }
+                    WriteDebug($"Sanitizer took {sanitizerInfo.SanitizeDuration.TotalMilliseconds}ms to process the object of cmdlet {MyInvocation.InvocationName}.");
+                }
             }
         }
 
@@ -428,6 +425,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         {
             WriteEndProcessingRecommendation();
             WriteWarningMessageForVersionUpgrade();
+            WriteSecretsWarningMessage();
 
             if (MetricHelper.IsCalledByUser()
                 && SurveyHelper.GetInstance().ShouldPromptAzSurvey()
@@ -451,7 +449,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 MetricHelper.AppendInternalCalledCmdlet(this.MyInvocation?.MyCommand?.Name);
             }
 
-            WriteShowSecretsWarningMessage();
             LogCmdletEndInvocationInfo();
             TearDownDebuggingTraces();
             TearDownHttpClientPipeline();
@@ -535,23 +532,24 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         protected new void WriteObject(object sendToPipeline)
         {
             FlushDebugMessages();
-            if (Sanitizer != null && Sanitizer.RequireSecretsDetection)
-            {
-                Sanitizer.Sanitize(sendToPipeline, out _sanitizerInfo);
-                WriteDebug($"Sanitizer took {_sanitizerInfo?.SanitizeDuration.TotalMilliseconds}ms to process the object of cmdlet {MyInvocation.InvocationName}.");
-            }
+            SanitizeOutput(sendToPipeline);
             base.WriteObject(sendToPipeline);
         }
 
         protected new void WriteObject(object sendToPipeline, bool enumerateCollection)
         {
             FlushDebugMessages();
-            if (Sanitizer != null && Sanitizer.RequireSecretsDetection)
-            {
-                Sanitizer.Sanitize(sendToPipeline, out _sanitizerInfo);
-                WriteDebug($"Sanitizer took {_sanitizerInfo?.SanitizeDuration.TotalMilliseconds}ms to process the object of cmdlet {MyInvocation.InvocationName}.");
-            }
+            SanitizeOutput(sendToPipeline);
             base.WriteObject(sendToPipeline, enumerateCollection);
+        }
+
+        private void SanitizeOutput(object sendToPipeline)
+        {
+            if (OutputSanitizer != null && OutputSanitizer.RequireSecretsDetection)
+            {
+                OutputSanitizer.Sanitize(sendToPipeline, out var telemetry);
+                _qosEvent?.SanitizerInfo.Combine(telemetry);
+            }
         }
 
         protected new void WriteVerbose(string text)
@@ -769,6 +767,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                             s => string.Format(CultureInfo.InvariantCulture, "-{0} ***", s)));
                 }
             }
+
+            _qosEvent.SanitizerInfo = new SanitizerTelemetry();
         }
 
         private void RecordDebugMessages()
@@ -836,7 +836,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
 
             _qosEvent.ParameterSetName = this.ParameterSetName;
-            _qosEvent.SanitizerInfo = _sanitizerInfo;
             _qosEvent.FinishQosEvent();
 
             if (!IsUsageMetricEnabled && (!IsErrorMetricEnabled || _qosEvent.IsSuccess))

@@ -32,6 +32,6 @@ namespace Microsoft.Azure.PowerShell.Common.Config
         //Use DisableErrorRecordsPersistence as opt-out for now, will replace it with EnableErrorRecordsPersistence as opt-in at next major release (November 2023)
         public const string DisableErrorRecordsPersistence = "DisableErrorRecordsPersistence";
         public const string EnableErrorRecordsPersistence = "EnableErrorRecordsPersistence";
-        public const string ShowSecretsWarning = "ShowSecretsWarning";
+        public const string DisplaySecretsWarning = "DisplaySecretsWarning";
     }
 }

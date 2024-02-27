@@ -430,7 +430,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                             sb.Append($"{key.ToString().Substring(AzurePSErrorDataKeys.KeyPrefix.Length)}={qos.Exception.Data[key]}");
                         }
                     }
-                    if(sb.Length > 0)
+                    if (sb.Length > 0)
                     {
                         eventProperties["exception-data"] = sb.ToString();
                     }
@@ -451,6 +451,25 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 }
             }
 
+            PopulateSanitizerPropertiesFromQos(qos, eventProperties);
+
+            if (qos.InputFromPipeline != null)
+            {
+                eventProperties.Add("InputFromPipeline", qos.InputFromPipeline.Value.ToString());
+            }
+            if (qos.OutputToPipeline != null)
+            {
+                eventProperties.Add("OutputToPipeline", qos.OutputToPipeline.Value.ToString());
+            }
+
+            foreach (var key in qos.CustomProperties.Keys)
+            {
+                eventProperties[key] = qos.CustomProperties[key];
+            }
+        }
+
+        private void PopulateSanitizerPropertiesFromQos(AzurePSQoSEvent qos, IDictionary<string, string> eventProperties)
+        {
             if (qos.SanitizerInfo != null)
             {
                 eventProperties["secrets-warning"] = qos.SanitizerInfo.ShowSecretsWarning.ToString();
@@ -477,20 +496,6 @@ namespace Microsoft.WindowsAzure.Commands.Common
                     }
                     eventProperties.Add("secrets-sanitize-duration", qos.SanitizerInfo.SanitizeDuration.ToString("c"));
                 }
-            }
-
-            if (qos.InputFromPipeline != null)
-            {
-                eventProperties.Add("InputFromPipeline", qos.InputFromPipeline.Value.ToString());
-            }
-            if (qos.OutputToPipeline != null)
-            {
-                eventProperties.Add("OutputToPipeline", qos.OutputToPipeline.Value.ToString());
-            }
-            
-            foreach (var key in qos.CustomProperties.Keys)
-            {
-                eventProperties[key] = qos.CustomProperties[key];
             }
         }
 
