@@ -34,6 +34,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using Microsoft.WindowsAzure.Commands.Common.Sanitizer;
 
 namespace Microsoft.WindowsAzure.Commands.Common
 {
@@ -429,7 +430,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                             sb.Append($"{key.ToString().Substring(AzurePSErrorDataKeys.KeyPrefix.Length)}={qos.Exception.Data[key]}");
                         }
                     }
-                    if(sb.Length > 0)
+                    if (sb.Length > 0)
                     {
                         eventProperties["exception-data"] = sb.ToString();
                     }
@@ -450,6 +451,8 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 }
             }
 
+            PopulateSanitizerPropertiesFromQos(qos, eventProperties);
+
             if (qos.InputFromPipeline != null)
             {
                 eventProperties.Add("InputFromPipeline", qos.InputFromPipeline.Value.ToString());
@@ -458,10 +461,41 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 eventProperties.Add("OutputToPipeline", qos.OutputToPipeline.Value.ToString());
             }
-            
+
             foreach (var key in qos.CustomProperties.Keys)
             {
                 eventProperties[key] = qos.CustomProperties[key];
+            }
+        }
+
+        private void PopulateSanitizerPropertiesFromQos(AzurePSQoSEvent qos, IDictionary<string, string> eventProperties)
+        {
+            if (qos.SanitizerInfo != null)
+            {
+                eventProperties["secrets-warning"] = qos.SanitizerInfo.ShowSecretsWarning.ToString();
+                if (qos.SanitizerInfo.ShowSecretsWarning)
+                {
+                    bool secretsDetected = qos.SanitizerInfo.DetectedProperties.Count > 0;
+                    eventProperties["secrets-detected"] = secretsDetected.ToString();
+                    if (secretsDetected)
+                    {
+                        eventProperties.Add("secrets-detected-properties", string.Join(";", qos.SanitizerInfo.DetectedProperties));
+                    }
+                    if (qos.SanitizerInfo.HasErrorInDetection && qos.SanitizerInfo.DetectionError != null)
+                    {
+                        eventProperties.Add("secrets-detection-exception-type", qos.SanitizerInfo.DetectionError.GetType().ToString());
+                        eventProperties.Add("secrets-detection-exception-message", qos.SanitizerInfo.DetectionError.Message);
+                        if (qos.SanitizerInfo.DetectionError.InnerException != null)
+                        {
+                            eventProperties.Add("secrets-detection-exception-inner-type", qos.SanitizerInfo.DetectionError.InnerException.GetType().ToString());
+                            eventProperties.Add("secrets-detection-exception-inner-message", qos.SanitizerInfo.DetectionError.InnerException.Message);
+                        }
+                        StackTrace sanitizerTrace = new StackTrace(qos.SanitizerInfo.DetectionError);
+                        string sanitizerExceptionStack = string.Join(";", sanitizerTrace.GetFrames().Take(3).Select(f => ConvertFrameToString(f)));
+                        eventProperties.Add("secrets-detection-exception-stack", sanitizerExceptionStack);
+                    }
+                    eventProperties.Add("secrets-sanitize-duration", qos.SanitizerInfo.SanitizeDuration.ToString("c"));
+                }
             }
         }
 
@@ -623,6 +657,8 @@ public class AzurePSQoSEvent
     public string InvocationName { get; set; }
     public Dictionary<string, string> CustomProperties { get; private set; }
     private static bool ShowTelemetry = string.Equals(bool.TrueString, Environment.GetEnvironmentVariable("AZUREPS_DEBUG_SHOW_TELEMETRY"), StringComparison.OrdinalIgnoreCase);
+
+    public SanitizerTelemetry SanitizerInfo { get; set; }
 
     public AzurePSQoSEvent()
     {
