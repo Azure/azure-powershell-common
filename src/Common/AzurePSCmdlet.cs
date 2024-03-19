@@ -413,7 +413,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                     {
                         WriteWarning(string.Format(Resources.DisplaySecretsWarningMessage, MyInvocation.InvocationName, string.Join(", ", sanitizerInfo.DetectedProperties)));
                     }
-                    WriteDebug($"Sanitizer took {sanitizerInfo.SanitizeDuration.TotalMilliseconds}ms to process the object of cmdlet {MyInvocation.InvocationName}.");
                 }
             }
         }
