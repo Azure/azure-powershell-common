@@ -690,21 +690,26 @@ public class AzurePSQoSEvent
         StringBuilder sb = new StringBuilder("AzureQoSEvent: ");
         if (ShowTelemetry)
         {
-            foreach(PropertyDescriptor descriptor in TypeDescriptor.GetProperties((this)))
-                {
-                    string name = descriptor.Name;
-                    object value = descriptor.GetValue(this);
-                    sb.Append($"{name}: {value}; ");
-                }
+            foreach (PropertyDescriptor descriptor in TypeDescriptor.GetProperties((this)))
+            {
+                string name = descriptor.Name;
+                object value = descriptor.GetValue(this);
+                sb.Append($"{name}: {value}; ");
+            }
             //InstallationId and InternalCalledCmdlets are properties of MetricHelper and  not in qosEventObject.
             sb.Append($"InternalCalledCmdlets: {Microsoft.WindowsAzure.Commands.Common.MetricHelper.InternalCalledCmdlets}; InstallaionId: {Microsoft.WindowsAzure.Commands.Common.MetricHelper.InstallationId}");
         }
         else
         {
-            sb = sb.Append($" Module: {ModuleName}:{ModuleVersion}; CommandName: {CommandName}; PSVersion: {PSVersion}");
+            sb.Append($" Module: {ModuleName}:{ModuleVersion}; CommandName: {CommandName}; PSVersion: {PSVersion}");
         }
 
         sb.Append($"; IsSuccess: {IsSuccess}; Duration: {Duration}");
+
+        if (SanitizerInfo?.ShowSecretsWarning == true)
+        {
+            sb.Append($"; SanitizeDuration: {SanitizerInfo.SanitizeDuration}");
+        }
 
         if (Exception != null)
         {
