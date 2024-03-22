@@ -321,7 +321,13 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                         break;
                     case AzureEnvironment.ExtendedEndpoint.ContainerRegistryEndpointResourceId:
                         environment.SetProperty(AzureEnvironment.ExtendedEndpoint.ContainerRegistryEndpointResourceId, propertyValue);
-                        break;                        
+                        break;
+                    case AzureEnvironment.ExtendedEndpoint.AzureDevCenterEndpointSuffix:
+                        environment.SetProperty(AzureEnvironment.ExtendedEndpoint.AzureDevCenterEndpointSuffix, propertyValue);
+                        break;
+                    case AzureEnvironment.ExtendedEndpoint.AzureDevCenterEndpointResourceId:
+                        environment.SetProperty(AzureEnvironment.ExtendedEndpoint.AzureDevCenterEndpointResourceId, propertyValue);
+                        break;                     
                 }
             }
         }
@@ -385,7 +391,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     break;
                 case AzureEnvironment.ExtendedEndpoint.ContainerRegistryEndpointResourceId:
                     resource = AzureEnvironment.ExtendedEndpoint.ContainerRegistryEndpointResourceId;
-                    break;                    
+                    break;  
+                case AzureEnvironment.ExtendedEndpoint.AzureDevCenterEndpointSuffix:
+                case AzureEnvironment.ExtendedEndpoint.AzureDevCenterEndpointResourceId:
+                    resource = AzureEnvironment.ExtendedEndpoint.AzureDevCenterEndpointResourceId;
+                    break;                  
                 default:
                     resource = AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId;
                     break;
