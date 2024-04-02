@@ -1165,11 +1165,20 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The output of cmdlet {0} may compromise security by showing secrets. Learn more at https://go.microsoft.com/fwlink/?linkid=2258844.
+        /// </summary>
+        public static string DisplaySecretsWarningMessageWithoutProperty {
+            get {
+                return ResourceManager.GetString("DisplaySecretsWarningMessageWithoutProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The output of cmdlet {0} may compromise security by showing the following secrets: {1}. Learn more at https://go.microsoft.com/fwlink/?linkid=2258844.
         /// </summary>
-        public static string DisplaySecretsWarningMessage {
+        public static string DisplaySecretsWarningMessageWithProperty {
             get {
-                return ResourceManager.GetString("DisplaySecretsWarningMessage", resourceCulture);
+                return ResourceManager.GetString("DisplaySecretsWarningMessageWithProperty", resourceCulture);
             }
         }
         
