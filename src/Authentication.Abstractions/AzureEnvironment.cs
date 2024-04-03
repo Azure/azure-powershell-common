@@ -231,6 +231,17 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 }
             }
 
+            if (!string.IsNullOrEmpty(armMetadata.LogAnalyticsResourceId))
+            {
+                string api_version = "v1";
+                var logAnalyticsEndpoint = armMetadata.LogAnalyticsResourceId + '/' + api_version;
+                azureEnvironment.SetProperty(ExtendedEndpoint.OperationalInsightsEndpointResourceId, armMetadata.LogAnalyticsResourceId);
+                if (!string.IsNullOrEmpty(logAnalyticsEndpoint))
+                {
+                    azureEnvironment.SetProperty(ExtendedEndpoint.OperationalInsightsEndpoint, logAnalyticsEndpoint);
+                }
+            }
+
             //ManagedHsmServiceEndpointSuffix currently uses Built-in endpoint.
             //In new ArmMedata, ManagedHsmServiceEndpointSuffix is provided as so 'MhsmDns'.
             //But it doesn't' make sense to just refresh ManagedHsmServiceEndpointSuffix from ARM without AzureManagedHsmServiceEndpointResourceId.
@@ -459,6 +470,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// </summary>
         public string ContainerRegistryEndpointSuffix { get; set; }
 
+        /// <summary>
+        /// The token audience required for communicating with the Log Analytics service in this enviornment
+        /// </summary>
+        public string OperationalInsightsEndpointResourceId { get; set; }
+        
         /// <summary>
         /// The set of Azure Version Profiles supported in this environment
         /// </summary>
