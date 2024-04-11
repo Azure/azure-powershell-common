@@ -819,8 +819,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         //Use DisableErrorRecordsPersistence as opt-out for now, will replace it with EnableErrorRecordsPersistence as opt-in at next major release (November 2023)
         private bool ShouldRecordDebugMessages()
         {
-            return (!AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
-                || !configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisableErrorRecordsPersistence))
+            return AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
+                && configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableErrorRecordsPersistence)
                 && IsDataCollectionAllowed();
         }
 
