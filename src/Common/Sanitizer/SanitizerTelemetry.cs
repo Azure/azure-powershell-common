@@ -21,6 +21,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
     {
         public bool ShowSecretsWarning { get; set; } = false;
 
+        public bool SecretsDetected { get; set; } = false;
+
         public HashSet<string> DetectedProperties { get; set; } = new HashSet<string>();
 
         public bool HasErrorInDetection { get; set; } = false;
@@ -29,11 +31,17 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 
         public TimeSpan SanitizeDuration { get; set; }
 
+        public SanitizerTelemetry(bool showSecretsWarning)
+        {
+            ShowSecretsWarning = showSecretsWarning;
+        }
+
         public void Combine(SanitizerTelemetry telemetry)
         {
             if (telemetry != null)
             {
                 ShowSecretsWarning = ShowSecretsWarning || telemetry.ShowSecretsWarning;
+                SecretsDetected = SecretsDetected || telemetry.SecretsDetected;
                 DetectedProperties.UnionWith(telemetry.DetectedProperties);
                 HasErrorInDetection = HasErrorInDetection || telemetry.HasErrorInDetection;
                 DetectionError = DetectionError ?? telemetry.DetectionError;
