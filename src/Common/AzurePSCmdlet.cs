@@ -171,7 +171,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         {
             get
             {
-                if (AzureSession.Instance != null && AzureSession.Instance.TryGetComponent<IOutputSanitizer>(nameof(IOutputSanitizer), out var outputSanitizer))
+                if (AzureSession.Instance.TryGetComponent<IOutputSanitizer>(nameof(IOutputSanitizer), out var outputSanitizer))
                     return outputSanitizer;
 
                 return null;
@@ -407,11 +407,15 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             if (_qosEvent?.SanitizerInfo != null)
             {
                 var sanitizerInfo = _qosEvent.SanitizerInfo;
-                if (sanitizerInfo.ShowSecretsWarning)
+                if (sanitizerInfo.ShowSecretsWarning && sanitizerInfo.SecretsDetected)
                 {
-                    if (sanitizerInfo.DetectedProperties?.Count > 0)
+                    if (sanitizerInfo.DetectedProperties.Count == 0)
                     {
-                        WriteWarning(string.Format(Resources.DisplaySecretsWarningMessage, MyInvocation.InvocationName, string.Join(", ", sanitizerInfo.DetectedProperties)));
+                        WriteWarning(string.Format(Resources.DisplaySecretsWarningMessageWithoutProperty, MyInvocation.InvocationName));
+                    }
+                    else
+                    {
+                        WriteWarning(string.Format(Resources.DisplaySecretsWarningMessageWithProperty, MyInvocation.InvocationName, string.Join(", ", sanitizerInfo.DetectedProperties)));
                     }
                 }
             }
@@ -544,7 +548,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         private void SanitizeOutput(object sendToPipeline)
         {
-            if (OutputSanitizer != null && OutputSanitizer.RequireSecretsDetection)
+            if (OutputSanitizer?.RequireSecretsDetection == true)
             {
                 OutputSanitizer.Sanitize(sendToPipeline, out var telemetry);
                 _qosEvent?.SanitizerInfo.Combine(telemetry);
@@ -767,7 +771,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 }
             }
 
-            _qosEvent.SanitizerInfo = new SanitizerTelemetry();
+            _qosEvent.SanitizerInfo = new SanitizerTelemetry(OutputSanitizer?.RequireSecretsDetection == true);
         }
 
         private void RecordDebugMessages()
