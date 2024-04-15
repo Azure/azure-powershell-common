@@ -1760,7 +1760,10 @@ Note : Go to {0} for steps to suppress this breaking change warning, and other i
   <data name="SurveyPreface" xml:space="preserve">
     <value>[Survey] Help us improve Azure PowerShell by sharing your experience. This survey should take about 5 minutes. Run 'Open-AzSurveyLink' to open in browser. Learn more at {0}</value>
   </data>
-  <data name="DisplaySecretsWarningMessage" xml:space="preserve">
+  <data name="DisplaySecretsWarningMessageWithProperty" xml:space="preserve">
     <value>The output of cmdlet {0} may compromise security by showing the following secrets: {1}. Learn more at https://go.microsoft.com/fwlink/?linkid=2258844</value>
+  </data>
+  <data name="DisplaySecretsWarningMessageWithoutProperty" xml:space="preserve">
+    <value>The output of cmdlet {0} may compromise security by showing secrets. Learn more at https://go.microsoft.com/fwlink/?linkid=2258844</value>
   </data>
 </root>
