@@ -475,11 +475,12 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 eventProperties["secrets-warning"] = qos.SanitizerInfo.ShowSecretsWarning.ToString();
                 if (qos.SanitizerInfo.ShowSecretsWarning)
                 {
-                    bool secretsDetected = qos.SanitizerInfo.DetectedProperties.Count > 0;
+                    bool secretsDetected = qos.SanitizerInfo.SecretsDetected;
                     eventProperties["secrets-detected"] = secretsDetected.ToString();
                     if (secretsDetected)
                     {
-                        eventProperties.Add("secrets-detected-properties", string.Join(";", qos.SanitizerInfo.DetectedProperties));
+                        var detectedProperties = qos.SanitizerInfo.DetectedProperties.Count == 0 ? "[None]" : string.Join(";", qos.SanitizerInfo.DetectedProperties);
+                        eventProperties.Add("secrets-detected-properties", detectedProperties);
                     }
                     if (qos.SanitizerInfo.HasErrorInDetection && qos.SanitizerInfo.DetectionError != null)
                     {
@@ -706,7 +707,7 @@ public class AzurePSQoSEvent
 
         sb.Append($"; IsSuccess: {IsSuccess}; Duration: {Duration}");
 
-        if (SanitizerInfo?.ShowSecretsWarning == true)
+        if (SanitizerInfo.ShowSecretsWarning)
         {
             sb.Append($"; SanitizeDuration: {SanitizerInfo.SanitizeDuration}");
         }
