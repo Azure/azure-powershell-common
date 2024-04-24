@@ -466,11 +466,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// The domain name suffix for Azure Container Registry
         /// </summary>
         public string ContainerRegistryEndpointSuffix { get; set; }
-
-        /// <summary>
-        /// The token audience required for communicating with the Log Analytics service in this enviornment
-        /// </summary>
-        public string OperationalInsightsEndpointResourceId { get; set; }
         
         /// <summary>
         /// The set of Azure Version Profiles supported in this environment
