@@ -233,10 +233,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 
             if (!string.IsNullOrEmpty(armMetadata.LogAnalyticsResourceId))
             {
-                string api_version = "v1";
-                var logAnalyticsEndpoint = armMetadata.LogAnalyticsResourceId + '/' + api_version;
                 azureEnvironment.SetProperty(ExtendedEndpoint.OperationalInsightsEndpointResourceId, armMetadata.LogAnalyticsResourceId);
-                azureEnvironment.SetProperty(ExtendedEndpoint.OperationalInsightsEndpoint, logAnalyticsEndpoint);
+                azureEnvironment.SetProperty(ExtendedEndpoint.OperationalInsightsEndpoint, $"{armMetadata.LogAnalyticsResourceId}/v1");
             }
 
             //ManagedHsmServiceEndpointSuffix currently uses Built-in endpoint.
