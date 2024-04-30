@@ -26,9 +26,171 @@ namespace Microsoft.WindowsAzure.Commands.Common
         public sealed class BackgroundColor
         {
             /// <summary>
+            /// Gets the color black.
+            /// </summary>
+            public static string Black { get; } = "\x1b[40m";
+
+            /// <summary>
+            /// Gets the color red.
+            /// </summary>
+            public static string Red { get; } = "\x1b[41m";
+
+            /// <summary>
+            /// Gets the color green.
+            /// </summary>
+            public static string Green { get; } = "\x1b[42m";
+
+            /// <summary>
+            /// Gets the color yellow.
+            /// </summary>
+            public static string Yellow { get; } = "\x1b[43m";
+
+            /// <summary>
             /// Gets the color blue.
             /// </summary>
             public static string Blue { get; } = "\x1b[44m";
+
+            /// <summary>
+            /// Gets the color magenta.
+            /// </summary>
+            public static string Magenta { get; } = "\x1b[45m";
+
+            /// <summary>
+            /// Gets the color cyan.
+            /// </summary>
+            public static string Cyan { get; } = "\x1b[46m";
+
+            /// <summary>
+            /// Gets the color white.
+            /// </summary>
+            public static string White { get; } = "\x1b[47m";
+
+            /// <summary>
+            /// Gets the color bright black.
+            /// </summary>
+            public static string BrightBlack { get; } = "\x1b[100m";
+
+            /// <summary>
+            /// Gets the color bright red.
+            /// </summary>
+            public static string BrightRed { get; } = "\x1b[101m";
+
+            /// <summary>
+            /// Gets the color bright green.
+            /// </summary>
+            public static string BrightGreen { get; } = "\x1b[102m";
+
+            /// <summary>
+            /// Gets the color bright yellow.
+            /// </summary>
+            public static string BrightYellow { get; } = "\x1b[103m";
+
+            /// <summary>
+            /// Gets the color bright blue.
+            /// </summary>
+            public static string BrightBlue { get; } = "\x1b[104m";
+
+            /// <summary>
+            /// Gets the color bright magenta.
+            /// </summary>
+            public static string BrightMagenta { get; } = "\x1b[105m";
+
+            /// <summary>
+            /// Gets the color bright cyan.
+            /// </summary>
+            public static string BrightCyan { get; } = "\x1b[106m";
+
+            /// <summary>
+            /// Gets the color bright white.
+            /// </summary>
+            public static string BrightWhite { get; } = "\x1b[107m";
+        }
+
+        /// <summary>
+        /// Contains foreground colors.
+        /// </summary>
+        public sealed class ForegroundColor
+        {
+
+            /// <summary>
+            /// Gets the color black.
+            /// </summary>
+            public static string Black { get; } = "\x1b[30m";
+
+            /// <summary>
+            /// Gets the color red.
+            /// </summary>
+            public static string Red { get; } = "\x1b[31m";
+
+            /// <summary>
+            /// Gets the color green.
+            /// </summary>
+            public static string Green { get; } = "\x1b[32m";
+
+            /// <summary>
+            /// Gets the color yellow.
+            /// </summary>
+            public static string Yellow { get; } = "\x1b[33m";
+
+            /// <summary>
+            /// Gets the color blue.
+            /// </summary>
+            public static string Blue { get; } = "\x1b[34m";
+
+            /// <summary>
+            /// Gets the color magenta.
+            /// </summary>
+            public static string Magenta { get; } = "\x1b[35m";
+
+            /// <summary>
+            /// Gets the color cyan.
+            /// </summary>
+            public static string Cyan { get; } = "\x1b[36m";
+
+            /// <summary>
+            /// Gets the color white.
+            /// </summary>
+            public static string White { get; } = "\x1b[37m";
+
+            /// <summary>
+            /// Gets the color bright black.
+            /// </summary>
+            public static string BrightBlack { get; } = "\x1b[90m";
+
+            /// <summary>
+            /// Gets the color bright red.
+            /// </summary>
+            public static string BrightRed { get; } = "\x1b[91m";
+
+            /// <summary>
+            /// Gets the color bright green.
+            /// </summary>
+            public static string BrightGreen { get; } = "\x1b[92m";
+
+            /// <summary>
+            /// Gets the color bright yellow.
+            /// </summary>
+            public static string BrightYellow { get; } = "\x1b[93m";
+
+            /// <summary>
+            /// Gets the color bright blue.
+            /// </summary>
+            public static string BrightBlue { get; } = "\x1b[94m";
+
+            /// <summary>
+            /// Gets the color bright magenta.
+            /// </summary>
+            public static string BrightMagenta { get; } = "\x1b[95m";
+
+            /// <summary>
+            /// Gets the color bright cyan.
+            /// </summary>
+            public static string BrightCyan { get; } = "\x1b[96m";
+
+            /// <summary>
+            /// Gets the color bright white.
+            /// </summary>
+            public static string BrightWhite { get; } = "\x1b[97m";
         }
 
         public static string Reset { get; } = "\x1b[0m";
