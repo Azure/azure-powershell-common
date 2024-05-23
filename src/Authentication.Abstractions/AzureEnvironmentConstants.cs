@@ -281,6 +281,10 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string USGovernmentContainerRegistryEndpointResourceId = "https://management.usgovcloudapi.net";
         public const string AzureContainerRegistryEndpointResourceId = "https://management.azure.com";
 
-
+        /// <summary>
+        /// Communication Email
+        /// </summary>
+        public const string AzureCommunicationEmailEndpointSuffix = "communication.azure.com";
+        public const string AzureCommunicationEmailEndpointResourceId = "https://communication.azure.com";
     }
 }
