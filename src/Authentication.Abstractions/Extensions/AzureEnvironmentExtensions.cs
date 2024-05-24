@@ -321,7 +321,13 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                         break;
                     case AzureEnvironment.ExtendedEndpoint.ContainerRegistryEndpointResourceId:
                         environment.SetProperty(AzureEnvironment.ExtendedEndpoint.ContainerRegistryEndpointResourceId, propertyValue);
-                        break;                        
+                        break;
+                    case AzureEnvironment.ExtendedEndpoint.AzureCommunicationEmailEndpointSuffix:
+                        environment.SetProperty(AzureEnvironment.ExtendedEndpoint.AzureCommunicationEmailEndpointSuffix, propertyValue);
+                        break;
+                    case AzureEnvironment.ExtendedEndpoint.AzureCommunicationEmailEndpointResourceId:
+                        environment.SetProperty(AzureEnvironment.ExtendedEndpoint.AzureCommunicationEmailEndpointResourceId, propertyValue);
+                        break;
                 }
             }
         }
@@ -385,7 +391,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     break;
                 case AzureEnvironment.ExtendedEndpoint.ContainerRegistryEndpointResourceId:
                     resource = AzureEnvironment.ExtendedEndpoint.ContainerRegistryEndpointResourceId;
-                    break;                    
+                    break;
+                case AzureEnvironment.ExtendedEndpoint.AzureCommunicationEmailEndpointSuffix:
+                case AzureEnvironment.ExtendedEndpoint.AzureCommunicationEmailEndpointResourceId:
+                    resource = AzureEnvironment.ExtendedEndpoint.AzureCommunicationEmailEndpointResourceId;
+                    break;
                 default:
                     resource = AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId;
                     break;

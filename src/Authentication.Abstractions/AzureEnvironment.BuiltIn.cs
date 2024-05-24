@@ -162,7 +162,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzurePurviewEndpointResourceId, AzureEnvironmentConstants.AzurePurviewEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureAppConfigurationEndpointSuffix, AzureEnvironmentConstants.AzureAppConfigurationEndpointSuffix);
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureAppConfigurationEndpointResourceId, AzureEnvironmentConstants.AzureAppConfigurationEndpointResourceId);
-                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.ContainerRegistryEndpointResourceId, AzureEnvironmentConstants.AzureContainerRegistryEndpointResourceId);            
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.ContainerRegistryEndpointResourceId, AzureEnvironmentConstants.AzureContainerRegistryEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureCommunicationEmailEndpointSuffix, AzureEnvironmentConstants.AzureCommunicationEmailEndpointSuffix);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureCommunicationEmailEndpointResourceId, AzureEnvironmentConstants.AzureCommunicationEmailEndpointResourceId);
             }
 
             if (azureEnvironments.ContainsKey(EnvironmentName.AzureChinaCloud))
