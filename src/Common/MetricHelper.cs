@@ -462,6 +462,11 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 eventProperties.Add("OutputToPipeline", qos.OutputToPipeline.Value.ToString());
             }
 
+            foreach (var key in qos.AzConfigInfo.Keys)
+            {
+                eventProperties[key] = qos.AzConfigInfo[key];
+            }
+
             foreach (var key in qos.CustomProperties.Keys)
             {
                 eventProperties[key] = qos.CustomProperties[key];
@@ -656,7 +661,11 @@ public class AzurePSQoSEvent
 
     public string ParameterSetName { get; set; }
     public string InvocationName { get; set; }
+
+    public Dictionary<string, string> AzConfigInfo { get; private set; }
+
     public Dictionary<string, string> CustomProperties { get; private set; }
+
     private static bool ShowTelemetry = string.Equals(bool.TrueString, Environment.GetEnvironmentVariable("AZUREPS_DEBUG_SHOW_TELEMETRY"), StringComparison.OrdinalIgnoreCase);
 
     public SanitizerTelemetry SanitizerInfo { get; set; }
@@ -666,6 +675,7 @@ public class AzurePSQoSEvent
         StartTime = DateTimeOffset.Now;
         _timer = new Stopwatch();
         _timer.Start();
+        AzConfigInfo = new Dictionary<string, string>();
         CustomProperties = new Dictionary<string, string>();
     }
 
