@@ -231,6 +231,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 }
             }
 
+            if (!string.IsNullOrEmpty(armMetadata.LogAnalyticsResourceId))
+            {
+                azureEnvironment.SetProperty(ExtendedEndpoint.OperationalInsightsEndpointResourceId, armMetadata.LogAnalyticsResourceId);
+                azureEnvironment.SetProperty(ExtendedEndpoint.OperationalInsightsEndpoint, $"{armMetadata.LogAnalyticsResourceId}/v1");
+            }
+
             //ManagedHsmServiceEndpointSuffix currently uses Built-in endpoint.
             //In new ArmMedata, ManagedHsmServiceEndpointSuffix is provided as so 'MhsmDns'.
             //But it doesn't' make sense to just refresh ManagedHsmServiceEndpointSuffix from ARM without AzureManagedHsmServiceEndpointResourceId.
@@ -458,7 +464,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// The domain name suffix for Azure Container Registry
         /// </summary>
         public string ContainerRegistryEndpointSuffix { get; set; }
-
+        
         /// <summary>
         /// The set of Azure Version Profiles supported in this environment
         /// </summary>
@@ -563,7 +569,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 AzurePurviewEndpointResourceId = "AzurePurviewEndpointResourceId",
                 AzureAppConfigurationEndpointSuffix = "AzureAppConfigurationEndpointSuffix",
                 AzureAppConfigurationEndpointResourceId = "AzureAppConfigurationEndpointResourceId",
-                ContainerRegistryEndpointResourceId = "ContainerRegistryEndpointResourceId";
+                ContainerRegistryEndpointResourceId = "ContainerRegistryEndpointResourceId",
+                AzureCommunicationEmailEndpointSuffix = "AzureCommunicationEmailEndpointSuffix",
+                AzureCommunicationEmailEndpointResourceId = "AzureCommunicationEmailEndpointResourceId";
         }
     }
 }
