@@ -1,0 +1,34 @@
+﻿// ----------------------------------------------------------------------------------
+//
+// Copyright Microsoft Corporation
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ----------------------------------------------------------------------------------
+
+namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
+{
+    public interface IAuthenticationInfo : IExtensibleModel
+    {
+        /// <summary>
+        /// Class name of the TokenCredential, stands for the authentication method
+        /// </summary>
+        string TokenCredentialName { get; set; }
+
+        /// <summary>
+        /// Authority Uri to do the authentiation
+        /// </summary>
+        string AuthorityUri { get; set; }
+
+        /// <summary>
+        /// Authentication process succeed or not.
+        /// </summary>
+        bool AuthenticationSuccess { get; set; }
+    }
+}
