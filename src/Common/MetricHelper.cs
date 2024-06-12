@@ -292,6 +292,18 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
         }
 
+        private static void PopulateAuthenticationInfoFromQos(IAuthenticationInfo info, IDictionary<string, string> eventProperties)
+        {
+            eventProperties[$"auth-info-{nameof(info.TokenCredentialName).ToLower()}"] = info.TokenCredentialName;
+            eventProperties[$"auth-info-{nameof(info.AuthorityUri).ToLower()}"] = info.AuthorityUri;
+            eventProperties[$"auth-info-{nameof(info.AuthenticationSuccess).ToLower()}"] = info.AuthenticationSuccess.ToString();
+
+            foreach (var property in info.ExtendedProperties)
+            {
+                eventProperties[$"auth-info-{property.Key.ToLower()}"] = property.Value;
+            }
+        }
+
         private void PopulatePropertiesFromQos(AzurePSQoSEvent qos, IDictionary<string, string> eventProperties, bool populateException = false)
         {
             if (qos == null)
@@ -454,6 +466,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
             PopulateConfigMetricsFromQos(qos, eventProperties);
             PopulateSanitizerPropertiesFromQos(qos, eventProperties);
+            PopulateAuthenticationInfoFromQos(qos.AuthInfo, eventProperties);
 
             if (qos.InputFromPipeline != null)
             {
@@ -697,6 +710,8 @@ public class AzurePSQoSEvent
     private static bool ShowTelemetry = string.Equals(bool.TrueString, Environment.GetEnvironmentVariable("AZUREPS_DEBUG_SHOW_TELEMETRY"), StringComparison.OrdinalIgnoreCase);
 
     public SanitizerTelemetry SanitizerInfo { get; set; }
+
+    public IAuthenticationInfo AuthInfo { get; set; }
 
     public AzurePSQoSEvent()
     {
