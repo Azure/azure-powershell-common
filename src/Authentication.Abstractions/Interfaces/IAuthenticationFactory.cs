@@ -94,5 +94,10 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <param name="account">The account to remove credentials for</param>
         /// <param name="tokenCache">The TokenCache to remove credentials from</param>
         void RemoveUser(IAzureAccount account, IAzureTokenCache tokenCache);
+
+        /// <summary>
+        /// Get the information to be recorded in Telemetry
+        /// </summary>
+        IAuthenticationInfo GetDataForTelemetry();
     }
 }
