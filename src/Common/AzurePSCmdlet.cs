@@ -431,6 +431,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             WriteWarningMessageForVersionUpgrade();
             WriteSecretsWarningMessage();
 
+            _qosEvent.AuthInfo = AzureSession.Instance.AuthenticationFactory.GetDataForTelemetry();
+
             if (MetricHelper.IsCalledByUser()
                 && SurveyHelper.GetInstance().ShouldPromptAzSurvey()
                 && (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
