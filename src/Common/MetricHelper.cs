@@ -35,6 +35,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using Microsoft.WindowsAzure.Commands.Common.Sanitizer;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models;
 
 namespace Microsoft.WindowsAzure.Commands.Common
 {
@@ -451,6 +452,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 }
             }
 
+            PopulateConfigInfosFromQos(qos, eventProperties);
             PopulateSanitizerPropertiesFromQos(qos, eventProperties);
 
             if (qos.InputFromPipeline != null)
@@ -460,11 +462,6 @@ namespace Microsoft.WindowsAzure.Commands.Common
             if (qos.OutputToPipeline != null)
             {
                 eventProperties.Add("OutputToPipeline", qos.OutputToPipeline.Value.ToString());
-            }
-
-            foreach (var key in qos.AzConfigInfo.Keys)
-            {
-                eventProperties[key] = qos.AzConfigInfo[key];
             }
 
             foreach (var key in qos.CustomProperties.Keys)
@@ -501,6 +498,22 @@ namespace Microsoft.WindowsAzure.Commands.Common
                         eventProperties.Add("secrets-detection-exception-stack", sanitizerExceptionStack);
                     }
                     eventProperties.Add("secrets-sanitize-duration", qos.SanitizerInfo.SanitizeDuration.ToString("c"));
+                }
+            }
+        }
+
+        private void PopulateConfigInfosFromQos(AzurePSQoSEvent qos, IDictionary<string, string> eventProperties)
+        {
+
+            if (qos?.ConfigInfos != null)
+            {
+                foreach (var config in qos.ConfigInfos)
+                {
+                    eventProperties[config.ConfigKey] = config.ConfigValue;
+                    foreach (var property in config.ExtendedProperties)
+                    {
+                        eventProperties[$"{config.ConfigKey}-{property.Key}"] = property.Value;
+                    }
                 }
             }
         }
@@ -662,7 +675,7 @@ public class AzurePSQoSEvent
     public string ParameterSetName { get; set; }
     public string InvocationName { get; set; }
 
-    public Dictionary<string, string> AzConfigInfo { get; private set; }
+    public List<ConfigInfo> ConfigInfos { get; private set; } 
 
     public Dictionary<string, string> CustomProperties { get; private set; }
 
@@ -675,7 +688,7 @@ public class AzurePSQoSEvent
         StartTime = DateTimeOffset.Now;
         _timer = new Stopwatch();
         _timer.Start();
-        AzConfigInfo = new Dictionary<string, string>();
+        ConfigInfos = new List<ConfigInfo>();
         CustomProperties = new Dictionary<string, string>();
     }
 
