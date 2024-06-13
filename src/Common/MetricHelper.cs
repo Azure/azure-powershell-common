@@ -670,7 +670,7 @@ public class AzurePSQoSEvent
     public string ParameterSetName { get; set; }
     public string InvocationName { get; set; }
 
-    internal List<ConfigInfo> ConfigInfo { get; private set; } 
+    public List<ConfigInfo> ConfigInfo { get; private set; } 
 
     public Dictionary<string, string> CustomProperties { get; private set; }
 
@@ -685,14 +685,6 @@ public class AzurePSQoSEvent
         _timer.Start();
         ConfigInfo = new List<ConfigInfo>();
         CustomProperties = new Dictionary<string, string>();
-    }
-
-    public void AddConfigInfo(ConfigInfo configInfo)
-    {
-        if(null != configInfo)
-        {
-            this.ConfigInfo.Add(configInfo);
-        }
     }
 
     public void PauseQoSTimer()
