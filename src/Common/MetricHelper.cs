@@ -452,7 +452,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 }
             }
 
-            PopulateConfigInfosFromQos(qos, eventProperties);
+            PopulateConfigInfoFromQos(qos, eventProperties);
             PopulateSanitizerPropertiesFromQos(qos, eventProperties);
 
             if (qos.InputFromPipeline != null)
@@ -502,18 +502,13 @@ namespace Microsoft.WindowsAzure.Commands.Common
             }
         }
 
-        private void PopulateConfigInfosFromQos(AzurePSQoSEvent qos, IDictionary<string, string> eventProperties)
+        private void PopulateConfigInfoFromQos(AzurePSQoSEvent qos, IDictionary<string, string> eventProperties)
         {
-
-            if (qos?.ConfigInfos != null)
+            if (qos?.ConfigInfo != null)
             {
-                foreach (var config in qos.ConfigInfos)
+                foreach (var config in qos.ConfigInfo)
                 {
                     eventProperties[config.ConfigKey] = config.ConfigValue;
-                    foreach (var property in config.ExtendedProperties)
-                    {
-                        eventProperties[$"{config.ConfigKey}-{property.Key}"] = property.Value;
-                    }
                 }
             }
         }
@@ -675,7 +670,7 @@ public class AzurePSQoSEvent
     public string ParameterSetName { get; set; }
     public string InvocationName { get; set; }
 
-    public List<ConfigInfo> ConfigInfos { get; private set; } 
+    internal List<ConfigInfo> ConfigInfo { get; private set; } 
 
     public Dictionary<string, string> CustomProperties { get; private set; }
 
@@ -688,8 +683,16 @@ public class AzurePSQoSEvent
         StartTime = DateTimeOffset.Now;
         _timer = new Stopwatch();
         _timer.Start();
-        ConfigInfos = new List<ConfigInfo>();
+        ConfigInfo = new List<ConfigInfo>();
         CustomProperties = new Dictionary<string, string>();
+    }
+
+    public void AddConfigInfo(ConfigInfo configInfo)
+    {
+        if(null != configInfo)
+        {
+            this.ConfigInfo.Add(configInfo);
+        }
     }
 
     public void PauseQoSTimer()

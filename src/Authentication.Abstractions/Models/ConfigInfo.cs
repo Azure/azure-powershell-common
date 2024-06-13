@@ -12,14 +12,9 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.Azure.PowerShell.Common.Config;
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Text;
-
-using static System.Collections.Specialized.BitVector32;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models
 {
