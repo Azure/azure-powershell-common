@@ -452,7 +452,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 }
             }
 
-            PopulateConfigInfoFromQos(qos, eventProperties);
+            PopulateConfigMetricsFromQos(qos, eventProperties);
             PopulateSanitizerPropertiesFromQos(qos, eventProperties);
 
             if (qos.InputFromPipeline != null)
@@ -502,13 +502,13 @@ namespace Microsoft.WindowsAzure.Commands.Common
             }
         }
 
-        private void PopulateConfigInfoFromQos(AzurePSQoSEvent qos, IDictionary<string, string> eventProperties)
+        private void PopulateConfigMetricsFromQos(AzurePSQoSEvent qos, IDictionary<string, string> eventProperties)
         {
-            if (qos?.ConfigInfo != null)
+            if (qos?.ConfigMetrics != null)
             {
-                foreach (var config in qos.ConfigInfo)
+                foreach (var configMetric in qos.ConfigMetrics)
                 {
-                    eventProperties[config.ConfigKey] = config.ConfigValue;
+                    eventProperties[configMetric.ConfigKey] = configMetric.ConfigValue;
                 }
             }
         }
@@ -670,7 +670,7 @@ public class AzurePSQoSEvent
     public string ParameterSetName { get; set; }
     public string InvocationName { get; set; }
 
-    public List<ConfigMetrics> ConfigInfo { get; private set; } 
+    public List<ConfigMetrics> ConfigMetrics { get; private set; } 
 
     public Dictionary<string, string> CustomProperties { get; private set; }
 
@@ -683,7 +683,7 @@ public class AzurePSQoSEvent
         StartTime = DateTimeOffset.Now;
         _timer = new Stopwatch();
         _timer.Start();
-        ConfigInfo = new List<ConfigMetrics>();
+        ConfigMetrics = new List<ConfigMetrics>();
         CustomProperties = new Dictionary<string, string>();
     }
 
