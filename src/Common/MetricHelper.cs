@@ -670,7 +670,7 @@ public class AzurePSQoSEvent
     public string ParameterSetName { get; set; }
     public string InvocationName { get; set; }
 
-    public List<ConfigInfo> ConfigInfo { get; private set; } 
+    public List<ConfigMetrics> ConfigInfo { get; private set; } 
 
     public Dictionary<string, string> CustomProperties { get; private set; }
 
@@ -683,7 +683,7 @@ public class AzurePSQoSEvent
         StartTime = DateTimeOffset.Now;
         _timer = new Stopwatch();
         _timer.Start();
-        ConfigInfo = new List<ConfigInfo>();
+        ConfigInfo = new List<ConfigMetrics>();
         CustomProperties = new Dictionary<string, string>();
     }
 

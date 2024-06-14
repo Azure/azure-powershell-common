@@ -21,7 +21,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models
     /// <summary>
     /// Recorded value for config in telemetry
     /// </summary>
-    public class ConfigInfo: IExtensibleModel
+    public class ConfigMetrics: IExtensibleModel
     {
         /// <summary>
         /// The unique key of config. It's required for recording config telemetry.
@@ -35,7 +35,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models
 
         public IDictionary<string, string> ExtendedProperties { get; } = new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        public ConfigInfo(string ConfigKey, string ConfigValue)
+        public ConfigMetrics(string ConfigKey, string ConfigValue)
         {
             this.ConfigKey = ConfigKey;
             this.ConfigValue = ConfigValue;
