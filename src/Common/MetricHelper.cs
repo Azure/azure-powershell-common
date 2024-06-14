@@ -35,6 +35,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using Microsoft.WindowsAzure.Commands.Common.Sanitizer;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models;
 
 namespace Microsoft.WindowsAzure.Commands.Common
 {
@@ -451,6 +452,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 }
             }
 
+            PopulateConfigMetricsFromQos(qos, eventProperties);
             PopulateSanitizerPropertiesFromQos(qos, eventProperties);
 
             if (qos.InputFromPipeline != null)
@@ -496,6 +498,17 @@ namespace Microsoft.WindowsAzure.Commands.Common
                         eventProperties.Add("secrets-detection-exception-stack", sanitizerExceptionStack);
                     }
                     eventProperties.Add("secrets-sanitize-duration", qos.SanitizerInfo.SanitizeDuration.ToString("c"));
+                }
+            }
+        }
+
+        private void PopulateConfigMetricsFromQos(AzurePSQoSEvent qos, IDictionary<string, string> eventProperties)
+        {
+            if (qos?.ConfigMetrics != null)
+            {
+                foreach (var configMetric in qos.ConfigMetrics)
+                {
+                    eventProperties[configMetric.ConfigKey] = configMetric.ConfigValue;
                 }
             }
         }
@@ -656,7 +669,11 @@ public class AzurePSQoSEvent
 
     public string ParameterSetName { get; set; }
     public string InvocationName { get; set; }
+
+    public List<ConfigMetrics> ConfigMetrics { get; private set; } 
+
     public Dictionary<string, string> CustomProperties { get; private set; }
+
     private static bool ShowTelemetry = string.Equals(bool.TrueString, Environment.GetEnvironmentVariable("AZUREPS_DEBUG_SHOW_TELEMETRY"), StringComparison.OrdinalIgnoreCase);
 
     public SanitizerTelemetry SanitizerInfo { get; set; }
@@ -666,6 +683,7 @@ public class AzurePSQoSEvent
         StartTime = DateTimeOffset.Now;
         _timer = new Stopwatch();
         _timer.Start();
+        ConfigMetrics = new List<ConfigMetrics>();
         CustomProperties = new Dictionary<string, string>();
     }
 
