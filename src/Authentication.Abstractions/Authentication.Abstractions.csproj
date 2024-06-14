@@ -54,6 +54,7 @@
 
   <ItemGroup>
     <None Include="..\..\LICENSE.txt" Link="LICENSE.txt" Pack="true" PackagePath="" />
+	<Folder Include="Models\" />
   </ItemGroup>
 
 </Project>
