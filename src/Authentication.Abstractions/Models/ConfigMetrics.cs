@@ -29,16 +29,24 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models
         public string ConfigKey { get; private set; }
 
         /// <summary>
+        /// The unique telemetry key of config. It's required for recording config telemetry. If not provided, it's same with ConfigKey.
+        /// </summary>
+        public string TelemetryKey { get; private set; }
+
+        /// <summary>
         /// Config value in string format. It's required for recording config telemetry.
         /// </summary>
         public string ConfigValue { get; private set; }
 
         public IDictionary<string, string> ExtendedProperties { get; } = new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        public ConfigMetrics(string ConfigKey, string ConfigValue)
+        public ConfigMetrics(string configKey, string configValue): this(configKey, configKey, configValue){}
+
+        public ConfigMetrics(string configKey, string telemetryKey, string configValue)
         {
-            this.ConfigKey = ConfigKey;
-            this.ConfigValue = ConfigValue;
+            this.ConfigKey = configKey;
+            this.TelemetryKey = telemetryKey;
+            this.ConfigValue = configValue;
         }
     }
 }
