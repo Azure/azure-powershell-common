@@ -508,7 +508,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 foreach (var configMetric in qos.ConfigMetrics)
                 {
-                    eventProperties[configMetric.Value.ConfigKey] = configMetric.Value.ConfigValue;
+                    eventProperties[configMetric.Value.TelemetryKey] = configMetric.Value.ConfigValue;
                 }
             }
         }
