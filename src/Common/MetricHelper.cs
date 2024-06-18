@@ -508,7 +508,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 foreach (var configMetric in qos.ConfigMetrics)
                 {
-                    eventProperties[configMetric.ConfigKey] = configMetric.ConfigValue;
+                    eventProperties[configMetric.Value.ConfigKey] = configMetric.Value.ConfigValue;
                 }
             }
         }
@@ -670,7 +670,7 @@ public class AzurePSQoSEvent
     public string ParameterSetName { get; set; }
     public string InvocationName { get; set; }
 
-    public List<ConfigMetrics> ConfigMetrics { get; private set; } 
+    public Dictionary<string, ConfigMetrics> ConfigMetrics { get; private set; } 
 
     public Dictionary<string, string> CustomProperties { get; private set; }
 
@@ -683,7 +683,7 @@ public class AzurePSQoSEvent
         StartTime = DateTimeOffset.Now;
         _timer = new Stopwatch();
         _timer.Start();
-        ConfigMetrics = new List<ConfigMetrics>();
+        ConfigMetrics = new Dictionary<string, ConfigMetrics>();
         CustomProperties = new Dictionary<string, string>();
     }
 
