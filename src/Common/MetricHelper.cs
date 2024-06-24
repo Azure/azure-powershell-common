@@ -292,16 +292,28 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
         }
 
-        private static void PopulateAuthenticationInfoFromQos(IAuthenticationInfo info, IDictionary<string, string> eventProperties)
+        private static void PopulateAuthenticationInfoFromQos(IEnumerable<IAuthenticationInfo> infos, IDictionary<string, string> eventProperties)
         {
-            eventProperties[$"auth-info-{nameof(info.TokenCredentialName).ToLower()}"] = info.TokenCredentialName;
-            eventProperties[$"auth-info-{nameof(info.AuthorityUri).ToLower()}"] = info.AuthorityUri;
-            eventProperties[$"auth-info-{nameof(info.AuthenticationSuccess).ToLower()}"] = info.AuthenticationSuccess.ToString();
-
-            foreach (var property in info.ExtendedProperties)
+            var enumerator = infos.GetEnumerator();
+            if (enumerator.MoveNext())
             {
-                eventProperties[$"auth-info-{property.Key.ToLower()}"] = property.Value;
+                var info = enumerator.Current;
+                eventProperties[$"{AuthenticationInfo.AuthInfoTelemetryHeadKey}-{nameof(info.TokenCredentialName).ToLower()}"] = info.TokenCredentialName;
+                eventProperties[$"{AuthenticationInfo.AuthInfoTelemetryHeadKey}-{nameof(info.AuthenticationSuccess).ToLower()}"] = info.AuthenticationSuccess.ToString();
+
+                foreach (var property in info.ExtendedProperties)
+                {
+                    eventProperties[$"{AuthenticationInfo.AuthInfoTelemetryHeadKey}-{property.Key.ToLower()}"] = property.Value;
+                }
             }
+
+            var subAuthInfos = new List<AuthenticationInfo>();
+            while (enumerator.MoveNext())
+            {
+                var info = enumerator.Current;
+                subAuthInfos.Add(info as AuthenticationInfo);
+            }
+            eventProperties[AuthenticationInfo.AuthInfoTelemetrySubsequentKey] = JsonConvert.SerializeObject(subAuthInfos);
         }
 
         private void PopulatePropertiesFromQos(AzurePSQoSEvent qos, IDictionary<string, string> eventProperties, bool populateException = false)
@@ -711,7 +723,7 @@ public class AzurePSQoSEvent
 
     public SanitizerTelemetry SanitizerInfo { get; set; }
 
-    public IAuthenticationInfo AuthInfo { get; set; }
+    public IEnumerable<IAuthenticationInfo> AuthInfo { get; set; }
 
     public AzurePSQoSEvent()
     {
