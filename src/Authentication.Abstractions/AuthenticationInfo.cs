@@ -15,6 +15,8 @@
 using System.Collections.Concurrent;
 using System;
 using System.Collections.Generic;
+using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
@@ -26,11 +28,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public string TokenCredentialName { get; set; }
 
         /// <summary>
-        /// Authority Uri to do the authentiation
-        /// </summary>
-        public string AuthorityUri { get; set; }
-
-        /// <summary>
         /// Authentication process succeed or not.
         /// </summary>
         public bool AuthenticationSuccess { get; set; } = false;
@@ -38,11 +35,32 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// Additional properties for AuthenticationInfo
         /// </summary>
+        [JsonIgnore]
+        [XmlIgnore]
         public IDictionary<string, string> ExtendedProperties { get; } = new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        public AuthenticationInfo()
+        {
+            TokenCredentialName = null;
+        }
+
+        public AuthenticationInfo(IAuthenticationInfo other, bool? isSuccess = null)
+        {
+            this.TokenCredentialName = other.TokenCredentialName;
+            this.AuthenticationSuccess = isSuccess ?? other.AuthenticationSuccess;
+            foreach(var property in other.ExtendedProperties)
+            {
+                this.SetProperty(property.Key, property.Value);
+            }
+        }
 
         /// <summary>
         /// Key to show whether token cache is enabled or not.
         /// </summary>
         public const string TokenCacheEnabled = "TokenCacheEnabled";
+
+        public const string AuthInfoTelemetryHeadKey = "auth-info-head";
+
+        public const string AuthInfoTelemetrySubsequentKey = "auth-info-sub";
     }
 }

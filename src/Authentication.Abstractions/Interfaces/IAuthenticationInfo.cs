@@ -22,11 +22,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         string TokenCredentialName { get; set; }
 
         /// <summary>
-        /// Authority Uri to do the authentiation
-        /// </summary>
-        string AuthorityUri { get; set; }
-
-        /// <summary>
         /// Authentication process succeed or not.
         /// </summary>
         bool AuthenticationSuccess { get; set; }
