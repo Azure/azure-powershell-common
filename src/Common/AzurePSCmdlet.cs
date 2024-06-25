@@ -431,8 +431,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             WriteWarningMessageForVersionUpgrade();
             WriteSecretsWarningMessage();
 
-            _qosEvent.AuthInfo = AzureSession.Instance.AuthenticationFactory.GetDataForTelemetry();
-
             if (MetricHelper.IsCalledByUser()
                 && SurveyHelper.GetInstance().ShouldPromptAzSurvey()
                 && (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
@@ -845,6 +843,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
             _qosEvent.ParameterSetName = this.ParameterSetName;
             _qosEvent.FinishQosEvent();
+            _qosEvent.AuthTelemetry = AzureSession.Instance.AuthenticationFactory.GetDataForTelemetry();
 
             if (!IsUsageMetricEnabled && (!IsErrorMetricEnabled || _qosEvent.IsSuccess))
             {
