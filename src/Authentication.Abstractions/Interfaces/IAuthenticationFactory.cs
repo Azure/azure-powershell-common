@@ -99,6 +99,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// Get the information to be recorded in Telemetry
         /// </summary>
-        IList<IAuthenticationInfo> GetDataForTelemetry();
+        AuthenticationTelemetry GetDataForTelemetry();
     }
 }
