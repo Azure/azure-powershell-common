@@ -524,25 +524,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
-
-        private void AddTelemetryForConfig()
-        {
-            // attach config read event handler to add config telemetry
-            AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager);
-            if (configManager is IConfigManagerWithEvents cm)
-            {
-                cm.ConfigRead += OnConfigReaded;
-            }            
-        }
-
-        private void OnConfigReaded(object sender, ConfigEventArgs args)
-        {
-            if (!_qosEvent.ConfigMetrics.ContainsKey(args.ConfigKey) && args is ConfigReadEventArgs readEventArgs)
-            {
-                _qosEvent.ConfigMetrics[readEventArgs.ConfigKey] = new ConfigMetrics(readEventArgs.ConfigTelemetryKey, readEventArgs.ConfigValue.ToString());
-            }
-        }
-
         protected new void ThrowTerminatingError(ErrorRecord errorRecord)
         {
             FlushDebugMessages();
@@ -567,8 +548,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             base.WriteObject(sendToPipeline, enumerateCollection);
         }
 
-
-    private void SanitizeOutput(object sendToPipeline)
+        private void SanitizeOutput(object sendToPipeline)
         {
             if (OutputSanitizer?.RequireSecretsDetection == true)
             {
@@ -795,7 +775,27 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
             _qosEvent.SanitizerInfo = new SanitizerTelemetry(OutputSanitizer?.RequireSecretsDetection == true);
 
-            AddTelemetryForConfig();
+            AttachConfigReadHandlerForTelemetry();
+        }
+
+        /// <summary>
+        ///  Attach config read event handler to add config telemetry
+        /// </summary>
+        private void AttachConfigReadHandlerForTelemetry()
+        {
+            AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager);
+            if (configManager is IConfigManagerWithEvents cm)
+            {
+                cm.ConfigRead += OnConfigRead;
+            }
+        }
+
+        private void OnConfigRead(object sender, ConfigEventArgs args)
+        {
+            if (!_qosEvent.ConfigMetrics.ContainsKey(args.ConfigKey) && args is ConfigReadEventArgs readEventArgs)
+            {
+                _qosEvent.ConfigMetrics[readEventArgs.ConfigKey] = new ConfigMetrics(readEventArgs.ConfigTelemetryKey, readEventArgs.ConfigValue.ToString());
+            }
         }
 
         private void RecordDebugMessages()

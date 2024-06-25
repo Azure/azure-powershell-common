@@ -12,17 +12,23 @@
 // limitations under the License.
 // -------------------------------------
 
-using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models;
-using Microsoft.Azure.PowerShell.Common.Config;
-
 using System;
+using System.Collections.Generic;
 
-namespace Microsoft.Azure.Commands.Common.Authentication.Config
+namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models
 {
-    public interface IConfigManagerWithEvents: IConfigManager
+    public class ConfigEventArgs : EventArgs, IExtensibleModel
     {
-        event EventHandler<ConfigEventArgs> ConfigRead;
-        event EventHandler<ConfigEventArgs> ConfigUpdated;
-        event EventHandler<ConfigEventArgs> ConfigCleared;
+        public string ConfigKey { get; }
+
+        public string ConfigValue { get; }
+
+        public IDictionary<string, string> ExtendedProperties { get; } = new Dictionary<string, string>();
+
+        public ConfigEventArgs(string configKey, string configValue)
+        {
+            ConfigKey = configKey;
+            ConfigValue = configValue;
+        }
     }
 }
