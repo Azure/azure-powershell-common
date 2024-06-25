@@ -12,15 +12,18 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using System.Collections.Concurrent;
-using System;
-using System.Collections.Generic;
-using System.Xml.Serialization;
 using Newtonsoft.Json;
+
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
-    public class AuthenticationInfo : IAuthenticationInfo
+    /// <summary>
+    /// A model class for authenction telemetry record.
+    /// </summary>
+    public class AuthTelemetryRecord : IAuthTelemetryRecord
     {
         /// <summary>
         /// Class name of the TokenCredential, stands for the authentication method
@@ -36,15 +39,14 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// Additional properties for AuthenticationInfo
         /// </summary>
         [JsonIgnore]
-        [XmlIgnore]
         public IDictionary<string, string> ExtendedProperties { get; } = new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        public AuthenticationInfo()
+        public AuthTelemetryRecord()
         {
             TokenCredentialName = null;
         }
 
-        public AuthenticationInfo(IAuthenticationInfo other, bool? isSuccess = null)
+        public AuthTelemetryRecord(IAuthTelemetryRecord other, bool? isSuccess = null)
         {
             this.TokenCredentialName = other.TokenCredentialName;
             this.AuthenticationSuccess = isSuccess ?? other.AuthenticationSuccess;
@@ -59,8 +61,14 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// </summary>
         public const string TokenCacheEnabled = "TokenCacheEnabled";
 
+        /// <summary>
+        /// Prefix of properties of the first record of authentication telemetry record.
+        /// </summary>
         public const string AuthInfoTelemetryHeadKey = "auth-info-head";
 
+        /// <summary>
+        /// Key of the left records of authentication telemetry.
+        /// </summary>
         public const string AuthInfoTelemetrySubsequentKey = "auth-info-sub";
     }
 }
