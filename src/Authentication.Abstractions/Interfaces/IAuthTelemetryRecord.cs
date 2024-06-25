@@ -14,7 +14,10 @@
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
-    public interface IAuthenticationInfo : IExtensibleModel
+    /// <summary>
+    /// Representation of an authentication telemetry record
+    /// </summary>
+    public interface IAuthTelemetryRecord : IExtensibleModel
     {
         /// <summary>
         /// Class name of the TokenCredential, stands for the authentication method
