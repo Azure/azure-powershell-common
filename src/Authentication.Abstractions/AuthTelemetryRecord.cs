@@ -64,11 +64,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// Prefix of properties of the first record of authentication telemetry record.
         /// </summary>
-        public const string AuthInfoTelemetryHeadKey = "auth-info-head";
+        public const string AuthTelemetryPropertyHeadPrefix = "auth-info-head";
 
         /// <summary>
         /// Key of the left records of authentication telemetry.
         /// </summary>
-        public const string AuthInfoTelemetrySubsequentKey = "auth-info-sub";
+        public const string AuthTelemetryPropertyTailKey = "auth-info-tail";
     }
 }
