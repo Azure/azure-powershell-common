@@ -295,15 +295,15 @@ namespace Microsoft.WindowsAzure.Commands.Common
         private static void PopulateAuthenticationPropertiesFromQos(AuthenticationTelemetry telemetry, IDictionary<string, string> eventProperties)
         {
             var record = telemetry.Head;
-            eventProperties[$"{AuthTelemetryRecord.AuthInfoTelemetryHeadKey}-{nameof(record.TokenCredentialName).ToLower()}"] = record.TokenCredentialName;
-            eventProperties[$"{AuthTelemetryRecord.AuthInfoTelemetryHeadKey}-{nameof(record.AuthenticationSuccess).ToLower()}"] = record.AuthenticationSuccess.ToString();
+            eventProperties[$"{AuthTelemetryRecord.AuthTelemetryPropertyHeadPrefix}-{nameof(record.TokenCredentialName).ToLower()}"] = record.TokenCredentialName;
+            eventProperties[$"{AuthTelemetryRecord.AuthTelemetryPropertyHeadPrefix}-{nameof(record.AuthenticationSuccess).ToLower()}"] = record.AuthenticationSuccess.ToString();
 
             foreach (var property in record.ExtendedProperties)
             {
-                eventProperties[$"{AuthTelemetryRecord.AuthInfoTelemetryHeadKey}-{property.Key.ToLower()}"] = property.Value;
+                eventProperties[$"{AuthTelemetryRecord.AuthTelemetryPropertyHeadPrefix}-{property.Key.ToLower()}"] = property.Value;
             }
 
-            eventProperties[AuthTelemetryRecord.AuthInfoTelemetrySubsequentKey] = JsonConvert.SerializeObject(telemetry.Tail);
+            eventProperties[AuthTelemetryRecord.AuthTelemetryPropertyTailKey] = JsonConvert.SerializeObject(telemetry.Tail);
         }
 
         private void PopulatePropertiesFromQos(AzurePSQoSEvent qos, IDictionary<string, string> eventProperties, bool populateException = false)

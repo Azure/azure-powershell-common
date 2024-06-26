@@ -14,7 +14,6 @@
 
 using Microsoft.Rest;
 using System;
-using System.Collections.Generic;
 using System.Security;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
@@ -99,6 +98,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// Get the information to be recorded in Telemetry
         /// </summary>
-        AuthenticationTelemetry GetDataForTelemetry();
+        AuthenticationTelemetry GetDataForTelemetry(string requestId);
     }
 }
