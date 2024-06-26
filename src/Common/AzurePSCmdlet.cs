@@ -14,6 +14,7 @@
 
 using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using Microsoft.Azure.Commands.Common.Authentication.Utilities;
 using Microsoft.Azure.PowerShell.Common.Config;
 using Microsoft.Azure.PowerShell.Common.Share.Survey;
 using Microsoft.Azure.PowerShell.Common.UpgradeNotification;
@@ -380,6 +381,11 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             //Now see if the cmdlet has any Breaking change attributes on it and process them if it does
             //This will print any breaking change attribute messages that are applied to the cmdlet
             WriteBreakingChangeOrPreviewMessage();
+
+            if (AzureSession.Instance.TryGetComponent(nameof(ThreadCmdldetMap), out ThreadCmdldetMap threadCmdletMap))
+            {
+                threadCmdletMap.PushCmdletId(this._clientRequestId);
+            }
         }
 
         private void WriteBreakingChangeOrPreviewMessage()
@@ -842,7 +848,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
             _qosEvent.ParameterSetName = this.ParameterSetName;
             _qosEvent.FinishQosEvent();
-            _qosEvent.AuthTelemetry = AzureSession.Instance.AuthenticationFactory.GetDataForTelemetry();
+            _qosEvent.AuthTelemetry = AzureSession.Instance.AuthenticationFactory.GetDataForTelemetry(_qosEvent.ClientRequestId);
 
             if (!IsUsageMetricEnabled && (!IsErrorMetricEnabled || _qosEvent.IsSuccess))
             {
