@@ -840,6 +840,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
             _qosEvent.ParameterSetName = this.ParameterSetName;
             _qosEvent.FinishQosEvent();
+            _qosEvent.AuthTelemetry = AzureSession.Instance.AuthenticationFactory.GetDataForTelemetry();
 
             if (!IsUsageMetricEnabled && (!IsErrorMetricEnabled || _qosEvent.IsSuccess))
             {
