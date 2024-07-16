@@ -12,11 +12,17 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 {
     public interface IOutputSanitizer
     {
         bool RequireSecretsDetection { get; }
+
+        IEnumerable<string> IgnoredModules { get; }
+
+        IEnumerable<string> IgnoredCmdlets { get; }
 
         void Sanitize(object sanitizingObject, out SanitizerTelemetry telemetryData);
     }
