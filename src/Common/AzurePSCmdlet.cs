@@ -548,7 +548,9 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         private void SanitizeOutput(object sendToPipeline)
         {
-            if (OutputSanitizer?.RequireSecretsDetection == true)
+            if (OutputSanitizer != null && OutputSanitizer.RequireSecretsDetection
+                && !OutputSanitizer.IgnoredModules.Contains(MyInvocation?.MyCommand?.ModuleName)
+                && !OutputSanitizer.IgnoredCmdlets.Contains(MyInvocation?.MyCommand?.Name))
             {
                 OutputSanitizer.Sanitize(sendToPipeline, out var telemetry);
                 _qosEvent?.SanitizerInfo.Combine(telemetry);
