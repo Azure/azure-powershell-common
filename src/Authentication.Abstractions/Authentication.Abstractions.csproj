@@ -7,6 +7,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Microsoft.Azure.PowerShell.Authentication.Abstractions</AssemblyName>
     <RootNamespace>Microsoft.Azure.Commands.Common.Authentication.Abstractions</RootNamespace>
     <OutputPath>$(ProjectDir)..\..\artifacts\$(Configuration)</OutputPath>
