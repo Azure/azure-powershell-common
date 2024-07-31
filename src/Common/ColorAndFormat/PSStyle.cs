@@ -20,6 +20,8 @@ namespace Microsoft.WindowsAzure.Commands.Common
     /// </summary>
     public sealed class PSStyle
     {
+        public static bool? SupportsVirtualTerminal = null;
+
         /// <summary>
         /// Contains background colors.
         /// </summary>
@@ -28,17 +30,35 @@ namespace Microsoft.WindowsAzure.Commands.Common
             /// <summary>
             /// Gets the color black.
             /// </summary>
-            public static string Black { get; } = "\x1b[40m";
+            public static string Black
+            {
+                get
+                {
+                    return SupportsVirtualTerminal == true ? "\x1b[40m" : "";
+                }
+            }
 
             /// <summary>
             /// Gets the color red.
             /// </summary>
-            public static string Red { get; } = "\x1b[41m";
+            public static string Red
+            {
+                get
+                {
+                    return SupportsVirtualTerminal == true ? "\x1b[41m" : "";
+                }
+            }
 
             /// <summary>
             /// Gets the color green.
             /// </summary>
-            public static string Green { get; } = "\x1b[42m";
+            public static string Green
+            {
+                get
+                {
+                    return SupportsVirtualTerminal == true ? "\x1b[42m" : "";
+                }
+            }
 
             /// <summary>
             /// Gets the color yellow.
