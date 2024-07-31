@@ -24,12 +24,39 @@ namespace Microsoft.Azure.PowerShell.Common.Config
     /// </remarks>
     public static class ConfigKeysForCommon
     {
-        public const string EnableInterceptSurvey  = "DisplaySurveyMessage";
+        /// <summary>
+        /// Gets the key for enabling intercept survey message.
+        /// </summary>
+        public const string EnableInterceptSurvey = "DisplaySurveyMessage";
+
+        /// <summary>
+        /// Gets the key for displaying breaking change warning.
+        /// </summary>
         public const string DisplayBreakingChangeWarning = "DisplayBreakingChangeWarning";
+
+        /// <summary>
+        /// Gets the key for enabling data collection.
+        /// </summary>
         public const string EnableDataCollection = "EnableDataCollection";
+
+        /// <summary>
+        /// Gets the key for enabling test coverage.
+        /// </summary>
         public const string EnableTestCoverage = "EnableTestCoverage";
+
+        /// <summary>
+        /// Gets the key for checking for upgrade automatically.
+        /// </summary>
         public const string CheckForUpgrade = "CheckForUpgrade";
+
+        /// <summary>
+        /// Gets the key for enabling error records persistence.
+        /// </summary>
         public const string EnableErrorRecordsPersistence = "EnableErrorRecordsPersistence";
+
+        /// <summary>
+        /// Gets the key for displaying warning about plain text secrets in outputs.
+        /// </summary>
         public const string DisplaySecretsWarning = "DisplaySecretsWarning";
     }
 }

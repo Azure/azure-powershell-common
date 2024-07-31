@@ -21,24 +21,39 @@ namespace Microsoft.Azure.PowerShell.Common.Config
     /// </summary>
     public class ConfigData
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConfigData"/> class.
+        /// </summary>
+        /// <param name="config">The config definition.</param>
+        /// <param name="value">The config value.</param>
+        /// <param name="scope">The config scope.</param>
+        /// <param name="appliesTo">Specifies a module or cmdlet that the config applies to. If null, it applies to all.</param>
         public ConfigData(ConfigDefinition config, object value, ConfigScope scope, string appliesTo)
-        {            
+        {
             Definition = config ?? throw new ArgumentNullException(nameof(config));
             Value = value;
             Scope = scope;
             AppliesTo = appliesTo;
         }
 
+        /// <summary>
+        /// Gets the config definition.
+        /// </summary>
         public ConfigDefinition Definition { get; }
 
+        /// <summary>
+        /// Gets the config value.
+        /// </summary>
         public object Value { get; }
 
         /// <summary>
-        /// Specifies a module or cmdlet that the config applies to.
-        /// If null, it applies to all.
+        /// Gets the module or cmdlet that the config applies to. If null, it applies to all.
         /// </summary>
         public string AppliesTo { get; }
 
+        /// <summary>
+        /// Gets the config scope.
+        /// </summary>
         public ConfigScope Scope { get; }
     }
 }

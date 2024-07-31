@@ -19,41 +19,41 @@ using System.Collections.Generic;
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
     /// <summary>
-    /// a model class for azure accoutn credentials
+    /// A model class for Azure account credentials.
     /// </summary>
     [Serializable]
     public class AzureAccount : IAzureAccount
     {
         /// <summary>
-        /// The account displayable id
+        /// The account displayable id.
         /// </summary>
         public string Id { get; set; }
 
         /// <summary>
-        /// The account credentials
+        /// The account credentials.
         /// </summary>
         public string Credential { get; set; }
 
         /// <summary>
-        /// The accoutn and credential type
+        /// The account and credential type.
         /// </summary>
         public string Type { get; set; }
 
         /// <summary>
-        /// A record of the account identifier in each tenant the accoutn has access to
+        /// A record of the account identifier in each tenant the account has access to.
         /// </summary>
         public IDictionary<string, string> TenantMap { get; } = new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Additional proeprties for accounts
+        /// Additional properties for accounts.
         /// </summary>
         public IDictionary<string, string> ExtendedProperties { get; } = new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// identifier specific equality comparer
+        /// Determines whether the current object is equal to another object.
         /// </summary>
-        /// <param name="obj">Another account</param>
-        /// <returns>true if accounts are equal, fase if the other object is a different account or a different object</returns>
+        /// <param name="obj">Another account.</param>
+        /// <returns>True if the accounts are equal, false if the other object is a different account or a different object.</returns>
         public override bool Equals(object obj)
         {
             var anotherAccount = obj as AzureAccount;
@@ -68,35 +68,35 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         }
 
         /// <summary>
-        /// Ensures that accounts representing the same id use the same hash
+        /// Serves as a hash function for a particular type.
         /// </summary>
-        /// <returns>A hash value based on the account displayable id</returns>
+        /// <returns>A hash code for the current object.</returns>
         public override int GetHashCode()
         {
             return Id.GetHashCode();
         }
 
         /// <summary>
-        /// string constants for known credential types
+        /// Contains string constants for known credential types.
         /// </summary>
         public static class AccountType
         {
-            public const string Certificate = "Certificate",
-            User = "User",
-            ServicePrincipal = "ServicePrincipal",
-            AccessToken = "AccessToken",
-            ManagedService = "ManagedService";
+            public const string Certificate = "Certificate";
+            public const string User = "User";
+            public const string ServicePrincipal = "ServicePrincipal";
+            public const string AccessToken = "AccessToken";
+            public const string ManagedService = "ManagedService";
         }
 
         /// <summary>
-        /// string constants for known extended properties
+        /// Contains string constants for known extended properties.
         /// </summary>
         public static class Property
         {
             public const string Subscriptions = "Subscriptions";
 
             /// <summary>
-            /// Comma separated list of tenants on this account.
+            /// Comma-separated list of tenants on this account.
             /// </summary>
             public const string Tenants = "Tenants";
 
@@ -111,7 +111,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             public const string HomeAccountId = "HomeAccountId";
 
             /// <summary>
-            /// Indicate whether to use user name and password for authentication.
+            /// Indicates whether to use user name and password for authentication.
             /// </summary>
             public const string UsePasswordAuth = "UsePasswordAuth";
 
@@ -126,45 +126,43 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             public const string KeyVaultAccessToken = "KeyVault";
 
             /// <summary>
-            /// Thumbprint for associated certificate
+            /// Thumbprint for associated certificate.
             /// </summary>
             public const string CertificateThumbprint = "CertificateThumbprint";
 
             /// <summary>
-            /// Login Uri for Managed Service Login
+            /// Login Uri for Managed Service Login.
             /// </summary>
             public const string MSILoginUri = "MSILoginUri";
 
             /// <summary>
-            /// Backup login Uri for MSI
+            /// Backup login Uri for MSI.
             /// </summary>
             public const string MSILoginUriBackup = "MSILoginBackup";
 
             /// <summary>
-            /// Secret that may be used with MSI login
+            /// Secret that may be used with MSI login.
             /// </summary>
             public const string MSILoginSecret = "MSILoginSecret";
 
             /// <summary>
-            /// Secret that may be used with service principal login
+            /// Secret that may be used with service principal login.
             /// </summary>
             public const string ServicePrincipalSecret = "ServicePrincipalSecret";
 
-
             /// <summary>
-            /// The path of certficate file in pem or pkcs#12 format
+            /// The path of the certificate file in PEM or PKCS#12 format.
             /// </summary>
             public const string CertificatePath = "CertificatePath";
 
             /// <summary>
-            /// The password required to access the pkcs#12 certificate file
+            /// The password required to access the PKCS#12 certificate file.
             /// </summary>
             public const string CertificatePassword = "CertificatePassword";
 
-
-        /// <summary>
-        /// Specifies if the x5c claim (public key of the certificate) should be sent to the STS to achieve easy certificate rollover in Azure AD
-        /// </summary>
+            /// <summary>
+            /// Specifies if the x5c claim (public key of the certificate) should be sent to the STS to achieve easy certificate rollover in Azure AD.
+            /// </summary>
             public const string SendCertificateChain = "SendCertificateChain";
         }
     }

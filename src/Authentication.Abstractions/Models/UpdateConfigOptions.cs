@@ -17,10 +17,16 @@ using System;
 namespace Microsoft.Azure.PowerShell.Common.Config
 {
     /// <summary>
-    /// Options for updating a config. Used as input of <see cref="IConfigManager.UpdateConfig(UpdateConfigOptions)"/>
+    /// Options for updating a config. Used as input of <see cref="IConfigManager.UpdateConfig(UpdateConfigOptions)"/>.
     /// </summary>
     public class UpdateConfigOptions
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UpdateConfigOptions"/> class with the specified key, value, and scope.
+        /// </summary>
+        /// <param name="key">The key of the config.</param>
+        /// <param name="value">The value of the config.</param>
+        /// <param name="scope">The scope of the config.</param>
         public UpdateConfigOptions(string key, object value, ConfigScope scope)
         {
             Key = key ?? throw new ArgumentNullException(nameof(key));
@@ -28,12 +34,23 @@ namespace Microsoft.Azure.PowerShell.Common.Config
             Value = value;
         }
 
+        /// <summary>
+        /// Gets the key of the config.
+        /// </summary>
         public string Key { get; }
+
+        /// <summary>
+        /// Gets the value of the config.
+        /// </summary>
         public object Value { get; }
+
+        /// <summary>
+        /// Gets or sets the scope of the config.
+        /// </summary>
         public ConfigScope Scope { get; set; }
 
         /// <summary>
-        /// Specifies a module or cmdlet that the config applies to.
+        /// Gets or sets the module or cmdlet that the config applies to.
         /// If null, it applies to all.
         /// </summary>
         public string AppliesTo { get; set; } = null;
