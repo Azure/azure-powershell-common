@@ -334,11 +334,21 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             AzureSession.Instance.ClientFactory.RemoveUserAgent(ModuleName);
             AzureSession.Instance.ClientFactory.RemoveHandler(typeof(CmdletInfoHandler));
         }
+
+        protected virtual void InitializePSStyle()
+        {
+            if (null == PSStyle.SupportsVirtualTerminal)
+            {
+                PSStyle.SupportsVirtualTerminal = Host.UI.SupportsVirtualTerminal;
+            }
+        }
+
         /// <summary>
         /// Cmdlet begin process. Write to logs, setup Http Tracing and initialize profile
         /// </summary>
         protected override void BeginProcessing()
         {
+            InitializePSStyle();
             FlushInitializationWarnings();
             SessionState = base.SessionState;
             var profile = _dataCollectionProfile;
