@@ -12,6 +12,8 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using System.Management.Automation.Host;
+
 namespace Microsoft.WindowsAzure.Commands.Common
 {
     /// <summary>
@@ -20,7 +22,28 @@ namespace Microsoft.WindowsAzure.Commands.Common
     /// </summary>
     public sealed class PSStyle
     {
-        public static bool? SupportsVirtualTerminal = null;
+        private static bool? _isEscapeSequenceSupported = null;
+
+        public static bool IsEscapeSequenceSupported
+        {
+            get
+            {
+                if (_isEscapeSequenceSupported.HasValue)
+                {
+                    return _isEscapeSequenceSupported.Value;
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// This function should be invoked only in the Az.Accounts.
+        /// </summary>
+        /// <param name="host">PowerShell Console Host</param>
+        public static void Initialize(PSHost host)
+        {
+            _isEscapeSequenceSupported = host?.UI?.SupportsVirtualTerminal;
+        }
 
         /// <summary>
         /// Contains background colors.
@@ -34,7 +57,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[40m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[40m" : "";
                 }
             }
 
@@ -45,7 +68,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[41m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[41m" : "";
                 }
             }
 
@@ -56,7 +79,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[42m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[42m" : "";
                 }
             }
 
@@ -67,7 +90,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[43m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[43m" : "";
                 }
             }
 
@@ -78,7 +101,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[44m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[44m" : "";
                 }
             }
 
@@ -89,7 +112,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[45m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[45m" : "";
                 }
             }
 
@@ -100,7 +123,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[46m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[46m" : "";
                 }
             }
 
@@ -111,7 +134,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[47m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[47m" : "";
                 }
             }
 
@@ -122,7 +145,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[100m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[100m" : "";
                 }
             }
 
@@ -133,7 +156,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[101m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[101m" : "";
                 }
             }
 
@@ -144,7 +167,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[102m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[102m" : "";
                 }
             }
 
@@ -155,7 +178,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[103m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[103m" : "";
                 }
             }
 
@@ -166,7 +189,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[104m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[104m" : "";
                 }
             }
 
@@ -177,7 +200,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[105m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[105m" : "";
                 }
             }
 
@@ -188,7 +211,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[106m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[106m" : "";
                 }
             }
 
@@ -199,7 +222,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[107m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[107m" : "";
                 }
             }
         }
@@ -217,7 +240,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[30m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[30m" : "";
                 }
             }
 
@@ -228,7 +251,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[31m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[31m" : "";
                 }
             }
 
@@ -239,7 +262,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[32m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[32m" : "";
                 }
             }
 
@@ -250,7 +273,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[33m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[33m" : "";
                 }
             }
 
@@ -261,7 +284,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[34m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[34m" : "";
                 }
             }
 
@@ -272,7 +295,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[35m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[35m" : "";
                 }
             }
 
@@ -283,7 +306,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[36m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[36m" : "";
                 }
             }
 
@@ -294,7 +317,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[37m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[37m" : "";
                 }
             }
 
@@ -305,7 +328,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[90m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[90m" : "";
                 }
             }
 
@@ -316,7 +339,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[91m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[91m" : "";
                 }
             }
 
@@ -327,7 +350,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[92m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[92m" : "";
                 }
             }
 
@@ -338,7 +361,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[93m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[93m" : "";
                 }
             }
 
@@ -349,7 +372,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[94m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[94m" : "";
                 }
             }
 
@@ -360,7 +383,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[95m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[95m" : "";
                 }
             }
 
@@ -371,7 +394,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[96m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[96m" : "";
                 }
             }
 
@@ -382,7 +405,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return SupportsVirtualTerminal == true ? "\x1b[97m" : "";
+                    return IsEscapeSequenceSupported ? "\x1b[97m" : "";
                 }
             }
         }
@@ -391,7 +414,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
             get
             {
-                return SupportsVirtualTerminal == true ? "\x1b[0m" : "";
+                return IsEscapeSequenceSupported ? "\x1b[0m" : "";
             }
         }
 
@@ -402,7 +425,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
             get
             {
-                return SupportsVirtualTerminal == true ? "\x1b[24m" : "";
+                return IsEscapeSequenceSupported ? "\x1b[24m" : "";
             }
         }
 
@@ -413,7 +436,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
             get
             {
-                return SupportsVirtualTerminal == true ? "\x1b[4m" : "";
+                return IsEscapeSequenceSupported ? "\x1b[4m" : "";
             }
         }
 
@@ -424,7 +447,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
             get
             {
-                return SupportsVirtualTerminal == true ? "\x1b[22m" : "";
+                return IsEscapeSequenceSupported ? "\x1b[22m" : "";
             }
         }
 
@@ -435,7 +458,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
             get
             {
-                return SupportsVirtualTerminal == true ? "\x1b[1m" : "";
+                return IsEscapeSequenceSupported ? "\x1b[1m" : "";
             }
         }
     }
