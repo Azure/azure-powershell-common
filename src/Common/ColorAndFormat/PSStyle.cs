@@ -24,20 +24,9 @@ namespace Microsoft.WindowsAzure.Commands.Common
     {
         private static bool? _isEscapeSequenceSupported = null;
 
-        public static bool IsEscapeSequenceSupported
-        {
-            get
-            {
-                if (_isEscapeSequenceSupported.HasValue)
-                {
-                    return _isEscapeSequenceSupported.Value;
-                }
-                return false;
-            }
-        }
-
         /// <summary>
-        /// This function should be invoked only in the Az.Accounts.
+        /// Initializes default settings of PSStyle according to the environment.
+        /// Note: This function should be invoked only in Az.Accounts.
         /// </summary>
         /// <param name="host">PowerShell Console Host</param>
         public static void Initialize(PSHost host)
@@ -57,7 +46,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[40m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[40m" : "";
                 }
             }
 
@@ -68,7 +57,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[41m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[41m" : "";
                 }
             }
 
@@ -79,7 +68,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[42m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[42m" : "";
                 }
             }
 
@@ -90,7 +79,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[43m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[43m" : "";
                 }
             }
 
@@ -101,7 +90,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[44m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[44m" : "";
                 }
             }
 
@@ -112,7 +101,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[45m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[45m" : "";
                 }
             }
 
@@ -123,7 +112,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[46m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[46m" : "";
                 }
             }
 
@@ -134,7 +123,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[47m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[47m" : "";
                 }
             }
 
@@ -145,7 +134,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[100m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[100m" : "";
                 }
             }
 
@@ -156,7 +145,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[101m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[101m" : "";
                 }
             }
 
@@ -167,7 +156,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[102m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[102m" : "";
                 }
             }
 
@@ -178,7 +167,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[103m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[103m" : "";
                 }
             }
 
@@ -189,7 +178,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[104m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[104m" : "";
                 }
             }
 
@@ -200,7 +189,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[105m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[105m" : "";
                 }
             }
 
@@ -211,7 +200,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[106m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[106m" : "";
                 }
             }
 
@@ -222,7 +211,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[107m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[107m" : "";
                 }
             }
         }
@@ -240,7 +229,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[30m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[30m" : "";
                 }
             }
 
@@ -251,7 +240,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[31m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[31m" : "";
                 }
             }
 
@@ -262,7 +251,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[32m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[32m" : "";
                 }
             }
 
@@ -273,7 +262,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[33m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[33m" : "";
                 }
             }
 
@@ -284,7 +273,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[34m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[34m" : "";
                 }
             }
 
@@ -295,7 +284,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[35m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[35m" : "";
                 }
             }
 
@@ -306,7 +295,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[36m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[36m" : "";
                 }
             }
 
@@ -317,7 +306,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[37m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[37m" : "";
                 }
             }
 
@@ -328,7 +317,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[90m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[90m" : "";
                 }
             }
 
@@ -339,7 +328,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[91m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[91m" : "";
                 }
             }
 
@@ -350,7 +339,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[92m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[92m" : "";
                 }
             }
 
@@ -361,7 +350,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[93m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[93m" : "";
                 }
             }
 
@@ -372,7 +361,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[94m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[94m" : "";
                 }
             }
 
@@ -383,7 +372,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[95m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[95m" : "";
                 }
             }
 
@@ -394,7 +383,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[96m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[96m" : "";
                 }
             }
 
@@ -405,7 +394,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 get
                 {
-                    return IsEscapeSequenceSupported ? "\x1b[97m" : "";
+                    return _isEscapeSequenceSupported == true ? "\x1b[97m" : "";
                 }
             }
         }
@@ -414,7 +403,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
             get
             {
-                return IsEscapeSequenceSupported ? "\x1b[0m" : "";
+                return _isEscapeSequenceSupported == true ? "\x1b[0m" : "";
             }
         }
 
@@ -425,7 +414,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
             get
             {
-                return IsEscapeSequenceSupported ? "\x1b[24m" : "";
+                return _isEscapeSequenceSupported == true ? "\x1b[24m" : "";
             }
         }
 
@@ -436,7 +425,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
             get
             {
-                return IsEscapeSequenceSupported ? "\x1b[4m" : "";
+                return _isEscapeSequenceSupported == true ? "\x1b[4m" : "";
             }
         }
 
@@ -447,7 +436,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
             get
             {
-                return IsEscapeSequenceSupported ? "\x1b[22m" : "";
+                return _isEscapeSequenceSupported == true ? "\x1b[22m" : "";
             }
         }
 
@@ -458,7 +447,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
             get
             {
-                return IsEscapeSequenceSupported ? "\x1b[1m" : "";
+                return _isEscapeSequenceSupported == true ? "\x1b[1m" : "";
             }
         }
     }
