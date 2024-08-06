@@ -334,6 +334,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             AzureSession.Instance.ClientFactory.RemoveUserAgent(ModuleName);
             AzureSession.Instance.ClientFactory.RemoveHandler(typeof(CmdletInfoHandler));
         }
+
         /// <summary>
         /// Cmdlet begin process. Write to logs, setup Http Tracing and initialize profile
         /// </summary>
