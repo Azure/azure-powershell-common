@@ -14,6 +14,7 @@
 
 using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces;
 using Microsoft.Azure.Commands.Common.Authentication.Models;
 using Microsoft.Azure.Commands.ResourceManager.Common.Paging;
 using Microsoft.Azure.Graph.RBAC;
@@ -32,6 +33,8 @@ namespace Microsoft.Azure.Graph.RBAC.Version1_6.ActiveDirectory
 {
     public class ActiveDirectoryClient
     {
+        public ICmdletContext CmdletContext { get; set; }
+
         public GraphRbacManagementClient GraphClient { get; private set; }
 
         /// <summary>
@@ -41,7 +44,7 @@ namespace Microsoft.Azure.Graph.RBAC.Version1_6.ActiveDirectory
         public ActiveDirectoryClient(IAzureContext context)
         {
             GraphClient = AzureSession.Instance.ClientFactory.CreateArmClient<GraphRbacManagementClient>(
-                context, AzureEnvironment.Endpoint.Graph);
+                context, AzureEnvironment.Endpoint.Graph, CmdletContext);
 
             GraphClient.TenantID = context.Tenant.Id.ToString();
         }

@@ -25,6 +25,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
     using System.Linq;
     using System.Management.Automation;
     using System.Collections.Concurrent;
+    using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces;
 
 
     /// <summary>
@@ -49,7 +50,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
                     {
                         try
                         {
-                            IResourceManagementClient client = AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager);
+                            IResourceManagementClient client = AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager, AzureCmdletContext.CmdletNone);
                             var allProviders = client.Providers.ListAsync();
                             if (_timeout == -1)
                             {

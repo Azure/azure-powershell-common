@@ -20,6 +20,7 @@ using Microsoft.Azure.Commands.Common.Authentication.Models;
 using Microsoft.Azure.Management.Internal.Resources;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces;
 
 namespace Microsoft.Azure.Commands.ResourceManager.Common.Tags
 {
@@ -37,10 +38,8 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.Tags
         /// Creates new tags client instance.
         /// </summary>
         /// <param name="context">The Azure context instance</param>
-        public TagsClient(IAzureContext context)
-            : this(AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager))
+        public TagsClient(IAzureContext context): this(AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager, AzureCmdletContext.CmdletNone))
         {
-
         }
 
         /// <summary>
