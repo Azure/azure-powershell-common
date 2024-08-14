@@ -15,6 +15,7 @@
 using Microsoft.Rest;
 using System;
 using System.Security;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
@@ -43,6 +44,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             string promptBehavior,
             Action<string> promptAction,
             IAzureTokenCache tokenCache,
+            ICmdletContext cmdletContext,
             string resourceId = AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId);
 
         /// <summary>
@@ -63,22 +65,25 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             SecureString password,
             string promptBehavior,
             Action<string> promptAction,
+            ICmdletContext cmdletContext,
             string resourceId = AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId);
 
         /// <summary>
         /// Get AutoRest credentials for the given context
         /// </summary>
         /// <param name="context">The target azure context</param>
+        /// <param name="cmdletContext">The caller cmdlet context</param>
         /// <returns>AutoRest client credentials targeting the given context</returns>
-        ServiceClientCredentials GetServiceClientCredentials(IAzureContext context);
+        ServiceClientCredentials GetServiceClientCredentials(IAzureContext context, ICmdletContext cmdletContext);
 
         /// <summary>
         /// Get AutoRest credebntials using the given context and named endpoint
         /// </summary>
         /// <param name="context">The context to use for authentication</param>
+        /// <param name="cmdletContext">The caller cmdlet context</param>
         /// <param name="targetEndpoint">The named endpoint the AutoRest client will target</param>
         /// <returns>AutoRest client crentials targeting the given context and endpoint</returns>
-        ServiceClientCredentials GetServiceClientCredentials(IAzureContext context, string targetEndpoint);
+        ServiceClientCredentials GetServiceClientCredentials(IAzureContext context, string targetEndpoint, ICmdletContext cmdletContext);
 
         /// <summary>
         /// Get service client credentials with initial token and delegate for renewing
@@ -94,10 +99,5 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <param name="account">The account to remove credentials for</param>
         /// <param name="tokenCache">The TokenCache to remove credentials from</param>
         void RemoveUser(IAzureAccount account, IAzureTokenCache tokenCache);
-
-        /// <summary>
-        /// Get the information to be recorded in Telemetry
-        /// </summary>
-        AuthenticationTelemetry GetDataForTelemetry(string requestId);
     }
 }
