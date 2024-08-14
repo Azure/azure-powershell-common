@@ -292,7 +292,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
         }
 
-        private static void PopulateAuthenticationPropertiesFromQos(AuthenticationTelemetry telemetry, IDictionary<string, string> eventProperties)
+        private static void PopulateAuthenticationPropertiesFromQos(AuthenticationTelemetryData telemetry, IDictionary<string, string> eventProperties)
         {
             var record = telemetry.Head;
             eventProperties[$"{AuthTelemetryRecord.AuthTelemetryPropertyHeadPrefix}-{nameof(record.TokenCredentialName).ToLower()}"] = record.TokenCredentialName;
@@ -713,7 +713,7 @@ public class AzurePSQoSEvent
 
     public SanitizerTelemetry SanitizerInfo { get; set; }
 
-    public AuthenticationTelemetry AuthTelemetry { get; set; }
+    public AuthenticationTelemetryData AuthTelemetry { get; set; }
 
     public AzurePSQoSEvent()
     {

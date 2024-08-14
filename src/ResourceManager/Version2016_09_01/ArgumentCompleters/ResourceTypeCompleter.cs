@@ -48,7 +48,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
                         var tempResourceTypeList = new List<string>();
                         try
                         {
-                            var client = AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager);
+                            var client = AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager, AzureCmdletContext.CmdletNone);
                             var resourceTypes = new List<Provider>();
                             var task = client.Providers.ListAsync();
                             if (task.Wait(TimeSpan.FromSeconds(_timeout)))

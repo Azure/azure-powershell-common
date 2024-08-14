@@ -13,6 +13,7 @@
 // ----------------------------------------------------------------------------------
 
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces;
 using Microsoft.Azure.Commands.Common.Authentication.Models;
 using Microsoft.Rest;
 using System;
@@ -37,6 +38,17 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         /// <returns>A client properly authenticated in the given context, properly configured for use with Azure PowerShell, 
         /// targeting the given named endpoint in the targeted environment</returns>
         TClient CreateArmClient<TClient>(IAzureContext context, string endpoint) where TClient : ServiceClient<TClient>;
+
+        /// <summary>
+        /// Create a properly configured AutoRest client using the given target Azure context, named endpoint and cmdlet context called from
+        /// </summary>
+        /// <typeparam name="TClient">The client type to create</typeparam>
+        /// <param name="context">The azure context to target</param>
+        /// <param name="endpoint">The named endpoint the client shoulld target</param>
+        /// <param name="cmdletContext">The cmdlet context called from</param>
+        /// <returns>A client properly authenticated in the given context, properly configured for use with Azure PowerShell, 
+        /// targeting the given named endpoint in the targeted environment</returns>
+        TClient CreateArmClient<TClient>(IAzureContext context, string endpoint, ICmdletContext cmdletContext) where TClient : ServiceClient<TClient>;
 
         /// <summary>
         /// Create a properly configured AutoRest client using custom client parameters

@@ -14,6 +14,7 @@
 
 using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces;
 using Microsoft.Azure.Commands.Common.Authentication.Models;
 using Microsoft.Azure.Management.Internal.Network.Version2017_03_01;
 using Microsoft.Azure.Management.Internal.Network.Version2017_03_01.Models;
@@ -42,8 +43,7 @@ namespace Microsoft.Azure.Management.Internal.Network.Common
 
         public Action<string> WarningLogger { get; set; }
 
-        public NetworkClient(IAzureContext context)
-            : this(AzureSession.Instance.ClientFactory.CreateArmClient<NetworkManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager))
+        public NetworkClient(IAzureContext context): this(AzureSession.Instance.ClientFactory.CreateArmClient<NetworkManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager, AzureCmdletContext.CmdletNone))
         {
         }
 

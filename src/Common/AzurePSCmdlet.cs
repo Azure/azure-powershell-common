@@ -14,7 +14,7 @@
 
 using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
-using Microsoft.Azure.Commands.Common.Authentication.Utilities;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces;
 using Microsoft.Azure.PowerShell.Common.Config;
 using Microsoft.Azure.PowerShell.Common.Share.Survey;
 using Microsoft.Azure.PowerShell.Common.UpgradeNotification;
@@ -94,6 +94,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         protected static string _sessionId = Guid.NewGuid().ToString();
         protected const string _fileTimeStampSuffixFormat = "yyyy-MM-dd-THH-mm-ss-fff";
         protected string _clientRequestId = Guid.NewGuid().ToString();
+        protected ICmdletContext _cmdletContext;
         protected static DateTimeOffset? _previousEndTime = null;
         protected MetricHelper _metricHelper;
         protected AzurePSQoSEvent _qosEvent;
@@ -400,16 +401,12 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             InitDebuggingFilter();
             SetupDebuggingTraces();
             SetupHttpClientPipeline();
+            _cmdletContext = new AzureCmdletContext(_clientRequestId);
             base.BeginProcessing();
 
             //Now see if the cmdlet has any Breaking change attributes on it and process them if it does
             //This will print any breaking change attribute messages that are applied to the cmdlet
             WriteBreakingChangeOrPreviewMessage();
-
-            if (AzureSession.Instance.TryGetComponent(nameof(ThreadCmdldetMap), out ThreadCmdldetMap threadCmdletMap))
-            {
-                threadCmdletMap.PushCmdletId(this._clientRequestId);
-            }
         }
 
         private void WriteBreakingChangeOrPreviewMessage()
@@ -885,7 +882,12 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
             _qosEvent.ParameterSetName = this.ParameterSetName;
             _qosEvent.FinishQosEvent();
-            _qosEvent.AuthTelemetry = AzureSession.Instance.AuthenticationFactory.GetDataForTelemetry(_qosEvent.ClientRequestId);
+
+            if (!AzureSession.Instance.TryGetComponent(nameof(AuthenticationTelemetry), out AuthenticationTelemetry authenticationTelemetry))
+            {
+                throw new NullReferenceException("AuthenticationTelemetry not registered");
+            }
+            _qosEvent.AuthTelemetry = authenticationTelemetry.GetTelemetryRecord(_cmdletContext);
 
             if (!IsUsageMetricEnabled && (!IsErrorMetricEnabled || _qosEvent.IsSuccess))
             {
