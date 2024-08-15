@@ -285,7 +285,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         {
             IAzureContext context;
             _qosEvent.Uid = "defaultid";
-            if (RequireDefaultContext() && TryGetDefaultContext(out context))
+            if (TryGetDefaultContext(out context) && context != null)
             {
                 _qosEvent.SubscriptionId = context.Subscription?.Id;
                 _qosEvent.TenantId = context.Tenant?.Id;
