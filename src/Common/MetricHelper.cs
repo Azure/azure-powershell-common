@@ -343,17 +343,9 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 eventProperties.Add("UserId", qos.Uid);
             }
-            if (null == qos.SubscriptionId )
-            {
-                qos.SubscriptionId = AzureRmProfileProvider.Instance?.Profile?.DefaultContext?.Subscription?.Id;
-            }
             if (qos.SubscriptionId != null)
             {
                 eventProperties.Add("subscription-id", qos.SubscriptionId);
-            }
-            if (null == qos.TenantId)
-            {
-                qos.TenantId = AzureRmProfileProvider.Instance?.Profile?.DefaultContext?.Tenant?.Id;
             }
             if (qos.TenantId != null)
             {
