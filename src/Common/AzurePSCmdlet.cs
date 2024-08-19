@@ -800,7 +800,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             _qosEvent.SanitizerInfo = new SanitizerTelemetry(OutputSanitizer?.RequireSecretsDetection == true);
         }
 
-        public static string getEnvUserAgent()
+        private static string getEnvUserAgent()
         {
             string hostEnv = Environment.GetEnvironmentVariable("AZUREPS_HOST_ENVIRONMENT");
             if (String.IsNullOrWhiteSpace(hostEnv))
