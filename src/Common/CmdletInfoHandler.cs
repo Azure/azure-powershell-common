@@ -57,10 +57,18 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
             if (Cmdlet != null)
             {
+                if (request.Headers.Contains("CommandName"))
+                {
+                    request.Headers.Remove("CommandName");
+                }
                 request.Headers.Add("CommandName", Cmdlet);
             }
             if (ParameterSet != null)
             {
+                if (request.Headers.Contains("ParameterSetName"))
+                {
+                    request.Headers.Remove("ParameterSetName");
+                }
                 request.Headers.Add("ParameterSetName", ParameterSet);
             }
             if (ClientRequestId != null)

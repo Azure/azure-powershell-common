@@ -322,6 +322,17 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             AzureSession.Instance.ClientFactory.AddUserAgent("AzurePowershell", string.Format("v{0}", AzVersion));
             AzureSession.Instance.ClientFactory.AddUserAgent(PSVERSION, string.Format("v{0}", PowerShellVersion));
             AzureSession.Instance.ClientFactory.AddUserAgent(ModuleName, this.ModuleVersion);
+            try {
+                string hostEnv = AzurePSCmdlet.getEnvUserAgent();
+                if (!String.IsNullOrWhiteSpace(hostEnv)) 
+                {
+                    AzureSession.Instance.ClientFactory.AddUserAgent(hostEnv);
+                }
+            } 
+            catch (Exception) 
+            {
+                // ignore if it failed.
+            }
 
             AzureSession.Instance.ClientFactory.AddHandler(
                 new CmdletInfoHandler(this.CommandRuntime.ToString(),
@@ -331,6 +342,18 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         protected virtual void TearDownHttpClientPipeline()
         {
+            try
+            {
+                string hostEnv = AzurePSCmdlet.getEnvUserAgent();
+                if (!String.IsNullOrWhiteSpace(hostEnv))
+                {
+                    AzureSession.Instance.ClientFactory.RemoveUserAgent(hostEnv);
+                }
+            }
+            catch (Exception)
+            {
+                // ignore if it failed.
+            }
             AzureSession.Instance.ClientFactory.RemoveUserAgent(ModuleName);
             AzureSession.Instance.ClientFactory.RemoveHandler(typeof(CmdletInfoHandler));
         }
@@ -721,14 +744,14 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             if (AzVersion == null)
             {
                 AzVersion = this.LoadModuleVersion("Az", true);
-                UserAgent = new ProductInfoHeaderValue("AzurePowershell", string.Format("Az{0}", AzVersion)).ToString();
-                string hostEnv = Environment.GetEnvironmentVariable("AZUREPS_HOST_ENVIRONMENT");
-                if (!String.IsNullOrWhiteSpace(hostEnv))
-                    UserAgent += string.Format(" {0}", hostEnv.Trim());
                 PowerShellVersion = this.LoadPowerShellVersion();
                 PSHostName = this.Host?.Name;
                 PSHostVersion = this.Host?.Version?.ToString();
             }
+            UserAgent = new ProductInfoHeaderValue("AzurePowershell", string.Format("Az{0}", AzVersion)).ToString();
+            string hostEnv = AzurePSCmdlet.getEnvUserAgent();
+            if (!String.IsNullOrWhiteSpace(hostEnv))
+                UserAgent += string.Format(" {0}", hostEnv);
             if (AzAccountsVersion == null)
             {
                 AzAccountsVersion = this.LoadModuleVersion("Az.Accounts", false);
@@ -775,6 +798,19 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
 
             _qosEvent.SanitizerInfo = new SanitizerTelemetry(OutputSanitizer?.RequireSecretsDetection == true);
+        }
+
+        public static string getEnvUserAgent()
+        {
+            string hostEnv = Environment.GetEnvironmentVariable("AZUREPS_HOST_ENVIRONMENT");
+            if (String.IsNullOrWhiteSpace(hostEnv))
+            {
+                return null;
+            }
+            else
+            {
+                return hostEnv.Trim();
+            }
         }
 
         private void RecordDebugMessages()
