@@ -121,7 +121,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
         public static List<ResourceIdentifier> GetResourceIdsFromClient(string resourceType, string resourceGroupName)
         {
             IAzureContext context = AzureRmProfileProvider.Instance?.Profile?.DefaultContext;
-            IResourceManagementClient client = AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager, AzureCmdletContext.CmdletNone);
+            IResourceManagementClient client = AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager);
             var odataQuery = new ODataQuery<GenericResourceFilter>(r => r.ResourceType == resourceType);
 
             var allProviders = string.IsNullOrWhiteSpace(resourceGroupName)
