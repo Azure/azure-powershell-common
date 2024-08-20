@@ -31,7 +31,7 @@ namespace Microsoft.Azure.Graph.RBAC.Version1_6.ActiveDirectory
             {
                 if (activeDirectoryClient == null)
                 {
-                    activeDirectoryClient = new ActiveDirectoryClient(DefaultProfile.DefaultContext);
+                    activeDirectoryClient = new ActiveDirectoryClient(DefaultProfile.DefaultContext, _cmdletContext);
                 }
 
                 return activeDirectoryClient;

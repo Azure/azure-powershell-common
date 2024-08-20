@@ -38,7 +38,16 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.Tags
         /// Creates new tags client instance.
         /// </summary>
         /// <param name="context">The Azure context instance</param>
-        public TagsClient(IAzureContext context): this(AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager, AzureCmdletContext.CmdletNone))
+        public TagsClient(IAzureContext context): this(AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager))
+        {
+        }
+
+        /// <summary>
+        /// Creates new tags client instance.
+        /// </summary>
+        /// <param name="context">The Azure context instance</param>
+        /// <param name="cmdletContext">The cmdlet context</param>
+        public TagsClient(IAzureContext context, ICmdletContext cmdletContext) : this(AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager, cmdletContext))
         {
         }
 
