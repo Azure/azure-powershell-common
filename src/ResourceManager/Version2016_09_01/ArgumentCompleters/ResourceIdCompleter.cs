@@ -59,7 +59,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
                     return Cache[contextHash].ResourceInfoList;
                 }
 
-                var client = AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager, AzureCmdletContext.CmdletNone);
+                var client = AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager);
 
                 var odata = new ODataQuery<GenericResourceFilter>(r => r.ResourceType == resourceType);
 

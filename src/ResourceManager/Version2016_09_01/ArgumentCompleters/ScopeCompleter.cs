@@ -45,7 +45,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
                         var tempScopeList = new List<string>();
                         try
                         {
-                            var client = AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager, AzureCmdletContext.CmdletNone);
+                            var client = AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager);
                             // Retrieve only the first page of ResourceGroups to use for scopes
                             var resourceGroups = client.ResourceGroups.ListAsync();
 

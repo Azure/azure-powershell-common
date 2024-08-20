@@ -48,7 +48,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
                         var tempResourceGroupList = new List<string>();
                         try
                         {
-                            var client = AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager, AzureCmdletContext.CmdletNone);
+                            var client = AzureSession.Instance.ClientFactory.CreateArmClient<ResourceManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager);
                             // Retrieve only the first page of ResourceGroups to display to the user
                             var resourceGroups = client.ResourceGroups.ListAsync();
 

@@ -16,6 +16,7 @@ using Microsoft.Rest;
 using System;
 using System.Security;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces;
+using System.Collections.Generic;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
@@ -24,6 +25,27 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
     /// </summary>
     public interface IAuthenticationFactory : IHyakAuthenticationFactory
     {
+
+        /// <summary>
+        /// Returns IAccessToken if authentication succeeds or throws an exception if authentication fails.
+        /// </summary>
+        /// <param name="account">The azure account object</param>
+        /// <param name="environment">The azure environment object</param>
+        /// <param name="tenant">The AD tenant in most cases should be 'common'</param>
+        /// <param name="password">The AD account password</param>
+        /// <param name="promptBehavior">The prompt behavior</param>
+        /// <param name="promptAction">The prompt action used in DeviceFlow authentication</param>
+        /// <param name="optionalParameters">The optional parameters, may include TokenCache, ResourceId and CmdletContext</param>
+        /// <returns></returns>
+        IAccessToken Authenticate(
+            IAzureAccount account,
+            IAzureEnvironment environment,
+            string tenant,
+            SecureString password,
+            string promptBehavior,
+            Action<string> promptAction,
+            IDictionary<string, object> optionalParameters);
+
         /// <summary>
         /// Returns IAccessToken if authentication succeeds or throws an exception if authentication fails.
         /// </summary>
@@ -44,7 +66,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             string promptBehavior,
             Action<string> promptAction,
             IAzureTokenCache tokenCache,
-            ICmdletContext cmdletContext,
             string resourceId = AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId);
 
         /// <summary>
@@ -65,8 +86,14 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             SecureString password,
             string promptBehavior,
             Action<string> promptAction,
-            ICmdletContext cmdletContext,
             string resourceId = AzureEnvironment.Endpoint.ActiveDirectoryServiceEndpointResourceId);
+
+        /// <summary>
+        /// Get AutoRest credentials for the given context
+        /// </summary>
+        /// <param name="context">The target azure context</param>
+        /// <returns>AutoRest client credentials targeting the given context</returns>
+        ServiceClientCredentials GetServiceClientCredentials(IAzureContext context);
 
         /// <summary>
         /// Get AutoRest credentials for the given context
@@ -80,8 +107,16 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// Get AutoRest credebntials using the given context and named endpoint
         /// </summary>
         /// <param name="context">The context to use for authentication</param>
-        /// <param name="cmdletContext">The caller cmdlet context</param>
         /// <param name="targetEndpoint">The named endpoint the AutoRest client will target</param>
+        /// <returns>AutoRest client crentials targeting the given context and endpoint</returns>
+        ServiceClientCredentials GetServiceClientCredentials(IAzureContext context, string targetEndpoint);
+
+        /// <summary>
+        /// Get AutoRest credebntials using the given context and named endpoint
+        /// </summary>
+        /// <param name="context">The context to use for authentication</param>
+        /// <param name="targetEndpoint">The named endpoint the AutoRest client will target</param>
+        /// <param name="cmdletContext">The caller cmdlet context</param>
         /// <returns>AutoRest client crentials targeting the given context and endpoint</returns>
         ServiceClientCredentials GetServiceClientCredentials(IAzureContext context, string targetEndpoint, ICmdletContext cmdletContext);
 

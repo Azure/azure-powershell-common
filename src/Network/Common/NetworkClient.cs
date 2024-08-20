@@ -43,7 +43,11 @@ namespace Microsoft.Azure.Management.Internal.Network.Common
 
         public Action<string> WarningLogger { get; set; }
 
-        public NetworkClient(IAzureContext context): this(AzureSession.Instance.ClientFactory.CreateArmClient<NetworkManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager, AzureCmdletContext.CmdletNone))
+        public NetworkClient(IAzureContext context): this(AzureSession.Instance.ClientFactory.CreateArmClient<NetworkManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager))
+        {
+        }
+
+        public NetworkClient(IAzureContext context, ICmdletContext cmdletContext) : this(AzureSession.Instance.ClientFactory.CreateArmClient<NetworkManagementClient>(context, AzureEnvironment.Endpoint.ResourceManager, cmdletContext))
         {
         }
 

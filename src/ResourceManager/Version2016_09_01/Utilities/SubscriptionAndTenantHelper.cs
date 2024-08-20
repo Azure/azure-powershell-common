@@ -14,6 +14,7 @@
 
 using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Extensions;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces;
 using Microsoft.Azure.Internal.Subscriptions;
 using Microsoft.Azure.Internal.Subscriptions.Models;
@@ -36,7 +37,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.Utilities
                null,
                ShowDialog.Never,
                null,
-               cmdletContext);
+               cmdletContext.ToExtensibleParameters());
         }
 
         internal static Dictionary<string, AzureSubscription> GetTenantsForSubscriptions(List<string> subscriptionIds, IAzureContext defaultContext, ICmdletContext cmdletContext)
