@@ -50,9 +50,8 @@ namespace Microsoft.Azure.Commands.ResourceManager.Test
                 It.IsAny<SecureString>(),
                 It.IsAny<string>(),
                 It.IsAny<Action<string>>(),
-                It.IsAny<ICmdletContext>(),
-                It.IsAny<string>())).Returns<IAzureAccount, IAzureEnvironment, string, SecureString, string, Action<string>, ICmdletContext, string>
-                ((a, e, t, w, b, p, c, r) => new MockAccessToken(azureAccount.Id, t, azureAccount.Type, t));
+                It.IsAny<IDictionary<string, object>>())).Returns<IAzureAccount, IAzureEnvironment, string, SecureString, string, Action<string>, string>
+                ((a, e, t, p, b, action, r) => new MockAccessToken(azureAccount.Id, t, azureAccount.Type, t));
             session.SetupProperty(m => m.AuthenticationFactory, authFactory.Object);
             return session.Object;
         }

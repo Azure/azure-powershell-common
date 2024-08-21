@@ -16,8 +16,16 @@
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
-    public class AuthenticationTelemetry: IAzureTelemetry <AuthTelemetryRecord> 
+    /// <summary>
+    /// Represents a class for handling authentication telemetry.
+    /// </summary>
+    public class AuthenticationTelemetry : IAzureTelemetry<AuthTelemetryRecord>
     {
+        /// <summary>
+        /// Gets the telemetry record for the specified cmdlet context.
+        /// </summary>
+        /// <param name="cmdletContext">The cmdlet context.</param>
+        /// <returns>The authentication telemetry data.</returns>
         public AuthenticationTelemetryData GetTelemetryRecord(ICmdletContext cmdletContext)
         {
             var records = PopTelemetryRecord(cmdletContext);
