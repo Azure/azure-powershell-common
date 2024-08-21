@@ -885,7 +885,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
             if (!AzureSession.Instance.TryGetComponent(nameof(AuthenticationTelemetry), out AuthenticationTelemetry authenticationTelemetry))
             {
-                throw new NullReferenceException("AuthenticationTelemetry not registered");
+                throw new NullReferenceException(Resources.AuthenticationTelemetryNotRegistered);
             }
             _qosEvent.AuthTelemetry = authenticationTelemetry.GetTelemetryRecord(_cmdletContext);
             WriteDebugWithTimestamp($"TotalKeyCount={authenticationTelemetry.KeysAllCount}; CurrentKeyCount={authenticationTelemetry.KeysCurrentCount}; EmptyCmdletContextCount={authenticationTelemetry.EmptyCmdletContextCount}; KeysNotFoundCount={authenticationTelemetry.KeyNotFoundCount}");
