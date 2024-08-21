@@ -17,20 +17,24 @@ using System.Collections.Generic;
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
     /// <summary>
-    /// A model class for a list of authenction telemetry records.
+    /// Represents the telemetry data for authentication.
     /// </summary>
     public class AuthenticationTelemetryData
     {
         /// <summary>
-        /// The first record of authentication telemetry data, usually describes the main method of this authentication process.
+        /// Gets the first record of authentication telemetry data, usually describing the main method of the authentication process.
         /// </summary>
         public IAuthTelemetryRecord Head { get; } = null;
 
         /// <summary>
-        /// The left part of authentication telemetry records.
+        /// Gets the remaining authentication telemetry records.
         /// </summary>
         public IList<IAuthTelemetryRecord> Tail { get; } = new List<IAuthTelemetryRecord>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthenticationTelemetryData"/> class with the specified authentication telemetry records.
+        /// </summary>
+        /// <param name="records">The authentication telemetry records.</param>
         public AuthenticationTelemetryData(IEnumerable<IAuthTelemetryRecord> records)
         {
             var enumerator = records.GetEnumerator();

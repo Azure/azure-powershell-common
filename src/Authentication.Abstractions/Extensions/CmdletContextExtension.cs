@@ -18,8 +18,16 @@ using System.Collections.Generic;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Extensions
 {
+    /// <summary>
+    /// Provides extension methods for the <see cref="ICmdletContext"/> interface.
+    /// </summary>
     public static class CmdletContextExtension
     {
+        /// <summary>
+        /// Converts the <see cref="ICmdletContext"/> object to a dictionary of extensible parameters.
+        /// </summary>
+        /// <param name="cmdletContext">The <see cref="ICmdletContext"/> object to convert.</param>
+        /// <returns>A dictionary of extensible parameters.</returns>
         public static IDictionary<string, object> ToExtensibleParameters(this ICmdletContext cmdletContext)
         {
             if (cmdletContext != null)
