@@ -255,6 +255,15 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AuthenticationTelemetry is not registered..
+        /// </summary>
+        public static string AuthenticationTelemetryNotRegistered {
+            get {
+                return ResourceManager.GetString("AuthenticationTelemetryNotRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Windows Azure Powershell\.
         /// </summary>
         public static string AzureDirectory {

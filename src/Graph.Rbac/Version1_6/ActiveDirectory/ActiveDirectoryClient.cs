@@ -36,14 +36,26 @@ namespace Microsoft.Azure.Graph.RBAC.Version1_6.ActiveDirectory
         public GraphRbacManagementClient GraphClient { get; private set; }
 
         /// <summary>
-        /// Creates new ActiveDirectoryClient using WindowsAzureSubscription.
+        /// Creates new ActiveDirectoryClient using Azure Subscription.
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="context">The Azure context</param>
         /// <param name="cmdletContext">The cmdlet context</param>
         public ActiveDirectoryClient(IAzureContext context, ICmdletContext cmdletContext)
         {
             GraphClient = AzureSession.Instance.ClientFactory.CreateArmClient<GraphRbacManagementClient>(
                 context, AzureEnvironment.Endpoint.Graph, cmdletContext);
+
+            GraphClient.TenantID = context.Tenant.Id.ToString();
+        }
+
+        /// <summary>
+        /// Creates new ActiveDirectoryClient using Azure Subscription.
+        /// </summary>
+        /// <param name="context">The Azure context</param>
+        public ActiveDirectoryClient(IAzureContext context)
+        {
+            GraphClient = AzureSession.Instance.ClientFactory.CreateArmClient<GraphRbacManagementClient>(
+                context, AzureEnvironment.Endpoint.Graph);
 
             GraphClient.TenantID = context.Tenant.Id.ToString();
         }

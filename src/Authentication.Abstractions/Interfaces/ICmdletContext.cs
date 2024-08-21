@@ -13,10 +13,19 @@
 // ----------------------------------------------------------------------------------
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces
 {
+    /// <summary>
+    /// Represents the context of a cmdlet.
+    /// </summary>
     public interface ICmdletContext
     {
+        /// <summary>
+        /// Gets the ID of the cmdlet.
+        /// </summary>
         string CmdletId { get; }
 
+        /// <summary>
+        /// Gets a value indicating whether the cmdlet context is valid.
+        /// </summary>
         bool IsValid { get; }
     }
 }

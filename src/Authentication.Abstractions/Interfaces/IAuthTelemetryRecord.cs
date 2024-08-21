@@ -15,20 +15,23 @@
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
     /// <summary>
-    /// Representation of an authentication telemetry record
+    /// Represents a telemetry record for authentication.
     /// </summary>
     public interface IAuthTelemetryRecord : IExtensibleModel
     {
         /// <summary>
-        /// Class name of the TokenCredential, stands for the authentication method
+        /// Gets or sets the class name of the TokenCredential, which stands for the authentication method.
         /// </summary>
         string TokenCredentialName { get; set; }
 
         /// <summary>
-        /// Authentication process succeed or not.
+        /// Gets or sets a value indicating whether the authentication process succeeded or not.
         /// </summary>
         bool AuthenticationSuccess { get; set; }
 
-        bool correlationId {  get; set; }
+        /// <summary>
+        /// Gets or sets the correlation ID for the authentication process.
+        /// </summary>
+        string CorrelationId { get; set; }
     }
 }

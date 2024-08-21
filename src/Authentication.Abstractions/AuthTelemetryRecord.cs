@@ -21,33 +21,44 @@ using System.Collections.Generic;
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
     /// <summary>
-    /// A model class for authenction telemetry record.
+    /// Represents a telemetry record for authentication.
     /// </summary>
     public class AuthTelemetryRecord : IAuthTelemetryRecord
     {
         /// <summary>
-        /// Class name of the TokenCredential, stands for the authentication method
+        /// Gets or sets the class name of the TokenCredential, which stands for the authentication method.
         /// </summary>
         public string TokenCredentialName { get; set; }
 
         /// <summary>
-        /// Authentication process succeed or not.
+        /// Gets or sets a value indicating whether the authentication process succeeded or not.
         /// </summary>
         public bool AuthenticationSuccess { get; set; } = false;
 
-        public bool correlationId { get; set; }
+        /// <summary>
+        /// Gets or sets the correlation ID for the authentication.
+        /// </summary>
+        public string CorrelationId { get; set; }
 
         /// <summary>
-        /// Additional properties for AuthenticationInfo
+        /// Gets the additional properties for AuthenticationInfo.
         /// </summary>
         [JsonIgnore]
         public IDictionary<string, string> ExtendedProperties { get; } = new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthTelemetryRecord"/> class.
+        /// </summary>
         public AuthTelemetryRecord()
         {
             TokenCredentialName = null;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthTelemetryRecord"/> class based on another instance of <see cref="IAuthTelemetryRecord"/>.
+        /// </summary>
+        /// <param name="other">The other instance of <see cref="IAuthTelemetryRecord"/>.</param>
+        /// <param name="isSuccess">A value indicating whether the authentication was successful or not.</param>
         public AuthTelemetryRecord(IAuthTelemetryRecord other, bool? isSuccess = null)
         {
             this.TokenCredentialName = other.TokenCredentialName;
@@ -59,17 +70,17 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         }
 
         /// <summary>
-        /// Key to show whether token cache is enabled or not.
+        /// Represents the key to indicate whether the token cache is enabled or not.
         /// </summary>
         public const string TokenCacheEnabled = "TokenCacheEnabled";
 
         /// <summary>
-        /// Prefix of properties of the first record of authentication telemetry record.
+        /// Represents the prefix of properties of the first record of authentication telemetry record.
         /// </summary>
         public const string AuthTelemetryPropertyHeadPrefix = "auth-info-head";
 
         /// <summary>
-        /// Key of the left records of authentication telemetry.
+        /// Represents the key of the left records of authentication telemetry.
         /// </summary>
         public const string AuthTelemetryPropertyTailKey = "auth-info-tail";
     }
