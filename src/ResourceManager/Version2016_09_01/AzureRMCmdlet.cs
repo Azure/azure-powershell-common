@@ -281,6 +281,22 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             return result;
         }
 
+        protected override void EndProcessing()
+        {
+            IAzureContext context;
+            _qosEvent.Uid = "defaultid";
+            if (TryGetDefaultContext(out context) && context != null)
+            {
+                _qosEvent.SubscriptionId = context.Subscription?.Id;
+                _qosEvent.TenantId = context.Tenant?.Id;
+                if (context.Account != null && !String.IsNullOrWhiteSpace(context.Account.Id))
+                {
+                    _qosEvent.Uid = MetricHelper.GenerateSha256HashString(context.Account.Id.ToString());
+                }
+            }
+            base.EndProcessing();
+        }
+
         /// <summary>
         /// Gets the current default context.
         /// </summary>
@@ -380,17 +396,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         {
             base.InitializeQosEvent();
 
-            IAzureContext context;
-            _qosEvent.Uid = "defaultid";
-            if (RequireDefaultContext() && TryGetDefaultContext(out context))
-            {
-                _qosEvent.SubscriptionId = context.Subscription?.Id;
-                _qosEvent.TenantId = context.Tenant?.Id;
-                if (context.Account != null && !String.IsNullOrWhiteSpace(context.Account.Id))
-                {
-                    _qosEvent.Uid = MetricHelper.GenerateSha256HashString(context.Account.Id.ToString());
-                }
-            }
+            
         }
 
         protected override void LogCmdletStartInvocationInfo()
