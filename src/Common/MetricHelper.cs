@@ -294,16 +294,23 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
         private static void PopulateAuthenticationPropertiesFromQos(AuthenticationTelemetryData telemetry, IDictionary<string, string> eventProperties)
         {
-            var record = telemetry.Head;
-            eventProperties[$"{AuthTelemetryRecord.AuthTelemetryPropertyHeadPrefix}-{nameof(record.TokenCredentialName).ToLower()}"] = record.TokenCredentialName;
-            eventProperties[$"{AuthTelemetryRecord.AuthTelemetryPropertyHeadPrefix}-{nameof(record.AuthenticationSuccess).ToLower()}"] = record.AuthenticationSuccess.ToString();
-
-            foreach (var property in record.ExtendedProperties)
+            var record = telemetry?.Head;
+            if (record != null)
             {
-                eventProperties[$"{AuthTelemetryRecord.AuthTelemetryPropertyHeadPrefix}-{property.Key.ToLower()}"] = property.Value;
-            }
+                eventProperties[$"{AuthTelemetryRecord.AuthTelemetryPropertyHeadPrefix}-{nameof(record.TokenCredentialName).ToLower()}"] = record.TokenCredentialName;
+                eventProperties[$"{AuthTelemetryRecord.AuthTelemetryPropertyHeadPrefix}-{nameof(record.AuthenticationSuccess).ToLower()}"] = record.AuthenticationSuccess.ToString();
+                eventProperties[$"{AuthTelemetryRecord.AuthTelemetryPropertyHeadPrefix}-{nameof(record.CorrelationId).ToLower()}"] = record.CorrelationId;
 
-            eventProperties[AuthTelemetryRecord.AuthTelemetryPropertyTailKey] = JsonConvert.SerializeObject(telemetry.Tail);
+                foreach (var property in record.ExtendedProperties)
+                {
+                    eventProperties[$"{AuthTelemetryRecord.AuthTelemetryPropertyHeadPrefix}-{property.Key.ToLower()}"] = property.Value;
+                }
+
+                if (telemetry.Tail != null && telemetry.Tail.Count > 0)
+                {
+                    eventProperties[AuthTelemetryRecord.AuthTelemetryPropertyTailKey] = JsonConvert.SerializeObject(telemetry.Tail);
+                }
+            }
         }
 
         private void PopulatePropertiesFromQos(AzurePSQoSEvent qos, IDictionary<string, string> eventProperties, bool populateException = false)
