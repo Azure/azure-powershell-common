@@ -809,7 +809,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
             else
             {
-                return hostEnv.Trim();
+                return hostEnv.Trim().Replace("@", "_").Replace("/", "_");
             }
         }
 
