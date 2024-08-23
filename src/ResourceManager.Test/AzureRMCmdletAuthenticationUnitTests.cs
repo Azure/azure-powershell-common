@@ -15,6 +15,7 @@
 using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Core;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces;
 using Microsoft.Azure.Commands.ResourceManager.Common;
 
 using Moq;
@@ -49,8 +50,8 @@ namespace Microsoft.Azure.Commands.ResourceManager.Test
                 It.IsAny<SecureString>(),
                 It.IsAny<string>(),
                 It.IsAny<Action<string>>(),
-                It.IsAny<string>())).Returns<IAzureAccount, IAzureEnvironment, string, SecureString, string, Action<string>, string>
-                ((a, e, t, w, b, p, r) => new MockAccessToken(azureAccount.Id, t, azureAccount.Type, t));
+                It.IsAny<IDictionary<string, object>>())).Returns<IAzureAccount, IAzureEnvironment, string, SecureString, string, Action<string>, string>
+                ((a, e, t, p, b, action, r) => new MockAccessToken(azureAccount.Id, t, azureAccount.Type, t));
             session.SetupProperty(m => m.AuthenticationFactory, authFactory.Object);
             return session.Object;
         }
