@@ -481,8 +481,29 @@ namespace Microsoft.WindowsAzure.Commands.Common
                     eventProperties["secrets-detected"] = secretsDetected.ToString();
                     if (secretsDetected)
                     {
-                        var detectedProperties = qos.SanitizerInfo.DetectedProperties.Count == 0 ? "[None]" : string.Join(";", qos.SanitizerInfo.DetectedProperties);
-                        eventProperties.Add("secrets-detected-properties", detectedProperties);
+                        string detectedProperties = string.Empty;
+                        if (qos.SanitizerInfo.DetectedProperties.IsEmpty)
+                        {
+                            eventProperties.Add("secrets-detected-properties", "[None]");
+                        }
+                        else
+                        {
+                            var sbDetectedProperties = new StringBuilder();
+                            sbDetectedProperties.Append("[");
+                            foreach (var detectedProperty in qos.SanitizerInfo.DetectedProperties)
+                            {
+                                sbDetectedProperties.Append("{");
+
+                                sbDetectedProperties.Append($"\"name\": \"{detectedProperty.Key}\",");
+                                sbDetectedProperties.Append($"\"correlatingid\": \"{string.Join(";", detectedProperty.Value.CrossCompanyCorrelatingIds)}\",");
+                                sbDetectedProperties.Append($"\"moniker\": \"{string.Join(";", detectedProperty.Value.Monikers)}\"");
+
+                                sbDetectedProperties.Append("},");
+                            }
+                            sbDetectedProperties.Length--;
+                            sbDetectedProperties.Append("]");
+                            eventProperties.Add("secrets-detected-properties", sbDetectedProperties.ToString());
+                        }
                     }
                     if (qos.SanitizerInfo.HasErrorInDetection && qos.SanitizerInfo.DetectionError != null)
                     {
