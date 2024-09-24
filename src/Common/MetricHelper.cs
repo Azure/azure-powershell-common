@@ -494,9 +494,8 @@ namespace Microsoft.WindowsAzure.Commands.Common
                             {
                                 sbDetectedProperties.Append("{");
 
-                                sbDetectedProperties.Append($"\"name\": \"{detectedProperty.Key}\",");
-                                sbDetectedProperties.Append($"\"correlatingid\": \"{string.Join(";", detectedProperty.Value.CrossCompanyCorrelatingIds)}\",");
-                                sbDetectedProperties.Append($"\"moniker\": \"{string.Join(";", detectedProperty.Value.Monikers)}\"");
+                                sbDetectedProperties.Append($"\"name\":\"{detectedProperty.Key}\",");
+                                sbDetectedProperties.Append($"\"moniker\":\"{string.Join(";", detectedProperty.Value)}\"");
 
                                 sbDetectedProperties.Append("},");
                             }

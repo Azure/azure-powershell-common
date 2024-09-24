@@ -18,41 +18,39 @@ using System.Collections.Generic;
 
 namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 {
-    public class DetectedPropertiesInfo : IEnumerable<KeyValuePair<string, (HashSet<string> CrossCompanyCorrelatingIds, HashSet<string> Monikers)>>
+    public class DetectedPropertiesInfo : IEnumerable<KeyValuePair<string, HashSet<string>>>
     {
-        private readonly Dictionary<string, (HashSet<string> CrossCompanyCorrelatingIds, HashSet<string> Monikers)> _internalProperties;
+        private readonly Dictionary<string, HashSet<string>> _internalProperties;
 
         public DetectedPropertiesInfo()
         {
-            _internalProperties = new Dictionary<string, (HashSet<string> CrossCompanyCorrelatingIds, HashSet<string> Monikers)>();
+            _internalProperties = new Dictionary<string, HashSet<string>>();
         }
 
         public bool IsEmpty => _internalProperties.Count == 0;
 
         public IEnumerable<string> PropertyNames => _internalProperties.Keys;
 
-        public void AddPropertyInfo(string propertyName, string crossCompanyCorrelatingId, string moniker)
+        public void AddPropertyInfo(string propertyName, string moniker)
         {
             if (!_internalProperties.TryGetValue(propertyName, out var propertyInfo))
             {
-                propertyInfo = (new HashSet<string>(), new HashSet<string>());
+                propertyInfo = new HashSet<string>();
                 _internalProperties[propertyName] = propertyInfo;
             }
 
-            propertyInfo.CrossCompanyCorrelatingIds.Add(crossCompanyCorrelatingId);
-            propertyInfo.Monikers.Add(moniker);
+            propertyInfo.Add(moniker);
         }
 
-        public void AddPropertyInfo(string propertyName, HashSet<string> crossCompanyCorrelatingIds, HashSet<string> monikers)
+        public void AddPropertyInfo(string propertyName, HashSet<string> monikers)
         {
             if (!_internalProperties.TryGetValue(propertyName, out var propertyInfo))
             {
-                propertyInfo = (new HashSet<string>(), new HashSet<string>());
+                propertyInfo = new HashSet<string>();
                 _internalProperties[propertyName] = propertyInfo;
             }
 
-            propertyInfo.CrossCompanyCorrelatingIds.UnionWith(crossCompanyCorrelatingIds);
-            propertyInfo.Monikers.UnionWith(monikers);
+            propertyInfo.UnionWith(monikers);
         }
 
         public bool ContainsProperty(string propertyName)
@@ -60,7 +58,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
             return _internalProperties.ContainsKey(propertyName);
         }
 
-        public IEnumerator<KeyValuePair<string, (HashSet<string> CrossCompanyCorrelatingIds, HashSet<string> Monikers)>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, HashSet<string>>> GetEnumerator()
         {
             return _internalProperties.GetEnumerator();
         }
@@ -104,7 +102,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
                 SanitizeDuration += telemetry.SanitizeDuration;
                 foreach (var property in telemetry.DetectedProperties)
                 {
-                    DetectedProperties.AddPropertyInfo(property.Key, property.Value.CrossCompanyCorrelatingIds, property.Value.Monikers);
+                    DetectedProperties.AddPropertyInfo(property.Key, property.Value);
                 }
             }
         }
