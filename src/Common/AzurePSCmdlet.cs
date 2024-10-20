@@ -433,13 +433,13 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 var sanitizerInfo = _qosEvent.SanitizerInfo;
                 if (sanitizerInfo.ShowSecretsWarning && sanitizerInfo.SecretsDetected)
                 {
-                    if (sanitizerInfo.DetectedProperties.Count == 0)
+                    if (sanitizerInfo.DetectedProperties.IsEmpty)
                     {
                         WriteWarning(string.Format(Resources.DisplaySecretsWarningMessageWithoutProperty, MyInvocation.InvocationName));
                     }
                     else
                     {
-                        WriteWarning(string.Format(Resources.DisplaySecretsWarningMessageWithProperty, MyInvocation.InvocationName, string.Join(", ", sanitizerInfo.DetectedProperties)));
+                        WriteWarning(string.Format(Resources.DisplaySecretsWarningMessageWithProperty, MyInvocation.InvocationName, string.Join(", ", sanitizerInfo.DetectedProperties.PropertyNames)));
                     }
                 }
             }

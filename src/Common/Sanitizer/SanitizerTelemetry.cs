@@ -13,27 +13,82 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
 {
+    public class DetectedPropertiesInfo : IEnumerable<KeyValuePair<string, HashSet<string>>>
+    {
+        private readonly Dictionary<string, HashSet<string>> _internalProperties;
+
+        public DetectedPropertiesInfo()
+        {
+            _internalProperties = new Dictionary<string, HashSet<string>>();
+        }
+
+        public bool IsEmpty => _internalProperties.Count == 0;
+
+        public IEnumerable<string> PropertyNames => _internalProperties.Keys;
+
+        public void AddPropertyInfo(string propertyName, string moniker)
+        {
+            if (!_internalProperties.TryGetValue(propertyName, out var propertyInfo))
+            {
+                propertyInfo = new HashSet<string>();
+                _internalProperties[propertyName] = propertyInfo;
+            }
+
+            propertyInfo.Add(moniker);
+        }
+
+        public void AddPropertyInfo(string propertyName, HashSet<string> monikers)
+        {
+            if (!_internalProperties.TryGetValue(propertyName, out var propertyInfo))
+            {
+                propertyInfo = new HashSet<string>();
+                _internalProperties[propertyName] = propertyInfo;
+            }
+
+            propertyInfo.UnionWith(monikers);
+        }
+
+        public bool ContainsProperty(string propertyName)
+        {
+            return _internalProperties.ContainsKey(propertyName);
+        }
+
+        public IEnumerator<KeyValuePair<string, HashSet<string>>> GetEnumerator()
+        {
+            return _internalProperties.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
+
     public class SanitizerTelemetry
     {
-        public bool ShowSecretsWarning { get; set; } = false;
+        public bool ShowSecretsWarning { get; set; }
 
-        public bool SecretsDetected { get; set; } = false;
+        public bool SecretsDetected { get; set; }
 
-        public HashSet<string> DetectedProperties { get; set; } = new HashSet<string>();
-
-        public bool HasErrorInDetection { get; set; } = false;
+        public bool HasErrorInDetection { get; set; }
 
         public Exception DetectionError { get; set; }
 
         public TimeSpan SanitizeDuration { get; set; }
 
+        public DetectedPropertiesInfo DetectedProperties { get; private set; }
+
         public SanitizerTelemetry(bool showSecretsWarning)
         {
             ShowSecretsWarning = showSecretsWarning;
+            SecretsDetected = false;
+            HasErrorInDetection = false;
+            DetectedProperties = new DetectedPropertiesInfo();
         }
 
         public void Combine(SanitizerTelemetry telemetry)
@@ -42,10 +97,13 @@ namespace Microsoft.WindowsAzure.Commands.Common.Sanitizer
             {
                 ShowSecretsWarning = ShowSecretsWarning || telemetry.ShowSecretsWarning;
                 SecretsDetected = SecretsDetected || telemetry.SecretsDetected;
-                DetectedProperties.UnionWith(telemetry.DetectedProperties);
                 HasErrorInDetection = HasErrorInDetection || telemetry.HasErrorInDetection;
                 DetectionError = DetectionError ?? telemetry.DetectionError;
                 SanitizeDuration += telemetry.SanitizeDuration;
+                foreach (var property in telemetry.DetectedProperties)
+                {
+                    DetectedProperties.AddPropertyInfo(property.Key, property.Value);
+                }
             }
         }
     }
