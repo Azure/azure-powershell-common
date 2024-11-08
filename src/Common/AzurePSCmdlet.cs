@@ -324,12 +324,12 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             AzureSession.Instance.ClientFactory.AddUserAgent(ModuleName, this.ModuleVersion);
             try {
                 string hostEnv = AzurePSCmdlet.getEnvUserAgent();
-                if (!String.IsNullOrWhiteSpace(hostEnv)) 
+                if (!String.IsNullOrWhiteSpace(hostEnv))
                 {
                     AzureSession.Instance.ClientFactory.AddUserAgent(hostEnv);
                 }
-            } 
-            catch (Exception) 
+            }
+            catch (Exception)
             {
                 // ignore if it failed.
             }
@@ -409,7 +409,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         private void WriteBreakingChangeOrPreviewMessage()
         {
             if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
-                && configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisplayBreakingChangeWarning))
+                && configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisplayBreakingChangeWarning, MyInvocation))
             {
                 BreakingChangeAttributeHelper.ProcessCustomAttributesAtRuntime(this.GetType(), this.MyInvocation, WriteWarning);
 
@@ -457,7 +457,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             if (MetricHelper.IsCalledByUser()
                 && SurveyHelper.GetInstance().ShouldPromptAzSurvey()
                 && (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
-                && !configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableInterceptSurvey).Equals(false)))
+                && !configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableInterceptSurvey, MyInvocation).Equals(false)))
             {
                 WriteSurvey();
                 if (_qosEvent != null)
@@ -516,7 +516,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
         protected void WriteSurvey()
         {
-            // Using color same with Azure brand event. 
+            // Using color same with Azure brand event.
             // Using Ansi Code to control font color(97(Bold White)) and background color(0;120;212(RGB))
             string ansiCodePrefix = "\u001b[97;48;2;0;120;212m";
             // using '[k' for erase in line. '[0m' to ending ansi code
@@ -540,7 +540,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
             base.WriteError(errorRecord);
             if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
-                && configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisplayBreakingChangeWarning))
+                && configManager.GetConfigValue<bool>(ConfigKeysForCommon.DisplayBreakingChangeWarning, MyInvocation))
             {
                 PreviewAttributeHelper.ProcessCustomAttributesAtRuntime(this.GetType(), this.MyInvocation, WriteWarning);
             }
@@ -863,7 +863,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         private bool ShouldRecordDebugMessages()
         {
             return AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager)
-                && configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableErrorRecordsPersistence)
+                && configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnableErrorRecordsPersistence, MyInvocation)
                 && IsDataCollectionAllowed();
         }
 
