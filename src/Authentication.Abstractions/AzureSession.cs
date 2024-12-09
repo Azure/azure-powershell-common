@@ -237,17 +237,16 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                 () =>
                 {
                     var key = new ComponentKey(componentName, typeof(T));
-                    // todo: double check if dictionary operations are thread safe
-                    if (!_componentRegistry.ContainsKey(key) || overwrite)
+                    if (!_componentRegistry.ContainsKey(key) || overwrite) // only proceed if key not found or overwrite is true
                     {
-                        if (_componentRegistry.ContainsKey(key) && overwrite)
+
+                        if (overwrite
+                            && _componentRegistry.TryGetValue(key, out var existed)
+                            && existed is IAzureSessionListener existedListener)
                         {
-                            var existed = _componentRegistry[key];
-                            if (existed is IAzureSessionListener existedListener)
-                            {
-                                _eventHandler -= existedListener.OnEvent;
-                            }
+                            _eventHandler -= existedListener.OnEvent;
                         }
+
                         var component = componentInitializer();
                         _componentRegistry[key] = component;
                         if (component is IAzureSessionListener listener)
@@ -264,15 +263,10 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                 () =>
                 {
                     var key = new ComponentKey(componentName, typeof(T));
-                    // todo: double check if dictionary operations are thread safe
-                    if (_componentRegistry.ContainsKey(key))
+                    var components = _componentRegistry as ConcurrentDictionary<ComponentKey, object>;
+                    if (components.TryRemove(key, out var component) && component is IAzureSessionListener listener)
                     {
-                        var component = _componentRegistry[key];
-                        if (component is IAzureSessionListener listener)
-                        {
-                            _eventHandler -= listener.OnEvent;
-                        }
-                        _componentRegistry.Remove(key);
+                        _eventHandler -= listener.OnEvent;
                     }
                 });
         }
