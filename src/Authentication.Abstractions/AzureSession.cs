@@ -30,7 +30,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         static IAzureSession _instance;
         static bool _initialized = false;
         static ReaderWriterLockSlim sessionLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
-        private IDictionary<ComponentKey, object> _componentRegistry = new ConcurrentDictionary<ComponentKey, object>(new ComponentKeyComparer());
+        // explicit typing for the thread-safe API calls to avoid the need for explicit casting
+        private ConcurrentDictionary<ComponentKey, object> _componentRegistry = new ConcurrentDictionary<ComponentKey, object>(new ComponentKeyComparer());
         private event EventHandler<AzureSessionEventArgs> _eventHandler;
 
         /// <summary>
@@ -263,8 +264,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                 () =>
                 {
                     var key = new ComponentKey(componentName, typeof(T));
-                    var components = _componentRegistry as ConcurrentDictionary<ComponentKey, object>;
-                    if (components.TryRemove(key, out var component) && component is IAzureSessionListener listener)
+                    if (_componentRegistry.TryRemove(key, out var component) && component is IAzureSessionListener listener)
                     {
                         _eventHandler -= listener.OnEvent;
                     }
