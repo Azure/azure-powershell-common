@@ -30,7 +30,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         static IAzureSession _instance;
         static bool _initialized = false;
         static ReaderWriterLockSlim sessionLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
-        private IDictionary<ComponentKey, object> _componentRegistry = new ConcurrentDictionary<ComponentKey, object>(new ComponentKeyComparer());
+        // explicit typing for the thread-safe API calls to avoid the need for explicit casting
+        private ConcurrentDictionary<ComponentKey, object> _componentRegistry = new ConcurrentDictionary<ComponentKey, object>(new ComponentKeyComparer());
         private event EventHandler<AzureSessionEventArgs> _eventHandler;
 
         /// <summary>
@@ -89,7 +90,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         public string OldProfileFile { get; set; }
 
         /// <summary>
-        /// The directory contianing the ARM ContextContainer
+        /// The directory containing the ARM ContextContainer
         /// </summary>
         public string ARMProfileDirectory { get; set; }
 
@@ -214,13 +215,16 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         public bool TryGetComponent<T>(string componentName, out T component) where T : class
         {
             var key = new ComponentKey(componentName, typeof(T));
-            component = null;
-            if (_componentRegistry.ContainsKey(key))
+            if (_componentRegistry.TryGetValue(key, out var componentObj) && componentObj is T componentT)
             {
-                component = _componentRegistry[key] as T;
+                component = componentT;
+                return true;
             }
-
-            return component != null;
+            else
+            {
+                component = null;
+                return false;
+            }
         }
 
         public void RegisterComponent<T>(string componentName, Func<T> componentInitializer) where T : class
@@ -234,16 +238,16 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                 () =>
                 {
                     var key = new ComponentKey(componentName, typeof(T));
-                    if (!_componentRegistry.ContainsKey(key) || overwrite)
+                    if (!_componentRegistry.ContainsKey(key) || overwrite) // only proceed if key not found or overwrite is true
                     {
-                        if (_componentRegistry.ContainsKey(key) && overwrite)
+
+                        if (overwrite
+                            && _componentRegistry.TryGetValue(key, out var existed)
+                            && existed is IAzureSessionListener existedListener)
                         {
-                            var existed = _componentRegistry[key];
-                            if (existed is IAzureSessionListener existedListener)
-                            {
-                                _eventHandler -= existedListener.OnEvent;
-                            }
+                            _eventHandler -= existedListener.OnEvent;
                         }
+
                         var component = componentInitializer();
                         _componentRegistry[key] = component;
                         if (component is IAzureSessionListener listener)
@@ -260,14 +264,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication
                 () =>
                 {
                     var key = new ComponentKey(componentName, typeof(T));
-                    if (_componentRegistry.ContainsKey(key))
+                    if (_componentRegistry.TryRemove(key, out var component) && component is IAzureSessionListener listener)
                     {
-                        var component = _componentRegistry[key];
-                        if (component is IAzureSessionListener listener)
-                        {
-                            _eventHandler -= listener.OnEvent;
-                        }
-                        _componentRegistry.Remove(key);
+                        _eventHandler -= listener.OnEvent;
                     }
                 });
         }
