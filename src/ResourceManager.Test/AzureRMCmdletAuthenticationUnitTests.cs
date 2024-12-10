@@ -101,7 +101,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Test
 
                 var header = cmdlet.GetAuxilaryAuthHeaderByTenatIds(tenants);
 
-                Assert.Equal(1, header.Count);
+                Assert.Single(header);
                 var h = header.First();
                 Assert.Equal("x-ms-authorization-auxiliary", h.Key);
                 Assert.Single(h.Value);

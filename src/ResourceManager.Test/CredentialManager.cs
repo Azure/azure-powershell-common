@@ -12,14 +12,11 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+
 namespace Microsoft.Azure.Commands.Common.Compute.Tests
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using Microsoft.IdentityModel.Clients.ActiveDirectory;
-    using Microsoft.Rest;
-
     class CredentialManager
     {
         protected CredentialManager() { }
@@ -37,20 +34,6 @@ namespace Microsoft.Azure.Commands.Common.Compute.Tests
         public string ApplicationSecret { get; private set; }
         public string TenantId { get; private set; }
         public string SubscriptionId { get; private set; }
-
-        public TokenCredentials TokenCredentials
-        {
-            get
-            {
-                var clientCredential = new ClientCredential(ApplicationId, ApplicationSecret);
-                var context = new AuthenticationContext(Path.Combine(AuthUrl, TenantId));
-                var result = context.AcquireTokenAsync(BaseUrl, clientCredential);
-
-                if (result == null) throw new InvalidOperationException("Failed to obtain the token");
-
-                return new TokenCredentials(result.Result.AccessToken);
-            }
-        }
 
         public static CredentialManager FromServicePrincipalEnvVariable(string envVariableName = ServicePrincipalEnvVariableName)
         {
