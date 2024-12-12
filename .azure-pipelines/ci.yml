@@ -6,9 +6,9 @@ pool:
 
 steps:
 - task: UseDotNet@2
-  displayName: 'Use .Net Core sdk  2.1.302'
+  displayName: 'Pin .Net SDK 8.x'
   inputs:
-    version: 2.1.302
+    version: 8.x
 
 - task: DotNetCoreCLI@2
   displayName: 'Build Debug'
