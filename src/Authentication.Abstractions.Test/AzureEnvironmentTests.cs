@@ -25,7 +25,7 @@ namespace Authentication.Abstractions.Test
         [Fact]
         public void TestArmAndNonArmBasedCloudMetadataInit()
         {
-            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData\GoodArmResponse.json");
+            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData/GoodArmResponse.json");
             var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
 
             // Check all discovered environments are loaded.
@@ -39,7 +39,7 @@ namespace Authentication.Abstractions.Test
         [Fact]
         public void TestArmCloudMetadata20190501Init()
         {
-            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData\ArmResponse2019-05-01.json");
+            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData/ArmResponse2019-05-01.json");
             var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
 
             // Check all discovered environments are loaded.
@@ -55,7 +55,7 @@ namespace Authentication.Abstractions.Test
         [Fact]
         public void TestArmCloudMetadata20220901Init()
         {
-            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData\ArmResponse2022-09-01.json");
+            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData/ArmResponse2022-09-01.json");
             var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
 
             // Check all discovered environments are loaded.
@@ -80,7 +80,7 @@ namespace Authentication.Abstractions.Test
         [Fact]
         public void TestArmResponseNoAzureCloud()
         {
-            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData\ArmResponseNoAzureCloud.json");
+            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData/ArmResponseNoAzureCloud.json");
             var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
 
             // Check AzureCloud is added to public environment list even discovery endpoint doesn't return AzureCloud.
@@ -93,7 +93,7 @@ namespace Authentication.Abstractions.Test
         [Fact]
         public void TestArmResponseOneEntry()
         {
-            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData\ArmResponseOneEntry.json");
+            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData/ArmResponseOneEntry.json");
             var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
 
             Assert.Equal(4, armEnvironments.Count);
@@ -133,7 +133,7 @@ namespace Authentication.Abstractions.Test
         [Fact]
         public void TestArmResponseWithEmptyGalleryEndpoint()
         {
-            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData\ArmResponseWithEmptyGallery.json");
+            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData/ArmResponseWithEmptyGallery.json");
             var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
 
             Assert.Equal(3, armEnvironments.Count);

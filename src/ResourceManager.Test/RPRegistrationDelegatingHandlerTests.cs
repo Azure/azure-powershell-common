@@ -39,7 +39,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Test
         }
 
         [Fact]
-        public void InvokeRegistrationForUnregisteredResourceProviders()
+        public async Task InvokeRegistrationForUnregisteredResourceProviders()
         {
             // Setup
             Mock<ResourceManagementClient> mockClient = new Mock<ResourceManagementClient>() { CallBase = true };
@@ -75,16 +75,16 @@ namespace Microsoft.Azure.Commands.ResourceManager.Test
             HttpClient httpClient = new HttpClient(rpHandler);
 
             // Test
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             // Assert
             Assert.Contains(msgs, s => s.Equals("Succeeded to register resource provider 'microsoft.compute'"));
             Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
-            Assert.Equal("Azure works!", response.Content.ReadAsStringAsync().Result);
+            Assert.Equal("Azure works!", await response.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void DoesNotInvokeRegistrationForRegisteredResourceProviders()
+        public async Task DoesNotInvokeRegistrationForRegisteredResourceProviders()
         {
             // Setup
             Mock<ResourceManagementClient> mockClient = new Mock<ResourceManagementClient>() { CallBase = true };
@@ -108,16 +108,16 @@ namespace Microsoft.Azure.Commands.ResourceManager.Test
             HttpClient httpClient = new HttpClient(rpHandler);
 
             // Test
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             // Assert
             Assert.Empty(msgs);
             Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
-            Assert.Equal("Azure works!", response.Content.ReadAsStringAsync().Result);
+            Assert.Equal("Azure works!", await response.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void DoesNotInvokeRegistrationForUnrelatedStatusCode()
+        public async Task DoesNotInvokeRegistrationForUnrelatedStatusCode()
         {
             // Setup
             Mock<ResourceManagementClient> mockClient = new Mock<ResourceManagementClient>() { CallBase = true };
@@ -141,16 +141,16 @@ namespace Microsoft.Azure.Commands.ResourceManager.Test
             HttpClient httpClient = new HttpClient(rpHandler);
 
             // Test
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             // Assert
             Assert.Empty(msgs);
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-            Assert.Equal("auth error!", response.Content.ReadAsStringAsync().Result);
+            Assert.Equal("auth error!", await response.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void DoesNotInvokeRegistrationForIncompatibleUri()
+        public async Task DoesNotInvokeRegistrationForIncompatibleUri()
         {
             // Setup
             Mock<ResourceManagementClient> mockClient = new Mock<ResourceManagementClient>() { CallBase = true };
@@ -174,16 +174,16 @@ namespace Microsoft.Azure.Commands.ResourceManager.Test
             HttpClient httpClient = new HttpClient(rpHandler);
 
             // Test
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             // Assert
             Assert.Empty(msgs);
             Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
-            Assert.Equal("registered to use namespace", response.Content.ReadAsStringAsync().Result);
+            Assert.Equal("registered to use namespace", await response.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void DoesNotHangForLongRegistrationCalls()
+        public async Task DoesNotHangForLongRegistrationCalls()
         {
             // Setup
             Mock<ResourceManagementClient> mockClient = new Mock<ResourceManagementClient>() { CallBase = true };
@@ -219,17 +219,17 @@ namespace Microsoft.Azure.Commands.ResourceManager.Test
             HttpClient httpClient = new HttpClient(rpHandler);
 
             // Test
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             // Assert
             Assert.Contains(msgs, s => s.Equals("Failed to register resource provider 'microsoft.compute'.Details: 'The operation has timed out.'"));
             Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
-            Assert.Equal("registered to use namespace", response.Content.ReadAsStringAsync().Result);
+            Assert.Equal("registered to use namespace", await response.Content.ReadAsStringAsync());
             mockProvidersOperations.Verify(f => f.RegisterWithHttpMessagesAsync("microsoft.compute", null, It.IsAny<CancellationToken>()), Times.AtMost(5));
         }
 
         [Fact]
-        public void DoesNotThrowForFailedRegistrationCall()
+        public async Task DoesNotThrowForFailedRegistrationCall()
         {
             // Setup
             Mock<ResourceManagementClient> mockClient = new Mock<ResourceManagementClient>() { CallBase = true };
@@ -256,12 +256,12 @@ namespace Microsoft.Azure.Commands.ResourceManager.Test
             HttpClient httpClient = new HttpClient(rpHandler);
 
             // Test
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             // Assert
             Assert.Contains(msgs, s => s.Equals("Failed to register resource provider 'microsoft.compute'.Details: 'PR reg failed'"));
             Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
-            Assert.Equal("registered to use namespace", response.Content.ReadAsStringAsync().Result);
+            Assert.Equal("registered to use namespace", await response.Content.ReadAsStringAsync());
             mockProvidersOperations.Verify(f => f.RegisterWithHttpMessagesAsync("microsoft.compute", null, It.IsAny<CancellationToken>()), Times.AtMost(4));
         }
     }

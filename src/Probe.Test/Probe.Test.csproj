@@ -3,7 +3,7 @@
   <Import Project="$(ProjectDir)..\Dependencies.Test.targets" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>Microsoft.Azure.PowerShell.Probe.Test</AssemblyName>
     <OutputPath>$(ProjectDir)..\..\artifacts\$(Configuration)</OutputPath>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
