@@ -220,7 +220,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
                 //this does not mean that the user does not have access to the subs, it just menas that the local context did not have them
                 //We gotta now call into the subscription RP and see if the user really does not have access to these subscriptions
 
-                var result = Utilities.SubscriptionAndTenantHelper.GetTenantsForSubscriptions(subscriptionsNotInDefaultProfile.ToList(), DefaultContext);
+                var result = Utilities.SubscriptionAndTenantHelper.GetTenantsForSubscriptions(subscriptionsNotInDefaultProfile.ToList(), DefaultContext, _cmdletContext);
 
                 if (result.Count < subscriptionsNotInDefaultProfile.Count())
                 {
@@ -245,7 +245,8 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         {
             return Utilities.SubscriptionAndTenantHelper.AcquireAccessToken(DefaultContext.Account,
                 DefaultContext.Environment,
-                tenantId);
+                tenantId,
+                _cmdletContext);
         }
 
         protected override string DataCollectionWarning
@@ -455,7 +456,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
                     {
                         var client = new ResourceManagementClient(
                             context.Environment.GetEndpointAsUri(AzureEnvironment.Endpoint.ResourceManager),
-                            AzureSession.Instance.AuthenticationFactory.GetServiceClientCredentials(context, AzureEnvironment.Endpoint.ResourceManager));
+                            AzureSession.Instance.AuthenticationFactory.GetServiceClientCredentials(context, AzureEnvironment.Endpoint.ResourceManager, _cmdletContext));
                         client.SubscriptionId = context.Subscription.Id;
                         return client;
                     },
