@@ -13,7 +13,7 @@
   <Target Name="netstandard20">
     <Message Importance="high" Text="Pack: netstandard20 started" />
     <ItemGroup>
-      <NetStandard20Projects Include="$(Src)**\*.csproj" Exclude="$(Src)**\*.Tests.csproj;$(Src)**\*.Test.csproj;$(Src)**\*.UnitTest.Netcore.csproj" />
+      <NetStandard20Projects Include="$(Src)**\*.csproj" Exclude="$(Src)**\*.Tests.csproj;$(Src)**\*.Test.csproj" />
     </ItemGroup>
     <Exec Command="dotnet pack %(NetStandard20Projects.FullPath) -c $(Configuration) /p:PackageVersion=$(PackageVersion)-preview --no-build" />
   </Target>
