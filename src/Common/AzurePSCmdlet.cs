@@ -14,6 +14,8 @@
 
 using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Models;
+using Microsoft.Azure.Commands.Common.Authentication.Config;
 using Microsoft.Azure.PowerShell.Common.Config;
 using Microsoft.Azure.PowerShell.Common.Share.Survey;
 using Microsoft.Azure.PowerShell.Common.UpgradeNotification;
@@ -798,6 +800,28 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
 
             _qosEvent.SanitizerInfo = new SanitizerTelemetry(OutputSanitizer?.RequireSecretsDetection == true);
+
+            AttachConfigReadHandlerForTelemetry();
+        }
+
+        /// <summary>
+        ///  Attach config read event handler to add config telemetry
+        /// </summary>
+        private void AttachConfigReadHandlerForTelemetry()
+        {
+            AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager);
+            if (configManager is IConfigManagerWithEvents cm)
+            {
+                cm.ConfigRead += OnConfigRead;
+            }
+        }
+
+        private void OnConfigRead(object sender, ConfigEventArgs args)
+        {
+            if (!_qosEvent.ConfigMetrics.ContainsKey(args.ConfigKey) && args is ConfigReadEventArgs readEventArgs)
+            {
+                _qosEvent.ConfigMetrics[readEventArgs.ConfigKey] = new ConfigMetrics(readEventArgs.ConfigTelemetryKey, readEventArgs.ConfigValue.ToString());
+            }
         }
 
         private static string getEnvUserAgent()
