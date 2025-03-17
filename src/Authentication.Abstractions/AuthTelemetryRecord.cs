@@ -36,11 +36,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public bool AuthenticationSuccess { get; set; } = false;
 
         /// <summary>
-        /// Gets or sets the correlation ID for the authentication.
-        /// </summary>
-        public string CorrelationId { get; set; }
-
-        /// <summary>
         /// Gets the additional properties for AuthenticationInfo.
         /// </summary>
         [JsonIgnore]
@@ -77,11 +72,11 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// Represents the prefix of properties of the first record of authentication telemetry record.
         /// </summary>
-        public const string AuthTelemetryPropertyHeadPrefix = "auth-info-head";
+        public const string AuthTelemetryPropertyPrimaryPrefix = "auth-info-primary";
 
         /// <summary>
         /// Represents the key of the left records of authentication telemetry.
         /// </summary>
-        public const string AuthTelemetryPropertyTailKey = "auth-info-tail";
+        public const string AuthTelemetryPropertySubsidiaryKey = "auth-info-subsidiary";
     }
 }
