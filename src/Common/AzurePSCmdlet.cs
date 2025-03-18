@@ -888,7 +888,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 throw new NullReferenceException(Resources.AuthenticationTelemetryNotRegistered);
             }
             _qosEvent.AuthTelemetry = authenticationTelemetry.GetTelemetryRecord(_cmdletContext);
-            WriteDebugWithTimestamp($"TotalKeyCount={authenticationTelemetry.KeysAllCount}; CurrentKeyCount={authenticationTelemetry.KeysCurrentCount}; EmptyCmdletContextCount={authenticationTelemetry.EmptyCmdletContextCount}; KeysNotFoundCount={authenticationTelemetry.KeyNotFoundCount}");
+            WriteDebugWithTimestamp($"CurrentKeyCount={authenticationTelemetry.KeysCurrentCount}; EmptyCmdletContextCount={authenticationTelemetry.EmptyCmdletContextCount}; KeysNotFoundCount={authenticationTelemetry.KeyNotFoundCount}");
 
             if (!IsUsageMetricEnabled && (!IsErrorMetricEnabled || _qosEvent.IsSuccess))
             {
