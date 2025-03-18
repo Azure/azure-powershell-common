@@ -269,10 +269,18 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public const string AzurePurviewEndpointResourceId = "https://purview.azure.net";
 
         /// <summary>
-        /// App Configuration
+        /// The domain name suffix for App Configuration
         /// </summary>
         public const string AzureAppConfigurationEndpointSuffix = "azconfig.io";
+        public const string ChinaAppConfigurationEndpointSuffix = "azconfig.azure.cn";
+        public const string USGovernmentAppConfigurationEndpointSuffix = "azconfig.azure.us";
+
+        /// <summary>
+        /// The endpoint Resource Id for App Configuration
+        /// </summary>
         public const string AzureAppConfigurationEndpointResourceId = "https://azconfig.io";
+        public const string ChinaAppConfigurationEndpointResourceId = "https://azconfig.azure.cn";
+        public const string USGovernmentAppConfigurationEndpointResourceId = "https://azconfig.azure.us";
 
         /// <summary>
         /// The endpoint Resource Id for Azure Container Registry
