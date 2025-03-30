@@ -289,10 +289,10 @@ namespace Authentication.Abstractions.Test
             };
 
             // Register components in parallel
-            var tasks = new List<Task>();
+            var tasks = new ConcurrentBag<Task>();
             foreach (var component in testComponents)
             {
-                Task.Run(() => RegisterAndUnregisterComponent(component, componentValue)).ContinueWith(t => tasks.Add(t));
+                Task.Run(() => RegisterAndUnregisterComponent(component, componentValue)).ContinueWith(t => tasks.Add(t), TaskScheduler.Default);
             }
 
             // Wait for all register tasks to complete
