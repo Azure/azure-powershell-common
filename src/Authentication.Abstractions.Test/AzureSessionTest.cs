@@ -76,7 +76,7 @@ namespace Authentication.Abstractions.Test
 
             public TestComponent(string name, int id)
             {
-                Name = string.Empty;
+                Name = name;
                 clist = new ConcurrentQueue<int>();
                 this.id = id;
             }
