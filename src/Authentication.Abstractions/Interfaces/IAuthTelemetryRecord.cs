@@ -28,10 +28,5 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// Gets or sets a value indicating whether the authentication process succeeded or not.
         /// </summary>
         bool AuthenticationSuccess { get; set; }
-
-        /// <summary>
-        /// Gets or sets the correlation ID for the authentication process.
-        /// </summary>
-        string CorrelationId { get; set; }
     }
 }

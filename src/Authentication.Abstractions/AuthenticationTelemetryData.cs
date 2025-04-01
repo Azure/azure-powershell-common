@@ -13,6 +13,7 @@
 // ----------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
 {
@@ -24,12 +25,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// Gets the first record of authentication telemetry data, usually describing the main method of the authentication process.
         /// </summary>
-        public IAuthTelemetryRecord Head { get; } = null;
+        public IAuthTelemetryRecord Primary { get; }
 
         /// <summary>
         /// Gets the remaining authentication telemetry records.
         /// </summary>
-        public IList<IAuthTelemetryRecord> Tail { get; } = new List<IAuthTelemetryRecord>();
+        public IList<IAuthTelemetryRecord> Subsidiary { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthenticationTelemetryData"/> class with the specified authentication telemetry records.
@@ -37,16 +38,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <param name="records">The authentication telemetry records.</param>
         public AuthenticationTelemetryData(IEnumerable<IAuthTelemetryRecord> records)
         {
-            var enumerator = records.GetEnumerator();
-            if (enumerator.MoveNext())
-            {
-                Head = enumerator.Current;
-            }
-
-            while (enumerator.MoveNext())
-            {
-                Tail.Add(enumerator.Current);
-            }
+            Primary = records.FirstOrDefault();
+            Subsidiary= records.Skip(1).ToList();
         }
     }
 }
