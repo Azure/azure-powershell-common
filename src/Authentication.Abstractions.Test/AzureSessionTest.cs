@@ -213,6 +213,8 @@ namespace Authentication.Abstractions.Test
             Task.WaitAll(tasks.ToArray());
 
             // Verify the results
+            AzureSession.Instance.TryGetComponent(testComponent, out TestComponent component);
+            Assert.Equal(10, component.Size);
             Assert.Single(tasks.Select(t => t.Result["id"]).Distinct());
             var checkList = tasks.Select(t => t.Result["size"]);
             Assert.Equal(10, checkList.Distinct().Count());
@@ -247,22 +249,15 @@ namespace Authentication.Abstractions.Test
             Task.WaitAll(tasks.ToArray());
 
             // Verify the results
-            AzureSession.Instance.TryGetComponent(testComponent, out TestComponent component);
-            Assert.Equal(1, component.Size);
-            void CheckResults(List<Task<Dictionary<string, int>>> tasks, int id)
+            for (int i = 0; i < 10; i++)
             {
-                var checkList = tasks.Where(t => t.Result["id"] == id);
+                var checkList = tasks.Where(t => t.Result["id"] == i);
                 var count = checkList.Count();
                 Assert.Equal(count, checkList.Distinct().Count());
                 if (count > 0)
                 {
                     Assert.Equal(count, checkList?.Select(t => t.Result["size"])?.Max());
                 }
-            }
-            for (int i = 0; i < 10; i++)
-            {
-                Console.WriteLine($"id={i}");
-                CheckResults(tasks, i);
             }
             AzureSession.Instance.ClearComponents();
         }
