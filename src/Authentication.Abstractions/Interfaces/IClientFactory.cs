@@ -44,7 +44,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         /// </summary>
         /// <typeparam name="TClient">The client type to create</typeparam>
         /// <param name="context">The azure context to target</param>
-        /// <param name="endpoint">The named endpoint the client shoulld target</param>
+        /// <param name="endpoint">The named endpoint the client should target</param>
         /// <param name="cmdletContext">The cmdlet context called from</param>
         /// <returns>A client properly authenticated in the given context, properly configured for use with Azure PowerShell, 
         /// targeting the given named endpoint in the targeted environment</returns>
