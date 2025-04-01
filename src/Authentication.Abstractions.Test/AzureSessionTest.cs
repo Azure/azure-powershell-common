@@ -213,8 +213,6 @@ namespace Authentication.Abstractions.Test
             Task.WaitAll(tasks.ToArray());
 
             // Verify the results
-            var results = new int[10];
-
             Assert.Single(tasks.Select(t => t.Result["id"]).Distinct());
             var checkList = tasks.Select(t => t.Result["size"]);
             Assert.Equal(10, checkList.Distinct().Count());
