@@ -237,23 +237,31 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             ChangeRegistry(
                 () =>
                 {
-                    var key = new ComponentKey(componentName, typeof(T));
-                    if (!_componentRegistry.ContainsKey(key) || overwrite) // only proceed if key not found or overwrite is true
+                    object oldComponent = null;
+                    bool hasUpdate = true;
+                    var newComponent = _componentRegistry.AddOrUpdate(
+                        new ComponentKey(componentName, typeof(T)),
+                        k => componentInitializer(),
+                        (k, v) =>
+                        {
+                            if (!overwrite)
+                            {
+                                hasUpdate = false;
+                                return v;
+                            }
+                            else
+                            {
+                                oldComponent = v;
+                                return componentInitializer();
+                            }
+                        });
+                    if (oldComponent is IAzureSessionListener oldListener)
                     {
-
-                        if (overwrite
-                            && _componentRegistry.TryGetValue(key, out var existed)
-                            && existed is IAzureSessionListener existedListener)
-                        {
-                            _eventHandler -= existedListener.OnEvent;
-                        }
-
-                        var component = componentInitializer();
-                        _componentRegistry[key] = component;
-                        if (component is IAzureSessionListener listener)
-                        {
-                            _eventHandler += listener.OnEvent;
-                        }
+                        _eventHandler -= oldListener.OnEvent;
+                    }
+                    if (hasUpdate && newComponent is IAzureSessionListener listener)
+                    {
+                        _eventHandler += listener.OnEvent;
                     }
                 });
         }
