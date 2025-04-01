@@ -112,7 +112,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         ServiceClientCredentials GetServiceClientCredentials(IAzureContext context, string targetEndpoint);
 
         /// <summary>
-        /// Get AutoRest credebntials using the given context and named endpoint
+        /// Get AutoRest credentials using the given context and named endpoint
         /// </summary>
         /// <param name="context">The context to use for authentication</param>
         /// <param name="targetEndpoint">The named endpoint the AutoRest client will target</param>
