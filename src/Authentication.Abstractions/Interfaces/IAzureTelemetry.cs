@@ -1,7 +1,22 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Threading;
+﻿// ----------------------------------------------------------------------------------
+//
+// Copyright Microsoft Corporation
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ----------------------------------------------------------------------------------
+
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces
 {
@@ -11,13 +26,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces
     /// <typeparam name="T">The type of telemetry record.</typeparam>
     public abstract class IAzureTelemetry<T>
     {
-        private ConcurrentDictionary<string, IList<T>> telemetryDataAccquirer = new ConcurrentDictionary<string, IList<T>>();
-
-        protected int historyKeyCount = 0;
-        /// <summary>
-        /// Gets the total count of all keys in the telemetry data.
-        /// </summary>
-        public int KeysAllCount { get => historyKeyCount; }
+        private ConcurrentDictionary<string, ConcurrentQueue<T>> telemetryDataAccquirer = new ConcurrentDictionary<string, ConcurrentQueue<T>>();
 
         /// <summary>
         /// Gets the current count of keys in the telemetry data.
@@ -26,7 +35,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces
         /// <summary>
         /// Gets the count of empty commandlet contexts in the telemetry data.
         /// </summary>
-        public int KeysCurrentCount { get => currentKeyCount; }
+        public int KeysCurrentCount { get => telemetryDataAccquirer.Keys.Count; }
 
         protected int nullCmdletContextCount = 0;
         public int EmptyCmdletContextCount { get => nullCmdletContextCount; }
@@ -47,13 +56,14 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces
         {
             if (cmdletContext != null && cmdletContext.IsValid && record != null)
             {
-                if (!telemetryDataAccquirer.ContainsKey(cmdletContext.CmdletId))
-                {
-                    telemetryDataAccquirer[cmdletContext.CmdletId] = new List<T>();
-                    Interlocked.Increment(ref historyKeyCount);
-                    Interlocked.Increment(ref currentKeyCount);
-                }
-                telemetryDataAccquirer[cmdletContext.CmdletId].Add(record);
+                var records = telemetryDataAccquirer.AddOrUpdate(
+                    cmdletContext.CmdletId,
+                    k => new ConcurrentQueue<T>(Enumerable.Repeat(record, 1)),
+                (key, value) =>
+                    {
+                        value.Enqueue(record);
+                        return value;
+                    });
                 return true;
             }
             Interlocked.Increment(ref nullCmdletContextCount);
@@ -65,20 +75,21 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces
         /// </summary>
         /// <param name="cmdletContext">The commandlet context.</param>
         /// <returns>The telemetry records associated with the commandlet context, or <c>null</c> if not found.</returns>
-        public IList<T> PopTelemetryRecord(ICmdletContext cmdletContext)
+        public IEnumerable<T> PopTelemetryRecord(ICmdletContext cmdletContext)
         {
             if (cmdletContext != null && cmdletContext.IsValid)
             {
-                if (telemetryDataAccquirer.ContainsKey(cmdletContext.CmdletId))
+                try
                 {
-                    telemetryDataAccquirer.TryRemove(cmdletContext.CmdletId, out IList<T> records);
-                    Interlocked.Decrement(ref currentKeyCount);
-                    return records;
+                    if (telemetryDataAccquirer.TryRemove(cmdletContext.CmdletId, out var records))
+                    {
+                        return records;
+                    }
                 }
-                else
+                catch (ArgumentNullException)
                 {
-                    Interlocked.Increment(ref keyNotFoundCount);
                 }
+                Interlocked.Increment(ref keyNotFoundCount);
             }
             else
             {
