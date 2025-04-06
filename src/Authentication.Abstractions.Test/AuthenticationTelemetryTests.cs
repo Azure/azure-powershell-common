@@ -53,7 +53,7 @@ namespace Authentication.Abstractions.Test
             }
 
             // Act
-            var result = telemetry.PushTelemetryRecord(context, record);
+            var result = telemetry.PushDataRecord(context, record);
 
             // Assert
             Assert.Equal(expectedResult, result);
@@ -98,11 +98,11 @@ namespace Authentication.Abstractions.Test
             if (pushBeforePop && context != null)
             {
                 var record = new AuthTelemetryRecord { TokenCredentialName = "TestCredential" };
-                telemetry.PushTelemetryRecord(context, record);
+                telemetry.PushDataRecord(context, record);
             }
 
             // Act
-            var result = telemetry.PopTelemetryRecord(context);
+            var result = telemetry.PopDataRecords(context);
 
             // Assert
             Assert.Equal(expectedNotNull, result != null);
@@ -153,7 +153,7 @@ namespace Authentication.Abstractions.Test
             for (int i = 0; i < recordCount; i++)
             {
                 var record = new AuthTelemetryRecord { TokenCredentialName = $"TestCredential{i}" };
-                telemetry.PushTelemetryRecord(context, record);
+                telemetry.PushDataRecord(context, record);
             }
 
             // Act
@@ -204,7 +204,7 @@ namespace Authentication.Abstractions.Test
                     {
                         // Each thread pushes one unique record
                         var record = new AuthTelemetryRecord { TokenCredentialName = $"TestCredential-{context.CmdletId}-{threadId}" };
-                        telemetry.PushTelemetryRecord(context, record);
+                        telemetry.PushDataRecord(context, record);
                     });
                 }
                 Task.WaitAll(pushTasks); // Wait for all push tasks to complete

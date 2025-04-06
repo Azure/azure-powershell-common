@@ -883,7 +883,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             _qosEvent.ParameterSetName = this.ParameterSetName;
             _qosEvent.FinishQosEvent();
 
-            if (!AzureSession.Instance.TryGetComponent(nameof(AuthenticationTelemetry), out AuthenticationTelemetry authenticationTelemetry))
+            if (!AzureSession.Instance.TryGetComponent(AuthenticationTelemetry.Name, out AuthenticationTelemetry authenticationTelemetry))
             {
                 throw new NullReferenceException(Resources.AuthenticationTelemetryNotRegistered);
             }
