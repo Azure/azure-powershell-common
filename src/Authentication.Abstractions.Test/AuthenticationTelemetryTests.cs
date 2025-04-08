@@ -170,18 +170,18 @@ namespace Authentication.Abstractions.Test
 
                 if (recordCount > 1)
                 {
-                    Assert.NotEmpty(result.Subsidiary);
-                    Assert.Equal(recordCount - 1, result.Subsidiary.Count);
+                    Assert.NotEmpty(result.Secondary);
+                    Assert.Equal(recordCount - 1, result.Secondary.Count);
 
                     // Verify each record in the tail
                     for (int i = 1; i < recordCount; i++)
                     {
-                        Assert.Equal($"TestCredential{i}", result.Subsidiary[i - 1].TokenCredentialName);
+                        Assert.Equal($"TestCredential{i}", result.Secondary[i - 1].TokenCredentialName);
                     }
                 }
                 else
                 {
-                    Assert.Empty(result.Subsidiary);
+                    Assert.Empty(result.Secondary);
                 }
             }
         }
@@ -238,10 +238,10 @@ namespace Authentication.Abstractions.Test
             // Check that we have results from both contexts
             Assert.NotNull(results1);
             Assert.True(results1.Primary?.TokenCredentialName.StartsWith("TestCredential-TestCmdlet1"));
-            Assert.Equal(9, results1.Subsidiary?.Count);
+            Assert.Equal(9, results1.Secondary?.Count);
             Assert.NotNull(results2);
             Assert.True(results2.Primary?.TokenCredentialName.StartsWith("TestCredential-TestCmdlet2"));
-            Assert.Equal(9, results2.Subsidiary?.Count);
+            Assert.Equal(9, results2.Secondary?.Count);
 
             // Verify all records were retrieved (nothing left)
             Assert.Null(telemetry.GetTelemetryRecord(context1));

@@ -305,9 +305,9 @@ namespace Microsoft.WindowsAzure.Commands.Common
                     eventProperties[$"{AuthTelemetryRecord.AuthTelemetryPropertyPrimaryPrefix}-{property.Key.ToLower()}"] = property.Value;
                 }
 
-                if (telemetry.Subsidiary != null && telemetry.Subsidiary.Count > 0)
+                if (telemetry.Secondary != null && telemetry.Secondary.Count > 0)
                 {
-                    eventProperties[AuthTelemetryRecord.AuthTelemetryPropertySubsidiaryKey] = JsonConvert.SerializeObject(telemetry.Subsidiary);
+                    eventProperties[AuthTelemetryRecord.AuthTelemetryPropertySecondaryKey] = JsonConvert.SerializeObject(telemetry.Secondary);
                 }
             }
         }

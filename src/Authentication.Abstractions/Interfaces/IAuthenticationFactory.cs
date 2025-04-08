@@ -117,7 +117,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <param name="context">The context to use for authentication</param>
         /// <param name="targetEndpoint">The named endpoint the AutoRest client will target</param>
         /// <param name="cmdletContext">The caller cmdlet context</param>
-        /// <returns>AutoRest client crentials targeting the given context and endpoint</returns>
+        /// <returns>AutoRest client credentials targeting the given context and endpoint</returns>
         ServiceClientCredentials GetServiceClientCredentials(IAzureContext context, string targetEndpoint, ICmdletContext cmdletContext);
 
         /// <summary>

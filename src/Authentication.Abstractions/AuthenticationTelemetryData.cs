@@ -30,7 +30,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// Gets the remaining authentication telemetry records.
         /// </summary>
-        public IList<IAuthTelemetryRecord> Subsidiary { get; }
+        public IList<IAuthTelemetryRecord> Secondary { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthenticationTelemetryData"/> class with the specified authentication telemetry records.
@@ -39,7 +39,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         public AuthenticationTelemetryData(IEnumerable<IAuthTelemetryRecord> records)
         {
             Primary = records.FirstOrDefault();
-            Subsidiary= records.Skip(1).ToList();
+            Secondary= records.Skip(1).ToList();
         }
     }
 }

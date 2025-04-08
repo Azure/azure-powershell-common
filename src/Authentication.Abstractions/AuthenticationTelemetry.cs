@@ -19,7 +19,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
     /// <summary>
     /// Represents a class for handling authentication telemetry.
     /// </summary>
-    public class AuthenticationTelemetry : IAzurePSCmdletConcurrentVault<AuthTelemetryRecord>
+    public class AuthenticationTelemetry : AzurePSCmdletConcurrentVault<AuthTelemetryRecord>
     {
         /// <summary>
         /// The name of the class.

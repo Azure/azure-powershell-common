@@ -77,6 +77,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// <summary>
         /// Represents the key of the left records of authentication telemetry.
         /// </summary>
-        public const string AuthTelemetryPropertySubsidiaryKey = "auth-info-subsidiary";
+        public const string AuthTelemetryPropertySecondaryKey = "auth-info-secondary";
     }
 }

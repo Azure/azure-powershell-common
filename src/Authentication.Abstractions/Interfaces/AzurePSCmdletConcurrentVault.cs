@@ -30,7 +30,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces
     /// associated with cmdlet contexts. It uses <see cref="ConcurrentDictionary{TKey, TValue}"/> and
     /// <see cref="ConcurrentQueue{T}"/> to ensure thread safety.
     /// </remarks>
-    public abstract class IAzurePSCmdletConcurrentVault<T> : IAzurePSCmdletDataVault<T>
+    public abstract class AzurePSCmdletConcurrentVault<T> : IAzurePSCmdletDataVault<T>
     {
         private ConcurrentDictionary<string, ConcurrentQueue<T>> dataAccquirer = new ConcurrentDictionary<string, ConcurrentQueue<T>>();
         /// <summary>
