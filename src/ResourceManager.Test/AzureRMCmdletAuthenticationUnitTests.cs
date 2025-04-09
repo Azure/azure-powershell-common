@@ -106,7 +106,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Test
                 var h = header.First();
                 Assert.Equal("x-ms-authorization-auxiliary", h.Key);
                 Assert.Single(h.Value);
-                var tokens = h.Value.First().Split(';');
+                var tokens = h.Value.First().Split(AzureRMCmdlet.AUX_TOKEN_APPEND_CHAR);
                 var regex = new Regex(@"Bearer ([0-9a-zA-Z]+)");
                 for (int i = 0; i < tenants.Count; ++i)
                 {
