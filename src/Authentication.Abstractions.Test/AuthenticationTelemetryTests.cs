@@ -57,9 +57,6 @@ namespace Authentication.Abstractions.Test
 
             // Assert
             Assert.Equal(expectedResult, result);
-            Assert.Equal(expectedKeysCurrent, telemetry.KeysCurrentCount);
-            //Assert.Equal(expectedKeysAll, telemetry.KeysAllCount);
-            Assert.Equal(expectedEmptyCount, telemetry.EmptyCmdletContextCount);
         }
 
         // Test data for PopTelemetryRecord tests
@@ -98,7 +95,7 @@ namespace Authentication.Abstractions.Test
             if (pushBeforePop && context != null)
             {
                 var record = new AuthTelemetryRecord { TokenCredentialName = "TestCredential" };
-                telemetry.PushDataRecord(context, record);
+                Assert.True(telemetry.PushDataRecord(context, record));
             }
 
             // Act
@@ -111,10 +108,6 @@ namespace Authentication.Abstractions.Test
                 Assert.Single(result);
                 Assert.Equal("TestCredential", result.FirstOrDefault()?.TokenCredentialName);
             }
-            Assert.Equal(expectedKeysCount, telemetry.KeysCurrentCount);
-            //Assert.Equal(expectedAllCount, telemetry.KeysAllCount);
-            Assert.Equal(expectedEmptyCount, telemetry.EmptyCmdletContextCount);
-            Assert.Equal(expectedKeyNotFoundCount, telemetry.KeyNotFoundCount);
         }
 
         // Test data for GetTelemetryRecord tests
@@ -153,7 +146,7 @@ namespace Authentication.Abstractions.Test
             for (int i = 0; i < recordCount; i++)
             {
                 var record = new AuthTelemetryRecord { TokenCredentialName = $"TestCredential{i}" };
-                telemetry.PushDataRecord(context, record);
+                Assert.True(telemetry.PushDataRecord(context, record));
             }
 
             // Act
@@ -204,7 +197,7 @@ namespace Authentication.Abstractions.Test
                     {
                         // Each thread pushes one unique record
                         var record = new AuthTelemetryRecord { TokenCredentialName = $"TestCredential-{context.CmdletId}-{threadId}" };
-                        telemetry.PushDataRecord(context, record);
+                        Assert.True(telemetry.PushDataRecord(context, record));
                     });
                 }
                 Task.WaitAll(pushTasks); // Wait for all push tasks to complete
@@ -246,10 +239,6 @@ namespace Authentication.Abstractions.Test
             // Verify all records were retrieved (nothing left)
             Assert.Null(telemetry.GetTelemetryRecord(context1));
             Assert.Null(telemetry.GetTelemetryRecord(context2));
-
-            // Check final telemetry counters
-            Assert.Equal(2, telemetry.KeyNotFoundCount);
-            Assert.Equal(0, telemetry.KeysCurrentCount); // All records should have been retrieved
         }
     }
 }

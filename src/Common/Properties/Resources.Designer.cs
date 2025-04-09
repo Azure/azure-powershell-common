@@ -2211,6 +2211,15 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No authentication telemetry is found for the current cmdlet with Id {0}..
+        /// </summary>
+        public static string NoAuthenticationTelemetry {
+            get {
+                return ResourceManager.GetString("NoAuthenticationTelemetry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There is no access token cached for subscription {0}, user id {1}. Use the Add-AzureAccount cmdlet to log in again and get a token for this subscription..
         /// </summary>
         public static string NoCachedToken {
@@ -4314,7 +4323,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to [Survey] Help us improve Azure PowerShell by sharing your experience. This survey should take about 5 minutes. Run &apos;Open-AzSurveyLink&apos; to open in browser. Learn more at {0}.
+        ///   Looks up a localized string similar to [Survey] Tell us what you think of Azure PowerShell. This survey should take about 2 minutes. Run &apos;Open-AzSurveyLink&apos; to open in browser. Learn more at {0}.
         /// </summary>
         public static string SurveyPreface {
             get {

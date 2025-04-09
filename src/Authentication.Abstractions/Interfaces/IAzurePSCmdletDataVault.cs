@@ -36,20 +36,5 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces
         /// <param name="cmdletContext">The cmdlet context whose records should be retrieved.</param>
         /// <returns>A collection of data records associated with the cmdlet context.</returns>
         IEnumerable<T> PopDataRecords(ICmdletContext cmdletContext);
-
-        /// <summary>
-        /// Gets the current count of keys in the data vault.
-        /// </summary>
-        int KeysCurrentCount { get; }
-
-        /// <summary>
-        /// Gets the count of empty cmdlet contexts in the data vault.
-        /// </summary>
-        int EmptyCmdletContextCount { get; }
-
-        /// <summary>
-        /// Gets the count of key not found occurrences in the telemetry data.
-        /// </summary>
-        int KeyNotFoundCount { get; }
     }
 }

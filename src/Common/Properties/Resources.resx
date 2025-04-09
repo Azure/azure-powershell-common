@@ -1769,4 +1769,7 @@ Note : Go to {0} for steps to suppress this breaking change warning, and other i
   <data name="AuthenticationTelemetryNotRegistered" xml:space="preserve">
     <value>AuthenticationTelemetry is not registered.</value>
   </data>
+  <data name="NoAuthenticationTelemetry" xml:space="preserve">
+    <value>No authentication telemetry is found for the current cmdlet with Id {0}.</value>
+  </data>
 </root>

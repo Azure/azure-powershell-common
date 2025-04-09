@@ -887,8 +887,15 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             {
                 throw new InvalidOperationException(Resources.AuthenticationTelemetryNotRegistered);
             }
-            _qosEvent.AuthTelemetry = authenticationTelemetry.GetTelemetryRecord(_cmdletContext);
-            WriteDebugWithTimestamp($"CurrentKeyCount={authenticationTelemetry.KeysCurrentCount}; EmptyCmdletContextCount={authenticationTelemetry.EmptyCmdletContextCount}; KeysNotFoundCount={authenticationTelemetry.KeyNotFoundCount}");
+            var authTelemetry = authenticationTelemetry.GetTelemetryRecord(_cmdletContext);
+            if (authTelemetry != null)
+            {
+                _qosEvent.AuthTelemetry = authTelemetry;
+            }
+            else
+            {
+                WriteDebugWithTimestamp(String.Format(Resources.NoAuthenticationTelemetry, _cmdletContext.CmdletId));
+            }
 
             if (!IsUsageMetricEnabled && (!IsErrorMetricEnabled || _qosEvent.IsSuccess))
             {

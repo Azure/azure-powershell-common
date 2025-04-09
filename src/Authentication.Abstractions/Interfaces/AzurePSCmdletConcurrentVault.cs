@@ -16,7 +16,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces
 {
@@ -33,22 +32,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces
     public abstract class AzurePSCmdletConcurrentVault<T> : IAzurePSCmdletDataVault<T>
     {
         private ConcurrentDictionary<string, ConcurrentQueue<T>> dataAccquirer = new ConcurrentDictionary<string, ConcurrentQueue<T>>();
-        /// <summary>
-        /// Gets the number of unique cmdlet context identifiers currently stored in the vault.
-        /// </summary>
-        public int KeysCurrentCount { get => dataAccquirer.Keys.Count; }
-
-        protected int nullCmdletContextCount = 0;
-        /// <summary>
-        /// Gets the count of operations attempted with invalid or null cmdlet contexts.
-        /// </summary>
-        public int EmptyCmdletContextCount { get => nullCmdletContextCount; }
-
-        protected int keyNotFoundCount = 0;
-        /// <summary>
-        /// Gets the count of attempts to retrieve data for cmdlet contexts that do not exist in the vault.
-        /// </summary>
-        public int KeyNotFoundCount { get => keyNotFoundCount; }
 
         /// <summary>
         /// Adds a data record to the vault for the specified cmdlet context.
@@ -73,7 +56,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces
                 });
                 return true;
             }
-            Interlocked.Increment(ref nullCmdletContextCount);
             return false;
         }
 
@@ -99,11 +81,6 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces
                 catch (ArgumentNullException)
                 {
                 }
-                Interlocked.Increment(ref keyNotFoundCount);
-            }
-            else
-            {
-                Interlocked.Increment(ref nullCmdletContextCount);
             }
             return null;
         }
