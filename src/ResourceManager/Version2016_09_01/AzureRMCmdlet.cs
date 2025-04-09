@@ -49,7 +49,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
         public const int MAX_NUMBER_OF_TOKENS_ALLOWED_IN_AUX_HEADER = 3;
         public const string AUX_HEADER_NAME = "x-ms-authorization-auxiliary";
         public const string AUX_TOKEN_PREFIX = "Bearer";
-        public const string AUX_TOKEN_APPEND_CHAR = ";";
+        public const string AUX_TOKEN_APPEND_CHAR = ",";
         public const string WriteDebugKey = "WriteDebug";
         public const string WriteVerboseKey = "WriteVerbose";
         public const string WriteWarningKey = "WriteWarning";
