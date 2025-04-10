@@ -14,6 +14,7 @@
 
 using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces;
 using Microsoft.Azure.PowerShell.Common.Config;
 using Microsoft.Azure.PowerShell.Common.Share.Survey;
 using Microsoft.Azure.PowerShell.Common.UpgradeNotification;
@@ -93,6 +94,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
         protected static string _sessionId = Guid.NewGuid().ToString();
         protected const string _fileTimeStampSuffixFormat = "yyyy-MM-dd-THH-mm-ss-fff";
         protected string _clientRequestId = Guid.NewGuid().ToString();
+        protected ICmdletContext _cmdletContext;
         protected static DateTimeOffset? _previousEndTime = null;
         protected MetricHelper _metricHelper;
         protected AzurePSQoSEvent _qosEvent;
@@ -399,6 +401,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             InitDebuggingFilter();
             SetupDebuggingTraces();
             SetupHttpClientPipeline();
+            _cmdletContext = new AzureCmdletContext(_clientRequestId);
             base.BeginProcessing();
 
             //Now see if the cmdlet has any Breaking change attributes on it and process them if it does
@@ -879,6 +882,20 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
 
             _qosEvent.ParameterSetName = this.ParameterSetName;
             _qosEvent.FinishQosEvent();
+
+            if (!AzureSession.Instance.TryGetComponent(AuthenticationTelemetry.Name, out AuthenticationTelemetry authenticationTelemetry))
+            {
+                throw new InvalidOperationException(Resources.AuthenticationTelemetryNotRegistered);
+            }
+            var authTelemetry = authenticationTelemetry.GetTelemetryRecord(_cmdletContext);
+            if (authTelemetry != null)
+            {
+                _qosEvent.AuthTelemetry = authTelemetry;
+            }
+            else
+            {
+                WriteDebugWithTimestamp(String.Format(Resources.NoAuthenticationTelemetry, _cmdletContext.CmdletId));
+            }
 
             if (!IsUsageMetricEnabled && (!IsErrorMetricEnabled || _qosEvent.IsSuccess))
             {

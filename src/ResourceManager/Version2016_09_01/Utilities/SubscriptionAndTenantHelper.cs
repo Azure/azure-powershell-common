@@ -14,6 +14,8 @@
 
 using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Extensions;
+using Microsoft.Azure.Commands.Common.Authentication.Abstractions.Interfaces;
 using Microsoft.Azure.Internal.Subscriptions;
 using Microsoft.Azure.Internal.Subscriptions.Models;
 using Microsoft.Rest;
@@ -26,7 +28,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.Utilities
 {
     class SubscriptionAndTenantHelper
     {
-        internal static IAccessToken AcquireAccessToken(IAzureAccount account, IAzureEnvironment environment, string tenantId)
+        internal static IAccessToken AcquireAccessToken(IAzureAccount account, IAzureEnvironment environment, string tenantId, ICmdletContext cmdletContext)
         {
             return AzureSession.Instance.AuthenticationFactory.Authenticate(
                account,
@@ -34,10 +36,11 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.Utilities
                tenantId,
                null,
                ShowDialog.Never,
-               null);
+               null,
+               cmdletContext.ToExtensibleParameters());
         }
 
-        internal static Dictionary<string, AzureSubscription> GetTenantsForSubscriptions(List<string> subscriptionIds, IAzureContext defaultContext)
+        internal static Dictionary<string, AzureSubscription> GetTenantsForSubscriptions(List<string> subscriptionIds, IAzureContext defaultContext, ICmdletContext cmdletContext)
         {
             Dictionary<string, AzureSubscription> result = new Dictionary<string, AzureSubscription>();
 
@@ -45,7 +48,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.Utilities
             {
                 //First get all the tenants, then get subscriptions in each tenant till we exhaust the subscriotions sent in
                 //Or we exhaust the tenants
-                List<AzureTenant> tenants = ListAccountTenants(defaultContext);
+                List<AzureTenant> tenants = ListAccountTenants(defaultContext, cmdletContext);
 
                 HashSet<string> subscriptionIdSet = new HashSet<string>(subscriptionIds);
 
@@ -57,7 +60,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.Utilities
                     }
 
                     var tId = tenant.GetId().ToString();
-                    var subscriptions = ListAllSubscriptionsForTenant(defaultContext, tId);
+                    var subscriptions = ListAllSubscriptionsForTenant(defaultContext, tId, cmdletContext);
                     
                     subscriptions?.ForEach((s) =>
                      {
@@ -75,7 +78,8 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.Utilities
         }
 
         private static List<AzureTenant> ListAccountTenants(
-            IAzureContext defaultContext)
+            IAzureContext defaultContext,
+            ICmdletContext cmdletContext)
         {
             List<AzureTenant> result = new List<AzureTenant>();
             var commonTenant = GetCommonTenant(defaultContext.Account);
@@ -83,7 +87,8 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.Utilities
             var commonTenantToken = AcquireAccessToken(
                 defaultContext.Account,
                 defaultContext.Environment,
-                commonTenant);
+                commonTenant,
+                cmdletContext);
 
             SubscriptionClient subscriptionClient = null;
             try
@@ -118,14 +123,15 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.Utilities
 
         private static IEnumerable<AzureSubscription> ListAllSubscriptionsForTenant(
             IAzureContext defaultContext,
-            string tenantId)
+            string tenantId,
+            ICmdletContext cmdletContext)
         {
             IAzureAccount account = defaultContext.Account;
             IAzureEnvironment environment = defaultContext.Environment;
             IAccessToken accessToken = null;
             try
             {
-                accessToken = AcquireAccessToken(account, environment, tenantId);
+                accessToken = AcquireAccessToken(account, environment, tenantId, cmdletContext);
             }
             catch (Exception e)
             {

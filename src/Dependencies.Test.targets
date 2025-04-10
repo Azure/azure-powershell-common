@@ -12,5 +12,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.2.24" IncludeAssets="All" />
+    <PackageReference Include="Moq" Version="4.10.1" />
   </ItemGroup>
 </Project>

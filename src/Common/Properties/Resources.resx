@@ -1766,4 +1766,10 @@ Note : Go to {0} for steps to suppress this breaking change warning, and other i
   <data name="DisplaySecretsWarningMessageWithoutProperty" xml:space="preserve">
     <value>The output of cmdlet {0} may compromise security by showing secrets. Learn more at https://go.microsoft.com/fwlink/?linkid=2258844</value>
   </data>
+  <data name="AuthenticationTelemetryNotRegistered" xml:space="preserve">
+    <value>AuthenticationTelemetry is not registered.</value>
+  </data>
+  <data name="NoAuthenticationTelemetry" xml:space="preserve">
+    <value>No authentication telemetry is found for the current cmdlet with Id {0}.</value>
+  </data>
 </root>

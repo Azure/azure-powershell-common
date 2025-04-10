@@ -292,6 +292,26 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
         }
 
+        private static void PopulateAuthenticationPropertiesFromQos(AuthenticationTelemetryData telemetry, IDictionary<string, string> eventProperties)
+        {
+            var record = telemetry?.Primary;
+            if (record != null)
+            {
+                eventProperties[$"{AuthTelemetryRecord.AuthTelemetryPropertyPrimaryPrefix}-{nameof(record.TokenCredentialName).ToLower()}"] = record.TokenCredentialName;
+                eventProperties[$"{AuthTelemetryRecord.AuthTelemetryPropertyPrimaryPrefix}-{nameof(record.AuthenticationSuccess).ToLower()}"] = record.AuthenticationSuccess.ToString();
+
+                foreach (var property in record.ExtendedProperties)
+                {
+                    eventProperties[$"{AuthTelemetryRecord.AuthTelemetryPropertyPrimaryPrefix}-{property.Key.ToLower()}"] = property.Value;
+                }
+
+                if (telemetry.Secondary != null && telemetry.Secondary.Count > 0)
+                {
+                    eventProperties[AuthTelemetryRecord.AuthTelemetryPropertySecondaryKey] = JsonConvert.SerializeObject(telemetry.Secondary);
+                }
+            }
+        }
+
         private void PopulatePropertiesFromQos(AzurePSQoSEvent qos, IDictionary<string, string> eventProperties, bool populateException = false)
         {
             if (qos == null)
@@ -454,6 +474,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
             PopulateConfigMetricsFromQos(qos, eventProperties);
             PopulateSanitizerPropertiesFromQos(qos, eventProperties);
+            PopulateAuthenticationPropertiesFromQos(qos.AuthTelemetry, eventProperties);
 
             if (qos.InputFromPipeline != null)
             {
@@ -697,6 +718,8 @@ public class AzurePSQoSEvent
     private static bool ShowTelemetry = string.Equals(bool.TrueString, Environment.GetEnvironmentVariable("AZUREPS_DEBUG_SHOW_TELEMETRY"), StringComparison.OrdinalIgnoreCase);
 
     public SanitizerTelemetry SanitizerInfo { get; set; }
+
+    public AuthenticationTelemetryData AuthTelemetry { get; set; }
 
     public AzurePSQoSEvent()
     {
