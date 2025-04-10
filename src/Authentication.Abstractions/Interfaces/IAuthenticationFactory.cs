@@ -133,6 +133,15 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// </summary>
         /// <param name="account">The account to remove credentials for</param>
         /// <param name="tokenCache">The TokenCache to remove credentials from</param>
+        [Obsolete("RemoveUser is deprecated, please use RemoveUser with Azure environment instead.", true)]
         void RemoveUser(IAzureAccount account, IAzureTokenCache tokenCache);
+
+
+        /// <summary>
+        /// Remove any stored credentials for the given user and the Azure environment used.
+        /// </summary>
+        /// <param name="account">The account to remove credentials for</param>
+        /// <param name="authority">The Microsoft Entra authority</param>
+        void RemoveUser(IAzureAccount account, string authority);
     }
 }
