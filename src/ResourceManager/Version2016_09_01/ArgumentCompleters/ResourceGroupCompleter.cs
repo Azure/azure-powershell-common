@@ -33,7 +33,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
     {
         private static IDictionary<int, IList<String>> _resourceGroupNamesDictionary = new ConcurrentDictionary<int, IList<string>>();
         private static readonly object _lock = new object();
-        public static int _timeout = 3;
+        public static int _timeout = 10;
 
         protected static IList<String> ResourceGroupNames
         {
