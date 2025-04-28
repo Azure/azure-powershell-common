@@ -141,7 +141,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// Remove any stored credentials for the given user and the Azure environment used.
         /// </summary>
         /// <param name="account">The account to remove credentials for</param>
-        /// <param name="authority">The Microsoft Entra authority</param>
-        void RemoveUser(IAzureAccount account, string authority);
+        /// <param name="environment">The environment which account belongs to</param>
+        void RemoveUser(IAzureAccount account, IAzureEnvironment environment);
     }
 }
