@@ -36,7 +36,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
     /// </summary>
     public class ResourceNameCompleterAttribute : ArgumentCompleterAttribute
     {
-        private static int _timeout = 3;
+        private static int _timeout = 10;
 
         /// <summary>
         /// Pass in a list of ResourceTypes and this class will provide a list of locations that are common to all ResourceTypes given. This will then be available to the user to tab through.

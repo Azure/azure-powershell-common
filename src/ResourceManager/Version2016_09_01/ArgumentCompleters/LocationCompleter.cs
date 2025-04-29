@@ -34,7 +34,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
     {
         private static IDictionary<int, IDictionary<string, ICollection<string>>> _resourceTypeLocationDictionary = new ConcurrentDictionary<int, IDictionary<string, ICollection<string>>>();
         private static readonly object _lock = new object();
-        private static int _timeout = 3;
+        private static int _timeout = 10;
 
         protected static IDictionary<string, ICollection<string>> ResourceTypeLocationDictionary
         {

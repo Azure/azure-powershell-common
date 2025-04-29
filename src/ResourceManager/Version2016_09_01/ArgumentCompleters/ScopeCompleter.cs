@@ -30,7 +30,7 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters
     {
         public static IDictionary<int, IList<string>> _scopeDictionary = new ConcurrentDictionary<int, IList<string>>();
         private static readonly object _lock = new object();
-        public static int _timeout = 3;
+        public static int _timeout = 10;
 
         protected static IList<String> Scopes
         {
