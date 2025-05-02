@@ -31,7 +31,15 @@ namespace Microsoft.WindowsAzure.Commands.Common
         /// <param name="host">PowerShell Console Host</param>
         public static void Initialize(PSHost host)
         {
-            _isEscapeSequenceSupported = host?.UI?.SupportsVirtualTerminal;
+            try
+            {
+                _isEscapeSequenceSupported = host?.UI?.SupportsVirtualTerminal;
+            }
+            catch (System.Exception) {
+                // Ignore exception and set _isEscapeSequenceSupported to null.
+                // The getter of SupportsVirtualTerminal can throw a null reference exception in automation runbooks.
+                // see https://github.com/Azure/azure-powershell/issues/26155
+            }
         }
 
         /// <summary>
