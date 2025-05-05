@@ -70,7 +70,7 @@ namespace Authentication.Abstractions.Test
                 else
                 {
                     Assert.Equal(AzureEnvironment.TypeBuiltIn, env.Type);
-                    Assert.NotEmpty(env.GalleryUrl);
+                    Assert.Null(env.GalleryUrl);
                 }
                 Assert.EndsWith("/", env.ServiceManagementUrl);
                 Assert.StartsWith(".", env.SqlDatabaseDnsSuffix);
