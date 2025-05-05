@@ -1,1 +1,2 @@
-PolicyInsights
+# PolicyInsights
+Common management client library for Azure PolicyInsights Service.  Allows modules to safely take a dependency on a .Net SDK for Policy Insights management functions without causing dependency conflicts with the Az.Policy module.
