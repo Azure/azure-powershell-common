@@ -294,5 +294,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// </summary>
         public const string AzureCommunicationEmailEndpointSuffix = "communication.azure.com";
         public const string AzureCommunicationEmailEndpointResourceId = "https://communication.azure.com";
+
+        /// <summary>
+        /// The scope for SSH authentication. See <see cref="SshCredentialFactory"/>
+        /// </summary>
+        public const string AzureSshAuthScope = "https://pas.windows.net/CheckMyAccess/Linux/.default";
+        public const string ChinaSshAuthScope = "https://pas.chinacloudapi.cn/CheckMyAccess/Linux/.default";
+        public const string USGovernmentSshAuthScope = "https://pasff.usgovcloudapi.net/CheckMyAccess/Linux/.default";
     }
 }

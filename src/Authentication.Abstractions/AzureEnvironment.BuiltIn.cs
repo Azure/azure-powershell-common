@@ -165,6 +165,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.ContainerRegistryEndpointResourceId, AzureEnvironmentConstants.AzureContainerRegistryEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureCommunicationEmailEndpointSuffix, AzureEnvironmentConstants.AzureCommunicationEmailEndpointSuffix);
                 azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureCommunicationEmailEndpointResourceId, AzureEnvironmentConstants.AzureCommunicationEmailEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureCloud].SetProperty(ExtendedEndpoint.AzureSshAuthScope, AzureEnvironmentConstants.AzureSshAuthScope);
             }
 
             if (azureEnvironments.ContainsKey(EnvironmentName.AzureChinaCloud))
@@ -178,6 +179,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.AzureAppConfigurationEndpointResourceId, AzureEnvironmentConstants.ChinaAppConfigurationEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.AzureAppConfigurationEndpointSuffix, AzureEnvironmentConstants.ChinaAppConfigurationEndpointSuffix);
                 azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.ContainerRegistryEndpointResourceId, AzureEnvironmentConstants.ChinaContainerRegistryEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureChinaCloud].SetProperty(ExtendedEndpoint.AzureSshAuthScope, AzureEnvironmentConstants.ChinaSshAuthScope);
             }
 
             if (azureEnvironments.ContainsKey(EnvironmentName.AzureUSGovernment))
@@ -191,6 +193,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.AzureAppConfigurationEndpointResourceId, AzureEnvironmentConstants.USGovernmentAppConfigurationEndpointResourceId);
                 azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.AzureAppConfigurationEndpointSuffix, AzureEnvironmentConstants.USGovernmentAppConfigurationEndpointSuffix);
                 azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.ContainerRegistryEndpointResourceId, AzureEnvironmentConstants.USGovernmentContainerRegistryEndpointResourceId);
+                azureEnvironments[EnvironmentName.AzureUSGovernment].SetProperty(ExtendedEndpoint.AzureSshAuthScope, AzureEnvironmentConstants.USGovernmentSshAuthScope);
             }
         } 
     }
