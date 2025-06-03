@@ -571,7 +571,8 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                 AzureAppConfigurationEndpointResourceId = "AzureAppConfigurationEndpointResourceId",
                 ContainerRegistryEndpointResourceId = "ContainerRegistryEndpointResourceId",
                 AzureCommunicationEmailEndpointSuffix = "AzureCommunicationEmailEndpointSuffix",
-                AzureCommunicationEmailEndpointResourceId = "AzureCommunicationEmailEndpointResourceId";
+                AzureCommunicationEmailEndpointResourceId = "AzureCommunicationEmailEndpointResourceId",
+                AzureSshAuthScope = "AzureSshAuthScope";
         }
     }
 }

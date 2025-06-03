@@ -328,6 +328,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
                     case AzureEnvironment.ExtendedEndpoint.AzureCommunicationEmailEndpointResourceId:
                         environment.SetProperty(AzureEnvironment.ExtendedEndpoint.AzureCommunicationEmailEndpointResourceId, propertyValue);
                         break;
+                    case AzureEnvironment.ExtendedEndpoint.AzureSshAuthScope:
+                        environment.SetProperty(AzureEnvironment.ExtendedEndpoint.AzureSshAuthScope, propertyValue);
+                        break;
                 }
             }
         }
