@@ -103,7 +103,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
         /// </summary>
         public const string AzureGraphEndpoint = "https://graph.windows.net/";
         public const string ChinaGraphEndpoint = "https://graph.chinacloudapi.cn/";
-        public const string USGovernmentGraphEndpoint = "https://graph.windows.net/";
+        public const string USGovernmentGraphEndpoint = "https://graph.microsoftazure.us/";
         [Obsolete("Microsoft Cloud Germany was closed on October 29th, 2021.")]
         public const string GermanGraphEndpoint = "https://graph.cloudapi.de/";
 
