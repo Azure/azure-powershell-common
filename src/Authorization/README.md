@@ -1,1 +1,2 @@
 # Authorization
+Common management client library for Azure Authorization Service.  Allows modules to safely take a dependency on a .Net SDK for RBAC functions without causing dependency conflicts with the Az.Resources module.

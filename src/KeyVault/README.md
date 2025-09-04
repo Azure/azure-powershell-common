@@ -1,1 +1,2 @@
 # KeyVault
+Common management client library for Azure KeyVault Service.  Allows modules to safely take a dependency on a .Net SDK for KeyVault management functions without causing dependency conflicts with the Az.KeyVault module.
