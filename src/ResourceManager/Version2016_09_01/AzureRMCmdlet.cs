@@ -651,9 +651,9 @@ namespace Microsoft.Azure.Commands.ResourceManager.Common
             DebugMessages.Enqueue(args.Message);
         }
 
-        public object GetDynamicParameters()
+        public override object GetDynamicParameters()
         {
-            var parameters = new RuntimeDefinedParameterDictionary();
+            var parameters = base.GetDynamicParameters() as RuntimeDefinedParameterDictionary ?? new RuntimeDefinedParameterDictionary();
 
             // add `-SubscriptionId` if the cmdlet has [SupportsSubscriptionId] attribute
             if (GetType().IsDefined(typeof(SupportsSubscriptionIdAttribute), true))

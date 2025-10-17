@@ -26,6 +26,7 @@ using Microsoft.WindowsAzure.Commands.Common.Sanitizer;
 using Microsoft.WindowsAzure.Commands.Common.Utilities;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -41,7 +42,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
     /// <summary>
     /// Represents base class for all Azure cmdlets.
     /// </summary>
-    public abstract class AzurePSCmdlet : PSCmdlet, IDisposable
+    public abstract class AzurePSCmdlet : PSCmdlet, IDisposable, IDynamicParameters
     {
         private const string PSVERSION = "PSVersion";
         private const string DEFAULT_PSVERSION = "3.0.0.0";
@@ -177,6 +178,91 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                     return outputSanitizer;
 
                 return null;
+            }
+        }
+
+        // PHASE2: ChangeReference temporarily disabled, always null
+        // internal string CurrentChangeReference
+        // {
+        //     get
+        //     {
+        //         var bp = this.MyInvocation?.BoundParameters;
+        //         if (bp != null && bp.ContainsKey("ChangeReference"))
+        //         {
+        //             return bp["ChangeReference"] as string;
+        //         }
+
+        //         return null;
+        //     }
+        // }
+
+        /// <summary>
+        /// Determines whether the policy token feature is enabled.
+        /// Priority 1: environment variable AZ_ENABLE_POLICY_TOKEN overrides (1/0, true/false, yes/no).
+        /// Priority 2: Config key (EnablePolicyToken) set by Set-AzConfig.
+        /// Default: disabled (false).
+        /// </summary>
+        internal bool IsPolicyTokenFeatureEnabled()
+        {
+            try
+            {
+                var env = Environment.GetEnvironmentVariable("AZ_ENABLE_POLICY_TOKEN");
+                if (!string.IsNullOrEmpty(env))
+                {
+                    var trimmed = env.Trim();
+
+                    if (bool.TryParse(trimmed, out var b)) return b;
+                    if (string.Equals(trimmed, "1", StringComparison.Ordinal)) return true;
+                    if (string.Equals(trimmed, "0", StringComparison.Ordinal)) return false;
+                    
+                    switch (trimmed.ToLowerInvariant())
+                    {
+                        case "yes":
+                        case "on":
+                        case "enable":
+                        case "enabled":
+                            return true;
+                        case "no":
+                        case "off":
+                        case "disable":
+                        case "disabled":
+                            return false;
+                    }
+                }
+
+                // Config fallback (Set-AzConfig -EnablePolicyToken true)
+                if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager))
+                {
+                    try
+                    {
+                        return configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnablePolicyToken, MyInvocation);
+                    }
+                    catch { }
+                }
+            }
+            catch { }
+
+            // Default: disabled
+            return false;
+        }
+
+        internal bool ShouldAcquirePolicyToken
+        {
+            get
+            {
+                var bp = this.MyInvocation?.BoundParameters;
+                if (bp == null)
+                {
+                    return false;
+                }
+                if (!IsPolicyTokenFeatureEnabled())
+                {
+                    return false;
+                }
+                var acquire = bp.ContainsKey("AcquirePolicyToken") && ((SwitchParameter)bp["AcquirePolicyToken"]).IsPresent;
+                // PHASE2: ChangeReference disabled; ignore for now
+                // var changeRef = bp.ContainsKey("ChangeReference") && !string.IsNullOrEmpty(bp["ChangeReference"] as string);
+                return acquire; // || changeRef;
             }
         }
 
@@ -324,7 +410,9 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             AzureSession.Instance.ClientFactory.AddUserAgent("AzurePowershell", string.Format("v{0}", AzVersion));
             AzureSession.Instance.ClientFactory.AddUserAgent(PSVERSION, string.Format("v{0}", PowerShellVersion));
             AzureSession.Instance.ClientFactory.AddUserAgent(ModuleName, this.ModuleVersion);
-            try {
+            
+            try
+            {
                 string hostEnv = AzurePSCmdlet.getEnvUserAgent();
                 if (!String.IsNullOrWhiteSpace(hostEnv))
                 {
@@ -335,11 +423,14 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             {
                 // ignore if it failed.
             }
+            
+            // Always add the acquire policy token handler; it will internally decide whether to act.
+            AzureSession.Instance.ClientFactory.AddHandler(new AcquirePolicyTokenHandler(this));
 
             AzureSession.Instance.ClientFactory.AddHandler(
                 new CmdletInfoHandler(this.CommandRuntime.ToString(),
                     this.ParameterSetName, this._clientRequestId));
-
+            
         }
 
         protected virtual void TearDownHttpClientPipeline()
@@ -356,8 +447,80 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             {
                 // ignore if it failed.
             }
+
             AzureSession.Instance.ClientFactory.RemoveUserAgent(ModuleName);
+            AzureSession.Instance.ClientFactory.RemoveHandler(typeof(AcquirePolicyTokenHandler));
             AzureSession.Instance.ClientFactory.RemoveHandler(typeof(CmdletInfoHandler));
+        }
+
+        /// <summary>
+        /// Dynamic parameters for policy token acquisition and any previously registered dynamic parameters (e.g. AsJob).
+        /// </summary>
+        public virtual object GetDynamicParameters()
+        {
+            var dict = new RuntimeDefinedParameterDictionary();
+
+            // Preserve existing dynamic parameters if any were registered via RegisterDynamicParameters
+            if (AsJobDynamicParameters != null)
+            {
+                foreach (var kv in AsJobDynamicParameters)
+                {
+                    dict[kv.Key] = kv.Value;
+                }
+            }
+
+            // FEATURE FLAG: only surface parameters when feature enabled
+            if (!IsPolicyTokenFeatureEnabled())
+            {
+                return dict;
+            }
+
+            // Do not add parameters for read-only cmdlets (Get-*/List-*/Show-*)
+            var commandName = this.MyInvocation?.MyCommand?.Name ?? string.Empty;
+
+            if (commandName.StartsWith("Get", StringComparison.OrdinalIgnoreCase)
+                || commandName.EndsWith("List", StringComparison.OrdinalIgnoreCase)
+                || commandName.EndsWith("Show", StringComparison.OrdinalIgnoreCase))
+            {
+                return dict;
+            }
+
+            try
+            {
+                var acquireParam = new RuntimeDefinedParameter(
+                    "AcquirePolicyToken",
+                    typeof(SwitchParameter),
+                    new Collection<Attribute>
+                    {
+                        new ParameterAttribute
+                        {
+                            HelpMessage = "Acquire an Azure Policy token automatically for this resource operation.",
+                            ParameterSetName = ParameterAttribute.AllParameterSets
+                        }
+                    });
+                dict.Add("AcquirePolicyToken", acquireParam);
+
+                /* PHASE2 (behind same feature flag): ChangeReference dynamic parameter
+                var changeRefParam = new RuntimeDefinedParameter(
+                    "ChangeReference",
+                    typeof(string),
+                    new Collection<Attribute>
+                    {
+                        new ParameterAttribute
+                        {
+                            HelpMessage = "The related change reference ID for this resource operation.",
+                            ParameterSetName = ParameterAttribute.AllParameterSets
+                        }
+                    });
+                dict.Add("ChangeReference", changeRefParam);
+                */
+            }
+            catch
+            {
+                // Ignore dynamic parameter creation issues.
+            }
+
+            return dict;
         }
 
         /// <summary>

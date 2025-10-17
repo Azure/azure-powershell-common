@@ -31,5 +31,6 @@ namespace Microsoft.Azure.PowerShell.Common.Config
         public const string CheckForUpgrade = "CheckForUpgrade";
         public const string EnableErrorRecordsPersistence = "EnableErrorRecordsPersistence";
         public const string DisplaySecretsWarning = "DisplaySecretsWarning";
+        public const string EnablePolicyToken = "EnablePolicyToken";
     }
 }
