@@ -181,69 +181,18 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
-        // PHASE2: ChangeReference temporarily disabled, always null
-        // internal string CurrentChangeReference
-        // {
-        //     get
-        //     {
-        //         var bp = this.MyInvocation?.BoundParameters;
-        //         if (bp != null && bp.ContainsKey("ChangeReference"))
-        //         {
-        //             return bp["ChangeReference"] as string;
-        //         }
-
-        //         return null;
-        //     }
-        // }
-
-        /// <summary>
-        /// Determines whether the policy token feature is enabled.
-        /// Priority 1: environment variable AZ_ENABLE_POLICY_TOKEN overrides (1/0, true/false, yes/no).
-        /// Priority 2: Config key (EnablePolicyToken) set by Set-AzConfig.
-        /// Default: disabled (false).
-        /// </summary>
-        internal bool IsPolicyTokenFeatureEnabled()
+        internal string CurrentChangeReference
         {
-            try
+            get
             {
-                var env = Environment.GetEnvironmentVariable("AZ_ENABLE_POLICY_TOKEN");
-                if (!string.IsNullOrEmpty(env))
+                var bp = this.MyInvocation?.BoundParameters;
+                if (bp != null && bp.ContainsKey("ChangeReference"))
                 {
-                    var trimmed = env.Trim();
-
-                    if (bool.TryParse(trimmed, out var b)) return b;
-                    if (string.Equals(trimmed, "1", StringComparison.Ordinal)) return true;
-                    if (string.Equals(trimmed, "0", StringComparison.Ordinal)) return false;
-                    
-                    switch (trimmed.ToLowerInvariant())
-                    {
-                        case "yes":
-                        case "on":
-                        case "enable":
-                        case "enabled":
-                            return true;
-                        case "no":
-                        case "off":
-                        case "disable":
-                        case "disabled":
-                            return false;
-                    }
+                    return bp["ChangeReference"] as string;
                 }
 
-                // Config fallback (Set-AzConfig -EnablePolicyToken true)
-                if (AzureSession.Instance.TryGetComponent<IConfigManager>(nameof(IConfigManager), out var configManager))
-                {
-                    try
-                    {
-                        return configManager.GetConfigValue<bool>(ConfigKeysForCommon.EnablePolicyToken, MyInvocation);
-                    }
-                    catch { }
-                }
+                return null;
             }
-            catch { }
-
-            // Default: disabled
-            return false;
         }
 
         internal bool ShouldAcquirePolicyToken
@@ -255,14 +204,9 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 {
                     return false;
                 }
-                if (!IsPolicyTokenFeatureEnabled())
-                {
-                    return false;
-                }
                 var acquire = bp.ContainsKey("AcquirePolicyToken") && ((SwitchParameter)bp["AcquirePolicyToken"]).IsPresent;
-                // PHASE2: ChangeReference disabled; ignore for now
-                // var changeRef = bp.ContainsKey("ChangeReference") && !string.IsNullOrEmpty(bp["ChangeReference"] as string);
-                return acquire; // || changeRef;
+                var changeRef = bp.ContainsKey("ChangeReference") && !string.IsNullOrEmpty(bp["ChangeReference"] as string);
+                return acquire || changeRef;
             }
         }
 
@@ -469,12 +413,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 }
             }
 
-            // FEATURE FLAG: only surface parameters when feature enabled
-            if (!IsPolicyTokenFeatureEnabled())
-            {
-                return dict;
-            }
-
             // Do not add parameters for read-only cmdlets (Get-*/List-*/Show-*)
             var commandName = this.MyInvocation?.MyCommand?.Name ?? string.Empty;
 
@@ -500,7 +438,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                     });
                 dict.Add("AcquirePolicyToken", acquireParam);
 
-                /* PHASE2 (behind same feature flag): ChangeReference dynamic parameter
                 var changeRefParam = new RuntimeDefinedParameter(
                     "ChangeReference",
                     typeof(string),
@@ -513,7 +450,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                         }
                     });
                 dict.Add("ChangeReference", changeRefParam);
-                */
             }
             catch
             {

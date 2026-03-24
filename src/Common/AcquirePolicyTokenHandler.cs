@@ -53,12 +53,6 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
             EnqueueDebug($"Intercept {request.Method} {request.RequestUri}");
 
-            if (!(_cmdlet?.IsPolicyTokenFeatureEnabled() ?? false))
-            {
-                EnqueueDebug("Skip: feature disabled (EnableAcquirePolicyToken config set to false).");
-                return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
-            }
-
             bool allowedVerb = _allowedWriteMethods.Contains(request.Method.Method);
             if (!allowedVerb)
             {
@@ -149,9 +143,8 @@ namespace Microsoft.WindowsAzure.Commands.Common
                     uri = originalRequest.RequestUri.ToString(),
                     httpMethod = originalRequest.Method.Method,
                     content = contentObj
-                }
-                // Phase 2: reintroduce when ChangeReference parameter is enabled
-                // ,changeReference = _cmdlet?.CurrentChangeReference
+                },
+                changeReference = _cmdlet?.CurrentChangeReference
             };
             EnqueueDebug("Payload prepared.");
 
