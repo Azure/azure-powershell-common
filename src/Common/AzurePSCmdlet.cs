@@ -181,14 +181,17 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
+        internal const string AcquirePolicyTokenParamName = "AcquirePolicyToken";
+        internal const string ChangeReferenceParamName = "ChangeReference";
+
         internal virtual string CurrentChangeReference
         {
             get
             {
                 var bp = this.MyInvocation?.BoundParameters;
-                if (bp != null && bp.ContainsKey("ChangeReference"))
+                if (bp != null && bp.ContainsKey(ChangeReferenceParamName))
                 {
-                    return bp["ChangeReference"] as string;
+                    return bp[ChangeReferenceParamName] as string;
                 }
 
                 return null;
@@ -204,8 +207,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 {
                     return false;
                 }
-                var acquire = bp.ContainsKey("AcquirePolicyToken") && ((SwitchParameter)bp["AcquirePolicyToken"]).IsPresent;
-                var changeRef = bp.ContainsKey("ChangeReference") && !string.IsNullOrEmpty(bp["ChangeReference"] as string);
+                var acquire = bp.ContainsKey(AcquirePolicyTokenParamName) && ((SwitchParameter)bp[AcquirePolicyTokenParamName]).IsPresent;
+                var changeRef = bp.ContainsKey(ChangeReferenceParamName) && !string.IsNullOrEmpty(bp[ChangeReferenceParamName] as string);
                 return acquire || changeRef;
             }
         }
@@ -417,20 +420,21 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 }
             }
 
-            // Do not add parameters for read-only cmdlets (Get-*/List-*/Show-*)
+            // Do not add parameters for read-only cmdlets (Get-*/Test-*/List-*/Show-*)
             var commandName = this.MyInvocation?.MyCommand?.Name ?? string.Empty;
 
             if (commandName.StartsWith("Get", StringComparison.OrdinalIgnoreCase)
-                || commandName.EndsWith("List", StringComparison.OrdinalIgnoreCase)
-                || commandName.EndsWith("Show", StringComparison.OrdinalIgnoreCase))
+                || commandName.StartsWith("Test", StringComparison.OrdinalIgnoreCase)
+                || commandName.StartsWith("List", StringComparison.OrdinalIgnoreCase)
+                || commandName.StartsWith("Show", StringComparison.OrdinalIgnoreCase))
             {
                 return dict;
             }
 
-            try
+            if (!dict.ContainsKey(AcquirePolicyTokenParamName))
             {
-                var acquireParam = new RuntimeDefinedParameter(
-                    "AcquirePolicyToken",
+                dict.Add(AcquirePolicyTokenParamName, new RuntimeDefinedParameter(
+                    AcquirePolicyTokenParamName,
                     typeof(SwitchParameter),
                     new Collection<Attribute>
                     {
@@ -439,25 +443,22 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                             HelpMessage = "Acquire an Azure Policy token automatically for this resource operation.",
                             ParameterSetName = ParameterAttribute.AllParameterSets
                         }
-                    });
-                dict.Add("AcquirePolicyToken", acquireParam);
+                    }));
+            }
 
-                var changeRefParam = new RuntimeDefinedParameter(
-                    "ChangeReference",
+            if (!dict.ContainsKey(ChangeReferenceParamName))
+            {
+                dict.Add(ChangeReferenceParamName, new RuntimeDefinedParameter(
+                    ChangeReferenceParamName,
                     typeof(string),
                     new Collection<Attribute>
                     {
                         new ParameterAttribute
                         {
-                            HelpMessage = "The related change reference ID for this resource operation.",
+                            HelpMessage = "The change reference resource ID for this resource operation.",
                             ParameterSetName = ParameterAttribute.AllParameterSets
                         }
-                    });
-                dict.Add("ChangeReference", changeRefParam);
-            }
-            catch
-            {
-                // Ignore dynamic parameter creation issues.
+                    }));
             }
 
             return dict;

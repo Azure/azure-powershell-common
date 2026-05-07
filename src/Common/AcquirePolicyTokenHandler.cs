@@ -137,6 +137,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             object contentObj = null;
             if (originalRequest.Content != null)
             {
+                await originalRequest.Content.LoadIntoBufferAsync().ConfigureAwait(false);
                 var body = await originalRequest.Content.ReadAsStringAsync().ConfigureAwait(false);
                 if (!string.IsNullOrWhiteSpace(body))
                 {

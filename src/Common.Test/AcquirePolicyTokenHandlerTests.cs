@@ -308,8 +308,11 @@ namespace Commands.Common.Tests
         [Fact]
         public void PolicyTokenHeader_NameMatchesSpec()
         {
-            // Header name must be exactly this — ARM checks for it
-            Assert.Equal("x-ms-policy-external-evaluations", "x-ms-policy-external-evaluations");
+            // Verify the header name is recognized by HTTP headers (case-insensitive)
+            var request = new HttpRequestMessage();
+            request.Headers.Add("x-ms-policy-external-evaluations", "test-token");
+            Assert.True(request.Headers.Contains("x-ms-policy-external-evaluations"));
+            Assert.Equal("test-token", request.Headers.GetValues("x-ms-policy-external-evaluations").First());
         }
     }
 
@@ -479,18 +482,21 @@ namespace Commands.Common.Tests
         [InlineData("Get-AzVM", false)]
         [InlineData("Get-AzContext", false)]
         [InlineData("Get-AzSubscription", false)]
+        [InlineData("Test-AzDeployment", false)]
+        [InlineData("Test-AzResourceGroupDeployment", false)]
         public void WriteCmdlets_GetParams_ReadCmdlets_DoNot(string commandName, bool shouldHaveParams)
         {
             bool isReadOnly = commandName.StartsWith("Get", StringComparison.OrdinalIgnoreCase)
-                || commandName.EndsWith("List", StringComparison.OrdinalIgnoreCase)
-                || commandName.EndsWith("Show", StringComparison.OrdinalIgnoreCase);
+                || commandName.StartsWith("Test", StringComparison.OrdinalIgnoreCase)
+                || commandName.StartsWith("List", StringComparison.OrdinalIgnoreCase)
+                || commandName.StartsWith("Show", StringComparison.OrdinalIgnoreCase);
 
             Assert.Equal(shouldHaveParams, !isReadOnly);
         }
 
         [Theory]
-        [InlineData("Get-AzResourceList", false)]  // ends in "List"
-        [InlineData("Get-AzVMShow", false)]         // ends in "Show"
+        [InlineData("List-AzResource", false)]      // starts with "List"
+        [InlineData("Show-AzVM", false)]             // starts with "Show"
         [InlineData("Export-AzStorageData", true)]   // Export is a write operation
         [InlineData("Import-AzData", true)]          // Import is a write operation
         [InlineData("Disable-AzFeature", true)]
@@ -498,8 +504,9 @@ namespace Commands.Common.Tests
         public void EdgeCases_FilteredCorrectly(string commandName, bool shouldHaveParams)
         {
             bool isReadOnly = commandName.StartsWith("Get", StringComparison.OrdinalIgnoreCase)
-                || commandName.EndsWith("List", StringComparison.OrdinalIgnoreCase)
-                || commandName.EndsWith("Show", StringComparison.OrdinalIgnoreCase);
+                || commandName.StartsWith("Test", StringComparison.OrdinalIgnoreCase)
+                || commandName.StartsWith("List", StringComparison.OrdinalIgnoreCase)
+                || commandName.StartsWith("Show", StringComparison.OrdinalIgnoreCase);
 
             Assert.Equal(shouldHaveParams, !isReadOnly);
         }
