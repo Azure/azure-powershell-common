@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\Authentication.Abstractions\Authentication.Abstractions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

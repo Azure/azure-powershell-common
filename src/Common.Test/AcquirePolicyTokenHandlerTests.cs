@@ -13,7 +13,6 @@
 // ----------------------------------------------------------------------------------
 
 using Microsoft.WindowsAzure.Commands.Common;
-using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -39,7 +38,7 @@ namespace Commands.Common.Tests
         [Fact]
         public void Clone_ReturnsNewInstance()
         {
-            var handler = new AcquirePolicyTokenHandler(null);
+            var handler = new AcquirePolicyTokenHandler(false, null, false, null);
             var clone = handler.Clone() as AcquirePolicyTokenHandler;
 
             Assert.NotNull(clone);
@@ -56,7 +55,7 @@ namespace Commands.Common.Tests
             var innerHandler = new MockInnerHandler((req, ct) =>
                 Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
 
-            var handler = new AcquirePolicyTokenHandler(null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
             var request = new HttpRequestMessage(HttpMethod.Get,
                 "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/sa?api-version=2024-01-01");
@@ -74,7 +73,7 @@ namespace Commands.Common.Tests
             var innerHandler = new MockInnerHandler((req, ct) =>
                 Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
 
-            var handler = new AcquirePolicyTokenHandler(null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
             var request = new HttpRequestMessage(HttpMethod.Head,
                 "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/test");
@@ -98,7 +97,7 @@ namespace Commands.Common.Tests
             var innerHandler = new MockInnerHandler((req, ct) =>
                 Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
 
-            var handler = new AcquirePolicyTokenHandler(null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
             var request = new HttpRequestMessage(new HttpMethod(method),
                 "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/sa?api-version=2024-01-01");
@@ -124,7 +123,7 @@ namespace Commands.Common.Tests
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
             });
 
-            var handler = new AcquirePolicyTokenHandler(null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
 
             await client.SendAsync(new HttpRequestMessage(HttpMethod.Delete,
@@ -143,7 +142,7 @@ namespace Commands.Common.Tests
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
             });
 
-            var handler = new AcquirePolicyTokenHandler(null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
             var uri = "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/test?api-version=2024-01-01";
             var request = new HttpRequestMessage(HttpMethod.Put, uri);
@@ -332,7 +331,7 @@ namespace Commands.Common.Tests
                 });
             });
 
-            var handler = new AcquirePolicyTokenHandler(null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
 
             var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Delete,
@@ -354,7 +353,7 @@ namespace Commands.Common.Tests
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.Created));
             });
 
-            var handler = new AcquirePolicyTokenHandler(null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
 
             var request = new HttpRequestMessage(HttpMethod.Put,
@@ -376,7 +375,7 @@ namespace Commands.Common.Tests
             var innerHandler = new MockInnerHandler((req, ct) =>
                 Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
 
-            var handler = new AcquirePolicyTokenHandler(null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
 
             var response = await client.SendAsync(new HttpRequestMessage(new HttpMethod("PATCH"),
@@ -397,7 +396,7 @@ namespace Commands.Common.Tests
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
             });
 
-            var handler = new AcquirePolicyTokenHandler(null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
 
             var baseUrl = "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/";
@@ -419,7 +418,7 @@ namespace Commands.Common.Tests
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
             });
 
-            var handler = new AcquirePolicyTokenHandler(null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
 
             var request = new HttpRequestMessage(HttpMethod.Put,
@@ -445,7 +444,7 @@ namespace Commands.Common.Tests
                     ReasonPhrase = "OK"
                 }));
 
-            var handler = new AcquirePolicyTokenHandler(null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
 
             var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Delete,
@@ -555,13 +554,428 @@ namespace Commands.Common.Tests
     }
 
     // =========================================================================
-    // MOCK INNER HANDLER — Shared test infrastructure
+    // 9. END-TO-END FLOW TESTS — Full token acquisition pipeline
+    //    Simulates: handler → acquirePolicyToken API → token → header → request
+    // =========================================================================
+    public class EndToEndPolicyTokenFlowTests
+    {
+        private const string TestToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.test-policy-token-value";
+        private const string TestSubId = "f5d0e517-47aa-467c-90a0-4326d3c0fcae";
+        private const string BaseUrl = "https://management.azure.com";
+
+        /// <summary>
+        /// Creates a mock token server that returns a valid token response.
+        /// </summary>
+        private static HttpClient CreateMockTokenServer(Action<HttpRequestMessage> captureTokenRequest = null)
+        {
+            var handler = new MockTokenServerHandler((req, ct) =>
+            {
+                captureTokenRequest?.Invoke(req);
+                var responseBody = JsonConvert.SerializeObject(new { token = TestToken });
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(responseBody, Encoding.UTF8, "application/json")
+                });
+            });
+            return new HttpClient(handler);
+        }
+
+        /// <summary>
+        /// Creates a mock token server that returns a failure.
+        /// </summary>
+        private static HttpClient CreateFailingTokenServer(HttpStatusCode statusCode, string errorMessage)
+        {
+            var handler = new MockTokenServerHandler((req, ct) =>
+            {
+                var body = JsonConvert.SerializeObject(new { error = new { code = "TestError", message = errorMessage } });
+                return Task.FromResult(new HttpResponseMessage(statusCode)
+                {
+                    Content = new StringContent(body, Encoding.UTF8, "application/json")
+                });
+            });
+            return new HttpClient(handler);
+        }
+
+        /// <summary>
+        /// Creates the handler with a mock cmdlet that has ShouldAcquirePolicyToken = true.
+        /// Uses internal constructor to inject a mock token HTTP client.
+        /// </summary>
+        private static (AcquirePolicyTokenHandler handler, HttpClient client) CreateTestPipeline(
+            HttpClient tokenHttpClient,
+            Action<HttpRequestMessage> captureRequest = null)
+        {
+            var innerHandler = new MockInnerHandler((req, ct) =>
+            {
+                captureRequest?.Invoke(req);
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
+            });
+
+            var handler = new AcquirePolicyTokenHandler(true, null, false, new ConcurrentQueue<string>(), tokenHttpClient)
+            {
+                InnerHandler = innerHandler
+            };
+
+            return (handler, new HttpClient(handler));
+        }
+
+        // ----- DELETE Storage Account -----
+
+        [Fact]
+        public async Task E2E_DeleteStorageAccount_TokenAcquired_HeaderAttached()
+        {
+            HttpRequestMessage capturedRequest = null;
+            var tokenClient = CreateMockTokenServer();
+            var (handler, client) = CreateTestPipeline(tokenClient, req => capturedRequest = req);
+
+            var request = new HttpRequestMessage(HttpMethod.Delete,
+                $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/testsa?api-version=2024-01-01");
+
+            var response = await client.SendAsync(request);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(capturedRequest.Headers.Contains("x-ms-policy-external-evaluations"),
+                "DELETE Storage Account: policy token header must be present");
+            Assert.Equal(TestToken,
+                capturedRequest.Headers.GetValues("x-ms-policy-external-evaluations").First());
+        }
+
+        // ----- DELETE Resource Group -----
+
+        [Fact]
+        public async Task E2E_DeleteResourceGroup_TokenAcquired_HeaderAttached()
+        {
+            HttpRequestMessage capturedRequest = null;
+            var tokenClient = CreateMockTokenServer();
+            var (handler, client) = CreateTestPipeline(tokenClient, req => capturedRequest = req);
+
+            var request = new HttpRequestMessage(HttpMethod.Delete,
+                $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/test-rg?api-version=2021-04-01");
+
+            var response = await client.SendAsync(request);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(capturedRequest.Headers.Contains("x-ms-policy-external-evaluations"));
+            Assert.Equal(TestToken,
+                capturedRequest.Headers.GetValues("x-ms-policy-external-evaluations").First());
+        }
+
+        // ----- PUT (Create/Update) VM -----
+
+        [Fact]
+        public async Task E2E_PutVM_TokenAcquired_HeaderAttached()
+        {
+            HttpRequestMessage capturedRequest = null;
+            var tokenClient = CreateMockTokenServer();
+            var (handler, client) = CreateTestPipeline(tokenClient, req => capturedRequest = req);
+
+            var request = new HttpRequestMessage(HttpMethod.Put,
+                $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.Compute/virtualMachines/testvm?api-version=2024-03-01")
+            {
+                Content = new StringContent("{\"location\":\"eastus\"}", Encoding.UTF8, "application/json")
+            };
+
+            var response = await client.SendAsync(request);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(capturedRequest.Headers.Contains("x-ms-policy-external-evaluations"));
+            Assert.Equal(TestToken,
+                capturedRequest.Headers.GetValues("x-ms-policy-external-evaluations").First());
+        }
+
+        // ----- POST Action (e.g., restart VM) -----
+
+        [Fact]
+        public async Task E2E_PostVMRestart_TokenAcquired_HeaderAttached()
+        {
+            HttpRequestMessage capturedRequest = null;
+            var tokenClient = CreateMockTokenServer();
+            var (handler, client) = CreateTestPipeline(tokenClient, req => capturedRequest = req);
+
+            var request = new HttpRequestMessage(HttpMethod.Post,
+                $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.Compute/virtualMachines/testvm/restart?api-version=2024-03-01");
+
+            var response = await client.SendAsync(request);
+
+            Assert.True(capturedRequest.Headers.Contains("x-ms-policy-external-evaluations"));
+            Assert.Equal(TestToken,
+                capturedRequest.Headers.GetValues("x-ms-policy-external-evaluations").First());
+        }
+
+        // ----- PATCH (Update) Network Security Group -----
+
+        [Fact]
+        public async Task E2E_PatchNSG_TokenAcquired_HeaderAttached()
+        {
+            HttpRequestMessage capturedRequest = null;
+            var tokenClient = CreateMockTokenServer();
+            var (handler, client) = CreateTestPipeline(tokenClient, req => capturedRequest = req);
+
+            var request = new HttpRequestMessage(new HttpMethod("PATCH"),
+                $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.Network/networkSecurityGroups/testnsg?api-version=2023-11-01")
+            {
+                Content = new StringContent("{\"tags\":{\"env\":\"test\"}}", Encoding.UTF8, "application/json")
+            };
+
+            var response = await client.SendAsync(request);
+
+            Assert.True(capturedRequest.Headers.Contains("x-ms-policy-external-evaluations"));
+            Assert.Equal(TestToken,
+                capturedRequest.Headers.GetValues("x-ms-policy-external-evaluations").First());
+        }
+
+        // ----- DELETE CosmosDB Account -----
+
+        [Fact]
+        public async Task E2E_DeleteCosmosDBAccount_TokenAcquired_HeaderAttached()
+        {
+            HttpRequestMessage capturedRequest = null;
+            var tokenClient = CreateMockTokenServer();
+            var (handler, client) = CreateTestPipeline(tokenClient, req => capturedRequest = req);
+
+            var request = new HttpRequestMessage(HttpMethod.Delete,
+                $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.DocumentDB/databaseAccounts/testcosmos?api-version=2024-05-15");
+
+            var response = await client.SendAsync(request);
+
+            Assert.True(capturedRequest.Headers.Contains("x-ms-policy-external-evaluations"));
+            Assert.Equal(TestToken,
+                capturedRequest.Headers.GetValues("x-ms-policy-external-evaluations").First());
+        }
+
+        // ----- DELETE Key Vault -----
+
+        [Fact]
+        public async Task E2E_DeleteKeyVault_TokenAcquired_HeaderAttached()
+        {
+            HttpRequestMessage capturedRequest = null;
+            var tokenClient = CreateMockTokenServer();
+            var (handler, client) = CreateTestPipeline(tokenClient, req => capturedRequest = req);
+
+            var request = new HttpRequestMessage(HttpMethod.Delete,
+                $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.KeyVault/vaults/testvault?api-version=2023-07-01");
+
+            var response = await client.SendAsync(request);
+
+            Assert.True(capturedRequest.Headers.Contains("x-ms-policy-external-evaluations"));
+            Assert.Equal(TestToken,
+                capturedRequest.Headers.GetValues("x-ms-policy-external-evaluations").First());
+        }
+
+        // ----- Verify token API request payload -----
+
+        [Fact]
+        public async Task E2E_TokenRequest_ContainsCorrectPayload()
+        {
+            HttpRequestMessage capturedTokenRequest = null;
+            var tokenClient = CreateMockTokenServer(req => capturedTokenRequest = req);
+            var (handler, client) = CreateTestPipeline(tokenClient);
+
+            var deleteUri = $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/sa1?api-version=2024-01-01";
+            await client.SendAsync(new HttpRequestMessage(HttpMethod.Delete, deleteUri));
+
+            // Verify the token request
+            Assert.NotNull(capturedTokenRequest);
+            Assert.Equal(HttpMethod.Post, capturedTokenRequest.Method);
+            Assert.Contains("acquirePolicyToken", capturedTokenRequest.RequestUri.ToString());
+            Assert.Contains(TestSubId, capturedTokenRequest.RequestUri.ToString());
+            Assert.Contains("api-version=2025-03-01", capturedTokenRequest.RequestUri.ToString());
+
+            // Verify payload
+            var body = await capturedTokenRequest.Content.ReadAsStringAsync();
+            var payload = JObject.Parse(body);
+            Assert.Equal(deleteUri, payload["operation"]["uri"].ToString());
+            Assert.Equal("DELETE", payload["operation"]["httpMethod"].ToString());
+
+            // Verify x-ms-force-sync header
+            Assert.True(capturedTokenRequest.Headers.Contains("x-ms-force-sync"));
+        }
+
+        // ----- Verify changeReference is passed in payload -----
+
+        [Fact]
+        public async Task E2E_TokenRequest_IncludesChangeReference()
+        {
+            HttpRequestMessage capturedTokenRequest = null;
+            var tokenClient = CreateMockTokenServer(req => capturedTokenRequest = req);
+
+            string changeRef = $"/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.ChangeSafety/changeStates/cs/stageProgressions/breakglassStage";
+            var innerHandler = new MockInnerHandler((req, ct) =>
+                Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
+
+            var handler = new AcquirePolicyTokenHandler(true, changeRef, false, new ConcurrentQueue<string>(), tokenClient) { InnerHandler = innerHandler };
+            var client = new HttpClient(handler);
+
+            await client.SendAsync(new HttpRequestMessage(HttpMethod.Delete,
+                $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/sa1?api-version=2024-01-01"));
+
+            var body = await capturedTokenRequest.Content.ReadAsStringAsync();
+            var payload = JObject.Parse(body);
+            Assert.Equal(changeRef, payload["changeReference"].ToString());
+        }
+
+        // ----- Verify auth headers are forwarded to token request -----
+
+        [Fact]
+        public async Task E2E_TokenRequest_ForwardsAuthHeaders()
+        {
+            HttpRequestMessage capturedTokenRequest = null;
+            var tokenClient = CreateMockTokenServer(req => capturedTokenRequest = req);
+            var (handler, client) = CreateTestPipeline(tokenClient);
+
+            var request = new HttpRequestMessage(HttpMethod.Delete,
+                $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/sa1?api-version=2024-01-01");
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", "test-token-123");
+            request.Headers.Add("x-ms-authorization-auxiliary", "Bearer aux-token-456");
+
+            await client.SendAsync(request);
+
+            Assert.Equal("Bearer", capturedTokenRequest.Headers.Authorization.Scheme);
+            Assert.Equal("test-token-123", capturedTokenRequest.Headers.Authorization.Parameter);
+            Assert.True(capturedTokenRequest.Headers.Contains("x-ms-authorization-auxiliary"));
+        }
+
+        // ----- Token API failure returns clear error -----
+
+        [Fact]
+        public async Task E2E_TokenApiFails_ThrowsWithMessage()
+        {
+            var tokenClient = CreateFailingTokenServer(HttpStatusCode.Forbidden, "Access denied");
+            var (handler, client) = CreateTestPipeline(tokenClient);
+
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                client.SendAsync(new HttpRequestMessage(HttpMethod.Delete,
+                    $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/sa1?api-version=2024-01-01")));
+
+            Assert.Contains("Failed to acquire policy token", ex.Message);
+            Assert.Contains("403", ex.Message);
+        }
+
+        // ----- Token API returns 200 but no token field -----
+
+        [Fact]
+        public async Task E2E_TokenApiReturns200ButNoToken_ThrowsWithResponse()
+        {
+            var handler = new MockTokenServerHandler((req, ct) =>
+            {
+                var body = JsonConvert.SerializeObject(new { result = "Failed", message = "validator error" });
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(body, Encoding.UTF8, "application/json")
+                });
+            });
+            var tokenClient = new HttpClient(handler);
+            var (pipelineHandler, client) = CreateTestPipeline(tokenClient);
+
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                client.SendAsync(new HttpRequestMessage(HttpMethod.Delete,
+                    $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/sa1?api-version=2024-01-01")));
+
+            Assert.Contains("No token returned", ex.Message);
+            Assert.Contains("validator error", ex.Message);
+        }
+
+        // ----- GET request is NOT intercepted even with flag -----
+
+        [Fact]
+        public async Task E2E_GetRequest_NeverAcquiresToken_EvenWithFlag()
+        {
+            bool tokenServerCalled = false;
+            var tokenClient = CreateMockTokenServer(_ => tokenServerCalled = true);
+            HttpRequestMessage capturedRequest = null;
+            var (handler, client) = CreateTestPipeline(tokenClient, req => capturedRequest = req);
+
+            await client.SendAsync(new HttpRequestMessage(HttpMethod.Get,
+                $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/sa1?api-version=2024-01-01"));
+
+            Assert.False(tokenServerCalled, "Token API must NOT be called for GET requests");
+            Assert.False(capturedRequest.Headers.Contains("x-ms-policy-external-evaluations"));
+        }
+
+        // ----- Multiple sequential requests each get their own token -----
+
+        [Fact]
+        public async Task E2E_MultipleRequests_EachGetsToken()
+        {
+            int tokenCallCount = 0;
+            var mockHandler = new MockTokenServerHandler((req, ct) =>
+            {
+                Interlocked.Increment(ref tokenCallCount);
+                var body = JsonConvert.SerializeObject(new { token = $"token-{tokenCallCount}" });
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(body, Encoding.UTF8, "application/json")
+                });
+            });
+            var tokenClient = new HttpClient(mockHandler);
+
+            List<string> capturedTokens = new List<string>();
+            var innerHandler = new MockInnerHandler((req, ct) =>
+            {
+                if (req.Headers.Contains("x-ms-policy-external-evaluations"))
+                    capturedTokens.Add(req.Headers.GetValues("x-ms-policy-external-evaluations").First());
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
+            });
+
+            var handler = new AcquirePolicyTokenHandler(true, null, false, new ConcurrentQueue<string>(), tokenClient) { InnerHandler = innerHandler };
+            var client = new HttpClient(handler);
+
+            await client.SendAsync(new HttpRequestMessage(HttpMethod.Delete,
+                $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg1/providers/Microsoft.Storage/storageAccounts/sa1?api-version=2024-01-01"));
+            await client.SendAsync(new HttpRequestMessage(HttpMethod.Put,
+                $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg2/providers/Microsoft.Compute/virtualMachines/vm1?api-version=2024-03-01"));
+
+            Assert.Equal(2, tokenCallCount);
+            Assert.Equal(2, capturedTokens.Count);
+        }
+
+        // ----- Request body is included in token payload -----
+
+        [Fact]
+        public async Task E2E_PutWithBody_BodyIncludedInTokenPayload()
+        {
+            HttpRequestMessage capturedTokenRequest = null;
+            var tokenClient = CreateMockTokenServer(req => capturedTokenRequest = req);
+            var (handler, client) = CreateTestPipeline(tokenClient);
+
+            var requestBody = "{\"location\":\"eastus\",\"sku\":{\"name\":\"Standard_GRS\"}}";
+            var request = new HttpRequestMessage(HttpMethod.Put,
+                $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/sa1?api-version=2024-01-01")
+            {
+                Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
+            };
+
+            await client.SendAsync(request);
+
+            var tokenBody = await capturedTokenRequest.Content.ReadAsStringAsync();
+            var payload = JObject.Parse(tokenBody);
+            Assert.Equal("eastus", payload["operation"]["content"]["location"].ToString());
+            Assert.Equal("Standard_GRS", payload["operation"]["content"]["sku"]["name"].ToString());
+        }
+    }
+
+    // =========================================================================
+    // MOCK HANDLERS — Shared test infrastructure
     // =========================================================================
     internal class MockInnerHandler : DelegatingHandler
     {
         private readonly Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> _handlerFunc;
 
         public MockInnerHandler(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> handlerFunc)
+        {
+            _handlerFunc = handlerFunc;
+        }
+
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            return _handlerFunc(request, cancellationToken);
+        }
+    }
+
+    internal class MockTokenServerHandler : HttpMessageHandler
+    {
+        private readonly Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> _handlerFunc;
+
+        public MockTokenServerHandler(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> handlerFunc)
         {
             _handlerFunc = handlerFunc;
         }

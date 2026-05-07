@@ -181,7 +181,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
-        internal string CurrentChangeReference
+        internal virtual string CurrentChangeReference
         {
             get
             {
@@ -195,7 +195,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
-        internal bool ShouldAcquirePolicyToken
+        internal virtual bool ShouldAcquirePolicyToken
         {
             get
             {
@@ -368,8 +368,12 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 // ignore if it failed.
             }
             
-            // Always add the acquire policy token handler; it will internally decide whether to act.
-            AzureSession.Instance.ClientFactory.AddHandler(new AcquirePolicyTokenHandler(this));
+            // Snapshot cmdlet state into the handler — no cmdlet reference held.
+            AzureSession.Instance.ClientFactory.AddHandler(new AcquirePolicyTokenHandler(
+                this.ShouldAcquirePolicyToken,
+                this.CurrentChangeReference,
+                this.MyInvocation?.BoundParameters?.ContainsKey("WhatIf") == true,
+                this.DebugMessages));
 
             AzureSession.Instance.ClientFactory.AddHandler(
                 new CmdletInfoHandler(this.CommandRuntime.ToString(),

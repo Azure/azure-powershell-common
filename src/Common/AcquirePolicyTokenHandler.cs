@@ -13,26 +13,32 @@
 // ----------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Net;
-using Microsoft.WindowsAzure.Commands.Utilities.Common;
 
 namespace Microsoft.WindowsAzure.Commands.Common
 {
     /// <summary>
-    /// Delegating handler to acquire an Azure Policy token for change safety feature and attach to outgoing request.
-    /// Activated when user specifies -AcquirePolicyToken. (ChangeReference deferred to Phase 2.)
+    /// Delegating handler to acquire an Azure Policy token for the change safety feature
+    /// and attach it to outgoing write requests.
+    /// Activated when user specifies -AcquirePolicyToken or -ChangeReference.
     /// </summary>
     public class AcquirePolicyTokenHandler : DelegatingHandler, ICloneable
     {
-        private readonly AzurePSCmdlet _cmdlet;
+        private readonly bool _shouldAcquire;
+        private readonly string _changeReference;
+        private readonly bool _isWhatIf;
+        private readonly ConcurrentQueue<string> _debugMessages;
+        private readonly HttpClient _tokenHttpClient;
+
         private const string TokenApiVersion = "2025-03-01";
         private static readonly Regex SubscriptionIdRegex = new Regex(@"/subscriptions/([0-9a-fA-F-]{36})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly HashSet<string> _allowedWriteMethods = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -44,32 +50,45 @@ namespace Microsoft.WindowsAzure.Commands.Common
         };
         private const string LogPrefix = "[AcquirePolicyTokenHandler]";
 
-        public AcquirePolicyTokenHandler(AzurePSCmdlet cmdlet)
+        /// <summary>
+        /// Creates a handler with explicit parameter values (no cmdlet reference needed).
+        /// </summary>
+        /// <param name="shouldAcquire">Whether the user requested policy token acquisition.</param>
+        /// <param name="changeReference">The change reference ID, or null if not specified.</param>
+        /// <param name="isWhatIf">Whether -WhatIf was specified (dry run).</param>
+        /// <param name="debugMessages">Queue for debug messages, or null.</param>
+        /// <param name="tokenHttpClient">Optional HttpClient for the token API call (for testing).</param>
+        public AcquirePolicyTokenHandler(
+            bool shouldAcquire,
+            string changeReference,
+            bool isWhatIf,
+            ConcurrentQueue<string> debugMessages,
+            HttpClient tokenHttpClient = null)
         {
-            _cmdlet = cmdlet;
+            _shouldAcquire = shouldAcquire;
+            _changeReference = changeReference;
+            _isWhatIf = isWhatIf;
+            _debugMessages = debugMessages;
+            _tokenHttpClient = tokenHttpClient;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             EnqueueDebug($"Intercept {request.Method} {request.RequestUri}");
 
-            bool allowedVerb = _allowedWriteMethods.Contains(request.Method.Method);
-            if (!allowedVerb)
+            if (!_allowedWriteMethods.Contains(request.Method.Method))
             {
                 EnqueueDebug("Skip: verb not allowed for token acquisition.");
                 return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
             }
 
-            bool hasCmdlet = _cmdlet != null;
-            bool userRequested = hasCmdlet && _cmdlet.ShouldAcquirePolicyToken;
-            if (!userRequested)
+            if (!_shouldAcquire)
             {
                 EnqueueDebug("Skip: user did not request token (no -AcquirePolicyToken).");
                 return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
             }
 
-            var isWhatIf = _cmdlet.MyInvocation?.BoundParameters?.ContainsKey("WhatIf") == true;
-            if (isWhatIf)
+            if (_isWhatIf)
             {
                 EnqueueDebug("Skip: -WhatIf present (dry run).");
                 return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
@@ -78,11 +97,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
             try
             {
                 var token = await AcquirePolicyTokenAsync(request, cancellationToken).ConfigureAwait(false);
-                
-                //Debug token, as is
-                // EnqueueDebug($"Token: {token}");
-                
-                
+
                 if (!string.IsNullOrEmpty(token))
                 {
                     if (request.Headers.Contains("x-ms-policy-external-evaluations"))
@@ -144,7 +159,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                     httpMethod = originalRequest.Method.Method,
                     content = contentObj
                 },
-                changeReference = _cmdlet?.CurrentChangeReference
+                changeReference = _changeReference
             };
             EnqueueDebug("Payload prepared.");
 
@@ -165,7 +180,9 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 tokenRequest.Headers.TryAddWithoutValidation("x-ms-authorization-auxiliary", auxValues);
             }
 
-            using (var http = new HttpClient())
+            var isOwnedClient = _tokenHttpClient == null;
+            var http = _tokenHttpClient ?? new HttpClient();
+            try
             {
                 EnqueueDebug($"POST acquirePolicyToken {tokenUri}");
                 var response = await http.SendAsync(tokenRequest, cancellationToken).ConfigureAwait(false);
@@ -188,7 +205,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 }
                 else if (response.StatusCode == HttpStatusCode.Accepted)
                 {
-                    EnqueueDebug("202 Accepted received (async not supported)." );
+                    EnqueueDebug("202 Accepted received (async not supported).");
                     throw new InvalidOperationException("Asynchronous policy token acquisition (202 Accepted) is not supported.");
                 }
                 else
@@ -196,6 +213,10 @@ namespace Microsoft.WindowsAzure.Commands.Common
                     EnqueueDebug("Non-success status; will throw.");
                     throw new InvalidOperationException($"Policy token acquisition failed with {(int)response.StatusCode} {response.StatusCode}: {responseContent}");
                 }
+            }
+            finally
+            {
+                if (isOwnedClient) http.Dispose();
             }
         }
 
@@ -212,14 +233,14 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
         public object Clone()
         {
-            return new AcquirePolicyTokenHandler(_cmdlet);
+            return new AcquirePolicyTokenHandler(_shouldAcquire, _changeReference, _isWhatIf, _debugMessages, _tokenHttpClient);
         }
 
         private void EnqueueDebug(string message)
         {
             try
             {
-                _cmdlet?.DebugMessages?.Enqueue($"{LogPrefix} {message}");
+                _debugMessages?.Enqueue($"{LogPrefix} {message}");
             }
             catch { }
         }
