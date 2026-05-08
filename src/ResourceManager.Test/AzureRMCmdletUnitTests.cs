@@ -29,8 +29,11 @@ namespace Microsoft.Azure.Commands.ResourceManager.Test
             var positive = new PositiveCmdlet();
             var dynamicParameters = positive.GetDynamicParameters() as RuntimeDefinedParameterDictionary;
             Assert.NotNull(dynamicParameters);
-            Assert.Single(dynamicParameters);
+            // AcquirePolicyToken + ChangeReference + SubscriptionId = 3
+            Assert.Equal(3, dynamicParameters.Count);
             Assert.NotNull(dynamicParameters["SubscriptionId"]);
+            Assert.NotNull(dynamicParameters["AcquirePolicyToken"]);
+            Assert.NotNull(dynamicParameters["ChangeReference"]);
         }
 
         [Fact]
@@ -38,7 +41,10 @@ namespace Microsoft.Azure.Commands.ResourceManager.Test
         {
             var negative = new NegativeCmdlet();
             var dynamicParameters = negative.GetDynamicParameters() as RuntimeDefinedParameterDictionary;
-            Assert.Empty(dynamicParameters);
+            // AcquirePolicyToken + ChangeReference = 2 (no SubscriptionId since no [SupportsSubscriptionId])
+            Assert.Equal(2, dynamicParameters.Count);
+            Assert.NotNull(dynamicParameters["AcquirePolicyToken"]);
+            Assert.NotNull(dynamicParameters["ChangeReference"]);
         }
 
         [Fact]
@@ -49,10 +55,12 @@ namespace Microsoft.Azure.Commands.ResourceManager.Test
             var positiveWithOwnParam = new PositiveCmdletWithOwnDynamicParam();
             var dynamicParameters = positiveWithOwnParam.GetDynamicParameters() as RuntimeDefinedParameterDictionary;
             Assert.NotNull(dynamicParameters);
-            Assert.Collection(dynamicParameters,
-                pair => { Assert.Equal("SubscriptionId", pair.Key); },
-                pair => { Assert.Equal("DP", pair.Key); }
-            );
+            // AcquirePolicyToken + ChangeReference + SubscriptionId + DP = 4
+            Assert.Equal(4, dynamicParameters.Count);
+            Assert.NotNull(dynamicParameters["AcquirePolicyToken"]);
+            Assert.NotNull(dynamicParameters["ChangeReference"]);
+            Assert.NotNull(dynamicParameters["SubscriptionId"]);
+            Assert.NotNull(dynamicParameters["DP"]);
         }
 
         [SupportsSubscriptionId]

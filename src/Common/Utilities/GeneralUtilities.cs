@@ -37,7 +37,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
     {
         private static Assembly assembly = Assembly.GetExecutingAssembly();
 
-        private static List<string> AuthorizationHeaderNames = new List<string>() { "Authorization" };
+        private static List<string> AuthorizationHeaderNames = new List<string>() { "Authorization", "x-ms-policy-external-evaluations" };
 
         // this is only used to determine cutoff for streams (not xml or json).
         private const int StreamCutOffSize = 10 * 1024; //10KB

@@ -26,6 +26,7 @@ using Microsoft.WindowsAzure.Commands.Common.Sanitizer;
 using Microsoft.WindowsAzure.Commands.Common.Utilities;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -41,7 +42,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
     /// <summary>
     /// Represents base class for all Azure cmdlets.
     /// </summary>
-    public abstract class AzurePSCmdlet : PSCmdlet, IDisposable
+    public abstract class AzurePSCmdlet : PSCmdlet, IDisposable, IDynamicParameters
     {
         private const string PSVERSION = "PSVersion";
         private const string DEFAULT_PSVERSION = "3.0.0.0";
@@ -177,6 +178,38 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                     return outputSanitizer;
 
                 return null;
+            }
+        }
+
+        internal const string AcquirePolicyTokenParamName = "AcquirePolicyToken";
+        internal const string ChangeReferenceParamName = "ChangeReference";
+
+        internal virtual string CurrentChangeReference
+        {
+            get
+            {
+                var bp = this.MyInvocation?.BoundParameters;
+                if (bp != null && bp.ContainsKey(ChangeReferenceParamName))
+                {
+                    return bp[ChangeReferenceParamName] as string;
+                }
+
+                return null;
+            }
+        }
+
+        internal virtual bool ShouldAcquirePolicyToken
+        {
+            get
+            {
+                var bp = this.MyInvocation?.BoundParameters;
+                if (bp == null)
+                {
+                    return false;
+                }
+                var acquire = bp.ContainsKey(AcquirePolicyTokenParamName) && ((SwitchParameter)bp[AcquirePolicyTokenParamName]).IsPresent;
+                var changeRef = bp.ContainsKey(ChangeReferenceParamName) && !string.IsNullOrEmpty(bp[ChangeReferenceParamName] as string);
+                return acquire || changeRef;
             }
         }
 
@@ -324,7 +357,9 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             AzureSession.Instance.ClientFactory.AddUserAgent("AzurePowershell", string.Format("v{0}", AzVersion));
             AzureSession.Instance.ClientFactory.AddUserAgent(PSVERSION, string.Format("v{0}", PowerShellVersion));
             AzureSession.Instance.ClientFactory.AddUserAgent(ModuleName, this.ModuleVersion);
-            try {
+            
+            try
+            {
                 string hostEnv = AzurePSCmdlet.getEnvUserAgent();
                 if (!String.IsNullOrWhiteSpace(hostEnv))
                 {
@@ -335,11 +370,18 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             {
                 // ignore if it failed.
             }
+            
+            // Snapshot cmdlet state into the handler — no cmdlet reference held.
+            AzureSession.Instance.ClientFactory.AddHandler(new AcquirePolicyTokenHandler(
+                this.ShouldAcquirePolicyToken,
+                this.CurrentChangeReference,
+                this.MyInvocation?.BoundParameters?.ContainsKey("WhatIf") == true,
+                this.DebugMessages));
 
             AzureSession.Instance.ClientFactory.AddHandler(
                 new CmdletInfoHandler(this.CommandRuntime.ToString(),
                     this.ParameterSetName, this._clientRequestId));
-
+            
         }
 
         protected virtual void TearDownHttpClientPipeline()
@@ -356,8 +398,70 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             {
                 // ignore if it failed.
             }
+
             AzureSession.Instance.ClientFactory.RemoveUserAgent(ModuleName);
+            AzureSession.Instance.ClientFactory.RemoveHandler(typeof(AcquirePolicyTokenHandler));
             AzureSession.Instance.ClientFactory.RemoveHandler(typeof(CmdletInfoHandler));
+        }
+
+        /// <summary>
+        /// Dynamic parameters for policy token acquisition and any previously registered dynamic parameters (e.g. AsJob).
+        /// </summary>
+        public virtual object GetDynamicParameters()
+        {
+            var dict = new RuntimeDefinedParameterDictionary();
+
+            // Preserve existing dynamic parameters if any were registered via RegisterDynamicParameters
+            if (AsJobDynamicParameters != null)
+            {
+                foreach (var kv in AsJobDynamicParameters)
+                {
+                    dict[kv.Key] = kv.Value;
+                }
+            }
+
+            // Do not add parameters for read-only cmdlets (Get-*/Test-*/List-*/Show-*)
+            var commandName = this.MyInvocation?.MyCommand?.Name ?? string.Empty;
+
+            if (commandName.StartsWith("Get", StringComparison.OrdinalIgnoreCase)
+                || commandName.StartsWith("Test", StringComparison.OrdinalIgnoreCase)
+                || commandName.StartsWith("List", StringComparison.OrdinalIgnoreCase)
+                || commandName.StartsWith("Show", StringComparison.OrdinalIgnoreCase))
+            {
+                return dict;
+            }
+
+            if (!dict.ContainsKey(AcquirePolicyTokenParamName))
+            {
+                dict.Add(AcquirePolicyTokenParamName, new RuntimeDefinedParameter(
+                    AcquirePolicyTokenParamName,
+                    typeof(SwitchParameter),
+                    new Collection<Attribute>
+                    {
+                        new ParameterAttribute
+                        {
+                            HelpMessage = "Acquire an Azure Policy token automatically for this resource operation.",
+                            ParameterSetName = ParameterAttribute.AllParameterSets
+                        }
+                    }));
+            }
+
+            if (!dict.ContainsKey(ChangeReferenceParamName))
+            {
+                dict.Add(ChangeReferenceParamName, new RuntimeDefinedParameter(
+                    ChangeReferenceParamName,
+                    typeof(string),
+                    new Collection<Attribute>
+                    {
+                        new ParameterAttribute
+                        {
+                            HelpMessage = "The change reference resource ID for this resource operation.",
+                            ParameterSetName = ParameterAttribute.AllParameterSets
+                        }
+                    }));
+            }
+
+            return dict;
         }
 
         /// <summary>
