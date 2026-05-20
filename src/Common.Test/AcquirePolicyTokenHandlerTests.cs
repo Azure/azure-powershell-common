@@ -12,6 +12,8 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using Microsoft.Azure.Commands.Common;
+using Microsoft.Azure.Commands.Common.Exceptions;
 using Microsoft.WindowsAzure.Commands.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -841,6 +843,28 @@ namespace Commands.Common.Tests
             Assert.True(capturedTokenRequest.Headers.Contains("x-ms-authorization-auxiliary"));
         }
 
+        // ----- Token request forwards x-ms-client-request-id for log correlation -----
+
+        [Fact]
+        public async Task E2E_TokenRequest_ForwardsClientRequestId()
+        {
+            HttpRequestMessage capturedTokenRequest = null;
+            var tokenClient = CreateMockTokenServer(req => capturedTokenRequest = req);
+            var (handler, client) = CreateTestPipeline(tokenClient);
+
+            var request = new HttpRequestMessage(HttpMethod.Delete,
+                $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/sa1?api-version=2024-01-01");
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", "test-token");
+            request.Headers.Add("x-ms-client-request-id", "correlation-id-abc-123");
+
+            await client.SendAsync(request);
+
+            Assert.True(capturedTokenRequest.Headers.Contains("x-ms-client-request-id"),
+                "Token request must forward x-ms-client-request-id for log correlation.");
+            Assert.Equal("correlation-id-abc-123",
+                capturedTokenRequest.Headers.GetValues("x-ms-client-request-id").First());
+        }
+
         // ----- Token API failure returns clear error -----
 
         [Fact]
@@ -849,12 +873,13 @@ namespace Commands.Common.Tests
             var tokenClient = CreateFailingTokenServer(HttpStatusCode.Forbidden, "Access denied");
             var (handler, client) = CreateTestPipeline(tokenClient);
 
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            var ex = await Assert.ThrowsAsync<AzPSCloudException>(() =>
                 client.SendAsync(new HttpRequestMessage(HttpMethod.Delete,
                     $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/sa1?api-version=2024-01-01")));
 
-            Assert.Contains("Failed to acquire policy token", ex.Message);
+            Assert.Contains("Policy token acquisition failed", ex.Message);
             Assert.Contains("403", ex.Message);
+            Assert.Equal(ErrorKind.ServiceError, ex.ErrorKind);
         }
 
         // ----- Token API returns 200 but no token field -----
@@ -873,12 +898,13 @@ namespace Commands.Common.Tests
             var tokenClient = new HttpClient(handler);
             var (pipelineHandler, client) = CreateTestPipeline(tokenClient);
 
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            var ex = await Assert.ThrowsAsync<AzPSCloudException>(() =>
                 client.SendAsync(new HttpRequestMessage(HttpMethod.Delete,
                     $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/sa1?api-version=2024-01-01")));
 
-            Assert.Contains("No token returned", ex.Message);
+            Assert.Contains("no token was returned", ex.Message);
             Assert.Contains("validator error", ex.Message);
+            Assert.Equal(ErrorKind.ServiceError, ex.ErrorKind);
         }
 
         // ----- GET request is NOT intercepted even with flag -----
