@@ -21,6 +21,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Azure.Commands.Common;
+using Microsoft.Azure.Commands.Common.Exceptions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -112,10 +114,22 @@ namespace Microsoft.WindowsAzure.Commands.Common
                     EnqueueDebug("No token returned (null/empty).");
                 }
             }
+            catch (AzPSInvalidOperationException)
+            {
+                throw;
+            }
+            catch (AzPSCloudException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 EnqueueDebug($"Exception: {ex.GetType().Name}: {ex.Message}");
-                throw new InvalidOperationException($"Failed to acquire policy token: {ex.Message}", ex);
+                throw new AzPSInvalidOperationException(
+                    $"Failed to acquire policy token for {request.Method} {request.RequestUri}: {ex.Message}",
+                    ErrorKind.ServiceError,
+                    ex,
+                    desensitizedMessage: "Failed to acquire policy token.");
             }
 
             return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
@@ -126,8 +140,11 @@ namespace Microsoft.WindowsAzure.Commands.Common
             var subscriptionId = ExtractSubscriptionId(originalRequest.RequestUri);
             if (string.IsNullOrEmpty(subscriptionId))
             {
-                EnqueueDebug("Failed: subscription id not found in URI.");
-                throw new InvalidOperationException("Unable to determine subscription ID for policy token acquisition.");
+                EnqueueDebug($"Failed: subscription id not found in URI {originalRequest.RequestUri}.");
+                throw new AzPSInvalidOperationException(
+                    $"Unable to determine subscription ID for policy token acquisition from URI: {originalRequest.RequestUri}",
+                    ErrorKind.UserError,
+                    desensitizedMessage: "Unable to determine subscription ID for policy token acquisition.");
             }
 
             var authority = originalRequest.RequestUri.GetLeftPart(UriPartial.Authority);
@@ -180,6 +197,10 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 tokenRequest.Headers.TryAddWithoutValidation("x-ms-authorization-auxiliary", auxValues);
             }
+            if (originalRequest.Headers.TryGetValues("x-ms-client-request-id", out var clientRequestIdValues))
+            {
+                tokenRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", clientRequestIdValues);
+            }
 
             var isOwnedClient = _tokenHttpClient == null;
             var http = _tokenHttpClient ?? new HttpClient();
@@ -198,21 +219,33 @@ namespace Microsoft.WindowsAzure.Commands.Common
                         if (string.IsNullOrEmpty(token))
                         {
                             EnqueueDebug("Response OK but token missing.");
-                            throw new InvalidOperationException($"No token returned. Response:{responseContent}");
+                            throw new AzPSCloudException(
+                                $"Policy token acquisition succeeded but no token was returned. Response: {responseContent}",
+                                ErrorKind.ServiceError,
+                                desensitizedMessage: "Policy token acquisition succeeded but no token was returned.");
                         }
                         return token;
                     }
-                    throw new InvalidOperationException("Empty response body when acquiring policy token.");
+                    throw new AzPSCloudException(
+                        "Policy token acquisition returned an empty response body.",
+                        ErrorKind.ServiceError,
+                        desensitizedMessage: "Policy token acquisition returned an empty response body.");
                 }
                 else if (response.StatusCode == HttpStatusCode.Accepted)
                 {
                     EnqueueDebug("202 Accepted received (async not supported).");
-                    throw new InvalidOperationException("Asynchronous policy token acquisition (202 Accepted) is not supported.");
+                    throw new AzPSCloudException(
+                        "Asynchronous policy token acquisition (202 Accepted) is not supported.",
+                        ErrorKind.ServiceError,
+                        desensitizedMessage: "Asynchronous policy token acquisition (202 Accepted) is not supported.");
                 }
                 else
                 {
-                    EnqueueDebug("Non-success status; will throw.");
-                    throw new InvalidOperationException($"Policy token acquisition failed with {(int)response.StatusCode} {response.StatusCode}: {responseContent}");
+                    EnqueueDebug($"Non-success status {(int)response.StatusCode}; will throw.");
+                    throw new AzPSCloudException(
+                        $"Policy token acquisition failed with {(int)response.StatusCode} {response.StatusCode}: {responseContent}",
+                        ErrorKind.ServiceError,
+                        desensitizedMessage: $"Policy token acquisition failed with status {(int)response.StatusCode}.");
                 }
             }
             finally
