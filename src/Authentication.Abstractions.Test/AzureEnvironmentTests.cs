@@ -144,5 +144,39 @@ namespace Authentication.Abstractions.Test
             Assert.Empty(armEnvironments[EnvironmentName.AzureChinaCloud].GalleryUrl);
             Assert.Empty(armEnvironments[EnvironmentName.AzureUSGovernment].GalleryUrl);
         }
+
+        [Fact]
+        public void TestArmMicrosoftGraphResourceIdWithoutTrailingSlash()
+        {
+            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData/ArmResponseMicrosoftGraphNoTrailingSlash.json");
+            var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
+
+            Assert.True(armEnvironments.ContainsKey("AzureBleuCloud"));
+            var env = armEnvironments["AzureBleuCloud"];
+
+            Assert.Equal(
+                "https://graph.microsoft.bleu.example",
+                env.GetProperty(AzureEnvironment.ExtendedEndpoint.MicrosoftGraphEndpointResourceId));
+            Assert.Equal(
+                "https://graph.microsoft.bleu.example",
+                env.GetProperty(AzureEnvironment.ExtendedEndpoint.MicrosoftGraphUrl));
+        }
+
+        [Fact]
+        public void TestArmMicrosoftGraphResourceIdWithTrailingSlash()
+        {
+            Environment.SetEnvironmentVariable(ArmMetadataEnvVariable, @"TestData/ArmResponseMicrosoftGraphWithTrailingSlash.json");
+            var armEnvironments = AzureEnvironment.InitializeBuiltInEnvironments(null, httpOperations: TestOperationsFactory.Create().GetHttpOperations());
+
+            Assert.True(armEnvironments.ContainsKey("AzureBleuCloud"));
+            var env = armEnvironments["AzureBleuCloud"];
+
+            Assert.Equal(
+                "https://graph.microsoft.bleu.example/",
+                env.GetProperty(AzureEnvironment.ExtendedEndpoint.MicrosoftGraphEndpointResourceId));
+            Assert.Equal(
+                "https://graph.microsoft.bleu.example",
+                env.GetProperty(AzureEnvironment.ExtendedEndpoint.MicrosoftGraphUrl));
+        }
     }
 }

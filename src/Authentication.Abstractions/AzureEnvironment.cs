@@ -204,13 +204,10 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Abstractions
             if (!string.IsNullOrEmpty(armMetadata.MicrosoftGraphResourceId))
             {
                 azureEnvironment.SetProperty(ExtendedEndpoint.MicrosoftGraphEndpointResourceId, armMetadata.MicrosoftGraphResourceId);
-                // ARM endpoint only gives us graph resource ID (with ending slash "/"),
-                // we assume the Url (endpoint to where we send requests) equals the resource ID without the slash
-                if (armMetadata.MicrosoftGraphResourceId.EndsWith("/"))
-                {
-                    azureEnvironment.SetProperty(ExtendedEndpoint.MicrosoftGraphUrl,
-                        armMetadata.MicrosoftGraphResourceId.TrimEnd('/'));
-                }
+                // ARM endpoint gives us the graph resource ID, which may or may not include a trailing slash.
+                // We assume the Url (endpoint to where we send requests) equals the resource ID without the slash.
+                azureEnvironment.SetProperty(ExtendedEndpoint.MicrosoftGraphUrl,
+                    armMetadata.MicrosoftGraphResourceId.TrimEnd('/'));
             }
 
             if (!string.IsNullOrEmpty(armMetadata.AttestationResourceId))
