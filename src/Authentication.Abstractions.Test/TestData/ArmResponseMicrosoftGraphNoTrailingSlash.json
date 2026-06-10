@@ -1,0 +1,42 @@
+[
+  {
+    "portal": "https://portal.bleu.example",
+    "authentication": {
+      "loginEndpoint": "https://login.bleu.example",
+      "audiences": [
+        "https://management.core.bleu.example/",
+        "https://management.bleu.example/"
+      ],
+      "tenant": "common",
+      "identityProvider": "AAD"
+    },
+    "media": "https://rest.media.bleu.example",
+    "graphAudience": "https://graph.windows.net/",
+    "graph": "https://graph.windows.net/",
+    "name": "AzureBleuCloud",
+    "suffixes": {
+      "azureDataLakeStoreFileSystem": "azuredatalakestore.bleu.example",
+      "acrLoginServer": "azurecr.bleu.example",
+      "sqlServerHostname": "database.bleu.example",
+      "azureDataLakeAnalyticsCatalogAndJob": "azuredatalakeanalytics.bleu.example",
+      "keyVaultDns": "vault.bleu.example",
+      "storage": "core.bleu.example",
+      "azureFrontDoorEndpointSuffix": "azurefd.bleu.example",
+      "mhsmDns": "managedhsm.bleu.example",
+      "synapseAnalytics": "dev.azuresynapse.bleu.example",
+      "attestationEndpoint": "attest.bleu.example"
+    },
+    "batch": "https://batch.core.bleu.example/",
+    "resourceManager": "https://management.bleu.example/",
+    "vmImageAliasDoc": "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-compute/quickstart-templates/aliases.json",
+    "activeDirectoryDataLake": "https://datalake.bleu.example/",
+    "sqlManagement": "https://management.core.bleu.example:8443/",
+    "microsoftGraphResourceId": "https://graph.microsoft.bleu.example",
+    "appInsightsResourceId": "https://api.applicationinsights.bleu.example",
+    "appInsightsTelemetryChannelResourceId": "https://dc.applicationinsights.bleu.example/v2/track",
+    "attestationResourceId": "https://attest.bleu.example",
+    "synapseAnalyticsResourceId": "https://dev.azuresynapse.bleu.example",
+    "logAnalyticsResourceId": "https://api.loganalytics.bleu.example",
+    "ossrDbmsResourceId": "https://ossrdbms-aad.database.bleu.example"
+  }
+]
