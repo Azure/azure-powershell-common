@@ -36,7 +36,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         {
             if (dict == null)
             {
-                return;
+                throw new ArgumentNullException(nameof(dict));
             }
 
             if (!dict.ContainsKey(AcquirePolicyTokenParamName))

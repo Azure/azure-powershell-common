@@ -38,9 +38,11 @@ namespace Microsoft.WindowsAzure.Commands.Common
     {
         private const string TokenApiVersion = "2025-03-01";
         private const string PolicyTokenHeaderName = "x-ms-policy-external-evaluations";
-        private const string LogPrefix = "[AcquirePolicyTokenHandler]";
+        private const string LogPrefix = "[PolicyTokenAcquirer]";
 
         private static readonly Regex SubscriptionIdRegex = new Regex(@"/subscriptions/([0-9a-fA-F-]{36})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static readonly HttpClient SharedTokenHttpClient = new HttpClient();
 
         private static readonly HashSet<string> _allowedWriteMethods = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -204,57 +206,49 @@ namespace Microsoft.WindowsAzure.Commands.Common
                     tokenRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", clientRequestIdValues);
                 }
 
-                var isOwnedClient = tokenHttpClient == null;
-                var http = tokenHttpClient ?? new HttpClient();
-                try
+                var http = tokenHttpClient ?? SharedTokenHttpClient;
+                EnqueueDebug(debugMessages, $"POST acquirePolicyToken {tokenUri}");
+                using (var response = await http.SendAsync(tokenRequest, cancellationToken).ConfigureAwait(false))
                 {
-                    EnqueueDebug(debugMessages, $"POST acquirePolicyToken {tokenUri}");
-                    using (var response = await http.SendAsync(tokenRequest, cancellationToken).ConfigureAwait(false))
+                    EnqueueDebug(debugMessages, $"Response {(int)response.StatusCode} {response.StatusCode}");
+                    var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    if (response.StatusCode == HttpStatusCode.OK)
                     {
-                        EnqueueDebug(debugMessages, $"Response {(int)response.StatusCode} {response.StatusCode}");
-                        var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                        if (response.StatusCode == HttpStatusCode.OK)
+                        if (!string.IsNullOrWhiteSpace(responseContent))
                         {
-                            if (!string.IsNullOrWhiteSpace(responseContent))
+                            var obj = JsonConvert.DeserializeObject<JObject>(responseContent);
+                            var token = obj?["token"]?.ToString();
+                            if (string.IsNullOrEmpty(token))
                             {
-                                var obj = JsonConvert.DeserializeObject<JObject>(responseContent);
-                                var token = obj?["token"]?.ToString();
-                                if (string.IsNullOrEmpty(token))
-                                {
-                                    EnqueueDebug(debugMessages, "Response OK but token missing.");
-                                    throw new AzPSCloudException(
-                                        $"Policy token acquisition succeeded but no token was returned. Response: {responseContent}",
-                                        ErrorKind.ServiceError,
-                                        desensitizedMessage: "Policy token acquisition succeeded but no token was returned.");
-                                }
-                                return token;
+                                EnqueueDebug(debugMessages, "Response OK but token missing.");
+                                throw new AzPSCloudException(
+                                    $"Policy token acquisition succeeded but no token was returned. Response: {responseContent}",
+                                    ErrorKind.ServiceError,
+                                    desensitizedMessage: "Policy token acquisition succeeded but no token was returned.");
                             }
-                            throw new AzPSCloudException(
-                                "Policy token acquisition returned an empty response body.",
-                                ErrorKind.ServiceError,
-                                desensitizedMessage: "Policy token acquisition returned an empty response body.");
+                            return token;
                         }
-                        else if (response.StatusCode == HttpStatusCode.Accepted)
-                        {
-                            EnqueueDebug(debugMessages, "202 Accepted received (async not supported).");
-                            throw new AzPSCloudException(
-                                "Asynchronous policy token acquisition (202 Accepted) is not supported.",
-                                ErrorKind.ServiceError,
-                                desensitizedMessage: "Asynchronous policy token acquisition (202 Accepted) is not supported.");
-                        }
-                        else
-                        {
-                            EnqueueDebug(debugMessages, $"Non-success status {(int)response.StatusCode}; will throw.");
-                            throw new AzPSCloudException(
-                                $"Policy token acquisition failed with {(int)response.StatusCode} {response.StatusCode}: {responseContent}",
-                                ErrorKind.ServiceError,
-                                desensitizedMessage: $"Policy token acquisition failed with status {(int)response.StatusCode}.");
-                        }
+                        throw new AzPSCloudException(
+                            "Policy token acquisition returned an empty response body.",
+                            ErrorKind.ServiceError,
+                            desensitizedMessage: "Policy token acquisition returned an empty response body.");
                     }
-                }
-                finally
-                {
-                    if (isOwnedClient) http.Dispose();
+                    else if (response.StatusCode == HttpStatusCode.Accepted)
+                    {
+                        EnqueueDebug(debugMessages, "202 Accepted received (async not supported).");
+                        throw new AzPSCloudException(
+                            "Asynchronous policy token acquisition (202 Accepted) is not supported.",
+                            ErrorKind.ServiceError,
+                            desensitizedMessage: "Asynchronous policy token acquisition (202 Accepted) is not supported.");
+                    }
+                    else
+                    {
+                        EnqueueDebug(debugMessages, $"Non-success status {(int)response.StatusCode}; will throw.");
+                        throw new AzPSCloudException(
+                            $"Policy token acquisition failed with {(int)response.StatusCode} {response.StatusCode}: {responseContent}",
+                            ErrorKind.ServiceError,
+                            desensitizedMessage: $"Policy token acquisition failed with status {(int)response.StatusCode}.");
+                    }
                 }
             }
         }
