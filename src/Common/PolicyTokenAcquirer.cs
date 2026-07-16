@@ -71,6 +71,9 @@ namespace Microsoft.WindowsAzure.Commands.Common
             HttpClient tokenHttpClient,
             CancellationToken cancellationToken)
         {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+            if (request.RequestUri == null) throw new ArgumentException("RequestUri must be set.", nameof(request));
+
             EnqueueDebug(debugMessages, $"Intercept {request.Method} {request.RequestUri}");
 
             if (!_allowedWriteMethods.Contains(request.Method.Method))
@@ -180,75 +183,79 @@ namespace Microsoft.WindowsAzure.Commands.Common
             EnqueueDebug(debugMessages, "Payload prepared.");
 
             var payloadJson = JsonConvert.SerializeObject(payload);
-            var tokenRequest = new HttpRequestMessage(HttpMethod.Post, tokenUri)
+            using (var tokenRequest = new HttpRequestMessage(HttpMethod.Post, tokenUri)
             {
                 Content = new StringContent(payloadJson, Encoding.UTF8, "application/json")
-            };
-            tokenRequest.Headers.Add("x-ms-force-sync", "true");
+            })
+            {
+                tokenRequest.Headers.Add("x-ms-force-sync", "true");
 
-            // Forward auth headers if present (minimal parity with original request auth context)
-            if (originalRequest.Headers.Authorization != null)
-            {
-                tokenRequest.Headers.Authorization = originalRequest.Headers.Authorization;
-            }
-            if (originalRequest.Headers.TryGetValues("x-ms-authorization-auxiliary", out var auxValues))
-            {
-                tokenRequest.Headers.TryAddWithoutValidation("x-ms-authorization-auxiliary", auxValues);
-            }
-            if (originalRequest.Headers.TryGetValues("x-ms-client-request-id", out var clientRequestIdValues))
-            {
-                tokenRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", clientRequestIdValues);
-            }
-
-            var isOwnedClient = tokenHttpClient == null;
-            var http = tokenHttpClient ?? new HttpClient();
-            try
-            {
-                EnqueueDebug(debugMessages, $"POST acquirePolicyToken {tokenUri}");
-                var response = await http.SendAsync(tokenRequest, cancellationToken).ConfigureAwait(false);
-                EnqueueDebug(debugMessages, $"Response {(int)response.StatusCode} {response.StatusCode}");
-                var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                if (response.StatusCode == HttpStatusCode.OK)
+                // Forward auth headers if present (minimal parity with original request auth context)
+                if (originalRequest.Headers.Authorization != null)
                 {
-                    if (!string.IsNullOrWhiteSpace(responseContent))
+                    tokenRequest.Headers.Authorization = originalRequest.Headers.Authorization;
+                }
+                if (originalRequest.Headers.TryGetValues("x-ms-authorization-auxiliary", out var auxValues))
+                {
+                    tokenRequest.Headers.TryAddWithoutValidation("x-ms-authorization-auxiliary", auxValues);
+                }
+                if (originalRequest.Headers.TryGetValues("x-ms-client-request-id", out var clientRequestIdValues))
+                {
+                    tokenRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", clientRequestIdValues);
+                }
+
+                var isOwnedClient = tokenHttpClient == null;
+                var http = tokenHttpClient ?? new HttpClient();
+                try
+                {
+                    EnqueueDebug(debugMessages, $"POST acquirePolicyToken {tokenUri}");
+                    using (var response = await http.SendAsync(tokenRequest, cancellationToken).ConfigureAwait(false))
                     {
-                        var obj = JsonConvert.DeserializeObject<JObject>(responseContent);
-                        var token = obj?["token"]?.ToString();
-                        if (string.IsNullOrEmpty(token))
+                        EnqueueDebug(debugMessages, $"Response {(int)response.StatusCode} {response.StatusCode}");
+                        var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        if (response.StatusCode == HttpStatusCode.OK)
                         {
-                            EnqueueDebug(debugMessages, "Response OK but token missing.");
+                            if (!string.IsNullOrWhiteSpace(responseContent))
+                            {
+                                var obj = JsonConvert.DeserializeObject<JObject>(responseContent);
+                                var token = obj?["token"]?.ToString();
+                                if (string.IsNullOrEmpty(token))
+                                {
+                                    EnqueueDebug(debugMessages, "Response OK but token missing.");
+                                    throw new AzPSCloudException(
+                                        $"Policy token acquisition succeeded but no token was returned. Response: {responseContent}",
+                                        ErrorKind.ServiceError,
+                                        desensitizedMessage: "Policy token acquisition succeeded but no token was returned.");
+                                }
+                                return token;
+                            }
                             throw new AzPSCloudException(
-                                $"Policy token acquisition succeeded but no token was returned. Response: {responseContent}",
+                                "Policy token acquisition returned an empty response body.",
                                 ErrorKind.ServiceError,
-                                desensitizedMessage: "Policy token acquisition succeeded but no token was returned.");
+                                desensitizedMessage: "Policy token acquisition returned an empty response body.");
                         }
-                        return token;
+                        else if (response.StatusCode == HttpStatusCode.Accepted)
+                        {
+                            EnqueueDebug(debugMessages, "202 Accepted received (async not supported).");
+                            throw new AzPSCloudException(
+                                "Asynchronous policy token acquisition (202 Accepted) is not supported.",
+                                ErrorKind.ServiceError,
+                                desensitizedMessage: "Asynchronous policy token acquisition (202 Accepted) is not supported.");
+                        }
+                        else
+                        {
+                            EnqueueDebug(debugMessages, $"Non-success status {(int)response.StatusCode}; will throw.");
+                            throw new AzPSCloudException(
+                                $"Policy token acquisition failed with {(int)response.StatusCode} {response.StatusCode}: {responseContent}",
+                                ErrorKind.ServiceError,
+                                desensitizedMessage: $"Policy token acquisition failed with status {(int)response.StatusCode}.");
+                        }
                     }
-                    throw new AzPSCloudException(
-                        "Policy token acquisition returned an empty response body.",
-                        ErrorKind.ServiceError,
-                        desensitizedMessage: "Policy token acquisition returned an empty response body.");
                 }
-                else if (response.StatusCode == HttpStatusCode.Accepted)
+                finally
                 {
-                    EnqueueDebug(debugMessages, "202 Accepted received (async not supported).");
-                    throw new AzPSCloudException(
-                        "Asynchronous policy token acquisition (202 Accepted) is not supported.",
-                        ErrorKind.ServiceError,
-                        desensitizedMessage: "Asynchronous policy token acquisition (202 Accepted) is not supported.");
+                    if (isOwnedClient) http.Dispose();
                 }
-                else
-                {
-                    EnqueueDebug(debugMessages, $"Non-success status {(int)response.StatusCode}; will throw.");
-                    throw new AzPSCloudException(
-                        $"Policy token acquisition failed with {(int)response.StatusCode} {response.StatusCode}: {responseContent}",
-                        ErrorKind.ServiceError,
-                        desensitizedMessage: $"Policy token acquisition failed with status {(int)response.StatusCode}.");
-                }
-            }
-            finally
-            {
-                if (isOwnedClient) http.Dispose();
             }
         }
 
