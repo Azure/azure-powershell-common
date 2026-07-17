@@ -776,7 +776,12 @@ namespace Commands.Common.Tests
         public async Task E2E_TokenRequest_ContainsCorrectPayload()
         {
             HttpRequestMessage capturedTokenRequest = null;
-            var tokenClient = CreateMockTokenServer(req => capturedTokenRequest = req);
+            string capturedTokenBody = null;
+            var tokenClient = CreateMockTokenServer(req =>
+            {
+                capturedTokenRequest = req;
+                capturedTokenBody = req.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            });
             var (handler, client) = CreateTestPipeline(tokenClient);
 
             var deleteUri = $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/sa1?api-version=2024-01-01";
@@ -790,7 +795,7 @@ namespace Commands.Common.Tests
             Assert.Contains("api-version=2025-03-01", capturedTokenRequest.RequestUri.ToString());
 
             // Verify payload
-            var body = await capturedTokenRequest.Content.ReadAsStringAsync();
+            var body = capturedTokenBody;
             var payload = JObject.Parse(body);
             Assert.Equal(deleteUri, payload["operation"]["uri"].ToString());
             Assert.Equal("DELETE", payload["operation"]["httpMethod"].ToString());
@@ -804,8 +809,9 @@ namespace Commands.Common.Tests
         [Fact]
         public async Task E2E_TokenRequest_IncludesChangeReference()
         {
-            HttpRequestMessage capturedTokenRequest = null;
-            var tokenClient = CreateMockTokenServer(req => capturedTokenRequest = req);
+            string capturedTokenBody = null;
+            var tokenClient = CreateMockTokenServer(req =>
+                capturedTokenBody = req.Content.ReadAsStringAsync().GetAwaiter().GetResult());
 
             string changeRef = $"/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.ChangeSafety/changeStates/cs/stageProgressions/breakglassStage";
             var innerHandler = new MockInnerHandler((req, ct) =>
@@ -817,7 +823,7 @@ namespace Commands.Common.Tests
             await client.SendAsync(new HttpRequestMessage(HttpMethod.Delete,
                 $"{BaseUrl}/subscriptions/{TestSubId}/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/sa1?api-version=2024-01-01"));
 
-            var body = await capturedTokenRequest.Content.ReadAsStringAsync();
+            var body = capturedTokenBody;
             var payload = JObject.Parse(body);
             Assert.Equal(changeRef, payload["changeReference"].ToString());
         }
@@ -966,8 +972,9 @@ namespace Commands.Common.Tests
         [Fact]
         public async Task E2E_PutWithBody_BodyIncludedInTokenPayload()
         {
-            HttpRequestMessage capturedTokenRequest = null;
-            var tokenClient = CreateMockTokenServer(req => capturedTokenRequest = req);
+            string capturedTokenBody = null;
+            var tokenClient = CreateMockTokenServer(req =>
+                capturedTokenBody = req.Content.ReadAsStringAsync().GetAwaiter().GetResult());
             var (handler, client) = CreateTestPipeline(tokenClient);
 
             var requestBody = "{\"location\":\"eastus\",\"sku\":{\"name\":\"Standard_GRS\"}}";
@@ -979,7 +986,7 @@ namespace Commands.Common.Tests
 
             await client.SendAsync(request);
 
-            var tokenBody = await capturedTokenRequest.Content.ReadAsStringAsync();
+            var tokenBody = capturedTokenBody;
             var payload = JObject.Parse(tokenBody);
             Assert.Equal("eastus", payload["operation"]["content"]["location"].ToString());
             Assert.Equal("Standard_GRS", payload["operation"]["content"]["sku"]["name"].ToString());
