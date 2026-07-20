@@ -40,7 +40,7 @@ namespace Commands.Common.Tests
         [Fact]
         public void Clone_ReturnsNewInstance()
         {
-            var handler = new AcquirePolicyTokenHandler(false, null, false, null);
+            var handler = new AcquirePolicyTokenHandler(false, null, null);
             var clone = handler.Clone() as AcquirePolicyTokenHandler;
 
             Assert.NotNull(clone);
@@ -57,7 +57,7 @@ namespace Commands.Common.Tests
             var innerHandler = new MockInnerHandler((req, ct) =>
                 Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
 
-            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
             var request = new HttpRequestMessage(HttpMethod.Get,
                 "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/sa?api-version=2024-01-01");
@@ -75,7 +75,7 @@ namespace Commands.Common.Tests
             var innerHandler = new MockInnerHandler((req, ct) =>
                 Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
 
-            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
             var request = new HttpRequestMessage(HttpMethod.Head,
                 "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/test");
@@ -99,7 +99,7 @@ namespace Commands.Common.Tests
             var innerHandler = new MockInnerHandler((req, ct) =>
                 Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
 
-            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
             var request = new HttpRequestMessage(new HttpMethod(method),
                 "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/sa?api-version=2024-01-01");
@@ -125,7 +125,7 @@ namespace Commands.Common.Tests
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
             });
 
-            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
 
             await client.SendAsync(new HttpRequestMessage(HttpMethod.Delete,
@@ -144,7 +144,7 @@ namespace Commands.Common.Tests
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
             });
 
-            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
             var uri = "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/test?api-version=2024-01-01";
             var request = new HttpRequestMessage(HttpMethod.Put, uri);
@@ -336,7 +336,7 @@ namespace Commands.Common.Tests
                 });
             });
 
-            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
 
             var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Delete,
@@ -358,7 +358,7 @@ namespace Commands.Common.Tests
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.Created));
             });
 
-            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
 
             var request = new HttpRequestMessage(HttpMethod.Put,
@@ -380,7 +380,7 @@ namespace Commands.Common.Tests
             var innerHandler = new MockInnerHandler((req, ct) =>
                 Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
 
-            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
 
             var response = await client.SendAsync(new HttpRequestMessage(new HttpMethod("PATCH"),
@@ -401,7 +401,7 @@ namespace Commands.Common.Tests
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
             });
 
-            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
 
             var baseUrl = "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/";
@@ -423,7 +423,7 @@ namespace Commands.Common.Tests
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
             });
 
-            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
 
             var request = new HttpRequestMessage(HttpMethod.Put,
@@ -449,7 +449,7 @@ namespace Commands.Common.Tests
                     ReasonPhrase = "OK"
                 }));
 
-            var handler = new AcquirePolicyTokenHandler(false, null, false, null) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(false, null, null) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
 
             var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Delete,
@@ -619,7 +619,7 @@ namespace Commands.Common.Tests
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
             });
 
-            var handler = new AcquirePolicyTokenHandler(true, null, false, new ConcurrentQueue<string>(), tokenHttpClient)
+            var handler = new AcquirePolicyTokenHandler(true, null, new ConcurrentQueue<string>(), tokenHttpClient)
             {
                 InnerHandler = innerHandler
             };
@@ -817,7 +817,7 @@ namespace Commands.Common.Tests
             var innerHandler = new MockInnerHandler((req, ct) =>
                 Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
 
-            var handler = new AcquirePolicyTokenHandler(true, changeRef, false, new ConcurrentQueue<string>(), tokenClient) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(true, changeRef, new ConcurrentQueue<string>(), tokenClient) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
 
             await client.SendAsync(new HttpRequestMessage(HttpMethod.Delete,
@@ -955,7 +955,7 @@ namespace Commands.Common.Tests
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
             });
 
-            var handler = new AcquirePolicyTokenHandler(true, null, false, new ConcurrentQueue<string>(), tokenClient) { InnerHandler = innerHandler };
+            var handler = new AcquirePolicyTokenHandler(true, null, new ConcurrentQueue<string>(), tokenClient) { InnerHandler = innerHandler };
             var client = new HttpClient(handler);
 
             await client.SendAsync(new HttpRequestMessage(HttpMethod.Delete,

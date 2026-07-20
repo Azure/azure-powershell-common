@@ -374,7 +374,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             AzureSession.Instance.ClientFactory.AddHandler(new AcquirePolicyTokenHandler(
                 this.ShouldAcquirePolicyToken,
                 this.CurrentChangeReference,
-                this.MyInvocation?.BoundParameters?.ContainsKey("WhatIf") == true,
                 this.DebugMessages));
 
             AzureSession.Instance.ClientFactory.AddHandler(

@@ -29,7 +29,6 @@ namespace Microsoft.WindowsAzure.Commands.Common
     {
         private readonly bool _shouldAcquire;
         private readonly string _changeReference;
-        private readonly bool _isWhatIf;
         private readonly ConcurrentQueue<string> _debugMessages;
         private readonly HttpClient _tokenHttpClient;
 
@@ -40,32 +39,29 @@ namespace Microsoft.WindowsAzure.Commands.Common
         /// </summary>
         /// <param name="shouldAcquire">Whether the user requested policy token acquisition.</param>
         /// <param name="changeReference">The change reference ID, or null if not specified.</param>
-        /// <param name="isWhatIf">Whether -WhatIf was specified (dry run).</param>
         /// <param name="debugMessages">Queue for debug messages, or null.</param>
         /// <param name="tokenHttpClient">Optional HttpClient for the token API call (for testing).</param>
         public AcquirePolicyTokenHandler(
             bool shouldAcquire,
             string changeReference,
-            bool isWhatIf,
             ConcurrentQueue<string> debugMessages,
             HttpClient tokenHttpClient = null)
         {
             _shouldAcquire = shouldAcquire;
             _changeReference = changeReference;
-            _isWhatIf = isWhatIf;
             _debugMessages = debugMessages;
             _tokenHttpClient = tokenHttpClient;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            await Acquirer.StampPolicyTokenAsync(request, _shouldAcquire, _changeReference, _isWhatIf, _debugMessages, _tokenHttpClient, cancellationToken).ConfigureAwait(false);
+            await Acquirer.StampPolicyTokenAsync(request, _shouldAcquire, _changeReference, _debugMessages, _tokenHttpClient, cancellationToken).ConfigureAwait(false);
             return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
         }
 
         public object Clone()
         {
-            return new AcquirePolicyTokenHandler(_shouldAcquire, _changeReference, _isWhatIf, _debugMessages, _tokenHttpClient);
+            return new AcquirePolicyTokenHandler(_shouldAcquire, _changeReference, _debugMessages, _tokenHttpClient);
         }
     }
 }

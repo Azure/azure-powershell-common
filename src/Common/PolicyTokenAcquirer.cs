@@ -60,7 +60,6 @@ namespace Microsoft.WindowsAzure.Commands.Common
         /// <param name="request">The outgoing request to inspect and (optionally) stamp.</param>
         /// <param name="shouldAcquire">Whether the user requested policy token acquisition.</param>
         /// <param name="changeReference">The change reference ID, or null if not specified.</param>
-        /// <param name="isWhatIf">Whether -WhatIf was specified (dry run).</param>
         /// <param name="debugMessages">Queue for debug messages, or null.</param>
         /// <param name="tokenHttpClient">Optional HttpClient for the token API call (for testing).</param>
         /// <param name="cancellationToken">Cancellation token.</param>
@@ -68,7 +67,6 @@ namespace Microsoft.WindowsAzure.Commands.Common
             HttpRequestMessage request,
             bool shouldAcquire,
             string changeReference,
-            bool isWhatIf,
             ConcurrentQueue<string> debugMessages,
             HttpClient tokenHttpClient,
             CancellationToken cancellationToken)
@@ -87,12 +85,6 @@ namespace Microsoft.WindowsAzure.Commands.Common
             if (!shouldAcquire)
             {
                 EnqueueDebug(debugMessages, "Skip: user did not request token (no -AcquirePolicyToken).");
-                return;
-            }
-
-            if (isWhatIf)
-            {
-                EnqueueDebug(debugMessages, "Skip: -WhatIf present (dry run).");
                 return;
             }
 
