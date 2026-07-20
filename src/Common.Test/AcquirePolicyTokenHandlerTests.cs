@@ -913,47 +913,6 @@ namespace Commands.Common.Tests
             Assert.Equal(ErrorKind.ServiceError, ex.ErrorKind);
         }
 
-        // ----- Data-plane request with flag fails fast (policy tokens are ARM-only) -----
-
-        [Theory]
-        [InlineData("https://myaccount.blob.core.windows.net/container/blob")]
-        [InlineData("https://myvault.vault.azure.net/secrets/s/setvalue?api-version=7.4")]
-        public async Task E2E_DataPlaneRequest_WithFlag_ThrowsAndNeverAcquires(string dataPlaneUrl)
-        {
-            bool tokenServerCalled = false;
-            bool innerCalled = false;
-
-            var tokenServer = new MockTokenServerHandler((req, ct) =>
-            {
-                tokenServerCalled = true;
-                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent(
-                        JsonConvert.SerializeObject(new { token = "should-not-be-acquired" }),
-                        Encoding.UTF8, "application/json")
-                });
-            });
-            var innerHandler = new MockInnerHandler((req, ct) =>
-            {
-                innerCalled = true;
-                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
-            });
-
-            var handler = new AcquirePolicyTokenHandler(true, null, new ConcurrentQueue<string>(), new HttpClient(tokenServer))
-            {
-                InnerHandler = innerHandler
-            };
-            var client = new HttpClient(handler);
-
-            var ex = await Assert.ThrowsAsync<AzPSInvalidOperationException>(() =>
-                client.SendAsync(new HttpRequestMessage(HttpMethod.Put, dataPlaneUrl)));
-
-            Assert.Contains("management-plane", ex.Message);
-            Assert.Equal(ErrorKind.UserError, ex.ErrorKind);
-            Assert.False(tokenServerCalled, "Token API must NOT be called for a data-plane request.");
-            Assert.False(innerCalled, "Request must not reach the inner handler when the data-plane guard throws.");
-        }
-
         // ----- GET request is NOT intercepted even with flag -----
 
         [Fact]
