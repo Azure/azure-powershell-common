@@ -88,9 +88,24 @@ namespace Microsoft.WindowsAzure.Commands.Common
                 return;
             }
 
+            // Policy tokens apply only to Azure Resource Manager (management-plane) operations, which are
+            // subscription-scoped. Data-plane requests (e.g. Storage/Key Vault service endpoints) have no
+            // /subscriptions/{id} segment and cannot be governed by Azure Policy. Fail fast rather than
+            // silently proceeding without a token the user explicitly requested.
+            var subscriptionId = ExtractSubscriptionId(request.RequestUri);
+            if (string.IsNullOrEmpty(subscriptionId))
+            {
+                EnqueueDebug(debugMessages, $"Skip: non-ARM (data-plane) request {request.RequestUri}; policy token not applicable.");
+                throw new AzPSInvalidOperationException(
+                    $"-AcquirePolicyToken / -ChangeReference is only supported for Azure Resource Manager (management-plane) operations. " +
+                    $"This cmdlet issued a data-plane request ({request.Method} {request.RequestUri}) that is not subscription-scoped, so no Azure Policy token was acquired.",
+                    ErrorKind.UserError,
+                    desensitizedMessage: "-AcquirePolicyToken / -ChangeReference is only supported for Azure Resource Manager (management-plane) operations.");
+            }
+
             try
             {
-                var token = await AcquirePolicyTokenAsync(request, changeReference, debugMessages, tokenHttpClient, cancellationToken).ConfigureAwait(false);
+                var token = await AcquirePolicyTokenAsync(request, subscriptionId, changeReference, debugMessages, tokenHttpClient, cancellationToken).ConfigureAwait(false);
 
                 if (!string.IsNullOrEmpty(token))
                 {
@@ -127,21 +142,12 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
         private async Task<string> AcquirePolicyTokenAsync(
             HttpRequestMessage originalRequest,
+            string subscriptionId,
             string changeReference,
             ConcurrentQueue<string> debugMessages,
             HttpClient tokenHttpClient,
             CancellationToken cancellationToken)
         {
-            var subscriptionId = ExtractSubscriptionId(originalRequest.RequestUri);
-            if (string.IsNullOrEmpty(subscriptionId))
-            {
-                EnqueueDebug(debugMessages, $"Failed: subscription id not found in URI {originalRequest.RequestUri}.");
-                throw new AzPSInvalidOperationException(
-                    $"Unable to determine subscription ID for policy token acquisition from URI: {originalRequest.RequestUri}",
-                    ErrorKind.UserError,
-                    desensitizedMessage: "Unable to determine subscription ID for policy token acquisition.");
-            }
-
             var authority = originalRequest.RequestUri.GetLeftPart(UriPartial.Authority);
             var relativePath = $"/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/acquirePolicyToken?api-version={TokenApiVersion}";
             var tokenUri = new Uri(authority + relativePath);
