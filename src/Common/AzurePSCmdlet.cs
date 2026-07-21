@@ -26,7 +26,6 @@ using Microsoft.WindowsAzure.Commands.Common.Sanitizer;
 using Microsoft.WindowsAzure.Commands.Common.Utilities;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -181,8 +180,8 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             }
         }
 
-        internal const string AcquirePolicyTokenParamName = "AcquirePolicyToken";
-        internal const string ChangeReferenceParamName = "ChangeReference";
+        internal const string AcquirePolicyTokenParamName = ChangeSafetyParameters.AcquirePolicyTokenParamName;
+        internal const string ChangeReferenceParamName = ChangeSafetyParameters.ChangeReferenceParamName;
 
         internal virtual string CurrentChangeReference
         {
@@ -375,7 +374,6 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
             AzureSession.Instance.ClientFactory.AddHandler(new AcquirePolicyTokenHandler(
                 this.ShouldAcquirePolicyToken,
                 this.CurrentChangeReference,
-                this.MyInvocation?.BoundParameters?.ContainsKey("WhatIf") == true,
                 this.DebugMessages));
 
             AzureSession.Instance.ClientFactory.AddHandler(
@@ -431,35 +429,7 @@ namespace Microsoft.WindowsAzure.Commands.Utilities.Common
                 return dict;
             }
 
-            if (!dict.ContainsKey(AcquirePolicyTokenParamName))
-            {
-                dict.Add(AcquirePolicyTokenParamName, new RuntimeDefinedParameter(
-                    AcquirePolicyTokenParamName,
-                    typeof(SwitchParameter),
-                    new Collection<Attribute>
-                    {
-                        new ParameterAttribute
-                        {
-                            HelpMessage = "Acquire an Azure Policy token automatically for this resource operation.",
-                            ParameterSetName = ParameterAttribute.AllParameterSets
-                        }
-                    }));
-            }
-
-            if (!dict.ContainsKey(ChangeReferenceParamName))
-            {
-                dict.Add(ChangeReferenceParamName, new RuntimeDefinedParameter(
-                    ChangeReferenceParamName,
-                    typeof(string),
-                    new Collection<Attribute>
-                    {
-                        new ParameterAttribute
-                        {
-                            HelpMessage = "The change reference resource ID for this resource operation.",
-                            ParameterSetName = ParameterAttribute.AllParameterSets
-                        }
-                    }));
-            }
+            ChangeSafetyParameters.AddChangeSafetyParameters(dict);
 
             return dict;
         }
