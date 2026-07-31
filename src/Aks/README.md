@@ -1,1 +1,2 @@
 # Aks
+Common management client library for Azure Kubernetes Service.  Allows modules to safely take a dependency on a .Net SDK for AKS management functions without causing dependency conflicts with the Az.AKS module.

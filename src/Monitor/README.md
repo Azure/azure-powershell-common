@@ -1,0 +1,2 @@
+# Monitor
+Common management client library for Azure Monitor Service.  Allows modules to safely take a dependency on a .Net SDK for Monitor management functions without causing dependency conflicts with the Az.Monitor module.

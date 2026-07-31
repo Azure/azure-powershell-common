@@ -1,1 +1,2 @@
 # Network
+Common management client library for Azure Network Service.  Allows modules to safely take a dependency on a .Net SDK for Network management functions without causing dependency conflicts with the Az.Network module.

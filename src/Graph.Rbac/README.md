@@ -1,1 +1,2 @@
 # Graph Rbac
+Common management client library for AAD Graph Service.  Allows modules to safely take a dependency on a .Net SDK for AAD Graph functions without causing dependency conflicts with the Az.Resources module.
