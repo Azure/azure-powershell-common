@@ -283,12 +283,12 @@ namespace Commands.Common.Tests
     public class PolicyTokenConstantsTests
     {
         [Fact]
-        public void TokenApiVersion_Matches_2025_03_01()
+        public void TokenApiVersion_Matches_2026_07_01()
         {
             // Must match Azure CLI and the design spec
             string subscriptionId = "00000000-0000-0000-0000-000000000000";
-            var path = $"/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/acquirePolicyToken?api-version=2025-03-01";
-            Assert.Contains("api-version=2025-03-01", path);
+            var path = $"/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/acquirePolicyToken?api-version=2026-07-01";
+            Assert.Contains("api-version=2026-07-01", path);
             Assert.Contains("Microsoft.Authorization/acquirePolicyToken", path);
         }
 
@@ -792,7 +792,8 @@ namespace Commands.Common.Tests
             Assert.Equal(HttpMethod.Post, capturedTokenRequest.Method);
             Assert.Contains("acquirePolicyToken", capturedTokenRequest.RequestUri.ToString());
             Assert.Contains(TestSubId, capturedTokenRequest.RequestUri.ToString());
-            Assert.Contains("api-version=2025-03-01", capturedTokenRequest.RequestUri.ToString());
+            Assert.Contains("api-version=2026-07-01", capturedTokenRequest.RequestUri.ToString());
+            Assert.Contains("/resourceGroups/rg/providers/Microsoft.Authorization/", capturedTokenRequest.RequestUri.ToString());
 
             // Verify payload
             var body = capturedTokenBody;
@@ -902,7 +903,8 @@ namespace Commands.Common.Tests
                 });
             });
             var tokenClient = new HttpClient(handler);
-            var (pipelineHandler, client) = CreateTestPipeline(tokenClient);
+            bool originalRequestSent = false;
+            var (pipelineHandler, client) = CreateTestPipeline(tokenClient, _ => originalRequestSent = true);
 
             var ex = await Assert.ThrowsAsync<AzPSCloudException>(() =>
                 client.SendAsync(new HttpRequestMessage(HttpMethod.Delete,
@@ -911,6 +913,7 @@ namespace Commands.Common.Tests
             Assert.Contains("no token was returned", ex.Message);
             Assert.Contains("validator error", ex.Message);
             Assert.Equal(ErrorKind.ServiceError, ex.ErrorKind);
+            Assert.False(originalRequestSent);
         }
 
         // ----- GET request is NOT intercepted even with flag -----
@@ -1026,4 +1029,3 @@ namespace Commands.Common.Tests
         }
     }
 }
-

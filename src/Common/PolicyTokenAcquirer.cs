@@ -36,11 +36,11 @@ namespace Microsoft.WindowsAzure.Commands.Common
     /// </summary>
     public class PolicyTokenAcquirer
     {
-        private const string TokenApiVersion = "2025-03-01";
+        private const string TokenApiVersion = "2026-07-01";
         private const string PolicyTokenHeaderName = "x-ms-policy-external-evaluations";
         private const string LogPrefix = "[PolicyTokenAcquirer]";
 
-        private static readonly Regex SubscriptionIdRegex = new Regex(@"/subscriptions/([0-9a-fA-F-]{36})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex ScopeRegex = new Regex(@"^/subscriptions/[0-9a-fA-F-]{36}(?:/resourceGroups/[^/]+)?(?=/|$)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly HttpClient SharedTokenHttpClient = new HttpClient();
 
@@ -92,19 +92,12 @@ namespace Microsoft.WindowsAzure.Commands.Common
             {
                 var token = await AcquirePolicyTokenAsync(request, changeReference, debugMessages, tokenHttpClient, cancellationToken).ConfigureAwait(false);
 
-                if (!string.IsNullOrEmpty(token))
+                if (request.Headers.Contains(PolicyTokenHeaderName))
                 {
-                    if (request.Headers.Contains(PolicyTokenHeaderName))
-                    {
-                        request.Headers.Remove(PolicyTokenHeaderName);
-                    }
-                    request.Headers.Add(PolicyTokenHeaderName, token);
-                    EnqueueDebug(debugMessages, "Token acquired and header added.");
+                    request.Headers.Remove(PolicyTokenHeaderName);
                 }
-                else
-                {
-                    EnqueueDebug(debugMessages, "No token returned (null/empty).");
-                }
+                request.Headers.Add(PolicyTokenHeaderName, token);
+                EnqueueDebug(debugMessages, "Token acquired and header added.");
             }
             catch (AzPSInvalidOperationException)
             {
@@ -132,18 +125,18 @@ namespace Microsoft.WindowsAzure.Commands.Common
             HttpClient tokenHttpClient,
             CancellationToken cancellationToken)
         {
-            var subscriptionId = ExtractSubscriptionId(originalRequest.RequestUri);
-            if (string.IsNullOrEmpty(subscriptionId))
+            var scope = ExtractScope(originalRequest.RequestUri);
+            if (string.IsNullOrEmpty(scope))
             {
-                EnqueueDebug(debugMessages, $"Failed: subscription id not found in URI {originalRequest.RequestUri}.");
+                EnqueueDebug(debugMessages, $"Failed: subscription or resource group scope not found in URI {originalRequest.RequestUri}.");
                 throw new AzPSInvalidOperationException(
-                    $"Unable to determine subscription ID for policy token acquisition from URI: {originalRequest.RequestUri}",
+                    $"Unable to determine subscription or resource group scope for policy token acquisition from URI: {originalRequest.RequestUri}",
                     ErrorKind.UserError,
-                    desensitizedMessage: "Unable to determine subscription ID for policy token acquisition.");
+                    desensitizedMessage: "Unable to determine subscription or resource group scope for policy token acquisition.");
             }
 
             var authority = originalRequest.RequestUri.GetLeftPart(UriPartial.Authority);
-            var relativePath = $"/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/acquirePolicyToken?api-version={TokenApiVersion}";
+            var relativePath = $"{scope}/providers/Microsoft.Authorization/acquirePolicyToken?api-version={TokenApiVersion}";
             var tokenUri = new Uri(authority + relativePath);
 
             object contentObj = null;
@@ -245,13 +238,13 @@ namespace Microsoft.WindowsAzure.Commands.Common
             }
         }
 
-        private static string ExtractSubscriptionId(Uri uri)
+        private static string ExtractScope(Uri uri)
         {
             if (uri == null) return null;
-            var match = SubscriptionIdRegex.Match(uri.AbsolutePath);
-            if (match.Success && match.Groups.Count > 1)
+            var match = ScopeRegex.Match(uri.AbsolutePath);
+            if (match.Success)
             {
-                return match.Groups[1].Value;
+                return match.Value;
             }
             return null;
         }
