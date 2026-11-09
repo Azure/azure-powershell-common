@@ -99,6 +99,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
                         request.Headers.Remove(PolicyTokenHeaderName);
                     }
                     request.Headers.Add(PolicyTokenHeaderName, token);
+                    RequestHeaderScope.MarkRequestScoped(request, PolicyTokenHeaderName);
                     EnqueueDebug(debugMessages, "Token acquired and header added.");
                 }
                 else
