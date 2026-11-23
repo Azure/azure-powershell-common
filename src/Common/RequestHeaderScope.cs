@@ -16,7 +16,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
     /// Declares headers that belong to one logical request, rather than its LRO follow-ups.
     /// Retry clones retain these headers.
     /// </summary>
-    public static class RequestHeaderScope
+    internal static class RequestHeaderScope
     {
         /// <summary>
         /// Cross-assembly metadata key consumed by generated AutoRest PowerShell runtimes.

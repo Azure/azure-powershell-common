@@ -2,10 +2,10 @@
 
 ## Request-scoped HTTP headers
 
-Pipeline components can call `RequestHeaderScope.MarkRequestScoped(request, headerName)`
-when adding a header that must not be inherited by LRO polling or final GET requests.
-The policy-token stamper declares `x-ms-policy-external-evaluations` this way after
-successfully adding a token. It does not remove headers from GET requests.
+The internal `RequestHeaderScope` helper is used by `PolicyTokenAcquirer` to declare
+headers that must not be inherited by LRO polling or final GET requests. The
+stamper declares `x-ms-policy-external-evaluations` this way after successfully
+adding a token. It does not remove headers from GET requests.
 
 The helper publishes immutable header-name snapshots under
 `HttpRequestMessage.Properties["Microsoft.Azure.PowerShell.RequestScopedHeaders"]`,
