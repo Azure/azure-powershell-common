@@ -22,7 +22,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
 {
     /// <summary>
     /// Delegating handler to acquire an Azure Policy token for the change safety feature
-    /// and attach it to outgoing write requests.
+    /// and attach it to outgoing write requests, while removing it from GET/HEAD requests.
     /// Activated when user specifies -AcquirePolicyToken or -ChangeReference.
     /// </summary>
     public class AcquirePolicyTokenHandler : DelegatingHandler, ICloneable
@@ -55,7 +55,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            await Acquirer.StampPolicyTokenAsync(request, _shouldAcquire, _changeReference, _debugMessages, _tokenHttpClient, cancellationToken).ConfigureAwait(false);
+            await Acquirer.ProcessRequestAsync(request, _shouldAcquire, _changeReference, _debugMessages, _tokenHttpClient, cancellationToken).ConfigureAwait(false);
             return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
         }
 

@@ -49,7 +49,57 @@ namespace Commands.Common.Tests
 
         #endregion
 
-        #region GET requests are always passed through
+        #region GET/HEAD policy-token cleanup
+
+        [Theory]
+        [InlineData("GET", true)]
+        [InlineData("HEAD", true)]
+        [InlineData("GET", false)]
+        [InlineData("HEAD", false)]
+        public async Task SendAsync_Read_RemovesInheritedPolicyHeader(string method, bool shouldAcquire)
+        {
+            int tokenCalls = 0;
+            using (var tokenClient = new HttpClient(new MockTokenServerHandler((req, ct) =>
+            {
+                tokenCalls++;
+                throw new InvalidOperationException("Read requests must not acquire a token.");
+            })))
+            using (var client = new HttpClient(new AcquirePolicyTokenHandler(shouldAcquire, null, null, tokenClient)
+            {
+                InnerHandler = new MockInnerHandler((req, ct) =>
+                {
+                    Assert.False(req.Headers.Contains("x-ms-policy-external-evaluations"));
+                    Assert.Equal("Bearer test-auth", req.Headers.Authorization.ToString());
+                    Assert.Equal("keep", req.Headers.GetValues("x-custom").Single());
+                    return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
+                })
+            }))
+            using (var request = new HttpRequestMessage(new HttpMethod(method), "https://management.azure.com/operations/test"))
+            {
+                request.Headers.Add("X-MS-POLICY-EXTERNAL-EVALUATIONS", "inherited-token");
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", "test-auth");
+                request.Headers.Add("x-custom", "keep");
+
+                using (var response = await client.SendAsync(request))
+                {
+                    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                }
+                Assert.Equal(0, tokenCalls);
+            }
+        }
+
+        [Fact]
+        public async Task StampPolicyTokenAsync_ExistingCallerAlsoRemovesReadHeader()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, "https://management.azure.com/operations/test"))
+            {
+                request.Headers.Add("x-ms-policy-external-evaluations", "inherited-token");
+
+                await new PolicyTokenAcquirer().StampPolicyTokenAsync(request, true, null, null, null, CancellationToken.None);
+
+                Assert.False(request.Headers.Contains("x-ms-policy-external-evaluations"));
+            }
+        }
 
         [Fact]
         public async Task SendAsync_GET_NeverAcquiresToken()
@@ -87,6 +137,31 @@ namespace Commands.Common.Tests
         #endregion
 
         #region Write requests without user flag are passed through
+
+        [Theory]
+        [InlineData("PUT")]
+        [InlineData("POST")]
+        [InlineData("DELETE")]
+        [InlineData("PATCH")]
+        public async Task SendAsync_WriteWithoutAcquisition_PreservesExistingPolicyHeader(string method)
+        {
+            using (var client = new HttpClient(new AcquirePolicyTokenHandler(false, null, null)
+            {
+                InnerHandler = new MockInnerHandler((req, ct) =>
+                {
+                    Assert.Equal("existing-token", req.Headers.GetValues("x-ms-policy-external-evaluations").Single());
+                    return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
+                })
+            }))
+            using (var request = new HttpRequestMessage(new HttpMethod(method), "https://management.azure.com/resources/test"))
+            {
+                request.Headers.Add("x-ms-policy-external-evaluations", "existing-token");
+                using (var response = await client.SendAsync(request))
+                {
+                    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                }
+            }
+        }
 
         [Theory]
         [InlineData("PUT")]
@@ -571,6 +646,35 @@ namespace Commands.Common.Tests
         private const string TestToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.test-policy-token-value";
         private const string TestSubId = "f5d0e517-47aa-467c-90a0-4326d3c0fcae";
         private const string BaseUrl = "https://management.azure.com";
+
+        [Fact]
+        public async Task ProcessRequestAsync_WriteAndClonedReads_AcquiresOnlyForWrite()
+        {
+            int tokenCalls = 0;
+            var acquirer = new PolicyTokenAcquirer();
+            using (var tokenClient = CreateMockTokenServer(req => tokenCalls++))
+            using (var write = new HttpRequestMessage(HttpMethod.Put, $"{BaseUrl}/subscriptions/{TestSubId}/resources/test"))
+            {
+                await acquirer.ProcessRequestAsync(write, true, null, null, tokenClient, CancellationToken.None);
+                Assert.Equal(TestToken, write.Headers.GetValues("x-ms-policy-external-evaluations").Single());
+
+                foreach (var suffix in new[] { "poll", "final" })
+                {
+                    using (var read = new HttpRequestMessage(HttpMethod.Get, $"{BaseUrl}/operations/{suffix}"))
+                    {
+                        foreach (var header in write.Headers)
+                        {
+                            read.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                        }
+                        await acquirer.ProcessRequestAsync(read, true, null, null, tokenClient, CancellationToken.None);
+                        Assert.False(read.Headers.Contains("x-ms-policy-external-evaluations"));
+                    }
+                }
+
+                Assert.Equal(1, tokenCalls);
+                Assert.Equal(TestToken, write.Headers.GetValues("x-ms-policy-external-evaluations").Single());
+            }
+        }
 
         /// <summary>
         /// Creates a mock token server that returns a valid token response.

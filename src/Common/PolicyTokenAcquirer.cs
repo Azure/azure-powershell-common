@@ -30,7 +30,8 @@ namespace Microsoft.WindowsAzure.Commands.Common
 {
     /// <summary>
     /// Pipeline-agnostic core that acquires an Azure Policy token for the change safety feature
-    /// and stamps it onto an outgoing write request. This type owns the wire behavior (payload
+    /// and stamps it onto an outgoing write request, or removes it from GET/HEAD requests.
+    /// This type owns the wire behavior (payload
     /// build, POST to the acquirePolicyToken endpoint, response handling and exception mapping)
     /// so it can be reused by different HTTP pipelines.
     /// </summary>
@@ -53,9 +54,8 @@ namespace Microsoft.WindowsAzure.Commands.Common
         };
 
         /// <summary>
-        /// Acquires a policy token (when required) and attaches it to the outgoing request as the
-        /// <c>x-ms-policy-external-evaluations</c> header. This performs everything the change safety
-        /// pipeline does prior to forwarding the request to the inner handler.
+        /// Compatibility entry point for callers compiled against the original stamping API.
+        /// Delegates to <see cref="ProcessRequestAsync"/> for both write stamping and GET/HEAD cleanup.
         /// </summary>
         /// <param name="request">The outgoing request to inspect and (optionally) stamp.</param>
         /// <param name="shouldAcquire">Whether the user requested policy token acquisition.</param>
@@ -63,7 +63,28 @@ namespace Microsoft.WindowsAzure.Commands.Common
         /// <param name="debugMessages">Queue for debug messages, or null.</param>
         /// <param name="tokenHttpClient">Optional HttpClient for the token API call (for testing).</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public async Task StampPolicyTokenAsync(
+        public Task StampPolicyTokenAsync(
+            HttpRequestMessage request,
+            bool shouldAcquire,
+            string changeReference,
+            ConcurrentQueue<string> debugMessages,
+            HttpClient tokenHttpClient,
+            CancellationToken cancellationToken)
+        {
+            return ProcessRequestAsync(request, shouldAcquire, changeReference, debugMessages, tokenHttpClient, cancellationToken);
+        }
+
+        /// <summary>
+        /// Removes the policy-token header from GET/HEAD requests, or acquires and attaches a token
+        /// to an eligible write when requested. Other HTTP methods are left unchanged.
+        /// </summary>
+        /// <param name="request">The outgoing request to process.</param>
+        /// <param name="shouldAcquire">Whether to acquire a token for eligible writes; GET/HEAD cleanup is unconditional.</param>
+        /// <param name="changeReference">The change reference ID, or null if not specified.</param>
+        /// <param name="debugMessages">Queue for debug messages, or null.</param>
+        /// <param name="tokenHttpClient">Optional HttpClient for the token API call (for testing).</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public async Task ProcessRequestAsync(
             HttpRequestMessage request,
             bool shouldAcquire,
             string changeReference,
@@ -75,6 +96,15 @@ namespace Microsoft.WindowsAzure.Commands.Common
             if (request.RequestUri == null) throw new ArgumentException("RequestUri must be set.", nameof(request));
 
             EnqueueDebug(debugMessages, $"Intercept {request.Method} {request.RequestUri}");
+
+            if (request.Method == HttpMethod.Get || request.Method == HttpMethod.Head)
+            {
+                if (request.Headers.Remove(PolicyTokenHeaderName))
+                {
+                    EnqueueDebug(debugMessages, "Removed policy token header from GET/HEAD request.");
+                }
+                return;
+            }
 
             if (!_allowedWriteMethods.Contains(request.Method.Method))
             {
