@@ -54,27 +54,6 @@ namespace Microsoft.WindowsAzure.Commands.Common
         };
 
         /// <summary>
-        /// Compatibility entry point for callers compiled against the original stamping API.
-        /// Delegates to <see cref="ProcessRequestAsync"/> for both write stamping and GET/HEAD cleanup.
-        /// </summary>
-        /// <param name="request">The outgoing request to inspect and (optionally) stamp.</param>
-        /// <param name="shouldAcquire">Whether the user requested policy token acquisition.</param>
-        /// <param name="changeReference">The change reference ID, or null if not specified.</param>
-        /// <param name="debugMessages">Queue for debug messages, or null.</param>
-        /// <param name="tokenHttpClient">Optional HttpClient for the token API call (for testing).</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        public Task StampPolicyTokenAsync(
-            HttpRequestMessage request,
-            bool shouldAcquire,
-            string changeReference,
-            ConcurrentQueue<string> debugMessages,
-            HttpClient tokenHttpClient,
-            CancellationToken cancellationToken)
-        {
-            return ProcessRequestAsync(request, shouldAcquire, changeReference, debugMessages, tokenHttpClient, cancellationToken);
-        }
-
-        /// <summary>
         /// Removes the policy-token header from GET/HEAD requests, or acquires and attaches a token
         /// to an eligible write when requested. Other HTTP methods are left unchanged.
         /// </summary>
@@ -84,7 +63,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
         /// <param name="debugMessages">Queue for debug messages, or null.</param>
         /// <param name="tokenHttpClient">Optional HttpClient for the token API call (for testing).</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public async Task ProcessRequestAsync(
+        public async Task StampPolicyTokenAsync(
             HttpRequestMessage request,
             bool shouldAcquire,
             string changeReference,

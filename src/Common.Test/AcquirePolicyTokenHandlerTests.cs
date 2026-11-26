@@ -89,7 +89,7 @@ namespace Commands.Common.Tests
         }
 
         [Fact]
-        public async Task StampPolicyTokenAsync_ExistingCallerAlsoRemovesReadHeader()
+        public async Task StampPolicyTokenAsync_RemovesReadHeader()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, "https://management.azure.com/operations/test"))
             {
@@ -648,14 +648,14 @@ namespace Commands.Common.Tests
         private const string BaseUrl = "https://management.azure.com";
 
         [Fact]
-        public async Task ProcessRequestAsync_WriteAndClonedReads_AcquiresOnlyForWrite()
+        public async Task StampPolicyTokenAsync_WriteAndClonedReads_AcquiresOnlyForWrite()
         {
             int tokenCalls = 0;
             var acquirer = new PolicyTokenAcquirer();
             using (var tokenClient = CreateMockTokenServer(req => tokenCalls++))
             using (var write = new HttpRequestMessage(HttpMethod.Put, $"{BaseUrl}/subscriptions/{TestSubId}/resources/test"))
             {
-                await acquirer.ProcessRequestAsync(write, true, null, null, tokenClient, CancellationToken.None);
+                await acquirer.StampPolicyTokenAsync(write, true, null, null, tokenClient, CancellationToken.None);
                 Assert.Equal(TestToken, write.Headers.GetValues("x-ms-policy-external-evaluations").Single());
 
                 foreach (var suffix in new[] { "poll", "final" })
@@ -666,7 +666,7 @@ namespace Commands.Common.Tests
                         {
                             read.Headers.TryAddWithoutValidation(header.Key, header.Value);
                         }
-                        await acquirer.ProcessRequestAsync(read, true, null, null, tokenClient, CancellationToken.None);
+                        await acquirer.StampPolicyTokenAsync(read, true, null, null, tokenClient, CancellationToken.None);
                         Assert.False(read.Headers.Contains("x-ms-policy-external-evaluations"));
                     }
                 }

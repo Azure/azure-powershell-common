@@ -55,7 +55,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            await Acquirer.ProcessRequestAsync(request, _shouldAcquire, _changeReference, _debugMessages, _tokenHttpClient, cancellationToken).ConfigureAwait(false);
+            await Acquirer.StampPolicyTokenAsync(request, _shouldAcquire, _changeReference, _debugMessages, _tokenHttpClient, cancellationToken).ConfigureAwait(false);
             return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
         }
 
