@@ -30,7 +30,8 @@ namespace Microsoft.WindowsAzure.Commands.Common
 {
     /// <summary>
     /// Pipeline-agnostic core that acquires an Azure Policy token for the change safety feature
-    /// and stamps it onto an outgoing write request. This type owns the wire behavior (payload
+    /// and stamps it onto an eligible write request, or removes it from other HTTP methods.
+    /// This type owns the wire behavior (payload
     /// build, POST to the acquirePolicyToken endpoint, response handling and exception mapping)
     /// so it can be reused by different HTTP pipelines.
     /// </summary>
@@ -53,12 +54,11 @@ namespace Microsoft.WindowsAzure.Commands.Common
         };
 
         /// <summary>
-        /// Acquires a policy token (when required) and attaches it to the outgoing request as the
-        /// <c>x-ms-policy-external-evaluations</c> header. This performs everything the change safety
-        /// pipeline does prior to forwarding the request to the inner handler.
+        /// Removes the policy-token header from methods outside PUT/POST/DELETE/PATCH, or acquires
+        /// and attaches a token to an eligible write when requested.
         /// </summary>
-        /// <param name="request">The outgoing request to inspect and (optionally) stamp.</param>
-        /// <param name="shouldAcquire">Whether the user requested policy token acquisition.</param>
+        /// <param name="request">The outgoing request to process.</param>
+        /// <param name="shouldAcquire">Whether to acquire a token for eligible writes; cleanup for other methods is unconditional.</param>
         /// <param name="changeReference">The change reference ID, or null if not specified.</param>
         /// <param name="debugMessages">Queue for debug messages, or null.</param>
         /// <param name="tokenHttpClient">Optional HttpClient for the token API call (for testing).</param>
@@ -78,6 +78,11 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
             if (!_allowedWriteMethods.Contains(request.Method.Method))
             {
+                // LRO polling and final requests can inherit the write's token; remove it from methods ineligible for acquisition.
+                if (request.Headers.Remove(PolicyTokenHeaderName))
+                {
+                    EnqueueDebug(debugMessages, "Removed policy token header from request not eligible for token acquisition.");
+                }
                 EnqueueDebug(debugMessages, "Skip: verb not allowed for token acquisition.");
                 return;
             }
