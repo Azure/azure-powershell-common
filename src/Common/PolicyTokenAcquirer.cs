@@ -76,18 +76,19 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
             EnqueueDebug(debugMessages, $"Intercept {request.Method} {request.RequestUri}");
 
-            if (request.Method == HttpMethod.Get || request.Method == HttpMethod.Head)
-            {
-                if (request.Headers.Remove(PolicyTokenHeaderName))
-                {
-                    EnqueueDebug(debugMessages, "Removed policy token header from GET/HEAD request.");
-                }
-                return;
-            }
-
             if (!_allowedWriteMethods.Contains(request.Method.Method))
             {
-                EnqueueDebug(debugMessages, "Skip: verb not allowed for token acquisition.");
+                if (request.Method == HttpMethod.Get || request.Method == HttpMethod.Head)
+                {
+                    if (request.Headers.Remove(PolicyTokenHeaderName))
+                    {
+                        EnqueueDebug(debugMessages, "Removed policy token header from GET/HEAD request.");
+                    }
+                }
+                else
+                {
+                    EnqueueDebug(debugMessages, "Skip: verb not allowed for token acquisition.");
+                }
                 return;
             }
 
