@@ -22,7 +22,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
 {
     /// <summary>
     /// Delegating handler to acquire an Azure Policy token for the change safety feature
-    /// and attach it to outgoing write requests, while removing it from GET/HEAD requests.
+    /// and attach it to eligible write requests, while removing it from other HTTP methods.
     /// Activated when user specifies -AcquirePolicyToken or -ChangeReference.
     /// </summary>
     public class AcquirePolicyTokenHandler : DelegatingHandler, ICloneable

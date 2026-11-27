@@ -30,7 +30,7 @@ namespace Microsoft.WindowsAzure.Commands.Common
 {
     /// <summary>
     /// Pipeline-agnostic core that acquires an Azure Policy token for the change safety feature
-    /// and stamps it onto an outgoing write request, or removes it from GET/HEAD requests.
+    /// and stamps it onto an eligible write request, or removes it from other HTTP methods.
     /// This type owns the wire behavior (payload
     /// build, POST to the acquirePolicyToken endpoint, response handling and exception mapping)
     /// so it can be reused by different HTTP pipelines.
@@ -54,11 +54,11 @@ namespace Microsoft.WindowsAzure.Commands.Common
         };
 
         /// <summary>
-        /// Removes the policy-token header from GET/HEAD requests, or acquires and attaches a token
-        /// to an eligible write when requested. Other HTTP methods are left unchanged.
+        /// Removes the policy-token header from methods outside PUT/POST/DELETE/PATCH, or acquires
+        /// and attaches a token to an eligible write when requested.
         /// </summary>
         /// <param name="request">The outgoing request to process.</param>
-        /// <param name="shouldAcquire">Whether to acquire a token for eligible writes; GET/HEAD cleanup is unconditional.</param>
+        /// <param name="shouldAcquire">Whether to acquire a token for eligible writes; cleanup for other methods is unconditional.</param>
         /// <param name="changeReference">The change reference ID, or null if not specified.</param>
         /// <param name="debugMessages">Queue for debug messages, or null.</param>
         /// <param name="tokenHttpClient">Optional HttpClient for the token API call (for testing).</param>
@@ -76,17 +76,13 @@ namespace Microsoft.WindowsAzure.Commands.Common
 
             EnqueueDebug(debugMessages, $"Intercept {request.Method} {request.RequestUri}");
 
-            if (request.Method == HttpMethod.Get || request.Method == HttpMethod.Head)
-            {
-                if (request.Headers.Remove(PolicyTokenHeaderName))
-                {
-                    EnqueueDebug(debugMessages, "Removed policy token header from GET/HEAD request.");
-                }
-                return;
-            }
-
             if (!_allowedWriteMethods.Contains(request.Method.Method))
             {
+                // LRO polling and final requests can inherit the write's token; remove it from methods ineligible for acquisition.
+                if (request.Headers.Remove(PolicyTokenHeaderName))
+                {
+                    EnqueueDebug(debugMessages, "Removed policy token header from request not eligible for token acquisition.");
+                }
                 EnqueueDebug(debugMessages, "Skip: verb not allowed for token acquisition.");
                 return;
             }

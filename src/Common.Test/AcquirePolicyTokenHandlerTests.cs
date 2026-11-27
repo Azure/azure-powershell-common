@@ -49,20 +49,26 @@ namespace Commands.Common.Tests
 
         #endregion
 
-        #region GET/HEAD policy-token cleanup
+        #region Policy-token cleanup for methods ineligible for acquisition
 
         [Theory]
         [InlineData("GET", true)]
         [InlineData("HEAD", true)]
         [InlineData("GET", false)]
         [InlineData("HEAD", false)]
-        public async Task SendAsync_Read_RemovesInheritedPolicyHeader(string method, bool shouldAcquire)
+        [InlineData("OPTIONS", true)]
+        [InlineData("OPTIONS", false)]
+        [InlineData("TRACE", true)]
+        [InlineData("TRACE", false)]
+        [InlineData("CUSTOM", true)]
+        [InlineData("CUSTOM", false)]
+        public async Task SendAsync_IneligibleMethod_RemovesInheritedPolicyHeader(string method, bool shouldAcquire)
         {
             int tokenCalls = 0;
             using (var tokenClient = new HttpClient(new MockTokenServerHandler((req, ct) =>
             {
                 tokenCalls++;
-                throw new InvalidOperationException("Read requests must not acquire a token.");
+                throw new InvalidOperationException("Ineligible methods must not acquire a token.");
             })))
             using (var client = new HttpClient(new AcquirePolicyTokenHandler(shouldAcquire, null, null, tokenClient)
             {
